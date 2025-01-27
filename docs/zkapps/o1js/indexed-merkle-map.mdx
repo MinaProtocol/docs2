@@ -1,0 +1,77 @@
+---
+title: Indexed Merkle Map
+hide_title: true
+description:
+  A comprehensive guide on how to use Indexed Merkle Map to reference off-chain data in zkApps on Mina.
+  - zkapp
+  - o1js
+  - merkle map
+  - merkle tree
+  - zkapps
+  - mina blockchain
+  - storage
+  - off-chain data
+  - blockchain technology
+  - data structures
+---
+
+:::experimental
+
+The Indexed Merkle Map API is currently an experimental feature.
+
+:::
+
+# Indexed Merkle Map
+
+Similar to a Merkle Tree, a Merkle Map allows referencing off-chain data by storing a single hash, also known as the root.
+
+A Merkle Map is a wrapper around a [Merkle Tree](/zkapps/o1js/merkle-tree). Both data structures are analogous, but instead of using an index to set a leaf in a tree, a Merkle Map uses a key in a map.
+
+## Design
+
+The Indexed Merkle Map is an improved version of the [MerkleMap](/zkapps/tutorials/common-types-and-functions#merkle-map), offering enhanced efficiency and usability:
+
+- **Reduced Constraints:** Uses 4-8x fewer constraints than `MerkleMap`.
+- **Provable Code Integration:** Unlike `MerkleTree` and `MerkleMap`, the high-level API of `IndexedMerkleMap` is usable within provable code.
+
+:::note
+
+The `Indexed Merkle Map` can have a height of at most `52`, whereas the `Merkle Map` has a larger height fixed at `256`.
+
+:::
+
+## Utilizing Indexed Merkle Map
+
+### Prerequisites
+
+The `IndexedMerkleMap` API is accessible within the `Experimental` namespace. To use the API, import `Experimental` from o1js version 1.5.0 or higher.
+
+```ts
+import { Experimental } from 'o1js';
+
+const { IndexedMerkleMap } = Experimental;
+```
+
+### Instantiating an Indexed Merkle Map
+
+Given a height, you can instantiate an Indexed Merkle Map by extending the base class.
+The height determines the capacity of the map; the maximum number of leaf nodes it can contain.
+
+```ts
+const height = 31;
+class IndexedMerkleMap31 extends IndexedMerkleMap(height) {}
+```
+
+In this example, `IndexedMerkleMap31` is a Merkle map capable of holding up to 2<sup>(31−1)</sup> leaves; approximately 1 billion entries.
+
+### Indexed Merkle Map - API reference
+
+For an example, see the `IndexedMerkleMap` [API reference](/zkapps/o1js-reference/namespaces/Experimental/functions/IndexedMerkleMap) in o1js.
+
+## Additional Resources
+
+For more details and examples, please refer to the following GitHub resources:
+
+- [Indexed Merkle Tree: o1js PR#1666](https://github.com/o1-labs/o1js/pull/1666)
+- [IndexedMerkleMap: Support 0 and -1 Keys: o1js PR#1671](https://github.com/o1-labs/o1js/pull/1671)
+- [Mastermind zkApp Example Using Indexed Merkle Map](https://github.com/o1-labs-XT/mastermind-zkApp/tree/level3)
