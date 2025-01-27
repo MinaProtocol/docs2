@@ -319,7 +319,7 @@ There is a more complicated version of this problem when interacting with accoun
 
 To have a concrete example, consider a token airdrop. As the token contract developer, you precompute a [Merkle map](/zkapps/o1js/merkle-tree) containing eligible accounts and their airdrop amounts, and store the Merkle root onchain. _Claiming_ an airdrop has to involve updating the tree and onchain root, because otherwise the same account could claim the airdrop multiple times.
 
-To scale payouts to multiple concurrent users per block, you approach the problem with [actions and reducer](/zkapps/writing-a-zkapp/feature-overview/actions-and-reducer). To claim, a user dipatches a "claim" action that contains their address and airdrop amount.
+To scale payouts to multiple concurrent users per block, you approach the problem with [actions and reducer](/zkapps/writing-a-zkapp/feature-overview/actions-and-reducer). To claim, a user dispatches a "claim" action that contains their address and airdrop amount.
 
 On top of that, every block, you run a reducer method which contains the following logic:
 

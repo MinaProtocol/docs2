@@ -121,7 +121,7 @@ class TokenContract extends SmartContract {
     amount: UInt64,
     callback: Experimental.Callback<any>
   ) {
-    // approves the callback which deductes the amount of tokens from the sender
+    // approves the callback which deducts the amount of tokens from the sender
     let senderAccountUpdate = this.approve(callback);
 
     // Create constraints for the sender account update and amount
