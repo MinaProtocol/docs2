@@ -18,6 +18,7 @@
     "update-sidebar": "node scripts/update-sidebars-o1js-api.js && npx prettier --config .prettierrc --write sidebars.js"
   },
   "dependencies": {
+    "@cookbookdev/docsbot": "^4.24.0",
     "@docusaurus/core": "^2.4.1",
     "@docusaurus/cssnano-preset": "^2.4.1",
     "@docusaurus/plugin-client-redirects": "^2.4.1",
