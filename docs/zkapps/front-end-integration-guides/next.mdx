@@ -1,0 +1,796 @@
+---
+title: Next JS and Vercel
+description: Getting started with Next JS and o1js, and deployments to Vercel
+keywords:
+  - next
+  - ui
+  - sharedarraybuffer
+  - webworker
+  - web
+  - worker
+  - vercel
+---
+
+# Next JS Integration Guide
+## Initialize the Project
+
+We will follow the project initialization workflow from the [NextJS docs](https://nextjs.org/docs/app/getting-started/installation).  This tutorial uses version 15, but the same concepts should apply to all versions of Next.
+
+- Create a new project by running:
+
+```bash
+npx create-next-app@15.1.4
+```
+
+For this tutorial, I have selected the following options:
+
+```
+✔ What is your project named? … next-js-integration-guide
+✔ Would you like to use TypeScript? … Yes
+✔ Would you like to use ESLint? … Yes
+✔ Would you like to use Tailwind CSS? … Yes
+✔ Would you like your code inside a `src/` directory? … Yes
+✔ Would you like to use App Router? (recommended) … Yes
+✔ Would you like to use Turbopack for `next dev`? … No
+✔ Would you like to customize the import alias (`@/*` by default)? … No
+```
+
+- Install o1js
+
+For this tutorial, we are using o1js version 2.
+
+```bash
+npm i o1js@^2
+```
+
+- Make sure that everything is working by running the development server
+
+```bash
+npm run dev
+```
+
+## Configure the app for effective o1js usage
+
+This section will walk through the basics of configuring a Next.js app to work with o1js.  The two main points are:
+
+- Set the COOP and COEP headers so that o1js can communicate with the shared array buffer used by WASM
+  - This is strictly necessary for o1js to work in browers, whether or not you choose to use web workers
+- Set up some web worker infrastructure so that long-running o1js computation does not block rendering your site
+
+### Update headers in next config
+
+To set the COOP and COEP headers correctly in next, edit your `next.config.ts` file to match the snippet below:
+
+```ts
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  async headers() {
+    return [
+      {
+        source: "/(.*)",
+        headers: [
+          {
+            key: "Cross-Origin-Opener-Policy",
+            value: "same-origin",
+          },
+          {
+            key: "Cross-Origin-Embedder-Policy",
+            value: "require-corp",
+          },
+        ],
+      },
+    ];
+  },
+};
+
+export default nextConfig;
+```
+
+#### (Alternative) Update Headers in Vercel Config
+
+If you plan to deploy to vercel only, then you can configure the headers in `vercel.json` instead of `next.config.ts`.  Here is an example of how to do that:
+
+```json
+{
+    "headers": [
+        {
+            "source": "/(.*)",
+            "headers": [
+                {
+                    "key": "Cross-Origin-Embedder-Policy",
+                    "value": "require-corp"
+                },
+                {
+                    "key": "Cross-Origin-Opener-Policy",
+                    "value": "same-origin"
+                }
+            ]
+        }
+    ]
+}
+```
+
+The Next JS config method will work on all deployment platforms, including Vercel.
+
+### Use Comlink to create a worker
+
+We strongly recommend using web workers in your o1js-enabled apps.  Comlink is a package which wraps web workers in a convenient API, and I will use it for this guide, but any way of using web workers that you're comfortable with will work.
+
+To use Comlink, first install it:
+
+```bash
+npm i comlink
+```
+
+Then, create a worker, and a workerClient file.  For this app, I will call the files `todoListWorker.ts` and `todoListWorkerClient.ts`.
+
+```bash
+touch src/app/todoListWorker.ts src/app/todoListWorkerClient.ts
+```
+
+For now, let's put some boilerplate in these files:
+
+```ts
+// todoListWorker.ts
+
+import * as Comlink from "comlink";
+
+export const api = {
+  async sayHi() {
+    return "Hello from the worker!";
+  }
+};
+
+Comlink.expose(api);
+```
+
+```ts
+// todoListWorkerClient.ts
+
+import * as Comlink from "comlink";
+
+export default class TodoListWorkerClient {
+  worker!: Worker;
+  remoteApi: Comlink.Remote<typeof import("./todoListWorker").api>;
+
+  constructor() {
+    const worker = new Worker(new URL("./todoListWorker.ts", import.meta.url), {
+      type: "module",
+    });
+    this.remoteApi = Comlink.wrap(worker);
+  }
+
+  async sayHi() {
+    return await this.remoteApi.sayHi();
+  }
+}
+```
+
+### Set any page that needs access to the web worker to 'use client' mode
+
+Only client-side rendered code will have access to web workers.  Server-rendered components don't have access to browser features.  In order to make use of web workers, tell next that your component should be client-rendered with `'use client'` on `page.tsx`.
+
+```ts
+// page.tsx
+
+'use client' // <---- Add this line to tell next to render this page client-side
+import Image from "next/image";
+
+export default function Home() {
+  return (
+```
+
+Then, import the web worker and confirm that it is working:
+
+```ts
+'use client'
+import Image from "next/image";
+import TodoListWorkerClient from "./todoListWorkerClient"; // <---- Add this line to import the worker client
+
+export default function Home() {
+  /**
+   * Add this code to the top of the page confirm that the worker is functioning
+   */
+  const workerClient = new TodoListWorkerClient();
+  workerClient.sayHi().then((message) => {
+    console.log(message);
+  });
+  return ( //...
+```
+
+Confirm that you see the message logged in your browser by opening the dev tools (F12) and looking for 'Hello from the worker!'.
+
+Now we have our web worker set up and we're ready to add logic to our app!
+
+## Write the provable code that you want to execute in browser
+
+The rest of the guide will go through specifically how to write a todolist program with o1js and run it in the browser using the Next.js config that we just set up.
+
+The first step is writing a `ZkProgram`.  `ZkProgram` is how proofs are created in o1js.  Generating the proof is done in javascript, either in node, or in a browser, and verifying the proof can be done in javascript as well, or on a network like Mina, Protokit or Zeko.
+
+Let's get started by creating a new file called `zkTodoList.ts` and describing our program:
+
+```bash
+mkdir -p src/lib && touch src/lib/zkTodoList.ts
+```
+
+```ts
+// zkTodoList.ts
+
+import { Experimental, ZkProgram } from "o1js";
+
+export { IndexedMerkleMap8, ZkTodoList, ZkTodoListProof };
+
+class IndexedMerkleMap8 extends Experimental.IndexedMerkleMap(8) {}
+
+const ZkTodoList = ZkProgram({
+  name: "TodoList",
+  publicOutput: IndexedMerkleMap8,
+  methods: {},
+});
+
+class ZkTodoListProof extends ZkProgram.Proof(ZkTodoList) {}
+```
+
+- `class IndexedMerkleMap8 extends Experimental.IndexedMerkleMap(8) {}`
+  - This line creates the class we will use to store our todo list
+  - IndexedMerkleMap(8) means a merkle map with 2^8 leaves that can be accessed by index
+- `publicOutput: IndexedMerkleMap8,`
+  - This line defines the type of the output of the proof as our indexed merkle map class
+  - So every proof of the contents of a todolist will export the merkle map that it is valid for
+
+Next let's add the data structure for a todo item.  We want to track the text of the todo and the status, whether it's been completed or not.
+
+```ts
+export { 
+  IndexedMerkleMap8, 
+  Todo, // <---- Add this line to export the Todo class
+  ZkTodoList, 
+  ZkTodoListProof 
+};
+
+class IndexedMerkleMap8 extends Experimental.IndexedMerkleMap(8) {}
+
+// Add this class to represent a todo item as a provable struct
+class Todo extends Struct({
+  text: CircuitString,
+  status: Bool,
+}) {
+  hash() {
+    return Poseidon.hash([this.text.hash(), this.status.toField()]);
+  }
+}
+
+const ZkTodoList = ZkProgram({
+```
+
+Finally, let's add methods to our program to handle initializing, adding a todo, and completing a todo.
+
+```ts
+const ZkTodoList = ZkProgram({
+  name: "TodoList",
+  publicOutput: IndexedMerkleMap8,
+  methods: {
+    /**
+     * init creates a proof of an empty merkle map, representing an empty todo list
+     */
+    init: {
+      privateInputs: [],
+      method: async () => {
+        const publicOutput = new IndexedMerkleMap8();
+        return { publicOutput };
+      },
+    },
+    /**
+     * addTodo inserts a new todo into the merkle map at the given index
+     */
+    addTodo: {
+      privateInputs: [SelfProof, Field, Todo],
+      method: async (
+        p: SelfProof<undefined, IndexedMerkleMap8>,
+        index: Field,
+        todo: Todo
+      ) => {
+        p.verify();
+        const publicOutput = p.publicOutput.clone();
+
+        publicOutput.insert(index, todo.hash());
+        return { publicOutput };
+      },
+    },
+    /**
+     * completeTodo marks a todo at a given index as completed
+     */
+    completeTodo: {
+      privateInputs: [SelfProof, Field, Todo],
+      method: async (
+        p: SelfProof<undefined, IndexedMerkleMap8>,
+        index: Field,
+        todo: Todo
+      ) => {
+        p.verify();
+        const publicOutput = p.publicOutput.clone();
+        publicOutput.get(index).assertEquals(todo.hash());
+        todo.status = Bool(true);
+        publicOutput.update(index, todo.hash());
+        return { publicOutput };
+      },
+    },
+  },
+});
+```
+
+That should do it for our ZkProgram!  Let's get back to the web application and integrate this new feature.
+
+## Wrap ZkProgram functionality in the web worker
+
+Back in our web worker, we will now want to expose the funcitonality of the todo list program to the Next.js application.
+
+Since we already set the worker up properly, this part is very straightforward.  We simply need to import the zk program and write new methods for the worker that correspond to the features.
+
+We will also track some state in the web worker for convenience.
+
+```ts
+// todoListWorker.ts
+
+import { Bool, CircuitString, Field } from "o1js";
+import * as Comlink from "comlink";
+import {
+  IndexedMerkleMap8,
+  Todo,
+  ZkTodoList,
+  ZkTodoListProof,
+} from "../lib/zkTodoList";
+
+export type TodoObjectRepr = {
+  text: string;
+  status: boolean;
+};
+
+const state = {
+  merkleMap: null as IndexedMerkleMap8 | null,
+  objectRepr: {} as Record<number, TodoObjectRepr>,
+  proof: null as ZkTodoListProof | null,
+  index: 0,
+};
+
+export const api = {
+  async init() {
+    console.time("Compiling zkTodoList");
+    await ZkTodoList.compile();
+    console.timeEnd("Compiling zkTodoList");
+    const initialProof = await ZkTodoList.init();
+    state.proof = initialProof.proof;
+    state.merkleMap = initialProof.proof.publicOutput;
+  },
+  async addTodos(todos: Array<string>) {
+    if (!state.proof) {
+      throw new Error("Proof not initialized");
+    }
+    let i = 0;
+    while (todos.length > 0) {
+      const text = todos.shift()!;
+      console.log("Adding todo", i, text);
+      const todo = new Todo({
+        text: CircuitString.fromString(text),
+        status: Bool(false),
+      });
+      const index = Field(state.index + 1);
+      const proof = await ZkTodoList.addTodo(state.proof, index, todo);
+      state.merkleMap = proof.proof.publicOutput;
+      state.index++;
+      i++;
+      state.objectRepr[state.index] = { text, status: false };
+      state.proof = proof.proof;
+    }
+  },
+  async completeTodo(index: number) {
+    if (!state.proof || !state.merkleMap) {
+      throw new Error("Proof not initialized");
+    }
+    try {
+      const todoHash = state.merkleMap.get(Field(index));
+
+      console.log("Completing todo", index, todoHash);
+    } catch (e) {
+      throw new Error("Todo not found");
+    }
+
+    const todoRepr = state.objectRepr[index];
+    if (!todoRepr) {
+      throw new Error("Todo not found");
+    }
+    if (todoRepr.status) {
+      throw new Error("Todo already completed");
+    }
+
+    const todo = new Todo({
+      text: CircuitString.fromString(todoRepr.text),
+      status: Bool(todoRepr.status),
+    });
+
+    const text = todo.text.toString();
+    const proof = await ZkTodoList.completeTodo(
+      state.proof,
+      Field(index),
+      new Todo({
+        text: CircuitString.fromString(text),
+        status: Bool(false),
+      })
+    );
+    todoRepr.status = true;
+    state.merkleMap = proof.proof.publicOutput;
+    state.objectRepr[index] = todoRepr;
+    state.proof = proof.proof;
+  },
+  async completeTodos(indices: Array<number>) {
+    for (const index of indices) {
+      console.log("Completing todo", index);
+      await this.completeTodo(index);
+    }
+  },
+  getTodo(index: number) {
+    return state.objectRepr[index];
+  },
+  getTodos() {
+    return state.objectRepr;
+  },
+};
+
+Comlink.expose(api);
+```
+
+And add the relevant wrappers to the worker client.
+
+```ts
+// todoListWorkerClient.ts
+
+import * as Comlink from "comlink";
+
+export default class TodoListWorkerClient {
+  worker!: Worker;
+  remoteApi: Comlink.Remote<typeof import("./todoListWorker").api>;
+
+  constructor() {
+    const worker = new Worker(new URL("./todoListWorker.ts", import.meta.url), {
+      type: "module",
+    });
+    this.remoteApi = Comlink.wrap(worker);
+  }
+
+  async init() {
+    await this.remoteApi.init();
+  }
+
+  async addTodos(todos: Array<string>) {
+    await this.remoteApi.addTodos(todos);
+  }
+
+  async completeTodos(indices: Array<number>) {
+    await this.remoteApi.completeTodos(indices);
+  }
+
+  async getTodo(index: number) {
+    return await this.remoteApi.getTodo(index);
+  }
+
+  async getTodos() {
+    return await this.remoteApi.getTodos();
+  }
+}
+```
+
+## Applying the UI
+
+For the final step, let's create a couple simple components to round out our application.  Let's create some files.  These components will render our pending and proven todo items.  The pending items are stored in react state until we add them to the proven data by calling the web worker client.  This improves performance by not having to wait for the proof to be generated every time an action is taken.
+
+```bash
+mkdir -p src/components
+touch src/components/PendingTodoItem.tsx src/components/PendingTodosQueue.tsx src/components/ProvenTodoItem.tsx src/components/ProvenTodosQueue.tsx
+```
+
+```tsx
+// PendingTodoItem.tsx
+
+export default function PendingTodoItem({ todo }: { todo: string }) {
+    return (
+        <li className="flex flex-row items-center gap-4 p-2 border-b border-gray-200">
+            <div className="flex-1">
+                <p>{todo}</p>
+            </div>
+        </li>
+    );
+}
+```
+
+```tsx
+// PendingTodosQueue.tsx
+import PendingTodoItem from "./PendingTodoItem";
+
+export default function TodosQueue({ title, subheading, todos }: { title: string, subheading: string, todos: Array<string> }) {
+    return (
+        <div className="flex flex-col gap-2 w-3/4">
+            <h1 className="text-2xl font-bold">{title}</h1>
+            <p>{subheading}</p>
+            <li className="flex flex-row items-center gap-4 p-2 border-b border-gray-200">
+                <div className="flex-1">
+                    <p>Todo</p>
+                </div>
+            </li>
+            <ul className="flex flex-col gap-2">
+                {todos.map((todo, index) => (
+                    <PendingTodoItem key={index} todo={todo} />
+                ))}
+            </ul>
+        </div>
+    );
+}
+```
+
+```tsx
+// ProvenTodoItem.tsx
+import { type TodoObjectRepr } from "@/app/todoListWorker";
+
+export default function ProvenTodoItem({ todo, index, completeTodo }: { todo: TodoObjectRepr, index: number, completeTodo: (index: number) => void }) {
+    return (
+        <li className="flex flex-row items-center gap-4 p-2 border-b border-gray-200">
+            <div className="flex-1">
+                <p>{todo.text}</p>
+            </div>
+            <div className="flex-1">
+                <p>{todo.status ? "✅" : "❌"}</p>
+            </div>
+            <div>
+                <p>{index}</p>
+            </div>
+            <div className="flex-1 text-right">
+                {todo.status ? (
+                    <p>Already complete!</p>
+                ) : (<button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded" onClick={() => completeTodo(index)}>Complete</button>)}
+            </div>
+        </li>
+    );
+}
+```
+
+```tsx
+// ProvenTodosQueue.tsx
+import { TodoObjectRepr } from "@/app/todoListWorker";
+import ProvenTodoItem from "./ProvenTodoItem";
+
+export default function ProvenTodosQueue({ title, subheading, todos, completeTodo }: { title: string, subheading: string, todos: Record<number, TodoObjectRepr>, completeTodo: (index: number) => void }) {
+    return (
+        <div className="flex flex-col gap-2 w-3/4">
+            <h1 className="text-2xl font-bold">{title}</h1>
+            <p>{subheading}</p>
+            <li className="flex flex-row items-center gap-4 p-2 border-b border-gray-200">
+                <div className="flex-1">
+                    <p>Todo</p>
+                </div>
+                <div className="flex-1">
+                    <p>Status</p>
+                </div>
+                <div>
+                    <p>Index</p>
+                </div>
+                <div className="flex-1 text-right">
+                    <p>Actions</p>
+                </div>
+            </li>
+            <ul className="flex flex-col gap-2">
+                {Object.entries(todos).map(([index, todo]) => {
+                    console.log(index, todo);
+                    return (
+                        <ProvenTodoItem key={index} todo={todo} index={Number(index)} completeTodo={completeTodo} />
+                    );
+                })}
+            </ul>
+        </div>
+    );
+}
+```
+
+Now that these files are created, let's use them in our main `page.tsx`.
+
+```tsx
+// page.tsx
+
+"use client";
+import { useEffect, useRef, useState } from "react";
+
+import TodoListWorkerClient from "./todoListWorkerClient";
+import PendingTodosQueue from "@/components/PendingTodosQueue";
+import ProvenTodosQueue from "@/components/ProvenTodosQueue";
+import { type TodoObjectRepr } from "./todoListWorker";
+
+export default function Home() {
+  const [todoListWorkerClient, setTodoListWorkerClient] =
+    useState<TodoListWorkerClient | null>(null);
+  const [hasBeenInitialized, setHasBeenInitialized] = useState(false);
+  const [workerIsBusy, setWorkerIsBusy] = useState(false);
+  const [todoList, setTodoList] = useState<Record<
+    number,
+    TodoObjectRepr
+  > | null>(null);
+  const [newTodo, setNewTodo] = useState("");
+  const [newTodosQueue, setNewTodosQueue] = useState<string[]>([]);
+  const [pendingCompleteTodosQueue, setPendingCompleteTodosQueue] = useState<number[]>([]);
+  const [logMessages, setLogMessages] = useState<string[]>([]);
+
+  const logContainerRef = useRef<HTMLDivElement>(null);
+  const isInitializingRef = useRef(false);
+
+  const initializeWorker = async (worker: TodoListWorkerClient) => {
+    setLogMessages((prev) => [...prev, "Compiling zk program..."]);
+    const timeStart = Date.now();
+    await worker.init();
+    const todos = await worker.getTodos();
+    setLogMessages((prev) => [...prev, `Zk program compiled in ${Date.now() - timeStart}ms`]);
+    setTodoList(todos);
+    setHasBeenInitialized(true);
+    isInitializingRef.current = false;
+  };
+
+  const setup = async () => {
+    setWorkerIsBusy(true);
+    if (!todoListWorkerClient) {
+      setLogMessages((prev) => [...prev, "No worker client found, creating new one..."]);
+      const workerClient = new TodoListWorkerClient();
+      setTodoListWorkerClient(workerClient);
+      setLogMessages((prev) => [...prev, "Worker client created"]);
+      isInitializingRef.current = true;
+      await initializeWorker(workerClient);
+    } else if (!hasBeenInitialized && !isInitializingRef.current) {
+      isInitializingRef.current = true;
+      await initializeWorker(todoListWorkerClient);
+    }
+    setWorkerIsBusy(false);
+  };
+
+  useEffect(() => {
+    setup();
+  }, [hasBeenInitialized, todoListWorkerClient]);
+
+  useEffect(() => {
+    if (logContainerRef.current) {
+      logContainerRef.current.scrollTop = logContainerRef.current.scrollHeight;
+    }
+  }, [logMessages]);
+
+  const addTodo = async () => {
+    setNewTodosQueue([...newTodosQueue, newTodo]);
+    setLogMessages((prev) => [...prev, `Added todo to pending queue: ${newTodo.substring(0, 10)}...`]);
+    setNewTodo("");
+  };
+
+  const resolveTodosQueue = async () => {
+    setLogMessages((prev) => [...prev, "Proving pending todos queue..."]);
+    setWorkerIsBusy(true);
+    const timeStart = Date.now();
+    await todoListWorkerClient!.addTodos(newTodosQueue);
+    const todos = await todoListWorkerClient!.getTodos();
+    setTodoList(todos);
+    setWorkerIsBusy(false);
+    setLogMessages((prev) => [...prev, `Todos queue proven in ${Date.now() - timeStart}ms!`]);
+    setNewTodosQueue([]);
+  };
+
+  const completeTodo = async (index: number) => {
+    if(!todoList) return;
+
+    setLogMessages((prev) => [...prev, `Marking todo ${index} for completion...`]);
+    setPendingCompleteTodosQueue([...pendingCompleteTodosQueue, index]);
+  };
+
+  const resolveCompleteTodosQueue = async () => {
+    setLogMessages((prev) => [...prev, "Proving pending complete todos queue..."]);
+    setWorkerIsBusy(true);
+    const timeStart = Date.now();
+    await todoListWorkerClient!.completeTodos(pendingCompleteTodosQueue);
+    const todos = await todoListWorkerClient!.getTodos();
+    setTodoList(todos);
+    setWorkerIsBusy(false);
+    setLogMessages((prev) => [...prev, `Complete todos queue proven in ${Date.now() - timeStart}ms!`]);
+    setPendingCompleteTodosQueue([]);
+  };
+
+
+  return (
+    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-8 font-[family-name:var(--font-geist-sans)]">
+      <main className="flex flex-col gap-x-12 gap-y-40 row-start-2 items-center w-3/4">
+        <div className="flex flex-col gap-4 items-center justify-center text-center">
+          <h1 className="text-4xl font-bold">
+            Todo List with o1js and Next JS!
+          </h1>
+          <p>
+            This is a demo site built with o1js and Next JS. Follow along with
+            step by step instructions for how to build this site{" "}
+            <a href="https://docs.minaprotocol.com/zkapps/front-end-integration-guides/next">here</a>!
+          </p>
+        </div>
+        <div className="w-full">
+          <h2 className="text-xl font-bold mb-2">Console Log</h2>
+          <div ref={logContainerRef} className="w-full max-h-40 overflow-y-auto bg-gray-100 p-4 rounded-lg">
+            <ul className="list-disc list-inside">
+              {logMessages.map((message, index) => (
+                <li key={index}>{message}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="flex flex-col gap-4">
+            <div className="py-8">
+              <PendingTodosQueue
+                title="Pending Todos Queue"
+                subheading="These todo items are only represented in Javascript. Click 'Pending Todos Queue' to prove their inclusion"
+                todos={newTodosQueue}
+              />
+              <input
+                type="text"
+                className="input"
+                value={newTodo}
+                onChange={(e) => setNewTodo(e.target.value)}
+              />
+              <button onClick={addTodo} className="mx-2 btn">
+                Add Todo
+              </button>
+              <button
+                className="btn"
+                onClick={resolveTodosQueue}
+                disabled={workerIsBusy || !hasBeenInitialized}
+              >
+                Prove Pending Todos Queue
+              </button>
+            </div>
+            <div>
+              <PendingTodosQueue
+                title="Pending Complete Todos Queue"
+                subheading="These todo items marked for completion in javascript, but not yet proven.  Click 'Pending Complete Todos Queue' to prove their completion"
+                todos={pendingCompleteTodosQueue.map((index) => todoList![index].text)}
+              />
+              <button
+                className="btn"
+                onClick={resolveCompleteTodosQueue}
+                disabled={workerIsBusy || !hasBeenInitialized}
+              >
+                Prove Pending Complete Todos Queue
+              </button>
+            </div>
+          </div>
+          <div>
+            {hasBeenInitialized ? (
+              todoList !== null && (
+                <ul className="flex flex-col gap-2">
+                  <ProvenTodosQueue
+                    title="Proven Todos Queue"
+                    subheading="These todo items are represented in the current proof"
+                    todos={todoList}
+                    completeTodo={completeTodo}
+                  />
+                </ul>
+              )
+            ) : (
+              <div>Waiting for zk circuit to compile...</div>
+            )}
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}
+```
+
+## Deployment
+
+Now that we have a complete app, here are the steps to deploy.  We will cover deployment to Vercel.  Deploying a Next JS app to Vercel is quite easy!  You will need a github repository with the code.  If you've been following along with this guide, you can use the repo that you've already built, or you can fork the reference implementation [on Github](https://github.com/o1-labs-XT/next-js-integration-example).
+
+You can follow the instructions about linking your repo to Vercel and deploying it [here](https://nextjs.org/learn-pages-router/basics/deploying-nextjs-app/deploy).  In the Vercel UI, you simply import your Github repo, and it will deploy automatically.
+
+### Troubleshooting
+
+#### Build Failure
+
+Make sure that running `npm run build` locally works before deploying.  If it doesn't, fix the error locally, then push your changes to git, and they will be automatically redeployed.
+
