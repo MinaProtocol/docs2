@@ -1,0 +1,279 @@
+---
+title: Circuit-Writing Primer
+hide_title: true
+description: Overview of the circuit-writing features in o1js
+keywords:
+  - circuit
+  - constraint
+  - provable
+  - proof
+  - o1js
+---
+
+# Overview of the circuit-writing features in o1js
+
+o1js is a library for writing zk circuits in TypeScript.  While many high-level features are abstracted away from the circuit level, this article will focus specifically on the tools that are specific to the unique nature of writing circuits.
+
+## What even is a zk circuit?
+
+For our purposes, you can think of a zk circuit as a set of gates, which we can give an input and produce a deterministic output.  We can prove the correct output of the circuit without revealing the inputs.
+
+o1js produces `kimchi` proofs.  Kimchi is defined in detail in the [Mina Book](https://o1-labs.github.io/proof-systems/specs/kimchi.html), including specifications for each type of gate that is supported.  Generally speaking, each type of gate represents a specific algebraic expression, and the values in the row represent coeffecients of that expression.
+
+## What are the implications of writing a circuit?
+
+One of the challenges when approaching circuit-writing is understanding how the nature of a circuit differs from most common programming paradigms.
+
+There is no equivalent to `JUMP` or `GOTO` in a circuit.  The implication of this for the developer is there is no way to branch or dynamically loop in o1js.  There are some workarounds to these limitations that we will discuss, but it's important to understand the fundamental limitation.
+
+The tradeoff for these limitations is that circuits can be proven to be executed correctly.  Practically all applications built with o1js should be designed with this tradeoff in mind.  "How does proving correct execution of this program provide value?" is a question you should ask about any ZkApp design built with o1js.
+
+## Witnesses
+
+In a circuit, a witness is kind of like a blank space that is purposefully left to be filled in by the prover.  The size and shape of a witness must be known at the time of circuit creation, but the value does not need to be known until the prover generates a proof.  It's like a function argument in Typescript, but much more strict.
+
+When you write provable code, you may explicitly create a witness of a certain type, and some classes in o1js will implicitly create witnesses for convenience.
+
+
+## Understanding your circuit
+
+What do we mean when we say that o1js is used to "build a circuit"?
+
+Well, there is a complicated build process that combs through your TypeScript code and generates a set of constraints.  But there is a _simple_ way to visualize the output.
+
+### Provable.constraintSystem
+
+Circuits, aka contraint systems, can be summarized in o1js with a helper function from the `Provable` namespace.
+
+```ts
+import { Field, Provable } from 'o1js';
+
+let boundCS = await Provable.constraintSystem(() => {
+  const anyField = Provable.witness(Field, () => Field(1001));
+
+  const lowerBound = anyField.greaterThanOrEqual(1000);
+  const upperBound = anyField.lessThanOrEqual(9999);
+  lowerBound.and(upperBound).assertTrue();
+});
+
+console.log(boundCS);
+```
+
+```sh
+rows: 56,
+digest: '4567a98430470b1709fab57843059246',
+gates: [
+{ type: 'Generic', wires: [Array], coeffs: [Array] },
+{ type: 'RangeCheck0', wires: [Array], coeffs: [Array] },
+{ type: 'RangeCheck0', wires: [Array], coeffs: [Array] },
+{ type: 'RangeCheck1', wires: [Array], coeffs: [] },
+....
+{ type: 'Generic', wires: [Array], coeffs: [Array] },
+{ type: 'Generic', wires: [Array], coeffs: [Array] },
+{ type: 'Generic', wires: [Array], coeffs: [Array] }
+],
+publicInputSize: 0,
+print: [Function: print],
+summary: [Function: summary]
+```
+
+You see, `Provable.constraintSystem` lets us visualize our entire circuit.  When using `Provable.constraintSystem`, witnesses need to be explicitly created for any input data.  This is easily verified by updating the code:
+
+```ts
+import { Field, Provable } from 'o1js';
+
+let boundCS = await Provable.constraintSystem(() => {
+  const anyField = Field(1001);
+
+  const lowerBound = anyField.greaterThanOrEqual(1000);
+  const upperBound = anyField.lessThanOrEqual(9999);
+  lowerBound.and(upperBound).assertTrue();
+});
+
+console.log(boundCS);
+```
+
+```sh
+rows: 0,
+digest: '4f5ddea76d29cfcfd8c595f14e31f21b',
+gates: [],
+publicInputSize: 0,
+print: [Function: print],
+summary: [Function: summary]
+```
+
+As you can see, there is no circuit this time because the input `const anyField = Field(1001);` is not explicitly witnessed in.  One added benetit of checking your code with `Provable.constraintSystem` is that it can help you verify that your circuit is actually provable.  Some of the common mistakes people make that result in non-provable circuits will show `0` rows and an empty `gates` array.
+
+### analyzeMethods
+
+Both `SmartContract` and `ZkProgram` expose the method `analyzeMethods`.  This is a convenience method that will go through each provable method on the defined class, and summarize the circuit that it creates.
+
+```ts
+const MyProgram = ZkProgram({
+  name: 'MyProgram',
+  publicInput: Field,
+  publicOutput: Field,
+  methods: {
+    add: {
+      privateInputs: [Field],
+      method: async (publicValue: Field, privateValue: Field) => {
+        privateValue.assertGreaterThan(10);
+        return { publicOutput: publicValue.add(privateValue) };
+      },
+    },
+
+    mul: {
+      privateInputs: [Field],
+      method: async (publicValue: Field, privateValue: Field) => {
+        return { publicOutput: publicValue.mul(privateValue) };
+      },
+    },
+  },
+});
+
+console.log(await MyProgram.analyzeMethods());
+```
+
+```sh
+{
+  add: {
+    rows: 20,
+    digest: '4aa07dbc03b8ead435d938812ff79575',
+    gates: [
+      [Object], [Object], [Object],
+      [Object], [Object], [Object],
+      [Object], [Object], [Object],
+      [Object], [Object], [Object],
+      [Object], [Object], [Object],
+      [Object], [Object], [Object],
+      [Object], [Object]
+    ],
+    publicInputSize: 0,
+    print: [Function: print],
+    summary: [Function: summary]
+  },
+  mul: {
+    rows: 1,
+    digest: '2a840c03f4e37242a8056a4aa536358c',
+    gates: [ [Object] ],
+    publicInputSize: 0,
+    print: [Function: print],
+    summary: [Function: summary]
+  }
+}
+```
+
+With `analyzeMethods`, you see that the witnesses are created automatically by the declarative method syntax.
+
+## Branching logic and loops
+
+### Provable If
+
+Because we lack a `JUMP` or `GOTO` type of behavior in the proof system, traditional if statements won't work.  In fact, we absolutely cannot skip _executing_ part of a function based on an if statement.
+
+Luckily, we can still set the value of a variable based on a condition using `Provable.if`.  It works like this:
+
+```ts
+const x = Provable.if(new Bool(true), Field(1), Field(2)); // x is always equal to Field(1)
+
+const y = Provable.if(a.greaterThan(b), Field(1), Field(2)); // y will be Field(1) if a > b, Field(2) otherwise
+
+let z = Field(0);
+// z will _always_ be Field(3) because both branches are executed!!!
+Provable.if(a.greaterThan(b), (z = z.add(Field(1))), (z = z.add(Field(2))));
+```
+
+### Provable Array
+
+Unbounded arrays are not possible in a circuit, so TypeScript arrays cannot be used.
+
+o1js provides an alternative, `Provable.Array`, which is a fixed-size array that can be used in a circuit.  This is a very convenient tool because it allows for using loop syntax, instead of forcing the developer to repeat code.
+
+Be careful when using `Provable.Array` because the rules still apply.  You can't use conditional logic to break out of a loop.  So each and every iteration will occur in every proof.  When dealing with an array size like 100 or more, the costs associated with iterating so many times can become expensive.
+
+```ts
+const MyArray = Provable.Array(Field, 5);
+
+const MyArrayProgram = ZkProgram({
+  name: 'MyArrayProgram',
+  publicOutput: Field,
+  methods: {
+    hash: {
+      privateInputs: [MyArray],
+      method: async (myArray: Field[]) => {
+        return { publicOutput: Poseidon.hash(myArray) };
+      },
+    },
+    equivalent: {
+      privateInputs: [Field, Field, Field, Field, Field],
+      method: async (a: Field, b: Field, c: Field, d: Field, e: Field) => {
+        return { publicOutput: Poseidon.hash([a, b, c, d, e]) };
+      },
+    },
+  },
+});
+
+const analysis = await MyArrayProgram.analyzeMethods();
+console.log('hash: ', {
+  rows: analysis.hash.rows,
+  digest: analysis.hash.digest,
+});
+console.log('equivalent: ', {
+  rows: analysis.equivalent.rows,
+  digest: analysis.equivalent.digest,
+});
+```
+
+```sh
+hash:  { rows: 38, digest: 'ac5f1fd447da277f66bcbbe6f46a22f8' }
+equivalent:  { rows: 38, digest: 'ac5f1fd447da277f66bcbbe6f46a22f8' }
+```
+
+### What happens if I don't follow the rules?
+
+In the case of conditional logic, we _can_ still generate a valid circuit.  But the circuit will ignore the branching.  In these cases, the javascript will execute with a dummy value, and whatever conditional branches the dummy value goes down, that will be the circuit.
+
+If we edit the implementation of the hash method above to include a condition on the input length, it will appear to be valid...
+
+```ts
+hash: {
+    privateInputs: [MyArray],
+    method: async (myArray: Field[]) => {
+    if (myArray.length !== 5) {
+        return { publicOutput: Field(0) };
+    } else {
+        return { publicOutput: Poseidon.hash(myArray) };
+    }
+    },
+},
+```
+
+```sh
+hash:  { rows: 38, digest: 'ac5f1fd447da277f66bcbbe6f46a22f8' }
+```
+
+Note that the circuit did not change at all, because even though we appear to have added a branch, the dummy value has a length of 5, so the other branch is simply discarded.
+
+If we try to call this method with an input of greather than or fewer than 5 elements, we will _not_ succeed in producing a valid proof.  We will get an error for attempting to break the rules.
+
+```ts
+await MyArrayProgram.compile();
+
+const p = await MyArrayProgram.hash([Field(10)]);
+```
+
+```sh
+Error: Error when witnessing in hash, argument 0: Expected witnessed values of length 5, got 1.
+    at exists (o1js/src/lib/provable/core/exists.ts:32:11)
+    at Object.witness (o1js/src/lib/provable/types/witness.ts:32:14)
+    at main (o1js/src/lib/proof-system/zkprogram.ts:845:30)
+```
+
+The same intuition applies for looping a variable number of times.  Instead of the witness being the wrong size, the circuit will have the wrong gates.  The result is the same:  the _javascript_ is valid, and may lull you into a sense of security, but you need to apply your circuit-writing knowledge to create valid programs.
+
+## More Resources
+
+These sources heavily influenced the preceding article and go into more depth about circuits in o1js:
+
+- Check out [Mastermind at 5 Levels](https://github.com/o1-labs-XT/mastermind-zkApp) for a practical example of how to implement thees concepts to build a game.
+- Read Yunus' article ["Let's Prove"](https://docs.google.com/document/d/1JQPypqNc7nIRbY0c_5zHFI5TbvbCTe1neiSTPxfLmWA/edit?tab=t.0), a complete guide to o1js.

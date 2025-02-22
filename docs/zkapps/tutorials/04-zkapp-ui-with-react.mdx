@@ -332,6 +332,12 @@ async setActiveInstanceToDevnet() {
   Depending on the network you are going to work with you might want to consider changing the GraphQL endpoint in the `setActiveInstanceToDevnet` function.
   Mind the supported networks by `Auro Wallet` though.
 
+:::info
+
+In this example, the `o1js` code is included in a client component and executed on the client side using an effect after the page loads. If you're integrating `o1js` within a server component, be aware that Next.js's caching mechanism might cause `o1js` to return outdated data. To prevent this, you can disable caching by adding `export const revalidate = 0;` to your component. For more details, refer to the [Next.js caching documentation](https://nextjs.org/docs/app/building-your-application/caching#opting-out-2).
+
+:::
+
 ### Add state
 
 These `04-zkapp-browser-ui/ui/app/page.tsx` statements creates mutable state that you can reference in the UI. The state updates as the application runs:

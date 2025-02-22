@@ -5,6 +5,7 @@
 #
 
 name: Algolia-Search
+
 on:
   push:
     branches:

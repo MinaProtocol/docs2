@@ -42,7 +42,7 @@ Prior to users accessing published state, it must first undergo settlement. Than
 
 ### Prerequisites
 
-The `OffchainState` API is accessible within the `Experimental` namespace. To use `OffchainState`, import `Experimental` from o1js version 1.2.0 or higher.
+The `OffchainState` API is accessible within the `Experimental` namespace. To use `OffchainState`, import `Experimental` from o1js version 1.9.1 or higher.
 
 ```ts
 import { Experimental } from 'o1js';
@@ -54,7 +54,7 @@ const { OffchainState, OffchainStateCommitments } = Experimental;
 
 To integrate Offchain storage, developers must initially define an Offchain state configuration and a state proof type, then prepare the smart contract. The `OffchainState` configuration allows specification of the desired Offchain state type, including key-value pairs in a map and any additional required state.
 
-The `StateProof` type will subsequently be used to finalize published state changes using a recursive reducer.
+The `StateProof` type will subsequently be used to finalize published state changes using a recursive reducer and the `OffchainStateInstance` stores internal data such as which contract instance it is associated with and the Merkle trees of data.
 
 ```ts
 const offchainState = OffchainState({
@@ -63,14 +63,15 @@ const offchainState = OffchainState({
 });
 
 class StateProof extends offchainState.Proof {}
+const offchainStateInstance = offchainState.init();
 ```
 
 Developers also need to set the smart contract instance and assign it to the offchain storage.
-This also compiles the recursive Offchain zkProgram in the background and assigns the Offchain state to a smart contract instance.
+This also compiles the recursive Offchain zkProgram in the background and assigns the Offchain state to the smart contract instance property.
 
 ```ts
 let contract = new MyContract(contractAddress);
-offchainState.setContractInstance(contract);
+contract.offchainState.setContractInstance(contract);
 
 // compile Offchain state program
 await offchainState.compile();
@@ -97,15 +98,18 @@ await Mina.transaction(sender, () => {
 
 The smart contract requires a field containing a commitment to the offchain state. This field is used internally by the `OffchainState` methods and should not be written to by your smart contract logic.
 
+It is also required that an `offchainStateInstance` be assigned to the smart contract’s instance property to ensure correct offchain state management.
+
 ```ts
 class MyContract extends SmartContract {
-  @state(OffchainStateCommitments) offchainState = State(
-    OffchainStateCommitments.empty()
-  );
+  @state(OffchainState.Commitments) offchainStateCommitments =
+    offchainState.emptyCommitments();
+
+  offchainState = offchainStateInstance;
 }
 ```
 
-The contract also need a `settle()` method to resolve all pending state updates. This method verifies a recursive proof to finalize all pending state changes, with the proof being generated before invoking the `settle()` method.
+The contract also needs a `settle()` method to resolve all pending state updates. This method verifies a recursive proof to finalize all pending state changes, with the proof being generated before invoking the `settle()` method.
 
 ```ts
 class MyContract extends SmartContract {
@@ -133,26 +137,26 @@ class MyContract extends SmartContract {
   @method
   async useOffchainStorage(playerA: PublicKey) {
     // retrieve totalScore, returning an Option
-    let totalScoreOption = await offchainState.fields.totalScore.get();
+    let totalScoreOption = await this.offchainState.fields.totalScore.get();
 
     // unwrap the Option and return a default value if the entry if empty
     let totalScore = totalScoreOption.orElse(0n);
 
     // increment totalScore, set a precondition on the state
     // (if `from` is undefined, the precondition is that the field is empty)
-    offchainState.fields.totalScore.update({
+    this.offchainState.fields.totalScore.update({
       from: totalScoreOption,
       to: totalScore.add(1),
     });
 
     // retrieve an entry from the map, returning an Option
-    let playerOption = await offchainState.fields.players.get(playerA);
+    let playerOption = await this.offchainState.fields.players.get(playerA);
 
     // unwrap the player's score Option and return a default value if the entry is empty
     let score = playerOption.orElse(0n);
 
     // increment the player's score, set a precondition on the previous score
-    offchainState.fields.players.update(playerA, {
+    this.offchainState.fields.players.update(playerA, {
       from: playerOption,
       to: score.add(1),
     });
@@ -185,4 +189,4 @@ This feature remains experimental, indicating that it is currently under active 
 
 - [Experimental Offchain Storage part 1](https://github.com/o1-labs/o1js/pull/1630)
 - [Experimental Offchain Storage part 2](https://github.com/o1-labs/o1js/pull/1652)
-- [An end-to-end example utilizing Offchain storage](https://github.com/o1-labs/o1js/blob/main/src/lib/mina/actions/offchain-contract.unit-test.ts)
+- [An end-to-end example utilizing Offchain storage](https://github.com/o1-labs/o1js/blob/main/src/lib/mina/actions/offchain-contract-tests/ExampleContract.ts)
