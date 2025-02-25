@@ -10,20 +10,43 @@ keywords:
 # Angular Integration Guide
 ## Install a Wallet
 
-- Install a wallet that supports zkApp transactions. For this tutorial, we’ll use **Auro Wallet**. [Download it here](https://www.aurowallet.com/).
+- Install a wallet that supports zkApp transactions. For this tutorial, we’ll use **Auro Wallet** (v2.3.1). [Download it here](https://www.aurowallet.com/).
 - Add the Auro Wallet browser extension.
 - Open the extension and follow the steps to create a new wallet.
 - Click **"Mainnet"** at the top of the extension view, then select **"Show Testnet"** from the menu. After that, select **"Devnet"**.
     - Using Devnet will allow us to interact with a test version of the Mina network without needing to spend real Mina to pay for transaction fees.
+
+<figure
+  style={{ display: "flex", height:"30rem" }}>
+  <img
+    src="/img/angular-integration-guide/auro-1.png"
+    alt="Enable testnets on Auro"
+    height="10rem"
+    style={{ margin: "0 auto" }}
+  />
+</figure>
+<br />
+
 - Fund your wallet using the [Mina Faucet](https://faucet.minaprotocol.com/).
     - You'll need to wait one block (~3 minutes) to see the change in balance reflected on chain. You can use [Minascan](https://minascan.io/devnet) to track the status of your transaction.
+
+<figure
+  style={{ display: "flex", height:"30rem" }}>
+  <img
+    src="/img/angular-integration-guide/faucet.png"
+    alt="Enable testnets on Auro"
+    height="10rem"
+    style={{ margin: "0 auto" }}
+  />
+</figure>
+<br />
 
 ## Initialize the Project
 
 - Install the Angular CLI globally:
 
 ```bash
-npm install -g @angular/cli
+npm install -g @angular/cli@19
 ```
 
 - Create a new Angular project by running:
@@ -31,16 +54,14 @@ npm install -g @angular/cli
 ```bash
 ng new <project-name>
 ```
-
-- Install the Angular CLI `npm install -g @angular/cli`
-- Create a new project `ng new <project-name>`
-    - Select your preferred stylesheet format.
-    - For **Server-Side Rendering (SSR)** and **Static Site Generation (SSG/Prerendering)**, choose **Yes**.
+- Configure the project
+  - For **Which stylesheet format would you like to use?**, select CSS.
+  - For **Do you want to enable Server-Side Rendering (SSR) and Static Site Generation (SSG/Prerendering)? (y/N)**, choose **No**.
 - Install the `o1js` library:
 
 ```bash
 cd <project-name>
-npm install o1js
+npm install o1js@2
 ```
 
 - Start the local development server.
@@ -56,7 +77,7 @@ npm run start
 
 ```bash
 cd ../
-npm install -g zkapp-cli
+npm install -g zkapp-cli@0.22.3
 ```
 
 - Initialize a new zkapp with the CLI. When prompted to create a UI project, select **none**.
@@ -91,11 +112,12 @@ import {RouterOutlet} from '@angular/router';
   standalone: true,
   imports: [RouterOutlet],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  styleUrl: './app.component.css'
 })
 
 export class AppComponent {
-  title = 'angular-o1js-demo';
+  // replace with your project name!
+  title = '<project-name>';
 
   constructor() {
     afterNextRender(async () => {
@@ -167,19 +189,29 @@ export class AppComponent {
 - For security reasons, `SharedArrayBuffer` needs certain headers to be set. These prevent cross origin resources (scripts and content loaded from external domains, iframes, and popups) from accessing shared memory.
     - Cross-Origin-Opener-Policy (COOP) must be set to `"same-origin"` to prevents cross-origin resources from accessing the main document’s memory.
     - Cross-Origin-Embedder-Policy (COEP) must be set to `"require-corp"` to restrict the way cross origin resources can be loaded by the main document. They'll either need to be from the same origin or include the `Cross-Origin-Resource-Policy: cross-origin` header.
-- Depending on how the application is being run, there are different ways to set these headers. Running the application locally with `ng serve` uses `@angular-devkit/build-angular:dev-server"` which we can configure in the project's `angular.json` file at `/projects/angular-o1js-demo/architect/serve/configurations/development`.
+- Depending on how the application is being run, there are different ways to set these headers. Running the application locally with `ng serve` uses `@angular-devkit/build-angular:dev-server"` which we can configure in the project's `angular.json` file at `/projects/<project-name>/architect/serve/configurations/development`.
 - Architect is Angular's task runner, the entries (called build targets) under `architect` each represent tasks that the Angular CLI can run (`ng build`, `ng serve`, `ng test`, etc). The `builder` property of each target specifies the program that Architect should run to execute the task. The `options` can be used to supply parameters to the builder, and the `configurations`specifies a custom set of options for different target configurations (development, production, etc).
 - Running `ng serve` locally runs the `@angular-devkit/build-angular:dev-server` builder, and in its options object we can specify custom headers specifying the headers required for `SharedArrayBuffer` as follows:
 
-```
+```json
   "serve": {
     "builder": "@angular-devkit/build-angular:dev-server",
-    "options": {
-      "headers": {
-        "Cross-Origin-Opener-Policy": "same-origin",
-        "Cross-Origin-Embedder-Policy": "require-corp"
++   "options": {
++     "headers": {
++       "Cross-Origin-Opener-Policy": "same-origin",
++       "Cross-Origin-Embedder-Policy": "require-corp"
++     }
++   },
+    "configurations": {
+      "production": {
+        "buildTarget": "angular-demo:build:production"
+      },
+      "development": {
+        "buildTarget": "angular-demo:build:development"
       }
     },
+    "defaultConfiguration": "development"
+  },
 ```
 
 - Restart the server with `npm run start` and view the application in the browser again - the `SharedArrayBuffer` error should be gone!
@@ -206,85 +238,57 @@ module.exports = {
 - Install builders which support using custom webpack configs - Angular's default builder will ignore the webpack file.
 
 ```bash
-npm i @angular-builders/custom-webpack
+npm install @angular-builders/custom-webpack@19
 ```
 
 - Update the `serve` and `build` build targets to use the `@angular-builders/custom-webpack` builders and load the file.
-    - In `angular.json` under `/projects/angular-o1js-demo/architect/build`, replace the default builder `"builder": "@angular-devkit/build-angular:application",` with `"builder": "@angular-builders/custom-webpack:browser"`.
-        - rename the browser property to `main` in `options`.
+    - In `angular.json` under `/projects/<project-name>/architect/build`, replace the default builder `"builder": "@angular-devkit/build-angular:application",` with `"builder": "@angular-builders/custom-webpack:browser"`.
+        - rename the `browser` property to `main` in `options`.
         - add  `"customWebpackConfig": { "path": "./webpack.config.js" },` to `options`.
-        - delete `server`, `prerender`, and `ssr` from `options`.
-    - In `angular.json` under `/projects/angular-o1js-demo/architect/serve`, replace the default builder `"builder": "@angular-devkit/build-angular:dev-server",` with `"builder": "@angular-builders/custom-webpack:dev-server"`.
-- The build targets should look like this:
+    - In `angular.json` under `/projects/<project-name>/architect/serve`, replace the default builder `"builder": "@angular-devkit/build-angular:dev-server",` with `"builder": "@angular-builders/custom-webpack:dev-server"`.
+- The changes to your build targets should look like this:
 
 ```json
-"build": {
-  "builder": "@angular-builders/custom-webpack:browser",
-  "options": {
-    "customWebpackConfig": {
-      "path": "./webpack.config.js"
-    },
-    "main": "src/main.ts",
-    "outputPath": "dist/<project-name>",
-    "index": "src/index.html",
-    "polyfills": [
-      "zone.js"
-    ],
-    "tsConfig": "tsconfig.app.json",
-    "inlineStyleLanguage": "scss",
-    "assets": [
-      {
-        "glob": "**/*",
-        "input": "public"
-      }
-    ],
-    "styles": [
-      "src/styles.scss"
-    ],
-    "scripts": []
-  },
-  "configurations": {
-    "production": {
-      "budgets": [
-        {
-          "type": "initial",
-          "maximumWarning": "500kB",
-          "maximumError": "1MB"
-        },
-        {
-          "type": "anyComponentStyle",
-          "maximumWarning": "2kB",
-          "maximumError": "4kB"
-        }
-      ],
-      "outputHashing": "all"
-    },
-    "development": {
-      "optimization": false,
-      "extractLicenses": false,
-      "sourceMap": true
-    }
-  },
-  "defaultConfiguration": "production"
-},
-"serve": {
-  "builder": "@angular-builders/custom-webpack:dev-server",
-  "configurations": {
-    "production": {
-      "buildTarget": "<project-name>:build:production"
-    },
-    "development": {
-      "buildTarget": "<project-name>:build:development"
-    }
-  },
-  "options": {
-    "headers": {
-      "Cross-Origin-Opener-Policy": "same-origin",
-      "Cross-Origin-Embedder-Policy": "require-corp"
-    }
-  },
-  "defaultConfiguration": "development"
-},
+       "architect": {
+         "build": {
+-          "builder": "@angular-devkit/build-angular:application",
++          "builder": "@angular-builders/custom-webpack:browser",
+           "options": {
++            "customWebpackConfig": { "path": "./webpack.config.js" },
+             "outputPath": "dist/angular-demo",
+             "index": "src/index.html",
+-            "browser": "src/main.ts",
++            "main": "src/main.ts",
+             "polyfills": [
+               "zone.js"
+             ],
+             "tsConfig": "tsconfig.app.json",
+             "assets": [
+               {
+                 "glob": "**/*",
+                 "input": "public"
+               }
+             ],
+             "styles": [
+               "src/styles.css"
+             ],
+             "scripts": []
+           },
+           "configurations": { ... },
+           "defaultConfiguration": "production"
+         },
+         "serve": {
+-          "builder": "@angular-devkit/build-angular:dev-server",
++          "builder": "@angular-builders/custom-webpack:dev-server",
+           "options": {
+             "headers": {
+               "Cross-Origin-Opener-Policy": "same-origin",
+               "Cross-Origin-Embedder-Policy": "require-corp"
+             }
+           },
+           "configurations": { ... },
+           "defaultConfiguration": "development"
+         },
 ```
 
 ### Copy o1js into Static Assets
@@ -298,8 +302,11 @@ npm i @angular-builders/custom-webpack
 ```
 
 - Add the `copy-o1js-lib` task to the build script and the start script.
-    - `"build": "npm run copy-libs && ng build"`
-    - `"start": "npm run copy-libs && ng serve"`
+```json
+"build": "npm run copy-libs && ng build",
+"start": "npm run copy-libs && ng serve"
+```
+
 - Add `public/lib` to `.gitignore`.
 
 ### Load o1js with an `importmap`
@@ -330,7 +337,8 @@ declare var o1js: typeof o1jsTypes;
 - Remove the import of o1js inside of `afterNextRender` and replace it with this:
 
 ```tsx
-const {Mina, PublicKey, fetchAccount} = o1js;
+-      const {Mina, PublicKey, fetchAccount} = await import('o1js');
++      const {Mina, PublicKey, fetchAccount} = o1js;
 ```
 
 ## Running the App Locally
@@ -345,13 +353,18 @@ const {Mina, PublicKey, fetchAccount} = o1js;
 ## Deploying to GitHub Pages
 
 - Now we'll set the app up for deployment to GitHub pages.
-- Publish your project to a GitHub repository.
+- Publish your project to a GitHub repository with the same name.
 - Run `ng deploy` and select GitHub Pages.
+
+```bash
+ng deploy
+```
+
 - Add `baseHref` to `options` under `build` in angular.json with the name of your GitHub repository.
     - **Do not remove the slashes!**
 
 ```json
-"baseHref": "/<your-github-repo-name>/"
+"baseHref": "/<project-name>/"
 ```
 
 - Create a deploy script in package.json which copies the required libraries
@@ -374,37 +387,18 @@ npm run deploy
 - Install `coi-serviceworker`.
 
 ```bash
-npm i coi-serviceworker
+npm install coi-serviceworker@^0.1.7
 ```
 
 - Update the script that copies `o1js` to `public` to also include the `coi-serviceworker` file:
 
 ```json
-"copy-libs": "mkdir -p public/lib/o1js && cp node_modules/o1js/dist/web/index.js public/lib/o1js/index.js && cp node_modules/coi-serviceworker/coi-serviceworker.min.js public/lib/coi-serviceworker.min.js"
+"copy-libs": "mkdir -p public/lib/o1js && cp node_modules/o1js/dist/web/index.js public/lib/o1js/index.js && cp node_modules/coi-serviceworker/coi-serviceworker.min.js public/coi-serviceworker.min.js"
 ```
 
-- Create a file `src/app/COIServiceWorker.ts` with the following contents.
-    - Be sure to replace `<your repo name>` with the name of your GitHub repo!
-
-```tsx
-export {};
-
-function loadCOIServiceWorker() {
-  console.log('Load COIServiceWorker', navigator);
-  if (typeof window !== 'undefined' && 'serviceWorker' in navigator && window.location.hostname != 'localhost') {
-    navigator.serviceWorker.register('/<your repo name>/lib/coi-serviceworker.min.js')
-      .then(registration => console.log('COI Service Worker registered with scope:', registration.scope))
-      .catch(error => console.error('COI Service Worker registration failed:', error));
-  }
-}
-
-loadCOIServiceWorker();
-```
-
-- Import it at the top of `src/app/app.component.ts`.
-
-```tsx
-import './COIServiceWorker';
+- Import it in your `index.html` file right above the o1js importmap script.
+```html
+<script src="coi-serviceworker.min.js"></script>
 ```
 
 - Redeploy the application with the `COIServiceWorker` files.

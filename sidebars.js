@@ -71,10 +71,12 @@ module.exports = {
             'zkapps/o1js/index',
             'zkapps/o1js/basic-concepts',
             'zkapps/o1js/recursion',
+            'zkapps/o1js/circuit-writing-primer',
             'zkapps/o1js/gadgets',
             'zkapps/o1js/bitwise-operations',
             'zkapps/o1js/foreign-fields',
             'zkapps/o1js/merkle-tree',
+            'zkapps/o1js/indexed-merkle-map',
             'zkapps/o1js/keccak',
             'zkapps/o1js/ecdsa',
             'zkapps/o1js/sha256',
@@ -150,9 +152,7 @@ module.exports = {
             type: 'doc',
             id: 'zkapps/front-end-integration-guides/angular',
           },
-          items: [
-            'zkapps/front-end-integration-guides/angular',
-          ],
+          items: ['zkapps/front-end-integration-guides/angular'],
         },
         {
           type: 'category',
