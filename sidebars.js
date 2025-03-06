@@ -152,7 +152,10 @@ module.exports = {
             type: 'doc',
             id: 'zkapps/front-end-integration-guides/angular',
           },
-          items: ['zkapps/front-end-integration-guides/angular'],
+          items: [
+            'zkapps/front-end-integration-guides/angular',
+            'zkapps/front-end-integration-guides/next',
+          ],
         },
         {
           type: 'category',
