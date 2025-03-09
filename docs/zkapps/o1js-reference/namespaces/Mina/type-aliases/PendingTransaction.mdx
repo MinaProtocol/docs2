@@ -1,13 +1,19 @@
 ```ts
-type PendingTransaction: Pick<TransactionCommon, "transaction" | "toJSON" | "toPretty"> & {
-  "data": SendZkAppResponse;
-  "errors": string[];
-  "hash": string;
-  "status": PendingTransactionStatus;
-  "safeWait": Promise<RejectedTransaction | IncludedTransaction>;
-  "wait": Promise<IncludedTransaction>;
+type PendingTransaction = Pick<TransactionCommon, "transaction" | "toJSON" | "toPretty"> & {
+  data: SendZkAppResponse;
+  errors: string[];
+  hash: string;
+  status: PendingTransactionStatus;
+  safeWait: Promise<
+     | RejectedTransaction
+     | IncludedTransaction>;
+  setFee: TransactionPromise<boolean, false>;
+  setFeePerSnarkCost: TransactionPromise<boolean, false>;
+  wait: Promise<IncludedTransaction>;
 };
 ```
+
+Defined in: [lib/mina/v1/transaction.ts:172](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/transaction.ts#L172)
 
 Represents a transaction that has been submitted to the blockchain but has not yet reached a final state.
 The [PendingTransaction](PendingTransaction.mdx) type extends certain functionalities from the base [Transaction](Transaction.mdx) type,
@@ -82,21 +88,27 @@ Waits for the transaction to be included in a block. This method polls the Mina 
 
 #### Parameters
 
-• **options?**
+##### options?
 
 Configuration options for polling behavior.
 
-• **options.interval?**: `number`
+###### interval
+
+`number`
 
 The time interval, in milliseconds, between each polling attempt.
 
-• **options.maxAttempts?**: `number`
+###### maxAttempts
+
+`number`
 
 The maximum number of polling attempts.
 
 #### Returns
 
-`Promise`\<[`RejectedTransaction`](RejectedTransaction.mdx) \| [`IncludedTransaction`](IncludedTransaction.mdx)\>
+`Promise`\<
+  \| [`RejectedTransaction`](RejectedTransaction.mdx)
+  \| [`IncludedTransaction`](IncludedTransaction.mdx)\>
 
 A promise that resolves to the transaction's final state.
 
@@ -107,21 +119,53 @@ const transaction = await pendingTransaction.wait({ maxAttempts: 5, interval: 10
 console.log(transaction.status); // 'included' or 'rejected'
 ```
 
+### setFee()
+
+setFee is the same as (newFee) but for a [PendingTransaction](PendingTransaction.mdx).
+
+#### Parameters
+
+##### newFee
+
+[`UInt64`](../../../classes/UInt64.mdx)
+
+#### Returns
+
+[`TransactionPromise`](../../../type-aliases/TransactionPromise.mdx)\<`boolean`, `false`\>
+
+### setFeePerSnarkCost()
+
+setFeePerSnarkCost is the same as (newFeePerSnarkCost) but for a [PendingTransaction](PendingTransaction.mdx).
+
+#### Parameters
+
+##### newFeePerSnarkCost
+
+`number`
+
+#### Returns
+
+[`TransactionPromise`](../../../type-aliases/TransactionPromise.mdx)\<`boolean`, `false`\>
+
 ### wait()
 
 Waits for the transaction to be included in a block. This method polls the Mina daemon to check the transaction's status, and throws an error if the transaction is rejected.
 
 #### Parameters
 
-• **options?**
+##### options?
 
 Configuration options for polling behavior.
 
-• **options.interval?**: `number`
+###### interval
+
+`number`
 
 The interval, in milliseconds, between status checks.
 
-• **options.maxAttempts?**: `number`
+###### maxAttempts
+
+`number`
 
 The maximum number of attempts to check the transaction status.
 
@@ -145,7 +189,3 @@ try {
   console.error('Transaction rejected or failed to finalize:', error);
 }
 ```
-
-## Source
-
-[lib/mina/transaction.ts:157](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/transaction.ts#L157)

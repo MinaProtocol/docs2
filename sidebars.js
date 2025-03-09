@@ -454,8 +454,8 @@ module.exports = {
                 },
                 {
                   type: 'doc',
-                  id: 'zkapps/o1js-reference/functions/State',
-                  label: 'State',
+                  id: 'zkapps/o1js-reference/functions/State-1',
+                  label: 'State-1',
                 },
                 {
                   type: 'doc',
@@ -559,8 +559,23 @@ module.exports = {
                 },
                 {
                   type: 'doc',
+                  id: 'zkapps/o1js-reference/functions/getBlindingValue',
+                  label: 'getBlindingValue',
+                },
+                {
+                  type: 'doc',
                   id: 'zkapps/o1js-reference/functions/initializeBindings',
                   label: 'initializeBindings',
+                },
+                {
+                  type: 'doc',
+                  id: 'zkapps/o1js-reference/functions/memoizationContext',
+                  label: 'memoizationContext',
+                },
+                {
+                  type: 'doc',
+                  id: 'zkapps/o1js-reference/functions/memoizeWitness',
+                  label: 'memoizeWitness',
                 },
                 {
                   type: 'doc',
@@ -619,8 +634,8 @@ module.exports = {
                 },
                 {
                   type: 'doc',
-                  id: 'zkapps/o1js-reference/functions/state-1',
-                  label: 'state-1',
+                  id: 'zkapps/o1js-reference/functions/state',
+                  label: 'state',
                 },
                 {
                   type: 'doc',
@@ -787,6 +802,11 @@ module.exports = {
                           type: 'doc',
                           id: 'zkapps/o1js-reference/namespaces/Experimental/functions/OffchainState',
                           label: 'OffchainState',
+                        },
+                        {
+                          type: 'doc',
+                          id: 'zkapps/o1js-reference/namespaces/Experimental/functions/Recursive',
+                          label: 'Recursive',
                         },
                         {
                           type: 'doc',
@@ -1152,6 +1172,11 @@ module.exports = {
                 },
                 {
                   type: 'doc',
+                  id: 'zkapps/o1js-reference/type-aliases/FlexibleBytes',
+                  label: 'FlexibleBytes',
+                },
+                {
+                  type: 'doc',
                   id: 'zkapps/o1js-reference/type-aliases/FlexibleProvable',
                   label: 'FlexibleProvable',
                 },
@@ -1177,6 +1202,11 @@ module.exports = {
                 },
                 {
                   type: 'doc',
+                  id: 'zkapps/o1js-reference/type-aliases/MemoizationContext',
+                  label: 'MemoizationContext',
+                },
+                {
+                  type: 'doc',
                   id: 'zkapps/o1js-reference/type-aliases/MerkleListBase',
                   label: 'MerkleListBase',
                 },
@@ -1199,11 +1229,6 @@ module.exports = {
                   type: 'doc',
                   id: 'zkapps/o1js-reference/type-aliases/ProvableExtended',
                   label: 'ProvableExtended',
-                },
-                {
-                  type: 'doc',
-                  id: 'zkapps/o1js-reference/type-aliases/ProvableHashable-1',
-                  label: 'ProvableHashable-1',
                 },
                 {
                   type: 'doc',
@@ -1380,6 +1405,11 @@ module.exports = {
                   type: 'doc',
                   id: 'zkapps/o1js-reference/variables/Poseidon',
                   label: 'Poseidon',
+                },
+                {
+                  type: 'doc',
+                  id: 'zkapps/o1js-reference/variables/Provable',
+                  label: 'Provable',
                 },
                 {
                   type: 'doc',

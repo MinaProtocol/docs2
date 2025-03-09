@@ -1,3 +1,5 @@
+Defined in: [lib/provable/int.ts:29](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L29)
+
 A 64 bit unsigned integer with values ranging from 0 to 18,446,744,073,709,551,615.
 
 ## Extends
@@ -18,6 +20,8 @@ new UInt64(x:
   | UInt32): UInt64
 ```
 
+Defined in: [lib/provable/int.ts:39](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L39)
+
 Create a [UInt64](UInt64.mdx).
 The max value of a [UInt64](UInt64.mdx) is `2^64 - 1 = UInt64.MAXINT()`.
 
@@ -25,13 +29,9 @@ The max value of a [UInt64](UInt64.mdx) is `2^64 - 1 = UInt64.MAXINT()`.
 
 #### Parameters
 
-• **x**: 
-  \| `string`
-  \| `number`
-  \| `bigint`
-  \| `FieldVar`
-  \| [`UInt64`](UInt64.mdx)
-  \| [`UInt32`](UInt32.mdx)
+##### x
+
+`string` | `number` | `bigint` | `FieldVar` | [`UInt64`](UInt64.mdx) | [`UInt32`](UInt32.mdx)
 
 #### Returns
 
@@ -39,11 +39,9 @@ The max value of a [UInt64](UInt64.mdx) is `2^64 - 1 = UInt64.MAXINT()`.
 
 #### Overrides
 
-`CircuitValue.constructor`
-
-#### Source
-
-[lib/provable/int.ts:40](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L40)
+```ts
+CircuitValue.constructor
+```
 
 ## Properties
 
@@ -53,9 +51,7 @@ The max value of a [UInt64](UInt64.mdx) is `2^64 - 1 = UInt64.MAXINT()`.
 value: Field;
 ```
 
-#### Source
-
-[lib/provable/int.ts:31](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L31)
+Defined in: [lib/provable/int.ts:30](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L30)
 
 ***
 
@@ -65,9 +61,7 @@ value: Field;
 static NUM_BITS: number = 64;
 ```
 
-#### Source
-
-[lib/provable/int.ts:32](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L32)
+Defined in: [lib/provable/int.ts:31](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L31)
 
 ***
 
@@ -75,9 +69,11 @@ static NUM_BITS: number = 64;
 
 ```ts
 static Unsafe: {
-  "fromField": UInt64;
+  fromField: UInt64;
 };
 ```
+
+Defined in: [lib/provable/int.ts:47](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L47)
 
 #### fromField()
 
@@ -88,51 +84,49 @@ Only use this if you know what you are doing, otherwise use the safe [UInt64.fro
 
 ##### Parameters
 
-• **x**: [`Field`](Field.mdx)
+###### x
+
+[`Field`](Field.mdx)
 
 ##### Returns
 
 [`UInt64`](UInt64.mdx)
 
-#### Source
-
-[lib/provable/int.ts:48](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L48)
-
 ## Accessors
 
 ### one
+
+#### Get Signature
 
 ```ts
 get static one(): UInt64
 ```
 
+Defined in: [lib/provable/int.ts:68](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L68)
+
 Static method to create a [UInt64](UInt64.mdx) with value `1`.
 
-#### Returns
+##### Returns
 
 [`UInt64`](UInt64.mdx)
-
-#### Source
-
-[lib/provable/int.ts:69](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L69)
 
 ***
 
 ### zero
 
+#### Get Signature
+
 ```ts
 get static zero(): UInt64
 ```
 
+Defined in: [lib/provable/int.ts:62](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L62)
+
 Static method to create a [UInt64](UInt64.mdx) with value `0`.
 
-#### Returns
+##### Returns
 
 [`UInt64`](UInt64.mdx)
-
-#### Source
-
-[lib/provable/int.ts:63](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L63)
 
 ## Methods
 
@@ -142,19 +136,19 @@ Static method to create a [UInt64](UInt64.mdx) with value `0`.
 add(y: number | UInt64): UInt64
 ```
 
+Defined in: [lib/provable/int.ts:231](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L231)
+
 Addition with overflow checking.
 
 #### Parameters
 
-• **y**: `number` \| [`UInt64`](UInt64.mdx)
+##### y
+
+`number` | [`UInt64`](UInt64.mdx)
 
 #### Returns
 
 [`UInt64`](UInt64.mdx)
-
-#### Source
-
-[lib/provable/int.ts:241](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L241)
 
 ***
 
@@ -164,19 +158,19 @@ Addition with overflow checking.
 addMod64(y: UInt64): UInt64
 ```
 
-Addition modulo 2^64. Check Gadgets.addMod64 for a detailed description.
+Defined in: [lib/provable/int.ts:156](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L156)
+
+Addition modulo 2^64. Check [Gadgets.addMod64](../variables/Gadgets.mdx#addmod64) for a detailed description.
 
 #### Parameters
 
-• **y**: [`UInt64`](UInt64.mdx)
+##### y
+
+[`UInt64`](UInt64.mdx)
 
 #### Returns
 
 [`UInt64`](UInt64.mdx)
-
-#### Source
-
-[lib/provable/int.ts:163](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L163)
 
 ***
 
@@ -185,6 +179,8 @@ Addition modulo 2^64. Check Gadgets.addMod64 for a detailed description.
 ```ts
 and(x: UInt64): UInt64
 ```
+
+Defined in: [lib/provable/int.ts:399](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L399)
 
 Bitwise AND gadget on [UInt64](UInt64.mdx) elements. Equivalent to the [bitwise AND `&` operator in JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Bitwise_AND).
 The AND gate works by comparing two bits and returning `1` if both bits are `1`, and `0` otherwise.
@@ -202,7 +198,9 @@ You can find more details about the implementation in the [Mina book](https://o1
 
 #### Parameters
 
-• **x**: [`UInt64`](UInt64.mdx)
+##### x
+
+[`UInt64`](UInt64.mdx)
 
 #### Returns
 
@@ -218,10 +216,6 @@ let c = a.and(b);    // ... 000001
 c.assertEquals(1);
 ```
 
-#### Source
-
-[lib/provable/int.ts:411](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L411)
-
 ***
 
 ### assertEquals()
@@ -230,9 +224,13 @@ c.assertEquals(1);
 assertEquals(x: this): void
 ```
 
+Defined in: [lib/provable/types/circuit-value.ts:121](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/circuit-value.ts#L121)
+
 #### Parameters
 
-• **x**: `this`
+##### x
+
+`this`
 
 #### Returns
 
@@ -240,11 +238,9 @@ assertEquals(x: this): void
 
 #### Inherited from
 
-`CircuitValue.assertEquals`
-
-#### Source
-
-[lib/provable/types/circuit-value.ts:130](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/circuit-value.ts#L130)
+```ts
+CircuitValue.assertEquals
+```
 
 ***
 
@@ -254,21 +250,23 @@ assertEquals(x: this): void
 assertGreaterThan(y: UInt64, message?: string): void
 ```
 
+Defined in: [lib/provable/int.ts:481](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L481)
+
 Asserts that a [UInt64](UInt64.mdx) is greater than another one.
 
 #### Parameters
 
-• **y**: [`UInt64`](UInt64.mdx)
+##### y
 
-• **message?**: `string`
+[`UInt64`](UInt64.mdx)
+
+##### message?
+
+`string`
 
 #### Returns
 
 `void`
-
-#### Source
-
-[lib/provable/int.ts:499](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L499)
 
 ***
 
@@ -278,21 +276,23 @@ Asserts that a [UInt64](UInt64.mdx) is greater than another one.
 assertGreaterThanOrEqual(y: UInt64, message?: string): void
 ```
 
+Defined in: [lib/provable/int.ts:495](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L495)
+
 Asserts that a [UInt64](UInt64.mdx) is greater than or equal to another one.
 
 #### Parameters
 
-• **y**: [`UInt64`](UInt64.mdx)
+##### y
 
-• **message?**: `string`
+[`UInt64`](UInt64.mdx)
+
+##### message?
+
+`string`
 
 #### Returns
 
 `void`
-
-#### Source
-
-[lib/provable/int.ts:513](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L513)
 
 ***
 
@@ -302,21 +302,23 @@ Asserts that a [UInt64](UInt64.mdx) is greater than or equal to another one.
 assertLessThan(y: UInt64, message?: string): void
 ```
 
+Defined in: [lib/provable/int.ts:461](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L461)
+
 Asserts that a [UInt64](UInt64.mdx) is less than another one.
 
 #### Parameters
 
-• **y**: [`UInt64`](UInt64.mdx)
+##### y
 
-• **message?**: `string`
+[`UInt64`](UInt64.mdx)
+
+##### message?
+
+`string`
 
 #### Returns
 
 `void`
-
-#### Source
-
-[lib/provable/int.ts:476](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L476)
 
 ***
 
@@ -326,21 +328,23 @@ Asserts that a [UInt64](UInt64.mdx) is less than another one.
 assertLessThanOrEqual(y: UInt64, message?: string): void
 ```
 
+Defined in: [lib/provable/int.ts:435](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L435)
+
 Asserts that a [UInt64](UInt64.mdx) is less than or equal to another one.
 
 #### Parameters
 
-• **y**: [`UInt64`](UInt64.mdx)
+##### y
 
-• **message?**: `string`
+[`UInt64`](UInt64.mdx)
+
+##### message?
+
+`string`
 
 #### Returns
 
 `void`
-
-#### Source
-
-[lib/provable/int.ts:447](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L447)
 
 ***
 
@@ -350,6 +354,8 @@ Asserts that a [UInt64](UInt64.mdx) is less than or equal to another one.
 div(y: number | UInt64): UInt64
 ```
 
+Defined in: [lib/provable/int.ts:205](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L205)
+
 Integer division.
 
 `x.div(y)` returns the floor of `x / y`, that is, the greatest
@@ -357,15 +363,13 @@ Integer division.
 
 #### Parameters
 
-• **y**: `number` \| [`UInt64`](UInt64.mdx)
+##### y
+
+`number` | [`UInt64`](UInt64.mdx)
 
 #### Returns
 
 [`UInt64`](UInt64.mdx)
-
-#### Source
-
-[lib/provable/int.ts:215](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L215)
 
 ***
 
@@ -373,10 +377,12 @@ Integer division.
 
 ```ts
 divMod(y: string | number | UInt64): {
-  "quotient": UInt64;
-  "rest": UInt64;
+  quotient: UInt64;
+  rest: UInt64;
 }
 ```
+
+Defined in: [lib/provable/int.ts:165](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L165)
 
 Integer division with remainder.
 
@@ -384,14 +390,16 @@ Integer division with remainder.
 
 #### Parameters
 
-• **y**: `string` \| `number` \| [`UInt64`](UInt64.mdx)
+##### y
+
+`string` | `number` | [`UInt64`](UInt64.mdx)
 
 #### Returns
 
 ```ts
 {
-  "quotient": UInt64;
-  "rest": UInt64;
+  quotient: UInt64;
+  rest: UInt64;
 }
 ```
 
@@ -407,10 +415,6 @@ quotient: UInt64;
 rest: UInt64;
 ```
 
-#### Source
-
-[lib/provable/int.ts:172](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L172)
-
 ***
 
 ### equals()
@@ -419,9 +423,13 @@ rest: UInt64;
 equals(x: this): Bool
 ```
 
+Defined in: [lib/provable/types/circuit-value.ts:117](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/circuit-value.ts#L117)
+
 #### Parameters
 
-• **x**: `this`
+##### x
+
+`this`
 
 #### Returns
 
@@ -429,11 +437,9 @@ equals(x: this): Bool
 
 #### Inherited from
 
-`CircuitValue.equals`
-
-#### Source
-
-[lib/provable/types/circuit-value.ts:126](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/circuit-value.ts#L126)
+```ts
+CircuitValue.equals
+```
 
 ***
 
@@ -443,19 +449,19 @@ equals(x: this): Bool
 greaterThan(y: UInt64): Bool
 ```
 
+Defined in: [lib/provable/int.ts:474](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L474)
+
 Checks if a [UInt64](UInt64.mdx) is greater than another one.
 
 #### Parameters
 
-• **y**: [`UInt64`](UInt64.mdx)
+##### y
+
+[`UInt64`](UInt64.mdx)
 
 #### Returns
 
 [`Bool`](Bool.mdx)
-
-#### Source
-
-[lib/provable/int.ts:492](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L492)
 
 ***
 
@@ -465,19 +471,19 @@ Checks if a [UInt64](UInt64.mdx) is greater than another one.
 greaterThanOrEqual(y: UInt64): Bool
 ```
 
+Defined in: [lib/provable/int.ts:488](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L488)
+
 Checks if a [UInt64](UInt64.mdx) is greater than or equal to another one.
 
 #### Parameters
 
-• **y**: [`UInt64`](UInt64.mdx)
+##### y
+
+[`UInt64`](UInt64.mdx)
 
 #### Returns
 
 [`Bool`](Bool.mdx)
-
-#### Source
-
-[lib/provable/int.ts:506](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L506)
 
 ***
 
@@ -487,17 +493,17 @@ Checks if a [UInt64](UInt64.mdx) is greater than or equal to another one.
 isConstant(): boolean
 ```
 
+Defined in: [lib/provable/types/circuit-value.ts:125](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/circuit-value.ts#L125)
+
 #### Returns
 
 `boolean`
 
 #### Inherited from
 
-`CircuitValue.isConstant`
-
-#### Source
-
-[lib/provable/types/circuit-value.ts:134](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/circuit-value.ts#L134)
+```ts
+CircuitValue.isConstant
+```
 
 ***
 
@@ -506,6 +512,8 @@ isConstant(): boolean
 ```ts
 leftShift(bits: number): UInt64
 ```
+
+Defined in: [lib/provable/int.ts:349](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L349)
 
 Performs a left shift operation on the provided [UInt64](UInt64.mdx) element.
 This operation is similar to the `<<` shift operation in JavaScript,
@@ -516,7 +524,9 @@ where the most significant (64th) bit is on the left end and the least significa
 
 #### Parameters
 
-• **bits**: `number`
+##### bits
+
+`number`
 
 Amount of bits to shift the [UInt64](UInt64.mdx) element to the left. The amount should be between 0 and 64 (or else the shift will fail).
 
@@ -532,10 +542,6 @@ const y = x.leftShift(2); // left shift by 2 bits
 y.assertEquals(0b110000); // 48 in binary
 ```
 
-#### Source
-
-[lib/provable/int.ts:361](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L361)
-
 ***
 
 ### lessThan()
@@ -544,19 +550,19 @@ y.assertEquals(0b110000); // 48 in binary
 lessThan(y: UInt64): Bool
 ```
 
+Defined in: [lib/provable/int.ts:449](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L449)
+
 Checks if a [UInt64](UInt64.mdx) is less than another one.
 
 #### Parameters
 
-• **y**: [`UInt64`](UInt64.mdx)
+##### y
+
+[`UInt64`](UInt64.mdx)
 
 #### Returns
 
 [`Bool`](Bool.mdx)
-
-#### Source
-
-[lib/provable/int.ts:464](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L464)
 
 ***
 
@@ -566,19 +572,19 @@ Checks if a [UInt64](UInt64.mdx) is less than another one.
 lessThanOrEqual(y: UInt64): Bool
 ```
 
+Defined in: [lib/provable/int.ts:423](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L423)
+
 Checks if a [UInt64](UInt64.mdx) is less than or equal to another one.
 
 #### Parameters
 
-• **y**: [`UInt64`](UInt64.mdx)
+##### y
+
+[`UInt64`](UInt64.mdx)
 
 #### Returns
 
 [`Bool`](Bool.mdx)
-
-#### Source
-
-[lib/provable/int.ts:435](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L435)
 
 ***
 
@@ -588,6 +594,8 @@ Checks if a [UInt64](UInt64.mdx) is less than or equal to another one.
 mod(y: number | UInt64): UInt64
 ```
 
+Defined in: [lib/provable/int.ts:215](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L215)
+
 Integer remainder.
 
 `x.mod(y)` returns the value `z` such that `0 <= z < y` and
@@ -595,15 +603,13 @@ Integer remainder.
 
 #### Parameters
 
-• **y**: `number` \| [`UInt64`](UInt64.mdx)
+##### y
+
+`number` | [`UInt64`](UInt64.mdx)
 
 #### Returns
 
 [`UInt64`](UInt64.mdx)
-
-#### Source
-
-[lib/provable/int.ts:225](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L225)
 
 ***
 
@@ -613,19 +619,19 @@ Integer remainder.
 mul(y: number | UInt64): UInt64
 ```
 
+Defined in: [lib/provable/int.ts:222](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L222)
+
 Multiplication with overflow checking.
 
 #### Parameters
 
-• **y**: `number` \| [`UInt64`](UInt64.mdx)
+##### y
+
+`number` | [`UInt64`](UInt64.mdx)
 
 #### Returns
 
 [`UInt64`](UInt64.mdx)
-
-#### Source
-
-[lib/provable/int.ts:232](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L232)
 
 ***
 
@@ -634,6 +640,8 @@ Multiplication with overflow checking.
 ```ts
 not(): UInt64
 ```
+
+Defined in: [lib/provable/int.ts:296](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L296)
 
 Bitwise NOT gate on [Field](../variables/Field.mdx) elements. Similar to the [bitwise
 NOT `~` operator in JavaScript](https://developer.mozilla.org/en-US/docs/
@@ -665,10 +673,6 @@ console.log(b.toBigInt().toString(2));
 
 ```
 
-#### Source
-
-[lib/provable/int.ts:308](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L308)
-
 ***
 
 ### or()
@@ -677,12 +681,16 @@ console.log(b.toBigInt().toString(2));
 or(x: UInt64): UInt64
 ```
 
+Defined in: [lib/provable/int.ts:416](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L416)
+
 Bitwise OR gadget on [UInt64](UInt64.mdx) elements. Equivalent to the [bitwise OR `|` operator in JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Bitwise_OR).
 The OR gate works by comparing two bits and returning `1` if at least one bit is `1`, and `0` otherwise.
 
 #### Parameters
 
-• **x**: [`UInt64`](UInt64.mdx)
+##### x
+
+[`UInt64`](UInt64.mdx)
 
 #### Returns
 
@@ -698,10 +706,6 @@ let c = a.or(b);    // ... 000111
 c.assertEquals(7);
 ```
 
-#### Source
-
-[lib/provable/int.ts:428](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L428)
-
 ***
 
 ### rightShift()
@@ -709,6 +713,8 @@ c.assertEquals(7);
 ```ts
 rightShift(bits: number): UInt64
 ```
+
+Defined in: [lib/provable/int.ts:370](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L370)
 
 Performs a right shift operation on the provided [UInt64](UInt64.mdx) element.
 This operation is similar to the `>>` shift operation in JavaScript,
@@ -719,7 +725,9 @@ where the most significant (64th) bit is on the left end and the least significa
 
 #### Parameters
 
-• **bits**: `number`
+##### bits
+
+`number`
 
 Amount of bits to shift the [UInt64](UInt64.mdx) element to the right. The amount should be between 0 and 64 (or else the shift will fail).
 
@@ -735,10 +743,6 @@ const y = x.rightShift(2); // right shift by 2 bits
 y.assertEquals(0b000011); // 3 in binary
 ```
 
-#### Source
-
-[lib/provable/int.ts:382](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L382)
-
 ***
 
 ### rotate()
@@ -746,6 +750,8 @@ y.assertEquals(0b000011); // 3 in binary
 ```ts
 rotate(bits: number, direction: "left" | "right"): UInt64
 ```
+
+Defined in: [lib/provable/int.ts:328](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L328)
 
 A (left and right) rotation operates similarly to the shift operation (`<<` for left and `>>` for right) in JavaScript,
 with the distinction that the bits are circulated to the opposite end of a 64-bit representation rather than being discarded.
@@ -757,19 +763,23 @@ where the most significant (64th) bit is on the left end and the least significa
 The `direction` parameter is a string that accepts either `'left'` or `'right'`, determining the direction of the rotation.
 
 To safely use `rotate()`, you need to make sure that the value passed in is range-checked to 64 bits;
-for example, using Gadgets.rangeCheck64.
+for example, using [Gadgets.rangeCheck64](../variables/Gadgets.mdx#rangecheck64).
 
 You can find more details about the implementation in the [Mina book](https://o1-labs.github.io/proof-systems/specs/kimchi.html?highlight=gates#rotation)
 
 #### Parameters
 
-• **bits**: `number`
+##### bits
+
+`number`
 
 amount of bits to rotate this [UInt64](UInt64.mdx) element with.
 
-• **direction**: `"left"` \| `"right"`= `'left'`
+##### direction
 
 left or right rotation direction.
+
+`"left"` | `"right"`
 
 #### Returns
 
@@ -785,10 +795,6 @@ y.assertEquals(0b110000);
 z.assertEquals(0b000011);
 ```
 
-#### Source
-
-[lib/provable/int.ts:340](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L340)
-
 ***
 
 ### sub()
@@ -797,19 +803,19 @@ z.assertEquals(0b000011);
 sub(y: number | UInt64): UInt64
 ```
 
+Defined in: [lib/provable/int.ts:240](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L240)
+
 Subtraction with underflow checking.
 
 #### Parameters
 
-• **y**: `number` \| [`UInt64`](UInt64.mdx)
+##### y
+
+`number` | [`UInt64`](UInt64.mdx)
 
 #### Returns
 
 [`UInt64`](UInt64.mdx)
-
-#### Source
-
-[lib/provable/int.ts:250](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L250)
 
 ***
 
@@ -819,15 +825,45 @@ Subtraction with underflow checking.
 toBigInt(): bigint
 ```
 
+Defined in: [lib/provable/int.ts:82](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L82)
+
 Turns the [UInt64](UInt64.mdx) into a BigInt.
 
 #### Returns
 
 `bigint`
 
-#### Source
+***
 
-[lib/provable/int.ts:83](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L83)
+### toBytes()
+
+```ts
+toBytes(): [UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8]
+```
+
+Defined in: [lib/provable/int.ts:510](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L510)
+
+Split a UInt64 into 8 UInt8s, in little-endian order.
+
+#### Returns
+
+\[[`UInt8`](UInt8.mdx), [`UInt8`](UInt8.mdx), [`UInt8`](UInt8.mdx), [`UInt8`](UInt8.mdx), [`UInt8`](UInt8.mdx), [`UInt8`](UInt8.mdx), [`UInt8`](UInt8.mdx), [`UInt8`](UInt8.mdx)\]
+
+***
+
+### toBytesBE()
+
+```ts
+toBytesBE(): [UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8]
+```
+
+Defined in: [lib/provable/int.ts:517](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L517)
+
+Split a UInt64 into 8 UInt8s, in big-endian order.
+
+#### Returns
+
+\[[`UInt8`](UInt8.mdx), [`UInt8`](UInt8.mdx), [`UInt8`](UInt8.mdx), [`UInt8`](UInt8.mdx), [`UInt8`](UInt8.mdx), [`UInt8`](UInt8.mdx), [`UInt8`](UInt8.mdx), [`UInt8`](UInt8.mdx)\]
 
 ***
 
@@ -837,17 +873,17 @@ Turns the [UInt64](UInt64.mdx) into a BigInt.
 toConstant(): this
 ```
 
+Defined in: [lib/provable/types/circuit-value.ts:113](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/circuit-value.ts#L113)
+
 #### Returns
 
 `this`
 
 #### Inherited from
 
-`CircuitValue.toConstant`
-
-#### Source
-
-[lib/provable/types/circuit-value.ts:122](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/circuit-value.ts#L122)
+```ts
+CircuitValue.toConstant
+```
 
 ***
 
@@ -857,17 +893,17 @@ toConstant(): this
 toFields(): Field[]
 ```
 
+Defined in: [lib/provable/types/circuit-value.ts:79](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/circuit-value.ts#L79)
+
 #### Returns
 
 [`Field`](Field.mdx)[]
 
 #### Inherited from
 
-`CircuitValue.toFields`
-
-#### Source
-
-[lib/provable/types/circuit-value.ts:85](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/circuit-value.ts#L85)
+```ts
+CircuitValue.toFields
+```
 
 ***
 
@@ -877,17 +913,17 @@ toFields(): Field[]
 toJSON(): any
 ```
 
+Defined in: [lib/provable/types/circuit-value.ts:109](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/circuit-value.ts#L109)
+
 #### Returns
 
 `any`
 
 #### Inherited from
 
-`CircuitValue.toJSON`
-
-#### Source
-
-[lib/provable/types/circuit-value.ts:118](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/circuit-value.ts#L118)
+```ts
+CircuitValue.toJSON
+```
 
 ***
 
@@ -897,15 +933,13 @@ toJSON(): any
 toString(): string
 ```
 
+Defined in: [lib/provable/int.ts:75](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L75)
+
 Turns the [UInt64](UInt64.mdx) into a string.
 
 #### Returns
 
 `string`
-
-#### Source
-
-[lib/provable/int.ts:76](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L76)
 
 ***
 
@@ -915,15 +949,13 @@ Turns the [UInt64](UInt64.mdx) into a string.
 toUInt32(): UInt32
 ```
 
+Defined in: [lib/provable/int.ts:89](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L89)
+
 Turns the [UInt64](UInt64.mdx) into a [UInt32](UInt32.mdx), asserting that it fits in 32 bits.
 
 #### Returns
 
 [`UInt32`](UInt32.mdx)
-
-#### Source
-
-[lib/provable/int.ts:90](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L90)
 
 ***
 
@@ -932,6 +964,8 @@ Turns the [UInt64](UInt64.mdx) into a [UInt32](UInt32.mdx), asserting that it fi
 ```ts
 toUInt32Clamped(): UInt32
 ```
+
+Defined in: [lib/provable/int.ts:101](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L101)
 
 Turns the [UInt64](UInt64.mdx) into a [UInt32](UInt32.mdx), clamping to the 32 bits range if it's too large.
 ```ts
@@ -942,10 +976,6 @@ UInt64.from(4294967296).toUInt32Clamped().toString(); // "4294967295"
 
 [`UInt32`](UInt32.mdx)
 
-#### Source
-
-[lib/provable/int.ts:102](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L102)
-
 ***
 
 ### xor()
@@ -953,6 +983,8 @@ UInt64.from(4294967296).toUInt32Clamped().toString(); // "4294967295"
 ```ts
 xor(x: UInt64): UInt64
 ```
+
+Defined in: [lib/provable/int.ts:265](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L265)
 
 Bitwise XOR gadget on [Field](../variables/Field.mdx) elements. Equivalent to the [bitwise XOR `^` operator in JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Bitwise_XOR).
 A XOR gate works by comparing two bits and returning `1` if two bits differ, and `0` if two bits are equal.
@@ -963,7 +995,9 @@ You can find more details about the implementation in the [Mina book](https://o1
 
 #### Parameters
 
-• **x**: [`UInt64`](UInt64.mdx)
+##### x
+
+[`UInt64`](UInt64.mdx)
 
 [UInt64](UInt64.mdx) element to XOR.
 
@@ -981,28 +1015,6 @@ let c = a.xor(b);
 c.assertEquals(0b0110);
 ```
 
-#### Source
-
-[lib/provable/int.ts:275](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L275)
-
-***
-
-### MAXINT()
-
-```ts
-static MAXINT(): UInt64
-```
-
-Creates a [UInt64](UInt64.mdx) with a value of 18,446,744,073,709,551,615.
-
-#### Returns
-
-[`UInt64`](UInt64.mdx)
-
-#### Source
-
-[lib/provable/int.ts:156](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L156)
-
 ***
 
 ### check()
@@ -1011,9 +1023,13 @@ Creates a [UInt64](UInt64.mdx) with a value of 18,446,744,073,709,551,615.
 static check(x: UInt64): void
 ```
 
+Defined in: [lib/provable/int.ts:107](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L107)
+
 #### Parameters
 
-• **x**: [`UInt64`](UInt64.mdx)
+##### x
+
+[`UInt64`](UInt64.mdx)
 
 #### Returns
 
@@ -1021,11 +1037,9 @@ static check(x: UInt64): void
 
 #### Overrides
 
-`CircuitValue.check`
-
-#### Source
-
-[lib/provable/int.ts:112](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L112)
+```ts
+CircuitValue.check
+```
 
 ***
 
@@ -1035,7 +1049,9 @@ static check(x: UInt64): void
 static empty<T>(): InstanceType<T>
 ```
 
-#### Type parameters
+Defined in: [lib/provable/types/circuit-value.ts:205](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/circuit-value.ts#L205)
+
+#### Type Parameters
 
 • **T** *extends* `AnyConstructor`
 
@@ -1045,43 +1061,75 @@ static empty<T>(): InstanceType<T>
 
 #### Inherited from
 
-`CircuitValue.empty`
-
-#### Source
-
-[lib/provable/types/circuit-value.ts:230](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/circuit-value.ts#L230)
+```ts
+CircuitValue.empty
+```
 
 ***
 
 ### from()
 
 ```ts
-static from(x: 
-  | string
-  | number
-  | bigint
-  | UInt64
-  | UInt32): UInt64
+static from(x: string | number | bigint | UInt64 | UInt32): UInt64
 ```
+
+Defined in: [lib/provable/int.ts:141](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L141)
 
 Creates a new [UInt64](UInt64.mdx).
 
 #### Parameters
 
-• **x**: 
-  \| `string`
-  \| `number`
-  \| `bigint`
-  \| [`UInt64`](UInt64.mdx)
-  \| [`UInt32`](UInt32.mdx)
+##### x
+
+`string` | `number` | `bigint` | [`UInt64`](UInt64.mdx) | [`UInt32`](UInt32.mdx)
 
 #### Returns
 
 [`UInt64`](UInt64.mdx)
 
-#### Source
+***
 
-[lib/provable/int.ts:148](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L148)
+### fromBytes()
+
+```ts
+static fromBytes(bytes: UInt8[]): UInt64
+```
+
+Defined in: [lib/provable/int.ts:524](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L524)
+
+Combine 8 UInt8s into a UInt64, in little-endian order.
+
+#### Parameters
+
+##### bytes
+
+[`UInt8`](UInt8.mdx)[]
+
+#### Returns
+
+[`UInt64`](UInt64.mdx)
+
+***
+
+### fromBytesBE()
+
+```ts
+static fromBytesBE(bytes: UInt8[]): UInt64
+```
+
+Defined in: [lib/provable/int.ts:532](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L532)
+
+Combine 8 UInt8s into a UInt64, in big-endian order.
+
+#### Parameters
+
+##### bytes
+
+[`UInt8`](UInt8.mdx)[]
+
+#### Returns
+
+[`UInt64`](UInt64.mdx)
 
 ***
 
@@ -1091,15 +1139,21 @@ Creates a new [UInt64](UInt64.mdx).
 static fromFields<T>(this: T, xs: Field[]): InstanceType<T>
 ```
 
-#### Type parameters
+Defined in: [lib/provable/types/circuit-value.ts:129](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/circuit-value.ts#L129)
+
+#### Type Parameters
 
 • **T** *extends* `AnyConstructor`
 
 #### Parameters
 
-• **this**: `T`
+##### this
 
-• **xs**: [`Field`](Field.mdx)[]
+`T`
+
+##### xs
+
+[`Field`](Field.mdx)[]
 
 #### Returns
 
@@ -1107,11 +1161,9 @@ static fromFields<T>(this: T, xs: Field[]): InstanceType<T>
 
 #### Inherited from
 
-`CircuitValue.fromFields`
-
-#### Source
-
-[lib/provable/types/circuit-value.ts:138](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/circuit-value.ts#L138)
+```ts
+CircuitValue.fromFields
+```
 
 ***
 
@@ -1121,15 +1173,19 @@ static fromFields<T>(this: T, xs: Field[]): InstanceType<T>
 static fromJSON<T>(x: string): InstanceType<T>
 ```
 
+Defined in: [lib/provable/int.ts:125](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L125)
+
 Decodes a JSON-like object into this structure.
 
-#### Type parameters
+#### Type Parameters
 
 • **T** *extends* `AnyConstructor`
 
 #### Parameters
 
-• **x**: `string`
+##### x
+
+`string`
 
 #### Returns
 
@@ -1137,11 +1193,9 @@ Decodes a JSON-like object into this structure.
 
 #### Overrides
 
-`CircuitValue.fromJSON`
-
-#### Source
-
-[lib/provable/int.ts:130](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L130)
+```ts
+CircuitValue.fromJSON
+```
 
 ***
 
@@ -1151,15 +1205,21 @@ Decodes a JSON-like object into this structure.
 static fromObject<T>(this: T, value: NonMethods<InstanceType<T>>): InstanceType<T>
 ```
 
-#### Type parameters
+Defined in: [lib/provable/types/circuit-value.ts:30](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/circuit-value.ts#L30)
+
+#### Type Parameters
 
 • **T** *extends* `AnyConstructor`
 
 #### Parameters
 
-• **this**: `T`
+##### this
 
-• **value**: `NonMethods`\<`InstanceType`\<`T`\>\>
+`T`
+
+##### value
+
+`NonMethods`\<`InstanceType`\<`T`\>\>
 
 #### Returns
 
@@ -1167,27 +1227,29 @@ static fromObject<T>(this: T, value: NonMethods<InstanceType<T>>): InstanceType<
 
 #### Inherited from
 
-`CircuitValue.fromObject`
-
-#### Source
-
-[lib/provable/types/circuit-value.ts:30](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/circuit-value.ts#L30)
+```ts
+CircuitValue.fromObject
+```
 
 ***
 
 ### fromValue()
 
 ```ts
-static fromValue<T>(x: bigint | UInt64): InstanceType<T>
+static fromValue<T>(x: number | bigint | UInt64): InstanceType<T>
 ```
 
-#### Type parameters
+Defined in: [lib/provable/int.ts:503](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L503)
+
+#### Type Parameters
 
 • **T** *extends* `AnyConstructor`
 
 #### Parameters
 
-• **x**: `bigint` \| [`UInt64`](UInt64.mdx)
+##### x
+
+`number` | `bigint` | [`UInt64`](UInt64.mdx)
 
 #### Returns
 
@@ -1195,11 +1257,25 @@ static fromValue<T>(x: bigint | UInt64): InstanceType<T>
 
 #### Overrides
 
-`CircuitValue.fromValue`
+```ts
+CircuitValue.fromValue
+```
 
-#### Source
+***
 
-[lib/provable/int.ts:521](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L521)
+### MAXINT()
+
+```ts
+static MAXINT(): UInt64
+```
+
+Defined in: [lib/provable/int.ts:149](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L149)
+
+Creates a [UInt64](UInt64.mdx) with a value of 18,446,744,073,709,551,615.
+
+#### Returns
+
+[`UInt64`](UInt64.mdx)
 
 ***
 
@@ -1209,17 +1285,17 @@ static fromValue<T>(x: bigint | UInt64): InstanceType<T>
 static sizeInFields(): number
 ```
 
+Defined in: [lib/provable/types/circuit-value.ts:37](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/circuit-value.ts#L37)
+
 #### Returns
 
 `number`
 
 #### Inherited from
 
-`CircuitValue.sizeInFields`
-
-#### Source
-
-[lib/provable/types/circuit-value.ts:37](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/circuit-value.ts#L37)
+```ts
+CircuitValue.sizeInFields
+```
 
 ***
 
@@ -1229,17 +1305,17 @@ static sizeInFields(): number
 static toAuxiliary(): []
 ```
 
+Defined in: [lib/provable/types/circuit-value.ts:56](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/circuit-value.ts#L56)
+
 #### Returns
 
-[]
+\[\]
 
 #### Inherited from
 
-`CircuitValue.toAuxiliary`
-
-#### Source
-
-[lib/provable/types/circuit-value.ts:59](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/circuit-value.ts#L59)
+```ts
+CircuitValue.toAuxiliary
+```
 
 ***
 
@@ -1249,15 +1325,21 @@ static toAuxiliary(): []
 static toCanonical<T>(this: T, value: InstanceType<T>): InstanceType<T>
 ```
 
-#### Type parameters
+Defined in: [lib/provable/types/circuit-value.ts:161](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/circuit-value.ts#L161)
+
+#### Type Parameters
 
 • **T** *extends* `AnyConstructor`
 
 #### Parameters
 
-• **this**: `T`
+##### this
 
-• **value**: `InstanceType`\<`T`\>
+`T`
+
+##### value
+
+`InstanceType`\<`T`\>
 
 #### Returns
 
@@ -1265,11 +1347,9 @@ static toCanonical<T>(this: T, value: InstanceType<T>): InstanceType<T>
 
 #### Inherited from
 
-`CircuitValue.toCanonical`
-
-#### Source
-
-[lib/provable/types/circuit-value.ts:177](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/circuit-value.ts#L177)
+```ts
+CircuitValue.toCanonical
+```
 
 ***
 
@@ -1279,15 +1359,21 @@ static toCanonical<T>(this: T, value: InstanceType<T>): InstanceType<T>
 static toConstant<T>(this: T, t: InstanceType<T>): InstanceType<T>
 ```
 
-#### Type parameters
+Defined in: [lib/provable/types/circuit-value.ts:170](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/circuit-value.ts#L170)
+
+#### Type Parameters
 
 • **T** *extends* `AnyConstructor`
 
 #### Parameters
 
-• **this**: `T`
+##### this
 
-• **t**: `InstanceType`\<`T`\>
+`T`
+
+##### t
+
+`InstanceType`\<`T`\>
 
 #### Returns
 
@@ -1295,11 +1381,9 @@ static toConstant<T>(this: T, t: InstanceType<T>): InstanceType<T>
 
 #### Inherited from
 
-`CircuitValue.toConstant`
-
-#### Source
-
-[lib/provable/types/circuit-value.ts:189](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/circuit-value.ts#L189)
+```ts
+CircuitValue.toConstant
+```
 
 ***
 
@@ -1309,15 +1393,21 @@ static toConstant<T>(this: T, t: InstanceType<T>): InstanceType<T>
 static toFields<T>(this: T, v: InstanceType<T>): Field[]
 ```
 
-#### Type parameters
+Defined in: [lib/provable/types/circuit-value.ts:42](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/circuit-value.ts#L42)
+
+#### Type Parameters
 
 • **T** *extends* `AnyConstructor`
 
 #### Parameters
 
-• **this**: `T`
+##### this
 
-• **v**: `InstanceType`\<`T`\>
+`T`
+
+##### v
+
+`InstanceType`\<`T`\>
 
 #### Returns
 
@@ -1325,11 +1415,9 @@ static toFields<T>(this: T, v: InstanceType<T>): Field[]
 
 #### Inherited from
 
-`CircuitValue.toFields`
-
-#### Source
-
-[lib/provable/types/circuit-value.ts:42](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/circuit-value.ts#L42)
+```ts
+CircuitValue.toFields
+```
 
 ***
 
@@ -1339,9 +1427,13 @@ static toFields<T>(this: T, v: InstanceType<T>): Field[]
 static toInput(x: UInt64): HashInput
 ```
 
+Defined in: [lib/provable/int.ts:111](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L111)
+
 #### Parameters
 
-• **x**: [`UInt64`](UInt64.mdx)
+##### x
+
+[`UInt64`](UInt64.mdx)
 
 #### Returns
 
@@ -1349,11 +1441,9 @@ static toInput(x: UInt64): HashInput
 
 #### Overrides
 
-`CircuitValue.toInput`
-
-#### Source
-
-[lib/provable/int.ts:116](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L116)
+```ts
+CircuitValue.toInput
+```
 
 ***
 
@@ -1363,11 +1453,15 @@ static toInput(x: UInt64): HashInput
 static toJSON(x: UInt64): string
 ```
 
+Defined in: [lib/provable/int.ts:118](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L118)
+
 Encodes this structure into a JSON-like object.
 
 #### Parameters
 
-• **x**: [`UInt64`](UInt64.mdx)
+##### x
+
+[`UInt64`](UInt64.mdx)
 
 #### Returns
 
@@ -1375,11 +1469,9 @@ Encodes this structure into a JSON-like object.
 
 #### Overrides
 
-`CircuitValue.toJSON`
-
-#### Source
-
-[lib/provable/int.ts:123](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L123)
+```ts
+CircuitValue.toJSON
+```
 
 ***
 
@@ -1389,9 +1481,13 @@ Encodes this structure into a JSON-like object.
 static toValue(x: UInt64): bigint
 ```
 
+Defined in: [lib/provable/int.ts:499](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L499)
+
 #### Parameters
 
-• **x**: [`UInt64`](UInt64.mdx)
+##### x
+
+[`UInt64`](UInt64.mdx)
 
 #### Returns
 
@@ -1399,8 +1495,6 @@ static toValue(x: UInt64): bigint
 
 #### Overrides
 
-`CircuitValue.toValue`
-
-#### Source
-
-[lib/provable/int.ts:517](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L517)
+```ts
+CircuitValue.toValue
+```

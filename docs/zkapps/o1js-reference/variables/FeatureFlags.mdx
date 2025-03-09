@@ -1,30 +1,32 @@
 ```ts
 FeatureFlags: {
-  "allMaybe": {
-     "foreignFieldAdd": undefined;
-     "foreignFieldMul": undefined;
-     "lookup": undefined;
-     "rangeCheck0": undefined;
-     "rangeCheck1": undefined;
-     "rot": undefined;
-     "runtimeTables": undefined;
-     "xor": undefined;
+  allMaybe: {
+     foreignFieldAdd: undefined;
+     foreignFieldMul: undefined;
+     lookup: undefined;
+     rangeCheck0: undefined;
+     rangeCheck1: undefined;
+     rot: undefined;
+     runtimeTables: undefined;
+     xor: undefined;
     };
-  "allNone": {
-     "foreignFieldAdd": false;
-     "foreignFieldMul": false;
-     "lookup": false;
-     "rangeCheck0": false;
-     "rangeCheck1": false;
-     "rot": false;
-     "runtimeTables": false;
-     "xor": false;
+  allNone: {
+     foreignFieldAdd: boolean;
+     foreignFieldMul: boolean;
+     lookup: boolean;
+     rangeCheck0: boolean;
+     rangeCheck1: boolean;
+     rot: boolean;
+     runtimeTables: boolean;
+     xor: boolean;
     };
-  "fromGates": featureFlagsFromGates;
-  "fromZkProgram": (program: AnalysableProgram) => Promise<FeatureFlags>;
-  "fromZkProgramList": (programs: AnalysableProgram[]) => Promise<FeatureFlags>;
+  fromGates: (gates: Gate[]) => FeatureFlags;
+  fromZkProgram: (program: AnalysableProgram) => Promise<FeatureFlags>;
+  fromZkProgramList: (programs: AnalysableProgram[]) => Promise<FeatureFlags>;
 };
 ```
+
+Defined in: [lib/proof-system/feature-flags.ts:17](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/proof-system/feature-flags.ts#L17)
 
 Feature flags indicate what custom gates are used in a proof of circuit.
 Side loading, for example, requires a set of feature flags in advance (at compile time) in order to verify and side load proofs.
@@ -38,62 +40,62 @@ _Note:_ `Maybe` feature flags incur a proving overhead.
 
 ```ts
 allMaybe: {
-  "foreignFieldAdd": undefined;
-  "foreignFieldMul": undefined;
-  "lookup": undefined;
-  "rangeCheck0": undefined;
-  "rangeCheck1": undefined;
-  "rot": undefined;
-  "runtimeTables": undefined;
-  "xor": undefined;
+  foreignFieldAdd: undefined;
+  foreignFieldMul: undefined;
+  lookup: undefined;
+  rangeCheck0: undefined;
+  rangeCheck1: undefined;
+  rot: undefined;
+  runtimeTables: undefined;
+  xor: undefined;
 };
 ```
 
 Returns a feature flag configuration where all flags are optional.
 
-### allMaybe.foreignFieldAdd
+#### allMaybe.foreignFieldAdd
 
 ```ts
 foreignFieldAdd: undefined = undefined;
 ```
 
-### allMaybe.foreignFieldMul
+#### allMaybe.foreignFieldMul
 
 ```ts
 foreignFieldMul: undefined = undefined;
 ```
 
-### allMaybe.lookup
+#### allMaybe.lookup
 
 ```ts
 lookup: undefined = undefined;
 ```
 
-### allMaybe.rangeCheck0
+#### allMaybe.rangeCheck0
 
 ```ts
 rangeCheck0: undefined = undefined;
 ```
 
-### allMaybe.rangeCheck1
+#### allMaybe.rangeCheck1
 
 ```ts
 rangeCheck1: undefined = undefined;
 ```
 
-### allMaybe.rot
+#### allMaybe.rot
 
 ```ts
 rot: undefined = undefined;
 ```
 
-### allMaybe.runtimeTables
+#### allMaybe.runtimeTables
 
 ```ts
 runtimeTables: undefined = undefined;
 ```
 
-### allMaybe.xor
+#### allMaybe.xor
 
 ```ts
 xor: undefined = undefined;
@@ -103,62 +105,62 @@ xor: undefined = undefined;
 
 ```ts
 allNone: {
-  "foreignFieldAdd": false;
-  "foreignFieldMul": false;
-  "lookup": false;
-  "rangeCheck0": false;
-  "rangeCheck1": false;
-  "rot": false;
-  "runtimeTables": false;
-  "xor": false;
+  foreignFieldAdd: boolean;
+  foreignFieldMul: boolean;
+  lookup: boolean;
+  rangeCheck0: boolean;
+  rangeCheck1: boolean;
+  rot: boolean;
+  runtimeTables: boolean;
+  xor: boolean;
 };
 ```
 
 Returns a feature flag configuration where all flags are set to false.
 
-### allNone.foreignFieldAdd
+#### allNone.foreignFieldAdd
 
 ```ts
 foreignFieldAdd: boolean = false;
 ```
 
-### allNone.foreignFieldMul
+#### allNone.foreignFieldMul
 
 ```ts
 foreignFieldMul: boolean = false;
 ```
 
-### allNone.lookup
+#### allNone.lookup
 
 ```ts
 lookup: boolean = false;
 ```
 
-### allNone.rangeCheck0
+#### allNone.rangeCheck0
 
 ```ts
 rangeCheck0: boolean = false;
 ```
 
-### allNone.rangeCheck1
+#### allNone.rangeCheck1
 
 ```ts
 rangeCheck1: boolean = false;
 ```
 
-### allNone.rot
+#### allNone.rot
 
 ```ts
 rot: boolean = false;
 ```
 
-### allNone.runtimeTables
+#### allNone.runtimeTables
 
 ```ts
 runtimeTables: boolean = false;
 ```
 
-### allNone.xor
+#### allNone.xor
 
 ```ts
 xor: boolean = false;
@@ -174,7 +176,9 @@ Given a list of gates, returns the feature flag configuration that the gates use
 
 #### Parameters
 
-• **gates**: `Gate`[]
+##### gates
+
+`Gate`[]
 
 #### Returns
 
@@ -191,7 +195,9 @@ This function considers all methods of the specified ZkProgram and finds a confi
 
 #### Parameters
 
-• **program**: `AnalysableProgram`
+##### program
+
+`AnalysableProgram`
 
 #### Returns
 
@@ -203,14 +209,15 @@ This function considers all methods of the specified ZkProgram and finds a confi
 fromZkProgramList: (programs: AnalysableProgram[]) => Promise<FeatureFlags>;
 ```
 
+Given a list of ZkPrograms, return the feature flag configuration that fits the given set of programs.
+This function considers all methods of all specified ZkPrograms and finds a configuration that fits all.
+
 #### Parameters
 
-• **programs**: `AnalysableProgram`[]
+##### programs
+
+`AnalysableProgram`[]
 
 #### Returns
 
 `Promise`\<[`FeatureFlags`](../type-aliases/FeatureFlags.mdx)\>
-
-## Source
-
-[lib/proof-system/feature-flags.ts:17](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/proof-system/feature-flags.ts#L17)

@@ -1,33 +1,37 @@
 ```ts
 function Option<A>(type: A): ProvableInferPureFrom<A, Option<InferProvable<A>, InferValue<A>>, InferValue<A> | undefined> & (option: {
-  "isSome": Bool;
-  "value": InferProvable<A>;
+  isSome: Bool;
+  value: InferProvable<A>;
  }) => Option<InferProvable<A>, InferValue<A>> & {
-  "from": Option<InferProvable<A>, InferValue<A>>;
-  "fromValue": Option<InferProvable<A>, InferValue<A>>;
-  "none": Option<InferProvable<A>, InferValue<A>>;
+  from: Option<InferProvable<A>, InferValue<A>>;
+  fromValue: Option<InferProvable<A>, InferValue<A>>;
+  none: Option<InferProvable<A>, InferValue<A>>;
 }
 ```
 
+Defined in: [lib/provable/option.ts:34](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/option.ts#L34)
+
 Define an optional version of a provable type.
 
-## Type parameters
+## Type Parameters
 
 • **A** *extends* [`ProvableType`](../type-aliases/ProvableType.mdx)
 
 ## Parameters
 
-• **type**: `A`
+### type
+
+`A`
 
 ## Returns
 
 `ProvableInferPureFrom`\<`A`, [`Option`](../type-aliases/Option.mdx)\<[`InferProvable`](../type-aliases/InferProvable.mdx)\<`A`\>, `InferValue`\<`A`\>\>, `InferValue`\<`A`\> \| `undefined`\> & (`option`: \{
-  `"isSome"`: [`Bool`](../type-aliases/Bool.mdx);
-  `"value"`: [`InferProvable`](../type-aliases/InferProvable.mdx)\<`A`\>;
+  `isSome`: [`Bool`](../type-aliases/Bool.mdx);
+  `value`: [`InferProvable`](../type-aliases/InferProvable.mdx)\<`A`\>;
  \}) => [`Option`](../type-aliases/Option.mdx)\<[`InferProvable`](../type-aliases/InferProvable.mdx)\<`A`\>, `InferValue`\<`A`\>\> & \{
-  `"from"`: [`Option`](../type-aliases/Option.mdx)\<[`InferProvable`](../type-aliases/InferProvable.mdx)\<`A`\>, `InferValue`\<`A`\>\>;
-  `"fromValue"`: [`Option`](../type-aliases/Option.mdx)\<[`InferProvable`](../type-aliases/InferProvable.mdx)\<`A`\>, `InferValue`\<`A`\>\>;
-  `"none"`: [`Option`](../type-aliases/Option.mdx)\<[`InferProvable`](../type-aliases/InferProvable.mdx)\<`A`\>, `InferValue`\<`A`\>\>;
+  `from`: [`Option`](../type-aliases/Option.mdx)\<[`InferProvable`](../type-aliases/InferProvable.mdx)\<`A`\>, `InferValue`\<`A`\>\>;
+  `fromValue`: [`Option`](../type-aliases/Option.mdx)\<[`InferProvable`](../type-aliases/InferProvable.mdx)\<`A`\>, `InferValue`\<`A`\>\>;
+  `none`: [`Option`](../type-aliases/Option.mdx)\<[`InferProvable`](../type-aliases/InferProvable.mdx)\<`A`\>, `InferValue`\<`A`\>\>;
  \}
 
 ## Example
@@ -43,7 +47,3 @@ let none = OptionUInt64.none();
 let five: UInt64 = some.assertSome('must have a value');
 let zero: UInt64 = none.orElse(0n); // specify a default value
 ```
-
-## Source
-
-[lib/provable/option.ts:37](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/option.ts#L37)

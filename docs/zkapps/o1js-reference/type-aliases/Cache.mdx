@@ -1,11 +1,13 @@
 ```ts
-type Cache: {
-  "canWrite": boolean;
-  "debug": boolean;
-  "read": undefined | Uint8Array;
-  "write": void;
+type Cache = {
+  canWrite: boolean;
+  debug: boolean;
+  read: undefined | Uint8Array;
+  write: void;
 };
 ```
+
+Defined in: [lib/proof-system/cache.ts:25](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/proof-system/cache.ts#L25)
 
 Interface for storing and retrieving values, for caching.
 `read()` and `write()` can just throw errors on failure.
@@ -48,7 +50,9 @@ Read a value from the cache.
 
 #### Parameters
 
-• **header**: [`CacheHeader`](CacheHeader.mdx)
+##### header
+
+[`CacheHeader`](CacheHeader.mdx)
 
 A small header to identify what is read from the cache.
 
@@ -62,18 +66,18 @@ Write a value to the cache.
 
 #### Parameters
 
-• **header**: [`CacheHeader`](CacheHeader.mdx)
+##### header
+
+[`CacheHeader`](CacheHeader.mdx)
 
 A small header to identify what is written to the cache. This will be used by `read()` to retrieve the data.
 
-• **value**: `Uint8Array`
+##### value
+
+`Uint8Array`
 
 The value to write to the cache, as a byte array.
 
 #### Returns
 
 `void`
-
-## Source
-
-[lib/proof-system/cache.ts:37](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/proof-system/cache.ts#L37)

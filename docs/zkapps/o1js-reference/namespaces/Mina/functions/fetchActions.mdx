@@ -2,39 +2,46 @@
 function fetchActions(
    publicKey: PublicKey, 
    actionStates?: ActionStates, 
-   tokenId?: Field): Promise<{
-  "actions": string[][];
-  "hash": string;
- }[] | {
-  "error": {
-     "statusCode": 404;
-     "statusText": string;
-    };
+   tokenId?: Field, 
+   headers?: HeadersInit): Promise<
+  | {
+  actions: string[][];
+  hash: string;
+ }[]
+  | {
+  error: FetchError;
 }>
 ```
 
+Defined in: [lib/mina/v1/mina-instance.ts:191](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/mina-instance.ts#L191)
+
 ## Parameters
 
-• **publicKey**: [`PublicKey`](../../../classes/PublicKey.mdx)
+### publicKey
 
-• **actionStates?**: [`ActionStates`](../type-aliases/ActionStates.mdx)
+[`PublicKey`](../../../classes/PublicKey.mdx)
 
-• **tokenId?**: [`Field`](../../../classes/Field.mdx)
+### actionStates?
+
+[`ActionStates`](../type-aliases/ActionStates.mdx)
+
+### tokenId?
+
+[`Field`](../../../classes/Field.mdx)
+
+### headers?
+
+`HeadersInit`
 
 ## Returns
 
-`Promise`\<\{
-  `"actions"`: `string`[][];
-  `"hash"`: `string`;
- \}[] \| \{
-  `"error"`: \{
-     `"statusCode"`: `404`;
-     `"statusText"`: `string`;
-    \};
+`Promise`\<
+  \| \{
+  `actions`: `string`[][];
+  `hash`: `string`;
+ \}[]
+  \| \{
+  `error`: `FetchError`;
  \}\>
 
 A list of emitted sequencing actions associated to the given public key.
-
-## Source
-
-[lib/mina/mina-instance.ts:197](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/mina-instance.ts#L197)

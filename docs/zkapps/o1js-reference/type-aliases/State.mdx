@@ -1,19 +1,21 @@
 ```ts
-type State<A>: {
-  "fetch": Promise<undefined | A>;
-  "fromAppState": A;
-  "get": A;
-  "getAndRequireEquals": A;
-  "requireEquals": void;
-  "requireEqualsIf": void;
-  "requireNothing": void;
-  "set": void;
+type State<A> = {
+  fetch: Promise<undefined | A>;
+  fromAppState: A;
+  get: A;
+  getAndRequireEquals: A;
+  requireEquals: void;
+  requireEqualsIf: void;
+  requireNothing: void;
+  set: void;
 };
 ```
 
+Defined in: [lib/mina/v1/state.ts:86](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/state.ts#L86)
+
 Gettable and settable state that can be checked for equality.
 
-## Type parameters
+## Type Parameters
 
 • **A**
 
@@ -40,7 +42,9 @@ let x = myContract.x.fromAppState(account.zkapp!.appState);
 
 #### Parameters
 
-• **appState**: [`Field`](../classes/Field.mdx)[]
+##### appState
+
+[`Field`](../classes/Field.mdx)[]
 
 #### Returns
 
@@ -84,7 +88,9 @@ by adding a precondition which the verifying Mina node will check before accepti
 
 #### Parameters
 
-• **a**: `A`
+##### a
+
+`A`
 
 #### Returns
 
@@ -99,9 +105,13 @@ If the condition is true, this adds a precondition that the verifying Mina node 
 
 #### Parameters
 
-• **condition**: [`Bool`](../classes/Bool.mdx)
+##### condition
 
-• **a**: `A`
+[`Bool`](../classes/Bool.mdx)
+
+##### a
+
+`A`
 
 #### Returns
 
@@ -121,12 +131,10 @@ Set the on-chain state to a new value.
 
 #### Parameters
 
-• **a**: `A`
+##### a
+
+`A`
 
 #### Returns
 
 `void`
-
-## Source
-
-[lib/mina/state.ts:91](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/state.ts#L91)

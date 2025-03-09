@@ -1,9 +1,11 @@
 ```ts
-type ZkappPublicInput: {
-  "accountUpdate": Field;
-  "calls": Field;
+type ZkappPublicInput = {
+  accountUpdate: Field;
+  calls: Field;
 };
 ```
+
+Defined in: [lib/mina/v1/account-update.ts:1912](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L1912)
 
 The public input for zkApps consists of certain hashes of the proving
 account update (and its child updates) which is constructed during method execution.
@@ -30,7 +32,3 @@ accountUpdate: Field;
 ```ts
 calls: Field;
 ```
-
-## Source
-
-[lib/mina/account-update.ts:2050](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L2050)

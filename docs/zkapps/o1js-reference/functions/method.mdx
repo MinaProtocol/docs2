@@ -1,10 +1,12 @@
 ```ts
 function method<K, T>(
-   target: T & { [k in string]: Function }, 
+   target: T & { [k in string]: (args: any) => Promise<void> }, 
    methodName: K & string & keyof T, 
    descriptor: PropertyDescriptor, 
    returnType?: Provable<any>): void
 ```
+
+Defined in: [lib/mina/v1/zkapp.ts:98](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/zkapp.ts#L98)
 
 A decorator to use in a zkApp to mark a method as provable.
 You can use inside your zkApp class as:
@@ -23,7 +25,7 @@ async myMethod(someArg: Field): Promise<Field> {
 }
 ```
 
-## Type parameters
+## Type Parameters
 
 • **K** *extends* `string`
 
@@ -31,18 +33,22 @@ async myMethod(someArg: Field): Promise<Field> {
 
 ## Parameters
 
-• **target**: `T` & `{ [k in string]: Function }`
+### target
 
-• **methodName**: `K` & `string` & keyof `T`
+`T` & `{ [k in string]: (args: any) => Promise<void> }`
 
-• **descriptor**: `PropertyDescriptor`
+### methodName
 
-• **returnType?**: `Provable`\<`any`\>
+`K` & `string` & keyof `T`
+
+### descriptor
+
+`PropertyDescriptor`
+
+### returnType?
+
+[`Provable`](../type-aliases/Provable.mdx)\<`any`\>
 
 ## Returns
 
 `void`
-
-## Source
-
-[lib/mina/zkapp.ts:105](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/zkapp.ts#L105)

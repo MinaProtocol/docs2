@@ -2,6 +2,8 @@
 function declareState<T>(SmartContract: T, states: Record<string, FlexibleProvablePure<any>>): void
 ```
 
+Defined in: [lib/mina/v1/state.ts:176](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/state.ts#L176)
+
 `declareState` can be used in place of the `@state` decorator to declare on-chain state on a SmartContract.
 It should be placed _after_ the class declaration.
 Here is an example of declaring a state property `x` of type `Field`.
@@ -35,20 +37,20 @@ class MyContract extends SmartContract {
 declareState(MyContract, { x: Field });
 ```
 
-## Type parameters
+## Type Parameters
 
 • **T** *extends* *typeof* [`SmartContract`](../classes/SmartContract.mdx)
 
 ## Parameters
 
-• **SmartContract**: `T`
+### SmartContract
 
-• **states**: `Record`\<`string`, [`FlexibleProvablePure`](../type-aliases/FlexibleProvablePure.mdx)\<`any`\>\>
+`T`
+
+### states
+
+`Record`\<`string`, [`FlexibleProvablePure`](../type-aliases/FlexibleProvablePure.mdx)\<`any`\>\>
 
 ## Returns
 
 `void`
-
-## Source
-
-[lib/mina/state.ts:183](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/state.ts#L183)
