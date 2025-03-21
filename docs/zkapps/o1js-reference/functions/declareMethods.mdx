@@ -2,6 +2,8 @@
 function declareMethods<T>(SmartContract: T, methodArguments: Record<string, Provable<unknown>[]>): void
 ```
 
+Defined in: [lib/mina/v1/zkapp.ts:1183](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/zkapp.ts#L1183)
+
 `declareMethods` can be used in place of the `@method` decorator
 to declare SmartContract methods along with their list of arguments.
 It should be placed _after_ the class declaration.
@@ -17,20 +19,20 @@ declareMethods(MyContract, { update: [Field] }); // `[Field]` is the list of arg
 ```
 Note that a method of the same name must still be defined on the class, just without the decorator.
 
-## Type parameters
+## Type Parameters
 
 • **T** *extends* *typeof* [`SmartContract`](../classes/SmartContract.mdx)
 
 ## Parameters
 
-• **SmartContract**: `T`
+### SmartContract
 
-• **methodArguments**: `Record`\<`string`, `Provable`\<`unknown`\>[]\>
+`T`
+
+### methodArguments
+
+`Record`\<`string`, [`Provable`](../type-aliases/Provable.mdx)\<`unknown`\>[]\>
 
 ## Returns
 
 `void`
-
-## Source
-
-[lib/mina/zkapp.ts:1270](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/zkapp.ts#L1270)

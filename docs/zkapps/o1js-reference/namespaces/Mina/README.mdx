@@ -1,23 +1,35 @@
-## Index
+## Namespaces
 
-| Member | Description |
-| :------ | :------ |
+| Namespace | Description |
+| ------ | ------ |
 | [TestPublicKey](namespaces/TestPublicKey/README.mdx) | - |
 | [Transaction](namespaces/Transaction/README.mdx) | - |
+
+## Type Aliases
+
+| Type alias | Description |
+| ------ | ------ |
 | [ActionStates](type-aliases/ActionStates.mdx) | - |
 | [FeePayerSpec](type-aliases/FeePayerSpec.mdx) | Allows you to specify information about the fee payer account and the transaction. |
 | [IncludedTransaction](type-aliases/IncludedTransaction.mdx) | Represents a transaction that has been successfully included in a block. |
 | [NetworkConstants](type-aliases/NetworkConstants.mdx) | - |
-| [PendingTransaction](type-aliases/PendingTransaction.mdx) | Represents a transaction that has been submitted to the blockchain but has not yet reached a final state. |
-| [PendingTransactionPromise](type-aliases/PendingTransactionPromise.mdx) | A `Promise<PendingTransaction>` with an additional `wait` method, which calls |
+| [PendingTransaction](type-aliases/PendingTransaction.mdx) | Represents a transaction that has been submitted to the blockchain but has not yet reached a final state. The [PendingTransaction](type-aliases/PendingTransaction.mdx) type extends certain functionalities from the base [Transaction](type-aliases/Transaction.mdx) type, adding methods to monitor the transaction's progress towards being finalized (either included in a block or rejected). |
+| [PendingTransactionPromise](type-aliases/PendingTransactionPromise.mdx) | A `Promise<PendingTransaction>` with an additional `wait` method, which calls into the inner `TransactionStatus`'s `wait` method upon its resolution. |
 | [PendingTransactionStatus](type-aliases/PendingTransactionStatus.mdx) | - |
 | [RejectedTransaction](type-aliases/RejectedTransaction.mdx) | Represents a transaction that has been rejected and not included in a blockchain block. |
 | [TestPublicKey](type-aliases/TestPublicKey.mdx) | - |
-| [Transaction](type-aliases/Transaction.mdx) | Defines the structure and operations associated with a transaction. |
+| [Transaction](type-aliases/Transaction.mdx) | Defines the structure and operations associated with a transaction. This type encompasses methods for serializing the transaction, signing it, generating proofs, and submitting it to the network. |
+
+## Variables
+
+| Variable | Description |
+| ------ | ------ |
 | [activeInstance](variables/activeInstance.mdx) | - |
-| [LocalBlockchain](functions/LocalBlockchain.mdx) | A mock Mina blockchain running locally and useful for testing. |
-| [Network](functions/Network.mdx) | Represents the Mina blockchain running on a real network |
-| [TestPublicKey](functions/TestPublicKey.mdx) | - |
+
+## Functions
+
+| Function | Description |
+| ------ | ------ |
 | [currentSlot](functions/currentSlot.mdx) | - |
 | [currentTransaction](functions/currentTransaction.mdx) | - |
 | [faucet](functions/faucet.mdx) | Requests the [testnet faucet](https://faucet.minaprotocol.com/api/v1/faucet) to fund a public key. |
@@ -32,7 +44,10 @@
 | [getNetworkState](functions/getNetworkState.mdx) | - |
 | [getProofsEnabled](functions/getProofsEnabled.mdx) | - |
 | [hasAccount](functions/hasAccount.mdx) | Checks if an account exists within the ledger. |
+| [LocalBlockchain](functions/LocalBlockchain.mdx) | A mock Mina blockchain running locally and useful for testing. |
+| [Network](functions/Network.mdx) | Represents the Mina blockchain running on a real network |
 | [sender](functions/sender.mdx) | Returns the public key of the current transaction's sender account. |
 | [setActiveInstance](functions/setActiveInstance.mdx) | Set the currently used Mina instance. |
-| [transaction](functions/transaction.mdx) | Construct a smart contract transaction. Within the callback passed to this function, |
+| [TestPublicKey](functions/TestPublicKey.mdx) | - |
+| [transaction](functions/transaction.mdx) | Construct a smart contract transaction. Within the callback passed to this function, you can call into the methods of smart contracts. |
 | [waitForFunding](functions/waitForFunding.mdx) | - |

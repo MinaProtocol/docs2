@@ -1,3 +1,5 @@
+Defined in: [lib/mina/v1/token/forest-iterator.ts:54](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/token/forest-iterator.ts#L54)
+
 Data structure to represent a forest of account updates that is being iterated over,
 in the context of a token manager contract.
 
@@ -32,21 +34,25 @@ new TokenAccountUpdateIterator(
    selfToken: Field): TokenAccountUpdateIterator
 ```
 
+Defined in: [lib/mina/v1/token/forest-iterator.ts:59](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/token/forest-iterator.ts#L59)
+
 #### Parameters
 
-• **forest**: [`MerkleListIterator`](MerkleListIterator.mdx)\<`AccountUpdateTreeBase`\>
+##### forest
 
-• **mayUseToken**: `MayUseToken`
+[`MerkleListIterator`](MerkleListIterator.mdx)\<`AccountUpdateTreeBase`\>
 
-• **selfToken**: [`Field`](Field.mdx)
+##### mayUseToken
+
+`MayUseToken`
+
+##### selfToken
+
+[`Field`](Field.mdx)
 
 #### Returns
 
 [`TokenAccountUpdateIterator`](TokenAccountUpdateIterator.mdx)
-
-#### Source
-
-[lib/mina/token/forest-iterator.ts:59](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/token/forest-iterator.ts#L59)
 
 ## Properties
 
@@ -56,9 +62,7 @@ new TokenAccountUpdateIterator(
 currentLayer: Layer;
 ```
 
-#### Source
-
-[lib/mina/token/forest-iterator.ts:55](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/token/forest-iterator.ts#L55)
+Defined in: [lib/mina/v1/token/forest-iterator.ts:55](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/token/forest-iterator.ts#L55)
 
 ***
 
@@ -68,9 +72,7 @@ currentLayer: Layer;
 selfToken: Field;
 ```
 
-#### Source
-
-[lib/mina/token/forest-iterator.ts:57](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/token/forest-iterator.ts#L57)
+Defined in: [lib/mina/v1/token/forest-iterator.ts:57](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/token/forest-iterator.ts#L57)
 
 ***
 
@@ -80,9 +82,7 @@ selfToken: Field;
 unfinishedParentLayers: MerkleList<Layer>;
 ```
 
-#### Source
-
-[lib/mina/token/forest-iterator.ts:56](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/token/forest-iterator.ts#L56)
+Defined in: [lib/mina/v1/token/forest-iterator.ts:56](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/token/forest-iterator.ts#L56)
 
 ## Methods
 
@@ -92,17 +92,17 @@ unfinishedParentLayers: MerkleList<Layer>;
 assertFinished(message?: string): void
 ```
 
+Defined in: [lib/mina/v1/token/forest-iterator.ts:129](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/token/forest-iterator.ts#L129)
+
 #### Parameters
 
-• **message?**: `string`
+##### message?
+
+`string`
 
 #### Returns
 
 `void`
-
-#### Source
-
-[lib/mina/token/forest-iterator.ts:140](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/token/forest-iterator.ts#L140)
 
 ***
 
@@ -110,10 +110,12 @@ assertFinished(message?: string): void
 
 ```ts
 next(): {
-  "accountUpdate": update;
-  "usesThisToken": Bool;
+  accountUpdate: AccountUpdate;
+  usesThisToken: Bool;
 }
 ```
+
+Defined in: [lib/mina/v1/token/forest-iterator.ts:88](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/token/forest-iterator.ts#L88)
 
 Make a single step along a tree of account updates.
 
@@ -129,8 +131,8 @@ caller handle the irrelevant case where `usesThisToken` is false.
 
 ```ts
 {
-  "accountUpdate": update;
-  "usesThisToken": Bool;
+  accountUpdate: AccountUpdate;
+  usesThisToken: Bool;
 }
 ```
 
@@ -146,10 +148,6 @@ accountUpdate: AccountUpdate = update;
 usesThisToken: Bool;
 ```
 
-#### Source
-
-[lib/mina/token/forest-iterator.ts:88](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/token/forest-iterator.ts#L88)
-
 ***
 
 ### create()
@@ -158,16 +156,18 @@ usesThisToken: Bool;
 static create(forest: AccountUpdateForest, selfToken: Field): TokenAccountUpdateIterator
 ```
 
+Defined in: [lib/mina/v1/token/forest-iterator.ts:69](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/token/forest-iterator.ts#L69)
+
 #### Parameters
 
-• **forest**: [`AccountUpdateForest`](AccountUpdateForest.mdx)
+##### forest
 
-• **selfToken**: [`Field`](Field.mdx)
+[`AccountUpdateForest`](AccountUpdateForest.mdx)
+
+##### selfToken
+
+[`Field`](Field.mdx)
 
 #### Returns
 
 [`TokenAccountUpdateIterator`](TokenAccountUpdateIterator.mdx)
-
-#### Source
-
-[lib/mina/token/forest-iterator.ts:69](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/token/forest-iterator.ts#L69)

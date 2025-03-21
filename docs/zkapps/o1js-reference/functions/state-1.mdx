@@ -1,44 +1,19 @@
 ```ts
-function state<A>(type: ProvableTypePure<A> | FlexibleProvablePure<A>): (target: SmartContract & {
-  "constructor": any;
- }, key: string, _descriptor?: PropertyDescriptor) => void
+function State<A>(defaultValue?: A): State<A>
 ```
 
-A decorator to use within a zkapp to indicate what will be stored on-chain.
-For example, if you want to store a field element `some_state` in a zkapp,
-you can use the following in the declaration of your zkapp:
+Defined in: [lib/mina/v1/state.ts:86](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/state.ts#L86)
 
-```
-@state(Field) some_state = State<Field>();
-```
-
-## Type parameters
+## Type Parameters
 
 • **A**
 
 ## Parameters
 
-• **type**: [`ProvableTypePure`](../type-aliases/ProvableTypePure.mdx)\<`A`\> \| [`FlexibleProvablePure`](../type-aliases/FlexibleProvablePure.mdx)\<`A`\>
+### defaultValue?
+
+`A`
 
 ## Returns
 
-`Function`
-
-> ### Parameters
->
-> • **target**: [`SmartContract`](../classes/SmartContract.mdx) & \{
-> `"constructor"`: `any`;
-> \}
->
-> • **key**: `string`
->
-> • **\_descriptor?**: `PropertyDescriptor`
->
-> ### Returns
->
-> `void`
->
-
-## Source
-
-[lib/mina/state.ts:105](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/state.ts#L105)
+[`State`](../type-aliases/State.mdx)\<`A`\>

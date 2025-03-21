@@ -1,3 +1,5 @@
+Defined in: [lib/proof-system/circuit.ts:87](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/proof-system/circuit.ts#L87)
+
 ## Constructors
 
 ### new Keypair()
@@ -6,17 +8,17 @@
 new Keypair(value: unknown): Keypair
 ```
 
+Defined in: [lib/proof-system/circuit.ts:90](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/proof-system/circuit.ts#L90)
+
 #### Parameters
 
-• **value**: `unknown`
+##### value
+
+`unknown`
 
 #### Returns
 
 [`Keypair`](Keypair.mdx)
-
-#### Source
-
-[lib/proof-system/circuit.ts:104](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/proof-system/circuit.ts#L104)
 
 ## Properties
 
@@ -26,9 +28,7 @@ new Keypair(value: unknown): Keypair
 value: unknown;
 ```
 
-#### Source
-
-[lib/proof-system/circuit.ts:102](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/proof-system/circuit.ts#L102)
+Defined in: [lib/proof-system/circuit.ts:88](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/proof-system/circuit.ts#L88)
 
 ## Methods
 
@@ -37,6 +37,8 @@ value: unknown;
 ```ts
 constraintSystem(): Gate[]
 ```
+
+Defined in: [lib/proof-system/circuit.ts:107](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/proof-system/circuit.ts#L107)
 
 Returns a low-level JSON representation of the [Circuit](Circuit.mdx) from its [Keypair](Keypair.mdx):
 a list of gates, each of which represents a row in a table, with certain coefficients and wires to other (row, column) pairs
@@ -52,10 +54,6 @@ const keypair = await MyCircuit.generateKeypair();
 const json = MyProvable.witnessFromKeypair(keypair);
 ```
 
-#### Source
-
-[lib/proof-system/circuit.ts:123](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/proof-system/circuit.ts#L123)
-
 ***
 
 ### verificationKey()
@@ -64,10 +62,8 @@ const json = MyProvable.witnessFromKeypair(keypair);
 verificationKey(): VerificationKey
 ```
 
+Defined in: [lib/proof-system/circuit.ts:94](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/proof-system/circuit.ts#L94)
+
 #### Returns
 
 `VerificationKey`
-
-#### Source
-
-[lib/proof-system/circuit.ts:108](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/proof-system/circuit.ts#L108)

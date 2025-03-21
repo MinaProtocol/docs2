@@ -20,12 +20,12 @@ To test the doc build and see local updates before you push changes to GitHub, b
 
 <!-- In case of version change, update .github/workflows/{test-tutorials.yml, snarkjs-api-reference.md} accordingly -->
 
-Local builds require Node.js, version 18 or greater.
+Local builds require Node.js, version 22 or greater.
 One way to install NPM is to rely on [nvm](https://github.com/nvm-sh/nvm). Use the following commands to install nvm and npm:
 
 ```sh
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
-nvm install v18
+nvm install v22
 ```
 
 After your local build environment is set, you can run a local build:

@@ -2,6 +2,8 @@
 function createForeignField(modulus: bigint): typeof UnreducedForeignField
 ```
 
+Defined in: [lib/provable/foreign-field.ts:620](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/foreign-field.ts#L620)
+
 Create a class representing a prime order finite field, which is different from the native [Field](../classes/Field.mdx).
 
 ```ts
@@ -21,7 +23,7 @@ represents a limb of 88 bits. Therefore, being a valid foreign field element mea
 fit in 88 bits, and the foreign field element altogether is smaller than the modulus p.
 
 Since the full `x < p` check is expensive, by default we only prove a weaker assertion, `x < 2^ceil(log2(p))`,
-see [ForeignField.assertAlmostReduced](../classes/ForeignField.mdx#assertalmostreduced-1) for more details.
+see [ForeignField.assertAlmostReduced](../classes/ForeignField.mdx#assertalmostreduced-2) for more details.
 
 This weaker assumption is what we call "almost reduced", and it is represented by the [AlmostForeignField](../classes/AlmostForeignField.mdx) class.
 Note that only [AlmostForeignField](../classes/AlmostForeignField.mdx) supports multiplication and inversion, while UnreducedForeignField
@@ -50,14 +52,12 @@ Base types for all of these classes are separately exported as UnreducedForeignF
 
 ## Parameters
 
-• **modulus**: `bigint`
+### modulus
+
+`bigint`
 
 the modulus of the finite field you are instantiating
 
 ## Returns
 
 *typeof* `UnreducedForeignField`
-
-## Source
-
-[lib/provable/foreign-field.ts:642](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/foreign-field.ts#L642)

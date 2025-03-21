@@ -1,3 +1,5 @@
+Defined in: [lib/provable/types/unconstrained.ts:39](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/unconstrained.ts#L39)
+
 Container which holds an unconstrained value. This can be used to pass values
 between the out-of-circuit blocks in provable code.
 
@@ -27,7 +29,7 @@ class MyContract extends SmartContract {
   }
 ```
 
-## Type parameters
+## Type Parameters
 
 • **T**
 
@@ -37,13 +39,15 @@ class MyContract extends SmartContract {
 
 ```ts
 static provable: UnconstrainedProvable<any> & {
-  "empty": () => Unconstrained<any>;
-  "toInput": (x: Unconstrained<any>) => {
-     "fields": Field[];
-     "packed": [Field, number][];
+  empty: () => Unconstrained<any>;
+  toInput: (x: Unconstrained<any>) => {
+     fields: Field[];
+     packed: [Field, number][];
     };
 };
 ```
+
+Defined in: [lib/provable/types/unconstrained.ts:109](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/unconstrained.ts#L109)
 
 #### Type declaration
 
@@ -61,21 +65,23 @@ empty: () => Unconstrained<any>;
 
 ```ts
 toInput: (x: Unconstrained<any>) => {
-  "fields": Field[];
-  "packed": [Field, number][];
+  fields: Field[];
+  packed: [Field, number][];
 };
 ```
 
 ###### Parameters
 
-• **x**: [`Unconstrained`](Unconstrained.mdx)\<`any`\>
+###### x
+
+[`Unconstrained`](Unconstrained.mdx)\<`any`\>
 
 ###### Returns
 
 ```ts
 {
-  "fields": Field[];
-  "packed": [Field, number][];
+  fields: Field[];
+  packed: [Field, number][];
 }
 ```
 
@@ -91,10 +97,6 @@ optional fields: Field[];
 optional packed: [Field, number][];
 ```
 
-#### Source
-
-[lib/provable/types/unconstrained.ts:111](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/unconstrained.ts#L111)
-
 ## Methods
 
 ### get()
@@ -102,6 +104,8 @@ optional packed: [Field, number][];
 ```ts
 get(): T
 ```
+
+Defined in: [lib/provable/types/unconstrained.ts:51](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/unconstrained.ts#L51)
 
 Read an unconstrained value.
 
@@ -111,10 +115,6 @@ Note: Can only be called outside provable code.
 
 `T`
 
-#### Source
-
-[lib/provable/types/unconstrained.ts:53](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/unconstrained.ts#L53)
-
 ***
 
 ### set()
@@ -123,19 +123,19 @@ Note: Can only be called outside provable code.
 set(value: T): void
 ```
 
+Defined in: [lib/provable/types/unconstrained.ts:65](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/unconstrained.ts#L65)
+
 Modify the unconstrained value.
 
 #### Parameters
 
-• **value**: `T`
+##### value
+
+`T`
 
 #### Returns
 
 `void`
-
-#### Source
-
-[lib/provable/types/unconstrained.ts:67](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/unconstrained.ts#L67)
 
 ***
 
@@ -145,19 +145,19 @@ Modify the unconstrained value.
 setTo(value: Unconstrained<T>): void
 ```
 
+Defined in: [lib/provable/types/unconstrained.ts:72](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/unconstrained.ts#L72)
+
 Set the unconstrained value to the same as another `Unconstrained`.
 
 #### Parameters
 
-• **value**: [`Unconstrained`](Unconstrained.mdx)\<`T`\>
+##### value
+
+[`Unconstrained`](Unconstrained.mdx)\<`T`\>
 
 #### Returns
 
 `void`
-
-#### Source
-
-[lib/provable/types/unconstrained.ts:74](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/unconstrained.ts#L74)
 
 ***
 
@@ -167,19 +167,19 @@ Set the unconstrained value to the same as another `Unconstrained`.
 updateAsProver(compute: (value: T) => T): void
 ```
 
+Defined in: [lib/provable/types/unconstrained.ts:102](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/unconstrained.ts#L102)
+
 Update an `Unconstrained` by a witness computation.
 
 #### Parameters
 
-• **compute**
+##### compute
+
+(`value`: `T`) => `T`
 
 #### Returns
 
 `void`
-
-#### Source
-
-[lib/provable/types/unconstrained.ts:104](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/unconstrained.ts#L104)
 
 ***
 
@@ -188,6 +188,8 @@ Update an `Unconstrained` by a witness computation.
 ```ts
 static from<T>(value: T | Unconstrained<T>): Unconstrained<T>
 ```
+
+Defined in: [lib/provable/types/unconstrained.ts:87](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/unconstrained.ts#L87)
 
 Create an `Unconstrained` with the given `value`.
 
@@ -199,21 +201,19 @@ Something like the following should be used instead:
 let xWrapped = Unconstrained.witness(() => Provable.toConstant(type, x));
 ```
 
-#### Type parameters
+#### Type Parameters
 
 • **T**
 
 #### Parameters
 
-• **value**: `T` \| [`Unconstrained`](Unconstrained.mdx)\<`T`\>
+##### value
+
+`T` | [`Unconstrained`](Unconstrained.mdx)\<`T`\>
 
 #### Returns
 
 [`Unconstrained`](Unconstrained.mdx)\<`T`\>
-
-#### Source
-
-[lib/provable/types/unconstrained.ts:89](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/unconstrained.ts#L89)
 
 ***
 
@@ -221,35 +221,35 @@ let xWrapped = Unconstrained.witness(() => Provable.toConstant(type, x));
 
 ```ts
 static withEmpty<T>(empty: T): Provable<Unconstrained<T>, T> & {
-  "empty": () => Unconstrained<T>;
-  "toInput": (x: Unconstrained<T>) => {
-     "fields": Field[];
-     "packed": [Field, number][];
+  empty: () => Unconstrained<T>;
+  toInput: (x: Unconstrained<T>) => {
+     fields: Field[];
+     packed: [Field, number][];
     };
 }
 ```
 
-#### Type parameters
+Defined in: [lib/provable/types/unconstrained.ts:129](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/unconstrained.ts#L129)
+
+#### Type Parameters
 
 • **T**
 
 #### Parameters
 
-• **empty**: `T`
+##### empty
+
+`T`
 
 #### Returns
 
-`Provable`\<[`Unconstrained`](Unconstrained.mdx)\<`T`\>, `T`\> & \{
-  `"empty"`: () => [`Unconstrained`](Unconstrained.mdx)\<`T`\>;
-  `"toInput"`: (`x`: [`Unconstrained`](Unconstrained.mdx)\<`T`\>) => \{
-     `"fields"`: [`Field`](Field.mdx)[];
-     `"packed"`: [[`Field`](Field.mdx), `number`][];
+[`Provable`](../type-aliases/Provable.mdx)\<[`Unconstrained`](Unconstrained.mdx)\<`T`\>, `T`\> & \{
+  `empty`: () => [`Unconstrained`](Unconstrained.mdx)\<`T`\>;
+  `toInput`: (`x`: [`Unconstrained`](Unconstrained.mdx)\<`T`\>) => \{
+     `fields`: [`Field`](Field.mdx)[];
+     `packed`: \[[`Field`](Field.mdx), `number`\][];
     \};
  \}
-
-#### Source
-
-[lib/provable/types/unconstrained.ts:131](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/unconstrained.ts#L131)
 
 ***
 
@@ -259,20 +259,20 @@ static withEmpty<T>(empty: T): Provable<Unconstrained<T>, T> & {
 static witness<T>(compute: () => T): Unconstrained<T>
 ```
 
+Defined in: [lib/provable/types/unconstrained.ts:95](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/unconstrained.ts#L95)
+
 Create an `Unconstrained` from a witness computation.
 
-#### Type parameters
+#### Type Parameters
 
 • **T**
 
 #### Parameters
 
-• **compute**
+##### compute
+
+() => `T`
 
 #### Returns
 
 [`Unconstrained`](Unconstrained.mdx)\<`T`\>
-
-#### Source
-
-[lib/provable/types/unconstrained.ts:97](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/unconstrained.ts#L97)

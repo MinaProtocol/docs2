@@ -9,7 +9,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           # In case of version change, update README.md accordingly
-          node-version: 16
+          node-version: 22
 
       - name: Checkout Docs repo
         uses: actions/checkout@v3

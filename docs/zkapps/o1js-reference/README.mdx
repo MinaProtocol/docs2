@@ -6,22 +6,6 @@ keywords:
   - Reference
 ---
 
----
-title: o1js API Reference
-keywords:
-  - o1js
-  - API
-  - Reference
----
-
----
-title: o1js API Reference
-keywords:
-  - o1js
-  - API
-  - Reference
----
-
 # o1js &nbsp; [![npm version](https://img.shields.io/npm/v/o1js.svg?style=flat)](https://www.npmjs.com/package/o1js) [![npm](https://img.shields.io/npm/dm/o1js)](https://www.npmjs.com/package/o1js) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/o1-labs/o1js/blob/main/CONTRIBUTING.md)
 
 ℹ️ **o1js** is an evolution of [SnarkyJS](https://www.npmjs.com/package/snarkyjs) which saw
@@ -84,16 +68,23 @@ High-quality community packages from open source developers are available for yo
 
 To include your package, see [Creating high-quality community packages](https://github.com/o1-labs/o1js/blob/main/CONTRIBUTING.md#creating-high-quality-community-packages).
 
-| Member | Description |
-| :------ | :------ |
+## Namespaces
+
+| Namespace | Description |
+| ------ | ------ |
 | [Crypto](namespaces/Crypto/README.mdx) | - |
 | [Encryption](namespaces/Encryption/README.mdx) | - |
-| [Experimental](namespaces/Experimental/README.mdx) | This module exposes APIs that are unstable, in the sense that the API surface is expected to change. |
+| [Experimental](namespaces/Experimental/README.mdx) | This module exposes APIs that are unstable, in the sense that the API surface is expected to change. (Not unstable in the sense that they are less functional or tested than other parts.) |
 | [Lightnet](namespaces/Lightnet/README.mdx) | - |
 | [Mina](namespaces/Mina/README.mdx) | - |
-| [AccountUpdate](classes/AccountUpdate.mdx) | An [AccountUpdate](classes/AccountUpdate.mdx) is a set of instructions for the Mina network. |
-| [AccountUpdateForest](classes/AccountUpdateForest.mdx) | Class which represents a forest (list of trees) of account updates, |
-| [AccountUpdateTree](classes/AccountUpdateTree.mdx) | Class which represents a tree of account updates, |
+
+## Classes
+
+| Class | Description |
+| ------ | ------ |
+| [AccountUpdate](classes/AccountUpdate.mdx) | An [AccountUpdate](classes/AccountUpdate.mdx) is a set of instructions for the Mina network. It includes Preconditions and a list of state updates, which need to be authorized by either a [Signature](classes/Signature.mdx) or [Proof](classes/Proof.mdx). |
+| [AccountUpdateForest](classes/AccountUpdateForest.mdx) | Class which represents a forest (list of trees) of account updates, in a compressed way which allows iterating and selectively witnessing the account updates. |
+| [AccountUpdateTree](classes/AccountUpdateTree.mdx) | Class which represents a tree of account updates, in a compressed way which allows iterating and selectively witnessing the account updates. |
 | [AlmostForeignField](classes/AlmostForeignField.mdx) | - |
 | [BaseMerkleWitness](classes/BaseMerkleWitness.mdx) | The [BaseMerkleWitness](classes/BaseMerkleWitness.mdx) class defines a circuit-compatible base class for [Merkle Witness](https://computersciencewiki.org/index.php/Merkle_proof). |
 | [Bool](classes/Bool.mdx) | A boolean value. You can use it like this: |
@@ -101,9 +92,9 @@ To include your package, see [Creating high-quality community packages](https://
 | [Character](classes/Character.mdx) | - |
 | [Circuit](classes/Circuit.mdx) | - |
 | [CircuitString](classes/CircuitString.mdx) | - |
-| [DynamicProof](classes/DynamicProof.mdx) | The `DynamicProof` class enables circuits to verify proofs using in-ciruit verfication keys. |
+| [DynamicProof](classes/DynamicProof.mdx) | The `DynamicProof` class enables circuits to verify proofs using in-ciruit verfication keys. This is opposed to the baked-in verification keys of the `Proof` class. |
 | [EcdsaSignature](classes/EcdsaSignature.mdx) | - |
-| [Field](classes/Field.mdx) | A [Field](classes/Field.mdx) is an element of a prime order [finite field](https://en.wikipedia.org/wiki/Finite_field). |
+| [Field](classes/Field.mdx) | A [Field](classes/Field.mdx) is an element of a prime order [finite field](https://en.wikipedia.org/wiki/Finite_field). Every other provable type is built using the [Field](classes/Field.mdx) type. |
 | [ForeignCurve](classes/ForeignCurve.mdx) | - |
 | [ForeignField](classes/ForeignField.mdx) | - |
 | [Group](classes/Group.mdx) | An element of a Group. |
@@ -112,55 +103,68 @@ To include your package, see [Creating high-quality community packages](https://
 | [Keypair](classes/Keypair.mdx) | - |
 | [Ledger](classes/Ledger.mdx) | Represents the Mina ledger. |
 | [MerkleList](classes/MerkleList.mdx) | Dynamic-length list which is represented as a single hash |
-| [MerkleListIterator](classes/MerkleListIterator.mdx) | MerkleListIterator helps iterating through a Merkle list. |
+| [MerkleListIterator](classes/MerkleListIterator.mdx) | MerkleListIterator helps iterating through a Merkle list. This works similar to calling `list.pop()` or `list.push()` repeatedly, but maintaining the entire list instead of removing elements. |
 | [MerkleMap](classes/MerkleMap.mdx) | - |
 | [MerkleMapWitness](classes/MerkleMapWitness.mdx) | - |
-| [MerkleTree](classes/MerkleTree.mdx) | A [Merkle Tree](https://en.wikipedia.org/wiki/Merkle_tree) is a binary tree in which every leaf is the cryptography hash of a piece of data, |
-| [Nullifier](classes/Nullifier.mdx) | Nullifiers are used as a public commitment to a specific anonymous account, |
+| [MerkleTree](classes/MerkleTree.mdx) | A [Merkle Tree](https://en.wikipedia.org/wiki/Merkle_tree) is a binary tree in which every leaf is the cryptography hash of a piece of data, and every node is the hash of the concatenation of its two child nodes. |
+| [Nullifier](classes/Nullifier.mdx) | Nullifiers are used as a public commitment to a specific anonymous account, to forbid actions like double spending, or allow a consistent identity between anonymous actions. |
 | [Packed](classes/Packed.mdx) | `Packed<T>` is a "packed" representation of any type `T`. |
 | [PrivateKey](classes/PrivateKey.mdx) | A signing key. You can generate one via [PrivateKey.random](classes/PrivateKey.mdx#random). |
 | [Proof](classes/Proof.mdx) | - |
 | [ProofBase](classes/ProofBase.mdx) | - |
-| [PublicKey](classes/PublicKey.mdx) | A public key, which is also an address on the Mina network. |
+| [PublicKey](classes/PublicKey.mdx) | A public key, which is also an address on the Mina network. You can derive a [PublicKey](classes/PublicKey.mdx) directly from a [PrivateKey](classes/PrivateKey.mdx). |
 | [Scalar](classes/Scalar.mdx) | Represents a [Scalar](classes/Scalar.mdx). |
 | [ScalarField](classes/ScalarField.mdx) | ForeignField representing the scalar field of Pallas and the base field of Vesta |
-| [SelfProof](classes/SelfProof.mdx) | - |
+| [SelfProof](classes/SelfProof.mdx) | A class representing the type of Proof produced by the [ZkProgram](functions/ZkProgram.mdx) in which it is used. |
 | [Sign](classes/Sign.mdx) | - |
 | [Signature](classes/Signature.mdx) | A Schnorr [Signature](classes/Signature.mdx) over the Pasta Curves. |
 | [SmartContract](classes/SmartContract.mdx) | The main zkapp class. To write a zkapp, extend this class as such: |
-| [TokenAccountUpdateIterator](classes/TokenAccountUpdateIterator.mdx) | Data structure to represent a forest of account updates that is being iterated over, |
-| [TokenContract](classes/TokenContract.mdx) | Base token contract which |
+| [TokenAccountUpdateIterator](classes/TokenAccountUpdateIterator.mdx) | Data structure to represent a forest of account updates that is being iterated over, in the context of a token manager contract. |
+| [TokenContract](classes/TokenContract.mdx) | Base token contract which - implements the `Approvable` API, with the `approveBase()` method left to be defined by subclasses - implements the `Transferable` API as a wrapper around the `Approvable` API |
 | [TokenSymbol](classes/TokenSymbol.mdx) | - |
 | [UInt32](classes/UInt32.mdx) | A 32 bit unsigned integer with values ranging from 0 to 4,294,967,295. |
 | [UInt64](classes/UInt64.mdx) | A 64 bit unsigned integer with values ranging from 0 to 18,446,744,073,709,551,615. |
 | [UInt8](classes/UInt8.mdx) | A 8 bit unsigned integer with values ranging from 0 to 255. |
-| [Unconstrained](classes/Unconstrained.mdx) | Container which holds an unconstrained value. This can be used to pass values |
+| [Unconstrained](classes/Unconstrained.mdx) | Container which holds an unconstrained value. This can be used to pass values between the out-of-circuit blocks in provable code. |
 | [VerificationKey](classes/VerificationKey.mdx) | - |
-| [Permissions](interfaces/Permissions.mdx) | Permissions specify how specific aspects of the zkapp account are allowed |
+
+## Interfaces
+
+| Interface | Description |
+| ------ | ------ |
+| [Permissions](interfaces/Permissions.mdx) | Permissions specify how specific aspects of the zkapp account are allowed to be modified. All fields are denominated by a Permission. |
+
+## Type Aliases
+
+| Type alias | Description |
+| ------ | ------ |
 | [Account](type-aliases/Account.mdx) | - |
 | [Bool](type-aliases/Bool.mdx) | - |
 | [BoolVar](type-aliases/BoolVar.mdx) | - |
 | [Bytes](type-aliases/Bytes.mdx) | - |
-| [Cache](type-aliases/Cache.mdx) | Interface for storing and retrieving values, for caching. |
+| [Cache](type-aliases/Cache.mdx) | Interface for storing and retrieving values, for caching. `read()` and `write()` can just throw errors on failure. |
 | [CacheHeader](type-aliases/CacheHeader.mdx) | A header that is passed to the caching layer, to support rich caching strategies. |
 | [ConstantField](type-aliases/ConstantField.mdx) | - |
 | [DeployArgs](type-aliases/DeployArgs.mdx) | - |
 | [Empty](type-aliases/Empty.mdx) | - |
 | [FeatureFlags](type-aliases/FeatureFlags.mdx) | - |
 | [Field](type-aliases/Field.mdx) | - |
+| [FlexibleBytes](type-aliases/FlexibleBytes.mdx) | - |
 | [FlexibleProvable](type-aliases/FlexibleProvable.mdx) | - |
 | [FlexibleProvablePure](type-aliases/FlexibleProvablePure.mdx) | - |
 | [Group](type-aliases/Group.mdx) | - |
 | [InferProvable](type-aliases/InferProvable.mdx) | - |
-| [JsonProof](type-aliases/JsonProof.mdx) | - |
+| [JsonProof](type-aliases/JsonProof.mdx) | Serializable representation of a Pickles proof, useful for caching compiled proofs. |
+| [MemoizationContext](type-aliases/MemoizationContext.mdx) | - |
 | [MerkleListBase](type-aliases/MerkleListBase.mdx) | Common base type for [MerkleList](classes/MerkleList.mdx) and [MerkleListIterator](classes/MerkleListIterator.mdx) |
 | [MerkleListIteratorBase](type-aliases/MerkleListIteratorBase.mdx) | - |
 | [Option](type-aliases/Option.mdx) | - |
 | [Provable](type-aliases/Provable.mdx) | `Provable<T>` is the general interface for provable types in o1js. |
+| [Provable](type-aliases/Provable.mdx) | `Provable<T>` is the general interface for provable types in o1js. |
 | [ProvableExtended](type-aliases/ProvableExtended.mdx) | - |
 | [ProvableHashable](type-aliases/ProvableHashable.mdx) | - |
-| [ProvableHashable](type-aliases/ProvableHashable-1.mdx) | - |
-| [ProvablePure](type-aliases/ProvablePure.mdx) | `ProvablePure<T>` is a special kind of [Provable](type-aliases/Provable.mdx) interface, where the "auxiliary" (non-provable) data is empty. |
+| [ProvableHashable](type-aliases/ProvableHashable.mdx) | - |
+| [ProvablePure](type-aliases/ProvablePure.mdx) | `ProvablePure<T>` is a special kind of [Provable](type-aliases/Provable.mdx) interface, where the "auxiliary" (non-provable) data is empty. This means the type consists only of field elements, in that sense it is "pure". Any instance of `ProvablePure<T>` is also an instance of `Provable<T>` where the "auxiliary" data is empty. |
 | [ProvableType](type-aliases/ProvableType.mdx) | - |
 | [ProvableTypePure](type-aliases/ProvableTypePure.mdx) | - |
 | [ProvableWithEmpty](type-aliases/ProvableWithEmpty.mdx) | - |
@@ -169,7 +173,7 @@ To include your package, see [Creating high-quality community packages](https://
 | [State](type-aliases/State.mdx) | Gettable and settable state that can be checked for equality. |
 | [Struct](type-aliases/Struct.mdx) | - |
 | [ToProvable](type-aliases/ToProvable.mdx) | - |
-| [TransactionPromise](type-aliases/TransactionPromise.mdx) | A `Promise<Transaction>` with some additional methods for making chained method calls |
+| [TransactionPromise](type-aliases/TransactionPromise.mdx) | A `Promise<Transaction>` with some additional methods for making chained method calls into the pending value upon its resolution. |
 | [TransactionStatus](type-aliases/TransactionStatus.mdx) | INCLUDED: A transaction that is on the longest chain |
 | [TupleN](type-aliases/TupleN.mdx) | tuple type that has the length as generic parameter |
 | [Undefined](type-aliases/Undefined.mdx) | - |
@@ -178,21 +182,28 @@ To include your package, see [Creating high-quality community packages](https://
 | [WithHash](type-aliases/WithHash.mdx) | - |
 | [WithProvable](type-aliases/WithProvable.mdx) | - |
 | [Witness](type-aliases/Witness.mdx) | - |
+| [ZkappPublicInput](type-aliases/ZkappPublicInput.mdx) | The public input for zkApps consists of certain hashes of the proving account update (and its child updates) which is constructed during method execution. |
 | [ZkProgram](type-aliases/ZkProgram.mdx) | - |
-| [ZkappPublicInput](type-aliases/ZkappPublicInput.mdx) | The public input for zkApps consists of certain hashes of the proving |
+
+## Variables
+
+| Variable | Description |
+| ------ | ------ |
 | [Account](variables/Account.mdx) | - |
 | [Bool](variables/Bool.mdx) | A boolean value. You can create it like this: |
 | [Cache](variables/Cache.mdx) | - |
 | [Crypto](variables/Crypto.mdx) | - |
 | [Empty](variables/Empty.mdx) | - |
-| [FeatureFlags](variables/FeatureFlags.mdx) | Feature flags indicate what custom gates are used in a proof of circuit. |
-| [Field](variables/Field.mdx) | A [Field](variables/Field.mdx) is an element of a prime order [finite field](https://en.wikipedia.org/wiki/Finite_field). |
+| [emptyHash](variables/emptyHash.mdx) | - |
+| [FeatureFlags](variables/FeatureFlags.mdx) | Feature flags indicate what custom gates are used in a proof of circuit. Side loading, for example, requires a set of feature flags in advance (at compile time) in order to verify and side load proofs. If the side loaded proofs and verification keys do not match the specified feature flag configurations, the verification will fail. Flags specified as `undefined` are considered as `maybe` by Pickles. This means, proofs can be sided loaded that can, but don't have to, use a specific custom gate. _Note:_ `Maybe` feature flags incur a proving overhead. |
+| [Field](variables/Field.mdx) | A [Field](variables/Field.mdx) is an element of a prime order [finite field](https://en.wikipedia.org/wiki/Finite_field). Every other provable type is built using the [Field](variables/Field.mdx) type. |
 | [Gadgets](variables/Gadgets.mdx) | - |
 | [Group](variables/Group.mdx) | An element of a Group. |
 | [Hash](variables/Hash.mdx) | A collection of hash functions which can be used in provable code. |
 | [Keccak](variables/Keccak.mdx) | - |
 | [Permissions](variables/Permissions.mdx) | - |
 | [Poseidon](variables/Poseidon.mdx) | - |
+| [Provable](variables/Provable.mdx) | - |
 | [ProvableType](variables/ProvableType.mdx) | - |
 | [TokenId](variables/TokenId.mdx) | - |
 | [TransactionVersion](variables/TransactionVersion.mdx) | - |
@@ -200,49 +211,56 @@ To include your package, see [Creating high-quality community packages](https://
 | [Undefined](variables/Undefined.mdx) | - |
 | [Void](variables/Void.mdx) | - |
 | [ZkappPublicInput](variables/ZkappPublicInput.mdx) | - |
-| [emptyHash](variables/emptyHash.mdx) | - |
-| [Bytes](functions/Bytes.mdx) | A provable type representing an array of bytes. |
-| [ConstantField](functions/ConstantField.mdx) | - |
-| [MerkleListBase](functions/MerkleListBase.mdx) | - |
-| [MerkleWitness](functions/MerkleWitness.mdx) | Returns a circuit-compatible Witness for a specific Tree height. |
-| [Option](functions/Option.mdx) | Define an optional version of a provable type. |
-| [Reducer](functions/Reducer.mdx) | - |
-| [State](functions/State.mdx) | - |
-| [Struct](functions/Struct.mdx) | `Struct` lets you declare composite types for use in o1js circuits. |
-| [VarField](functions/VarField.mdx) | - |
-| [WithHash](functions/WithHash.mdx) | - |
-| [ZkProgram](functions/ZkProgram.mdx) | - |
+
+## Functions
+
+| Function | Description |
+| ------ | ------ |
 | [addCachedAccount](functions/addCachedAccount.mdx) | Adds an account to the local cache, indexed by a GraphQL endpoint. |
-| [assert](functions/assert.mdx) | Assert that a statement is true. If the statement is false, throws an error with the given message. |
+| [assert](functions/assert.mdx) | Assert that a statement is true. If the statement is false, throws an error with the given message. Can be used in provable code. |
+| [Bytes](functions/Bytes.mdx) | A provable type representing an array of bytes. |
 | [checkBitLength](functions/checkBitLength.mdx) | - |
 | [checkZkappTransaction](functions/checkZkappTransaction.mdx) | - |
 | [circuitMain](functions/circuitMain.mdx) | - |
 | [conditionalSwap](functions/conditionalSwap.mdx) | - |
+| [ConstantField](functions/ConstantField.mdx) | - |
 | [createEcdsa](functions/createEcdsa.mdx) | Create a class [EcdsaSignature](classes/EcdsaSignature.mdx) for verifying ECDSA signatures on the given curve. |
 | [createForeignCurve](functions/createForeignCurve.mdx) | Create a class representing an elliptic curve group, which is different from the native [Group](classes/Group.mdx). |
 | [createForeignField](functions/createForeignField.mdx) | Create a class representing a prime order finite field, which is different from the native [Field](classes/Field.mdx). |
-| [declareMethods](functions/declareMethods.mdx) | `declareMethods` can be used in place of the `@method` decorator |
-| [declareState](functions/declareState.mdx) | `declareState` can be used in place of the `@state` decorator to declare on-chain state on a SmartContract. |
-| [fetchAccount](functions/fetchAccount.mdx) | Gets account information on the specified publicKey by performing a GraphQL query |
+| [declareMethods](functions/declareMethods.mdx) | `declareMethods` can be used in place of the `@method` decorator to declare SmartContract methods along with their list of arguments. It should be placed _after_ the class declaration. Here is an example of declaring a method `update`, which takes a single argument of type `Field`: `class MyContract extends SmartContract { // ... update(x: Field) { // ... } } declareMethods(MyContract, { update: [Field] }); // `[Field]` is the list of arguments!` Note that a method of the same name must still be defined on the class, just without the decorator. |
+| [declareState](functions/declareState.mdx) | `declareState` can be used in place of the `@state` decorator to declare on-chain state on a SmartContract. It should be placed _after_ the class declaration. Here is an example of declaring a state property `x` of type `Field`. `class MyContract extends SmartContract { x = State<Field>(); // ... } declareState(MyContract, { x: Field });` |
+| [fetchAccount](functions/fetchAccount.mdx) | Gets account information on the specified publicKey by performing a GraphQL query to the specified endpoint. This will call the 'GetAccountInfo' query which fetches zkapp related account information. |
 | [fetchEvents](functions/fetchEvents.mdx) | Asynchronously fetches event data for an account from the Mina Archive Node GraphQL API. |
 | [fetchLastBlock](functions/fetchLastBlock.mdx) | Fetches the last block on the Mina network. |
 | [fetchTransactionStatus](functions/fetchTransactionStatus.mdx) | Fetches the status of a transaction. |
 | [genericHash](functions/genericHash.mdx) | - |
+| [getBlindingValue](functions/getBlindingValue.mdx) | - |
 | [initializeBindings](functions/initializeBindings.mdx) | A function that has to finish before any bindings exports can be used. |
+| [memoizationContext](functions/memoizationContext.mdx) | - |
+| [memoizeWitness](functions/memoizeWitness.mdx) | Like Provable.witness, but memoizes the witness during transaction construction for reuse by the prover. This is needed to witness non-deterministic values. |
+| [MerkleListBase](functions/MerkleListBase.mdx) | - |
 | [merkleListHash](functions/merkleListHash.mdx) | - |
-| [method](functions/method.mdx) | A decorator to use in a zkApp to mark a method as provable. |
+| [MerkleWitness](functions/MerkleWitness.mdx) | Returns a circuit-compatible Witness for a specific Tree height. |
+| [method](functions/method.mdx) | A decorator to use in a zkApp to mark a method as provable. You can use inside your zkApp class as: |
+| [Option](functions/Option.mdx) | Define an optional version of a provable type. |
 | [provable](functions/provable.mdx) | - |
 | [provablePure](functions/provablePure.mdx) | - |
 | [public\_](functions/public.mdx) | - |
 | [readVarMessage](functions/readVarMessage.mdx) | - |
+| [Reducer](functions/Reducer.mdx) | - |
 | [sendZkapp](functions/sendZkapp.mdx) | Sends a zkApp command (transaction) to the specified GraphQL endpoint. |
 | [setArchiveGraphqlEndpoint](functions/setArchiveGraphqlEndpoint.mdx) | Sets up a GraphQL endpoint to be used for fetching information from an Archive Node. |
 | [setGraphqlEndpoint](functions/setGraphqlEndpoint.mdx) | - |
 | [setGraphqlEndpoints](functions/setGraphqlEndpoints.mdx) | - |
 | [setNumberOfWorkers](functions/setNumberOfWorkers.mdx) | Set the number of workers to use for parallelizing the proof generation. By default the number of workers is set to the number of physical CPU cores on your machine, but there may be some instances where you want to set the number of workers manually. Some machines may have a large number of cores, but not enough memory to support that many workers. In that case, you can set the number of workers to a lower number to avoid running out of memory. On the other hand, some machines with heterogeneous cores may benefit from setting the number of workers to a lower number to avoid contention between core types if load-link/store-conditional multithreading is used. Feel free to experiment and see what works best for your use case. Maybe you can squeeze slightly more performance out by tweaking this value :) |
-| [state](functions/state-1.mdx) | A decorator to use within a zkapp to indicate what will be stored on-chain. |
+| [state](functions/state.mdx) | A decorator to use within a zkapp to indicate what will be stored on-chain. For example, if you want to store a field element `some_state` in a zkapp, you can use the following in the declaration of your zkapp: |
+| [State](functions/State-1.mdx) | - |
+| [Struct](functions/Struct.mdx) | `Struct` lets you declare composite types for use in o1js circuits. |
 | [toConstantField](functions/toConstantField.mdx) | - |
 | [toFp](functions/toFp.mdx) | - |
-| [verify](functions/verify.mdx) | - |
+| [VarField](functions/VarField.mdx) | - |
+| [verify](functions/verify.mdx) | Initializes Pickles bindings, serializes the input proof and verification key for use in OCaml, then calls into the Pickles verify function and returns the result. |
+| [WithHash](functions/WithHash.mdx) | - |
 | [withHashes](functions/withHashes.mdx) | - |
 | [withMessage](functions/withMessage.mdx) | - |
+| [ZkProgram](functions/ZkProgram.mdx) | Wraps config + provable code into a program capable of producing [Proof](classes/Proof.mdx)s. |

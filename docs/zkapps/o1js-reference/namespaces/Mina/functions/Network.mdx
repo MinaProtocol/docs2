@@ -1,50 +1,73 @@
-## Network(graphqlEndpoint)
+## Call Signature
 
 ```ts
 function Network(graphqlEndpoint: string): Mina
 ```
 
+Defined in: [lib/mina/v1/mina.ts:101](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/mina.ts#L101)
+
 Represents the Mina blockchain running on a real network
 
 ### Parameters
 
-• **graphqlEndpoint**: `string`
+#### graphqlEndpoint
+
+`string`
 
 ### Returns
 
 `Mina`
 
-### Source
-
-[lib/mina/mina.ts:101](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/mina.ts#L101)
-
-## Network(options)
+## Call Signature
 
 ```ts
 function Network(options: {
-  "archive": string | string[];
-  "lightnetAccountManager": string;
-  "mina": string | string[];
-  "networkId": NetworkId;
+  archive: string | string[];
+  archiveDefaultHeaders: HeadersInit;
+  bypassTransactionLimits: boolean;
+  lightnetAccountManager: string;
+  mina: string | string[];
+  minaDefaultHeaders: HeadersInit;
+  networkId: NetworkId;
  }): Mina
 ```
 
+Defined in: [lib/mina/v1/mina.ts:102](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/mina.ts#L102)
+
+Represents the Mina blockchain running on a real network
+
 ### Parameters
 
-• **options**
+#### options
 
-• **options.archive?**: `string` \| `string`[]
+##### archive
 
-• **options.lightnetAccountManager?**: `string`
+`string` \| `string`[]
 
-• **options.mina**: `string` \| `string`[]
+##### archiveDefaultHeaders
 
-• **options.networkId?**: `NetworkId`
+`HeadersInit`
+
+##### bypassTransactionLimits
+
+`boolean`
+
+##### lightnetAccountManager
+
+`string`
+
+##### mina
+
+`string` \| `string`[]
+
+##### minaDefaultHeaders
+
+`HeadersInit`
+
+##### networkId
+
+`NetworkId`
 
 ### Returns
 
 `Mina`
-
-### Source
-
-[lib/mina/mina.ts:102](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/mina.ts#L102)

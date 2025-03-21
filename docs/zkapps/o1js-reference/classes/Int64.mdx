@@ -1,3 +1,5 @@
+Defined in: [lib/provable/int.ts:1087](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L1087)
+
 A 64 bit signed integer with values ranging from -18,446,744,073,709,551,615 to 18,446,744,073,709,551,615.
 
 ## Extends
@@ -16,23 +18,25 @@ A 64 bit signed integer with values ranging from -18,446,744,073,709,551,615 to 
 new Int64(magnitude: UInt64, sgn?: Sign): Int64
 ```
 
+Defined in: [lib/provable/int.ts:1132](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L1132)
+
 #### Parameters
 
-• **magnitude**: [`UInt64`](UInt64.mdx)
+##### magnitude
+
+[`UInt64`](UInt64.mdx)
 
 The magnitude of the integer as a UInt64.
 
-• **sgn?**: [`Sign`](Sign.mdx)= `Sign.one`
+##### sgn?
+
+[`Sign`](Sign.mdx) = `Sign.one`
 
 The sign of the integer. Default is positive (Sign.one).
 
 #### Returns
 
 [`Int64`](Int64.mdx)
-
-#### Overrides
-
-`CircuitValue.constructor`
 
 #### Deprecated
 
@@ -50,9 +54,11 @@ Recommended Fix:
 Use Int64.create() which enforces a canonical representation of zero, or
 explicitly handle the zero case in operations like mod().
 
-#### Source
+#### Overrides
 
-[lib/provable/int.ts:1141](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1141)
+```ts
+CircuitValue.constructor
+```
 
 ## Properties
 
@@ -62,13 +68,13 @@ explicitly handle the zero case in operations like mod().
 magnitude: UInt64;
 ```
 
+Defined in: [lib/provable/int.ts:1091](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L1091)
+
 #### Implementation of
 
-`BalanceChange.magnitude`
-
-#### Source
-
-[lib/provable/int.ts:1100](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1100)
+```ts
+BalanceChange.magnitude
+```
 
 ***
 
@@ -78,13 +84,13 @@ magnitude: UInt64;
 sgn: Sign;
 ```
 
+Defined in: [lib/provable/int.ts:1092](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L1092)
+
 #### Implementation of
 
-`BalanceChange.sgn`
-
-#### Source
-
-[lib/provable/int.ts:1101](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1101)
+```ts
+BalanceChange.sgn
+```
 
 ***
 
@@ -92,81 +98,83 @@ sgn: Sign;
 
 ```ts
 static Unsafe: {
-  "fromObject": Int64;
+  fromObject: Int64;
 };
 ```
+
+Defined in: [lib/provable/int.ts:1197](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L1197)
 
 #### fromObject()
 
 ##### Parameters
 
-• **obj**
+###### obj
 
-• **obj.magnitude**: [`UInt64`](UInt64.mdx)
+###### magnitude
 
-• **obj.sgn**: [`Sign`](Sign.mdx)
+[`UInt64`](UInt64.mdx)
+
+###### sgn
+
+[`Sign`](Sign.mdx)
 
 ##### Returns
 
 [`Int64`](Int64.mdx)
 
-#### Source
-
-[lib/provable/int.ts:1206](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1206)
-
 ## Accessors
 
 ### minusOne
+
+#### Get Signature
 
 ```ts
 get static minusOne(): Int64
 ```
 
+Defined in: [lib/provable/int.ts:1246](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L1246)
+
 Static method to create a [Int64](Int64.mdx) with value `-1`.
 
-#### Returns
+##### Returns
 
 [`Int64`](Int64.mdx)
-
-#### Source
-
-[lib/provable/int.ts:1258](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1258)
 
 ***
 
 ### one
 
+#### Get Signature
+
 ```ts
 get static one(): Int64
 ```
 
+Defined in: [lib/provable/int.ts:1240](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L1240)
+
 Static method to create a [Int64](Int64.mdx) with value `1`.
 
-#### Returns
+##### Returns
 
 [`Int64`](Int64.mdx)
-
-#### Source
-
-[lib/provable/int.ts:1252](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1252)
 
 ***
 
 ### zero
 
+#### Get Signature
+
 ```ts
 get static zero(): Int64
 ```
 
+Defined in: [lib/provable/int.ts:1234](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L1234)
+
 Static method to create a [Int64](Int64.mdx) with value `0`.
 
-#### Returns
+##### Returns
 
 [`Int64`](Int64.mdx)
-
-#### Source
-
-[lib/provable/int.ts:1246](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1246)
 
 ## Methods
 
@@ -182,17 +190,15 @@ add(y:
   | Int64): Int64
 ```
 
+Defined in: [lib/provable/int.ts:1297](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L1297)
+
 Addition with overflow checking.
 
 #### Parameters
 
-• **y**: 
-  \| `string`
-  \| `number`
-  \| `bigint`
-  \| [`UInt64`](UInt64.mdx)
-  \| [`UInt32`](UInt32.mdx)
-  \| [`Int64`](Int64.mdx)
+##### y
+
+`string` | `number` | `bigint` | [`UInt64`](UInt64.mdx) | [`UInt32`](UInt32.mdx) | [`Int64`](Int64.mdx)
 
 #### Returns
 
@@ -200,11 +206,9 @@ Addition with overflow checking.
 
 #### Implementation of
 
-`BalanceChange.add`
-
-#### Source
-
-[lib/provable/int.ts:1309](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1309)
+```ts
+BalanceChange.add
+```
 
 ***
 
@@ -220,19 +224,19 @@ assertEquals(y:
   | Int64, message?: string): void
 ```
 
+Defined in: [lib/provable/int.ts:1375](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L1375)
+
 Asserts that two values are equal.
 
 #### Parameters
 
-• **y**: 
-  \| `string`
-  \| `number`
-  \| `bigint`
-  \| [`UInt64`](UInt64.mdx)
-  \| [`UInt32`](UInt32.mdx)
-  \| [`Int64`](Int64.mdx)
+##### y
 
-• **message?**: `string`
+`string` | `number` | `bigint` | [`UInt64`](UInt64.mdx) | [`UInt32`](UInt32.mdx) | [`Int64`](Int64.mdx)
+
+##### message?
+
+`string`
 
 #### Returns
 
@@ -240,15 +244,15 @@ Asserts that two values are equal.
 
 #### Implementation of
 
-`BalanceChange.assertEquals`
+```ts
+BalanceChange.assertEquals
+```
 
 #### Overrides
 
-`CircuitValue.assertEquals`
-
-#### Source
-
-[lib/provable/int.ts:1391](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1391)
+```ts
+CircuitValue.assertEquals
+```
 
 ***
 
@@ -264,19 +268,17 @@ div(y:
   | Int64): Int64
 ```
 
+Defined in: [lib/provable/int.ts:1329](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L1329)
+
 Integer division with canonical zero representation.
 
 #### Parameters
 
-• **y**: 
-  \| `string`
-  \| `number`
-  \| `bigint`
-  \| [`UInt64`](UInt64.mdx)
-  \| [`UInt32`](UInt32.mdx)
-  \| [`Int64`](Int64.mdx)
+##### y
 
 The divisor. Can be an Int64, number, string, bigint, UInt64, or UInt32.
+
+`string` | `number` | `bigint` | [`UInt64`](UInt64.mdx) | [`UInt32`](UInt32.mdx) | [`Int64`](Int64.mdx)
 
 #### Returns
 
@@ -293,11 +295,9 @@ representation, eliminating potential ambiguities in zero handling.
 
 #### Implementation of
 
-`BalanceChange.div`
-
-#### Source
-
-[lib/provable/int.ts:1341](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1341)
+```ts
+BalanceChange.div
+```
 
 ***
 
@@ -313,17 +313,15 @@ equals(y:
   | Int64): Bool
 ```
 
+Defined in: [lib/provable/int.ts:1368](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L1368)
+
 Checks if two values are equal.
 
 #### Parameters
 
-• **y**: 
-  \| `string`
-  \| `number`
-  \| `bigint`
-  \| [`UInt64`](UInt64.mdx)
-  \| [`UInt32`](UInt32.mdx)
-  \| [`Int64`](Int64.mdx)
+##### y
+
+`string` | `number` | `bigint` | [`UInt64`](UInt64.mdx) | [`UInt32`](UInt32.mdx) | [`Int64`](Int64.mdx)
 
 #### Returns
 
@@ -331,15 +329,15 @@ Checks if two values are equal.
 
 #### Implementation of
 
-`BalanceChange.equals`
+```ts
+BalanceChange.equals
+```
 
 #### Overrides
 
-`CircuitValue.equals`
-
-#### Source
-
-[lib/provable/int.ts:1384](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1384)
+```ts
+CircuitValue.equals
+```
 
 ***
 
@@ -347,18 +345,24 @@ Checks if two values are equal.
 
 ```ts
 fromObject(obj: {
-  "magnitude": string | number | bigint | UInt64;
-  "sgn": bigint | Sign;
+  magnitude: string | number | bigint | UInt64;
+  sgn: bigint | Sign;
  }): Int64
 ```
 
+Defined in: [lib/provable/int.ts:1203](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L1203)
+
 #### Parameters
 
-• **obj**
+##### obj
 
-• **obj.magnitude**: `string` \| `number` \| `bigint` \| [`UInt64`](UInt64.mdx)
+###### magnitude
 
-• **obj.sgn**: `bigint` \| [`Sign`](Sign.mdx)
+`string` \| `number` \| `bigint` \| [`UInt64`](UInt64.mdx)
+
+###### sgn
+
+`bigint` \| [`Sign`](Sign.mdx)
 
 #### Returns
 
@@ -366,11 +370,9 @@ fromObject(obj: {
 
 #### Implementation of
 
-`BalanceChange.fromObject`
-
-#### Source
-
-[lib/provable/int.ts:1212](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1212)
+```ts
+BalanceChange.fromObject
+```
 
 ***
 
@@ -380,21 +382,23 @@ fromObject(obj: {
 isConstant(): boolean
 ```
 
+Defined in: [lib/provable/int.ts:1223](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L1223)
+
 #### Returns
 
 `boolean`
 
 #### Implementation of
 
-`BalanceChange.isConstant`
+```ts
+BalanceChange.isConstant
+```
 
 #### Overrides
 
-`CircuitValue.isConstant`
-
-#### Source
-
-[lib/provable/int.ts:1235](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1235)
+```ts
+CircuitValue.isConstant
+```
 
 ***
 
@@ -404,6 +408,8 @@ isConstant(): boolean
 isNegative(): Bool
 ```
 
+Defined in: [lib/provable/int.ts:1405](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L1405)
+
 Checks if the value is negative (x < 0).
 
 #### Returns
@@ -412,11 +418,9 @@ Checks if the value is negative (x < 0).
 
 #### Implementation of
 
-`BalanceChange.isNegative`
-
-#### Source
-
-[lib/provable/int.ts:1424](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1424)
+```ts
+BalanceChange.isNegative
+```
 
 ***
 
@@ -426,6 +430,8 @@ Checks if the value is negative (x < 0).
 isNonNegative(): Bool
 ```
 
+Defined in: [lib/provable/int.ts:1397](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L1397)
+
 Checks if the value is non-negative (x >= 0).
 
 #### Returns
@@ -434,11 +440,9 @@ Checks if the value is non-negative (x >= 0).
 
 #### Implementation of
 
-`BalanceChange.isNonNegative`
-
-#### Source
-
-[lib/provable/int.ts:1416](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1416)
+```ts
+BalanceChange.isNonNegative
+```
 
 ***
 
@@ -448,6 +452,8 @@ Checks if the value is non-negative (x >= 0).
 isPositive(): Bool
 ```
 
+Defined in: [lib/provable/int.ts:1390](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L1390)
+
 Checks if the value is strictly positive (x > 0).
 
 #### Returns
@@ -456,32 +462,27 @@ Checks if the value is strictly positive (x > 0).
 
 True if the value is greater than zero, false otherwise.
 
-#### Implementation of
-
-`BalanceChange.isPositive`
-
 #### Remarks
 
 This method considers zero as non-positive. It ensures consistency
 with the mathematical definition of "positive" as strictly greater than zero.
 This differs from some other methods which may treat zero as non-negative.
 
-#### Source
+#### Implementation of
 
-[lib/provable/int.ts:1409](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1409)
+```ts
+BalanceChange.isPositive
+```
 
 ***
 
 ### mod()
 
 ```ts
-mod(y: 
-  | string
-  | number
-  | bigint
-  | UInt64
-  | UInt32): Int64
+mod(y: string | number | bigint | UInt64 | UInt32): Int64
 ```
+
+Defined in: [lib/provable/int.ts:1357](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L1357)
 
 Calculates the integer remainder of this Int64 divided by the given value.
 
@@ -493,24 +494,17 @@ Note: This method follows the "truncate toward zero" convention for negative num
 
 #### Parameters
 
-• **y**: 
-  \| `string`
-  \| `number`
-  \| `bigint`
-  \| [`UInt64`](UInt64.mdx)
-  \| [`UInt32`](UInt32.mdx)
+##### y
 
 The divisor. Will be converted to UInt64 if not already.
+
+`string` | `number` | `bigint` | [`UInt64`](UInt64.mdx) | [`UInt32`](UInt32.mdx)
 
 #### Returns
 
 [`Int64`](Int64.mdx)
 
 A new Int64 instance representing the remainder.
-
-#### Implementation of
-
-`BalanceChange.mod`
 
 #### Example
 
@@ -524,9 +518,11 @@ console.log(x1.mod(y1).toString()); // Output: 2
 
 Implicitly, if y is zero or negative.
 
-#### Source
+#### Implementation of
 
-[lib/provable/int.ts:1369](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1369)
+```ts
+BalanceChange.mod
+```
 
 ***
 
@@ -542,17 +538,15 @@ mul(y:
   | Int64): Int64
 ```
 
+Defined in: [lib/provable/int.ts:1311](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L1311)
+
 Multiplication with overflow checking.
 
 #### Parameters
 
-• **y**: 
-  \| `string`
-  \| `number`
-  \| `bigint`
-  \| [`UInt64`](UInt64.mdx)
-  \| [`UInt32`](UInt32.mdx)
-  \| [`Int64`](Int64.mdx)
+##### y
+
+`string` | `number` | `bigint` | [`UInt64`](UInt64.mdx) | [`UInt32`](UInt32.mdx) | [`Int64`](Int64.mdx)
 
 #### Returns
 
@@ -560,11 +554,9 @@ Multiplication with overflow checking.
 
 #### Implementation of
 
-`BalanceChange.mul`
-
-#### Source
-
-[lib/provable/int.ts:1323](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1323)
+```ts
+BalanceChange.mul
+```
 
 ***
 
@@ -573,6 +565,8 @@ Multiplication with overflow checking.
 ```ts
 neg(): Int64
 ```
+
+Defined in: [lib/provable/int.ts:1286](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L1286)
 
 Negates the current Int64 value.
 
@@ -584,10 +578,6 @@ If the current value is zero, it returns zero.
 [`Int64`](Int64.mdx)
 
 A new Int64 instance with the negated value.
-
-#### Implementation of
-
-`BalanceChange.neg`
 
 #### Example
 
@@ -604,9 +594,11 @@ Int64.from(5).neg();
 
 Implicitly, if the internal Provable.if condition fails
 
-#### Source
+#### Implementation of
 
-[lib/provable/int.ts:1298](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1298)
+```ts
+BalanceChange.neg
+```
 
 ***
 
@@ -622,17 +614,15 @@ sub(y:
   | Int64): Int64
 ```
 
+Defined in: [lib/provable/int.ts:1304](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L1304)
+
 Subtraction with underflow checking.
 
 #### Parameters
 
-• **y**: 
-  \| `string`
-  \| `number`
-  \| `bigint`
-  \| [`UInt64`](UInt64.mdx)
-  \| [`UInt32`](UInt32.mdx)
-  \| [`Int64`](Int64.mdx)
+##### y
+
+`string` | `number` | `bigint` | [`UInt64`](UInt64.mdx) | [`UInt32`](UInt32.mdx) | [`Int64`](Int64.mdx)
 
 #### Returns
 
@@ -640,11 +630,9 @@ Subtraction with underflow checking.
 
 #### Implementation of
 
-`BalanceChange.sub`
-
-#### Source
-
-[lib/provable/int.ts:1316](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1316)
+```ts
+BalanceChange.sub
+```
 
 ***
 
@@ -654,6 +642,8 @@ Subtraction with underflow checking.
 toBigint(): bigint
 ```
 
+Defined in: [lib/provable/int.ts:1210](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L1210)
+
 Turns the [Int64](Int64.mdx) into a BigInt.
 
 #### Returns
@@ -662,11 +652,9 @@ Turns the [Int64](Int64.mdx) into a BigInt.
 
 #### Implementation of
 
-`BalanceChange.toBigint`
-
-#### Source
-
-[lib/provable/int.ts:1222](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1222)
+```ts
+BalanceChange.toBigint
+```
 
 ***
 
@@ -676,21 +664,23 @@ Turns the [Int64](Int64.mdx) into a BigInt.
 toConstant(): this
 ```
 
+Defined in: [lib/provable/types/circuit-value.ts:113](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/circuit-value.ts#L113)
+
 #### Returns
 
 `this`
 
 #### Implementation of
 
-`BalanceChange.toConstant`
+```ts
+BalanceChange.toConstant
+```
 
 #### Inherited from
 
-`CircuitValue.toConstant`
-
-#### Source
-
-[lib/provable/types/circuit-value.ts:122](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/circuit-value.ts#L122)
+```ts
+CircuitValue.toConstant
+```
 
 ***
 
@@ -700,6 +690,8 @@ toConstant(): this
 toField(): Field
 ```
 
+Defined in: [lib/provable/int.ts:1253](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L1253)
+
 Returns the [Field](../variables/Field.mdx) value.
 
 #### Returns
@@ -708,11 +700,9 @@ Returns the [Field](../variables/Field.mdx) value.
 
 #### Implementation of
 
-`BalanceChange.toField`
-
-#### Source
-
-[lib/provable/int.ts:1265](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1265)
+```ts
+BalanceChange.toField
+```
 
 ***
 
@@ -722,21 +712,23 @@ Returns the [Field](../variables/Field.mdx) value.
 toFields(): Field[]
 ```
 
+Defined in: [lib/provable/types/circuit-value.ts:79](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/circuit-value.ts#L79)
+
 #### Returns
 
 [`Field`](Field.mdx)[]
 
 #### Implementation of
 
-`BalanceChange.toFields`
+```ts
+BalanceChange.toFields
+```
 
 #### Inherited from
 
-`CircuitValue.toFields`
-
-#### Source
-
-[lib/provable/types/circuit-value.ts:85](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/circuit-value.ts#L85)
+```ts
+CircuitValue.toFields
+```
 
 ***
 
@@ -746,21 +738,23 @@ toFields(): Field[]
 toJSON(): any
 ```
 
+Defined in: [lib/provable/types/circuit-value.ts:109](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/circuit-value.ts#L109)
+
 #### Returns
 
 `any`
 
 #### Implementation of
 
-`BalanceChange.toJSON`
+```ts
+BalanceChange.toJSON
+```
 
 #### Inherited from
 
-`CircuitValue.toJSON`
-
-#### Source
-
-[lib/provable/types/circuit-value.ts:118](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/circuit-value.ts#L118)
+```ts
+CircuitValue.toJSON
+```
 
 ***
 
@@ -770,6 +764,8 @@ toJSON(): any
 toString(): string
 ```
 
+Defined in: [lib/provable/int.ts:1219](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L1219)
+
 Turns the [Int64](Int64.mdx) into a string.
 
 #### Returns
@@ -778,11 +774,9 @@ Turns the [Int64](Int64.mdx) into a string.
 
 #### Implementation of
 
-`BalanceChange.toString`
-
-#### Source
-
-[lib/provable/int.ts:1231](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1231)
+```ts
+BalanceChange.toString
+```
 
 ***
 
@@ -790,18 +784,24 @@ Turns the [Int64](Int64.mdx) into a string.
 
 ```ts
 static check(__namedParameters: {
-  "magnitude": UInt64;
-  "sgn": Sign;
+  magnitude: UInt64;
+  sgn: Sign;
  }): void
 ```
 
+Defined in: [lib/provable/int.ts:1409](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L1409)
+
 #### Parameters
 
-• **\_\_namedParameters**
+##### \_\_namedParameters
 
-• **\_\_namedParameters.magnitude**: [`UInt64`](UInt64.mdx)
+###### magnitude
 
-• **\_\_namedParameters.sgn**: [`Sign`](Sign.mdx)
+[`UInt64`](UInt64.mdx)
+
+###### sgn
+
+[`Sign`](Sign.mdx)
 
 #### Returns
 
@@ -809,11 +809,9 @@ static check(__namedParameters: {
 
 #### Overrides
 
-`CircuitValue.check`
-
-#### Source
-
-[lib/provable/int.ts:1428](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1428)
+```ts
+CircuitValue.check
+```
 
 ***
 
@@ -823,16 +821,24 @@ static check(__namedParameters: {
 static create(magnitude: UInt64, sign: Sign): Int64
 ```
 
+Defined in: [lib/provable/int.ts:1149](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L1149)
+
 Safely creates a new Int64 instance, enforcing canonical representation of zero.
 This is the recommended way to create Int64 instances.
 
 #### Parameters
 
-• **magnitude**: [`UInt64`](UInt64.mdx)
+##### magnitude
+
+[`UInt64`](UInt64.mdx)
 
 The magnitude of the integer as a UInt64
 
-• **sign**: [`Sign`](Sign.mdx)= `Sign.one`
+##### sign
+
+[`Sign`](Sign.mdx) = `Sign.one`
+
+The sign of the integer.
 
 #### Returns
 
@@ -846,10 +852,6 @@ A new Int64 instance with a canonical representation.
 const x = Int64.create(0); // canonical representation of zero
 ```
 
-#### Source
-
-[lib/provable/int.ts:1158](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1158)
-
 ***
 
 ### empty()
@@ -858,7 +860,9 @@ const x = Int64.create(0); // canonical representation of zero
 static empty<T>(): InstanceType<T>
 ```
 
-#### Type parameters
+Defined in: [lib/provable/types/circuit-value.ts:205](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/circuit-value.ts#L205)
+
+#### Type Parameters
 
 • **T** *extends* `AnyConstructor`
 
@@ -868,11 +872,9 @@ static empty<T>(): InstanceType<T>
 
 #### Inherited from
 
-`CircuitValue.empty`
-
-#### Source
-
-[lib/provable/types/circuit-value.ts:230](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/circuit-value.ts#L230)
+```ts
+CircuitValue.empty
+```
 
 ***
 
@@ -889,28 +891,21 @@ static from(x:
   | Int64): Int64
 ```
 
+Defined in: [lib/provable/int.ts:1189](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L1189)
+
 Creates a new [Int64](Int64.mdx).
 
 Check the range if the argument is a constant.
 
 #### Parameters
 
-• **x**: 
-  \| `string`
-  \| `number`
-  \| `bigint`
-  \| [`Field`](Field.mdx)
-  \| [`UInt64`](UInt64.mdx)
-  \| [`UInt32`](UInt32.mdx)
-  \| [`Int64`](Int64.mdx)
+##### x
+
+`string` | `number` | `bigint` | [`Field`](Field.mdx) | [`UInt64`](UInt64.mdx) | [`UInt32`](UInt32.mdx) | [`Int64`](Int64.mdx)
 
 #### Returns
 
 [`Int64`](Int64.mdx)
-
-#### Source
-
-[lib/provable/int.ts:1198](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1198)
 
 ***
 
@@ -920,19 +915,19 @@ Check the range if the argument is a constant.
 static fromField(x: Field): Int64
 ```
 
+Defined in: [lib/provable/int.ts:1259](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L1259)
+
 Static method to create a [Int64](Int64.mdx) from a [Field](../variables/Field.mdx).
 
 #### Parameters
 
-• **x**: [`Field`](Field.mdx)
+##### x
+
+[`Field`](Field.mdx)
 
 #### Returns
 
 [`Int64`](Int64.mdx)
-
-#### Source
-
-[lib/provable/int.ts:1271](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1271)
 
 ***
 
@@ -942,15 +937,21 @@ Static method to create a [Int64](Int64.mdx) from a [Field](../variables/Field.m
 static fromFields<T>(this: T, xs: Field[]): InstanceType<T>
 ```
 
-#### Type parameters
+Defined in: [lib/provable/types/circuit-value.ts:129](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/circuit-value.ts#L129)
+
+#### Type Parameters
 
 • **T** *extends* `AnyConstructor`
 
 #### Parameters
 
-• **this**: `T`
+##### this
 
-• **xs**: [`Field`](Field.mdx)[]
+`T`
+
+##### xs
+
+[`Field`](Field.mdx)[]
 
 #### Returns
 
@@ -958,11 +959,9 @@ static fromFields<T>(this: T, xs: Field[]): InstanceType<T>
 
 #### Inherited from
 
-`CircuitValue.fromFields`
-
-#### Source
-
-[lib/provable/types/circuit-value.ts:138](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/circuit-value.ts#L138)
+```ts
+CircuitValue.fromFields
+```
 
 ***
 
@@ -972,15 +971,21 @@ static fromFields<T>(this: T, xs: Field[]): InstanceType<T>
 static fromJSON<T>(this: T, value: any): InstanceType<T>
 ```
 
-#### Type parameters
+Defined in: [lib/provable/types/circuit-value.ts:186](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/circuit-value.ts#L186)
+
+#### Type Parameters
 
 • **T** *extends* `AnyConstructor`
 
 #### Parameters
 
-• **this**: `T`
+##### this
 
-• **value**: `any`
+`T`
+
+##### value
+
+`any`
 
 #### Returns
 
@@ -988,11 +993,9 @@ static fromJSON<T>(this: T, value: any): InstanceType<T>
 
 #### Inherited from
 
-`CircuitValue.fromJSON`
-
-#### Source
-
-[lib/provable/types/circuit-value.ts:208](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/circuit-value.ts#L208)
+```ts
+CircuitValue.fromJSON
+```
 
 ***
 
@@ -1002,15 +1005,21 @@ static fromJSON<T>(this: T, value: any): InstanceType<T>
 static fromObject<T>(this: T, value: NonMethods<InstanceType<T>>): InstanceType<T>
 ```
 
-#### Type parameters
+Defined in: [lib/provable/types/circuit-value.ts:30](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/circuit-value.ts#L30)
+
+#### Type Parameters
 
 • **T** *extends* `AnyConstructor`
 
 #### Parameters
 
-• **this**: `T`
+##### this
 
-• **value**: `NonMethods`\<`InstanceType`\<`T`\>\>
+`T`
+
+##### value
+
+`NonMethods`\<`InstanceType`\<`T`\>\>
 
 #### Returns
 
@@ -1018,11 +1027,9 @@ static fromObject<T>(this: T, value: NonMethods<InstanceType<T>>): InstanceType<
 
 #### Inherited from
 
-`CircuitValue.fromObject`
-
-#### Source
-
-[lib/provable/types/circuit-value.ts:30](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/circuit-value.ts#L30)
+```ts
+CircuitValue.fromObject
+```
 
 ***
 
@@ -1032,21 +1039,21 @@ static fromObject<T>(this: T, value: NonMethods<InstanceType<T>>): InstanceType<
 static fromUnsigned(x: UInt64 | UInt32): Int64
 ```
 
+Defined in: [lib/provable/int.ts:1179](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/int.ts#L1179)
+
 Creates a new [Int64](Int64.mdx) from a [Field](../variables/Field.mdx).
 
 **Does not** check if the [Field](../variables/Field.mdx) is within range.
 
 #### Parameters
 
-• **x**: [`UInt64`](UInt64.mdx) \| [`UInt32`](UInt32.mdx)
+##### x
+
+[`UInt64`](UInt64.mdx) | [`UInt32`](UInt32.mdx)
 
 #### Returns
 
 [`Int64`](Int64.mdx)
-
-#### Source
-
-[lib/provable/int.ts:1188](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1188)
 
 ***
 
@@ -1056,15 +1063,21 @@ Creates a new [Int64](Int64.mdx) from a [Field](../variables/Field.mdx).
 static fromValue<T>(this: T, value: any): InstanceType<T>
 ```
 
-#### Type parameters
+Defined in: [lib/provable/types/circuit-value.ts:92](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/circuit-value.ts#L92)
+
+#### Type Parameters
 
 • **T** *extends* `AnyConstructor`
 
 #### Parameters
 
-• **this**: `T`
+##### this
 
-• **value**: `any`
+`T`
+
+##### value
+
+`any`
 
 #### Returns
 
@@ -1072,11 +1085,9 @@ static fromValue<T>(this: T, value: any): InstanceType<T>
 
 #### Inherited from
 
-`CircuitValue.fromValue`
-
-#### Source
-
-[lib/provable/types/circuit-value.ts:98](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/circuit-value.ts#L98)
+```ts
+CircuitValue.fromValue
+```
 
 ***
 
@@ -1086,17 +1097,17 @@ static fromValue<T>(this: T, value: any): InstanceType<T>
 static sizeInFields(): number
 ```
 
+Defined in: [lib/provable/types/circuit-value.ts:37](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/circuit-value.ts#L37)
+
 #### Returns
 
 `number`
 
 #### Inherited from
 
-`CircuitValue.sizeInFields`
-
-#### Source
-
-[lib/provable/types/circuit-value.ts:37](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/circuit-value.ts#L37)
+```ts
+CircuitValue.sizeInFields
+```
 
 ***
 
@@ -1106,17 +1117,17 @@ static sizeInFields(): number
 static toAuxiliary(): []
 ```
 
+Defined in: [lib/provable/types/circuit-value.ts:56](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/circuit-value.ts#L56)
+
 #### Returns
 
-[]
+\[\]
 
 #### Inherited from
 
-`CircuitValue.toAuxiliary`
-
-#### Source
-
-[lib/provable/types/circuit-value.ts:59](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/circuit-value.ts#L59)
+```ts
+CircuitValue.toAuxiliary
+```
 
 ***
 
@@ -1126,15 +1137,21 @@ static toAuxiliary(): []
 static toCanonical<T>(this: T, value: InstanceType<T>): InstanceType<T>
 ```
 
-#### Type parameters
+Defined in: [lib/provable/types/circuit-value.ts:161](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/circuit-value.ts#L161)
+
+#### Type Parameters
 
 • **T** *extends* `AnyConstructor`
 
 #### Parameters
 
-• **this**: `T`
+##### this
 
-• **value**: `InstanceType`\<`T`\>
+`T`
+
+##### value
+
+`InstanceType`\<`T`\>
 
 #### Returns
 
@@ -1142,11 +1159,9 @@ static toCanonical<T>(this: T, value: InstanceType<T>): InstanceType<T>
 
 #### Inherited from
 
-`CircuitValue.toCanonical`
-
-#### Source
-
-[lib/provable/types/circuit-value.ts:177](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/circuit-value.ts#L177)
+```ts
+CircuitValue.toCanonical
+```
 
 ***
 
@@ -1156,15 +1171,21 @@ static toCanonical<T>(this: T, value: InstanceType<T>): InstanceType<T>
 static toConstant<T>(this: T, t: InstanceType<T>): InstanceType<T>
 ```
 
-#### Type parameters
+Defined in: [lib/provable/types/circuit-value.ts:170](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/circuit-value.ts#L170)
+
+#### Type Parameters
 
 • **T** *extends* `AnyConstructor`
 
 #### Parameters
 
-• **this**: `T`
+##### this
 
-• **t**: `InstanceType`\<`T`\>
+`T`
+
+##### t
+
+`InstanceType`\<`T`\>
 
 #### Returns
 
@@ -1172,11 +1193,9 @@ static toConstant<T>(this: T, t: InstanceType<T>): InstanceType<T>
 
 #### Inherited from
 
-`CircuitValue.toConstant`
-
-#### Source
-
-[lib/provable/types/circuit-value.ts:189](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/circuit-value.ts#L189)
+```ts
+CircuitValue.toConstant
+```
 
 ***
 
@@ -1186,15 +1205,21 @@ static toConstant<T>(this: T, t: InstanceType<T>): InstanceType<T>
 static toFields<T>(this: T, v: InstanceType<T>): Field[]
 ```
 
-#### Type parameters
+Defined in: [lib/provable/types/circuit-value.ts:42](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/circuit-value.ts#L42)
+
+#### Type Parameters
 
 • **T** *extends* `AnyConstructor`
 
 #### Parameters
 
-• **this**: `T`
+##### this
 
-• **v**: `InstanceType`\<`T`\>
+`T`
+
+##### v
+
+`InstanceType`\<`T`\>
 
 #### Returns
 
@@ -1202,11 +1227,9 @@ static toFields<T>(this: T, v: InstanceType<T>): Field[]
 
 #### Inherited from
 
-`CircuitValue.toFields`
-
-#### Source
-
-[lib/provable/types/circuit-value.ts:42](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/circuit-value.ts#L42)
+```ts
+CircuitValue.toFields
+```
 
 ***
 
@@ -1216,15 +1239,21 @@ static toFields<T>(this: T, v: InstanceType<T>): Field[]
 static toInput<T>(this: T, v: InstanceType<T>): HashInput
 ```
 
-#### Type parameters
+Defined in: [lib/provable/types/circuit-value.ts:60](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/circuit-value.ts#L60)
+
+#### Type Parameters
 
 • **T** *extends* `AnyConstructor`
 
 #### Parameters
 
-• **this**: `T`
+##### this
 
-• **v**: `InstanceType`\<`T`\>
+`T`
+
+##### v
+
+`InstanceType`\<`T`\>
 
 #### Returns
 
@@ -1232,11 +1261,9 @@ static toInput<T>(this: T, v: InstanceType<T>): HashInput
 
 #### Inherited from
 
-`CircuitValue.toInput`
-
-#### Source
-
-[lib/provable/types/circuit-value.ts:63](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/circuit-value.ts#L63)
+```ts
+CircuitValue.toInput
+```
 
 ***
 
@@ -1246,15 +1273,21 @@ static toInput<T>(this: T, v: InstanceType<T>): HashInput
 static toJSON<T>(this: T, v: InstanceType<T>): any
 ```
 
-#### Type parameters
+Defined in: [lib/provable/types/circuit-value.ts:175](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/circuit-value.ts#L175)
+
+#### Type Parameters
 
 • **T** *extends* `AnyConstructor`
 
 #### Parameters
 
-• **this**: `T`
+##### this
 
-• **v**: `InstanceType`\<`T`\>
+`T`
+
+##### v
+
+`InstanceType`\<`T`\>
 
 #### Returns
 
@@ -1262,11 +1295,9 @@ static toJSON<T>(this: T, v: InstanceType<T>): any
 
 #### Inherited from
 
-`CircuitValue.toJSON`
-
-#### Source
-
-[lib/provable/types/circuit-value.ts:197](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/circuit-value.ts#L197)
+```ts
+CircuitValue.toJSON
+```
 
 ***
 
@@ -1276,15 +1307,21 @@ static toJSON<T>(this: T, v: InstanceType<T>): any
 static toValue<T>(this: T, v: InstanceType<T>): any
 ```
 
-#### Type parameters
+Defined in: [lib/provable/types/circuit-value.ts:83](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/circuit-value.ts#L83)
+
+#### Type Parameters
 
 • **T** *extends* `AnyConstructor`
 
 #### Parameters
 
-• **this**: `T`
+##### this
 
-• **v**: `InstanceType`\<`T`\>
+`T`
+
+##### v
+
+`InstanceType`\<`T`\>
 
 #### Returns
 
@@ -1292,8 +1329,6 @@ static toValue<T>(this: T, v: InstanceType<T>): any
 
 #### Inherited from
 
-`CircuitValue.toValue`
-
-#### Source
-
-[lib/provable/types/circuit-value.ts:89](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/circuit-value.ts#L89)
+```ts
+CircuitValue.toValue
+```

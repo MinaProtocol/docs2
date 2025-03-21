@@ -1,3 +1,5 @@
+Defined in: [snarky.d.ts:498](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/snarky.d.ts#L498)
+
 Represents the Mina ledger.
 
 ## Constructors
@@ -20,21 +22,23 @@ new Ledger(): Ledger
 addAccount(publicKey: MlPublicKey, balance: string): void
 ```
 
+Defined in: [snarky.d.ts:507](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/snarky.d.ts#L507)
+
 Adds an account and its balance to the ledger.
 
 #### Parameters
 
-• **publicKey**: `MlPublicKey`
+##### publicKey
 
-• **balance**: `string`
+`MlPublicKey`
+
+##### balance
+
+`string`
 
 #### Returns
 
 `void`
-
-#### Source
-
-[snarky.d.ts:492](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/snarky.d.ts#L492)
 
 ***
 
@@ -47,23 +51,27 @@ applyJsonTransaction(
    networkState: string): void
 ```
 
+Defined in: [snarky.d.ts:512](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/snarky.d.ts#L512)
+
 Applies a JSON transaction to the ledger.
 
 #### Parameters
 
-• **txJson**: `string`
+##### txJson
 
-• **accountCreationFee**: `string`
+`string`
 
-• **networkState**: `string`
+##### accountCreationFee
+
+`string`
+
+##### networkState
+
+`string`
 
 #### Returns
 
 `void`
-
-#### Source
-
-[snarky.d.ts:497](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/snarky.d.ts#L497)
 
 ***
 
@@ -73,21 +81,23 @@ Applies a JSON transaction to the ledger.
 getAccount(publicKey: MlPublicKey, tokenId: FieldConst): undefined | Account
 ```
 
+Defined in: [snarky.d.ts:521](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/snarky.d.ts#L521)
+
 Returns an account.
 
 #### Parameters
 
-• **publicKey**: `MlPublicKey`
+##### publicKey
 
-• **tokenId**: `FieldConst`
+`MlPublicKey`
+
+##### tokenId
+
+`FieldConst`
 
 #### Returns
 
 `undefined` \| `Account`
-
-#### Source
-
-[snarky.d.ts:506](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/snarky.d.ts#L506)
 
 ***
 
@@ -97,12 +107,10 @@ Returns an account.
 static create(): Ledger
 ```
 
+Defined in: [snarky.d.ts:502](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/snarky.d.ts#L502)
+
 Creates a fresh ledger.
 
 #### Returns
 
 [`Ledger`](Ledger.mdx)
-
-#### Source
-
-[snarky.d.ts:487](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/snarky.d.ts#L487)
