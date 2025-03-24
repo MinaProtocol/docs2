@@ -226,7 +226,7 @@ tx = await Mina.transaction(account1Address, async () => {
   await zkapp.withdraw(UInt64.from(1e9));
 });
 await tx.prove();
-await tx.sign([account1Key, zkappKey]).send();
+await tx.sign([account1Key]).send();
 ```
 
 In contrast to the other examples, you don't explicitly create an `AccountUpdate`. Instead, you instantiate `UnsecureContract` and call its `withdraw()` method. Each method call is automatically associated with an account update, for which it creates a valid proof. You can access and modify this account update by using `this` inside the method.
