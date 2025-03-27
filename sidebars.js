@@ -454,11 +454,6 @@ module.exports = {
                 },
                 {
                   type: 'doc',
-                  id: 'zkapps/o1js-reference/functions/State-1',
-                  label: 'State-1',
-                },
-                {
-                  type: 'doc',
                   id: 'zkapps/o1js-reference/functions/Struct',
                   label: 'Struct',
                 },
@@ -631,11 +626,6 @@ module.exports = {
                   type: 'doc',
                   id: 'zkapps/o1js-reference/functions/setNumberOfWorkers',
                   label: 'setNumberOfWorkers',
-                },
-                {
-                  type: 'doc',
-                  id: 'zkapps/o1js-reference/functions/state',
-                  label: 'state',
                 },
                 {
                   type: 'doc',
