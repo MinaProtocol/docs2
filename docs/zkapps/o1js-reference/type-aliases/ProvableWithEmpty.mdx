@@ -1,10 +1,8 @@
 ```ts
-type ProvableWithEmpty<T, TValue> = Provable<T, TValue> & {
-  empty: () => T;
+type ProvableWithEmpty<T, TValue>: Provable<T, TValue> & {
+  "empty": () => T;
 };
 ```
-
-Defined in: [lib/provable/types/provable-intf.ts:118](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/provable-intf.ts#L118)
 
 ## Type declaration
 
@@ -18,8 +16,12 @@ empty: () => T;
 
 `T`
 
-## Type Parameters
+## Type parameters
 
 • **T**
 
 • **TValue** = `any`
+
+## Source
+
+[lib/provable/types/provable-intf.ts:118](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/provable-intf.ts#L118)

@@ -1,11 +1,9 @@
-## Call Signature
+## transaction(sender, f)
 
 ```ts
 function transaction(sender: FeePayerSpec, f: () => Promise<void>): TransactionPromise<false, false>
 ```
 
-Defined in: [lib/mina/v1/transaction.ts:582](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/transaction.ts#L582)
-
 Construct a smart contract transaction. Within the callback passed to this function,
 you can call into the methods of smart contracts.
 
@@ -18,13 +16,9 @@ let tx = await Mina.transaction(sender, async () => {
 
 ### Parameters
 
-#### sender
+• **sender**: [`FeePayerSpec`](../type-aliases/FeePayerSpec.mdx)
 
-[`FeePayerSpec`](../type-aliases/FeePayerSpec.mdx)
-
-#### f
-
-() => `Promise`\<`void`\>
+• **f**
 
 ### Returns
 
@@ -32,32 +26,24 @@ let tx = await Mina.transaction(sender, async () => {
 
 A transaction that can subsequently be submitted to the chain.
 
-## Call Signature
+### Source
+
+[lib/mina/transaction.ts:564](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/transaction.ts#L564)
+
+## transaction(f)
 
 ```ts
 function transaction(f: () => Promise<void>): TransactionPromise<false, false>
 ```
 
-Defined in: [lib/mina/v1/transaction.ts:586](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/transaction.ts#L586)
-
-Construct a smart contract transaction. Within the callback passed to this function,
-you can call into the methods of smart contracts.
-
-```
-let tx = await Mina.transaction(sender, async () => {
-  await myZkapp.update();
-  await someOtherZkapp.someOtherMethod();
-});
-```
-
 ### Parameters
 
-#### f
-
-() => `Promise`\<`void`\>
+• **f**
 
 ### Returns
 
 [`TransactionPromise`](../../../type-aliases/TransactionPromise.mdx)\<`false`, `false`\>
 
-A transaction that can subsequently be submitted to the chain.
+### Source
+
+[lib/mina/transaction.ts:568](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/transaction.ts#L568)

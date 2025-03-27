@@ -1,15 +1,14 @@
 ```ts
-type FeePayerSpec = 
-  | PublicKey
-  | {
-  fee: number | string | UInt64;
-  memo: string;
-  nonce: number;
-  sender: PublicKey;
- }
-  | undefined;
+type FeePayerSpec: PublicKey | {
+  "fee": number | string | UInt64;
+  "memo": string;
+  "nonce": number;
+  "sender": PublicKey;
+ } | undefined;
 ```
 
-Defined in: [lib/mina/v1/mina-instance.ts:48](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/mina-instance.ts#L48)
-
 Allows you to specify information about the fee payer account and the transaction.
+
+## Source
+
+[lib/mina/mina-instance.ts:52](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/mina-instance.ts#L52)

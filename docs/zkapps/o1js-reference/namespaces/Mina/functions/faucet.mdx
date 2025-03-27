@@ -1,28 +1,19 @@
 ```ts
-function faucet(
-   pub: PublicKey, 
-   network: string, 
-headers?: HeadersInit): Promise<void>
+function faucet(pub: PublicKey, network: string): Promise<void>
 ```
-
-Defined in: [lib/mina/v1/mina.ts:461](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/mina.ts#L461)
 
 Requests the [testnet faucet](https://faucet.minaprotocol.com/api/v1/faucet) to fund a public key.
 
 ## Parameters
 
-### pub
+• **pub**: [`PublicKey`](../../../classes/PublicKey.mdx)
 
-[`PublicKey`](../../../classes/PublicKey.mdx)
-
-### network
-
-`string` = `'berkeley-qanet'`
-
-### headers?
-
-`HeadersInit`
+• **network**: `string`= `'berkeley-qanet'`
 
 ## Returns
 
 `Promise`\<`void`\>
+
+## Source
+
+[lib/mina/mina.ts:514](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/mina.ts#L514)

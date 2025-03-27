@@ -1,22 +1,20 @@
 ```ts
 function fetchAccount(
    accountInfo: {
-  publicKey: string | PublicKey;
-  tokenId: string | Field;
+  "publicKey": string | PublicKey;
+  "tokenId": string | Field;
  }, 
    graphqlEndpoint: string, 
-   config: FetchConfig): Promise<
-  | {
-  account: Types.Account;
-  error: undefined;
- }
-  | {
-  account: undefined;
-  error: FetchError;
+   __namedParameters: {
+  "timeout": defaultTimeout;
+ }): Promise<{
+  "account": Types.Account;
+  "error": undefined;
+ } | {
+  "account": undefined;
+  "error": FetchError;
 }>
 ```
-
-Defined in: [lib/mina/v1/fetch.ts:203](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/fetch.ts#L203)
 
 Gets account information on the specified publicKey by performing a GraphQL query
 to the specified endpoint. This will call the 'GetAccountInfo' query which fetches
@@ -27,44 +25,32 @@ the data is returned.
 
 ## Parameters
 
-### accountInfo
+• **accountInfo**
 
-The public key and token id of the account to fetch
+• **accountInfo.publicKey**: `string` \| [`PublicKey`](../classes/PublicKey.mdx)
 
-#### publicKey
+• **accountInfo.tokenId?**: `string` \| [`Field`](../classes/Field.mdx)
 
-`string` \| [`PublicKey`](../classes/PublicKey.mdx)
-
-The specified publicKey to get account information on
-
-#### tokenId
-
-`string` \| [`Field`](../classes/Field.mdx)
-
-The specified tokenId to get account information on
-
-### graphqlEndpoint
-
-`string` = `networkConfig.minaEndpoint`
+• **graphqlEndpoint**: `string`= `networkConfig.minaEndpoint`
 
 The graphql endpoint to fetch from
 
-### config
+• **\_\_namedParameters**= `{}`
 
-`FetchConfig` = `{}`
-
-An object that exposes an additional timeout and header options
+• **\_\_namedParameters.timeout**: `undefined` \| `number`= `defaultTimeout`
 
 ## Returns
 
-`Promise`\<
-  \| \{
-  `account`: `Types.Account`;
-  `error`: `undefined`;
- \}
-  \| \{
-  `account`: `undefined`;
-  `error`: `FetchError`;
+`Promise`\<\{
+  `"account"`: `Types.Account`;
+  `"error"`: `undefined`;
+ \} \| \{
+  `"account"`: `undefined`;
+  `"error"`: `FetchError`;
  \}\>
 
 zkapp information on the specified account or an error is thrown
+
+## Source
+
+[lib/mina/fetch.ts:179](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/fetch.ts#L179)

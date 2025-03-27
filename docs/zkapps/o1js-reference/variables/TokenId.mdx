@@ -1,13 +1,11 @@
 ```ts
 const TokenId: {
-  default: Field;
-  derive: Field;
-  fromBase58: Field;
-  toBase58: string;
+  "default": Field;
+  "derive": Field;
+  "fromBase58": Field;
+  "toBase58": string;
 };
 ```
-
-Defined in: [lib/mina/v1/account-update.ts:620](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L620)
 
 ## Type declaration
 
@@ -21,13 +19,9 @@ default: Field;
 
 #### Parameters
 
-##### tokenOwner
+• **tokenOwner**: [`PublicKey`](../classes/PublicKey.mdx)
 
-[`PublicKey`](../classes/PublicKey.mdx)
-
-##### parentTokenId
-
-[`Field`](../classes/Field.mdx) = `...`
+• **parentTokenId**: [`Field`](../classes/Field.mdx)= `undefined`
 
 #### Returns
 
@@ -37,9 +31,7 @@ default: Field;
 
 #### Parameters
 
-##### base58
-
-`string`
+• **base58**: `string`
 
 #### Returns
 
@@ -49,10 +41,12 @@ default: Field;
 
 #### Parameters
 
-##### t
-
-[`Field`](../classes/Field.mdx)
+• **t**: [`Field`](../classes/Field.mdx)
 
 #### Returns
 
 `string`
+
+## Source
+
+[lib/mina/account-update.ts:666](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L666)

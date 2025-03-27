@@ -1,105 +1,83 @@
 ```ts
-function ZkProgram<Config, _>(config: Config & {
-  methods: { [I in string | number | symbol]: InferMethodType<Config>[I] };
-  name: string;
-  overrideWrapDomain: 0 | 2 | 1;
+function ZkProgram<Config, Methods, MethodSignatures, PrivateInputs, AuxiliaryOutputs>(config: Config & {
+  "methods": { [I in string | number | symbol]: Methods[I] };
+  "name": string;
+  "overrideWrapDomain": 0 | 2 | 1;
  }): {
-  analyzeMethods: () => Promise<{ [I in keyof Config["methods"]]: UnwrapPromise<ReturnType<typeof analyzeMethod>> }>;
-  auxiliaryOutputTypes: InferAuxiliaryOutputs<Config>;
-  compile: (options?: {
-     cache: Cache;
-     forceRecompile: boolean;
-     proofsEnabled: boolean;
+  "analyzeMethods": () => Promise<{ [I in keyof Config["methods"]]: UnwrapPromise<ReturnType<typeof analyzeMethod>> }>;
+  "auxiliaryOutputTypes": AuxiliaryOutputs;
+  "compile": (options?: {
+     "cache": Cache;
+     "forceRecompile": boolean;
+     "proofsEnabled": boolean;
     }) => Promise<{
-     verificationKey: {
-        data: string;
-        hash: Field;
+     "verificationKey": {
+        "data": string;
+        "hash": Field;
        };
     }>;
-  digest: () => Promise<string>;
-  name: string;
-  privateInputTypes: InferPrivateInput<Config>;
-  Proof: typeof Proof;
-  proofsEnabled: boolean;
-  publicInputType: ProvableOrUndefined<Get<Config, "publicInput">>;
-  publicOutputType: ProvableOrVoid<Get<Config, "publicOutput">>;
-  rawMethods: { [I in keyof Config["methods"]]: InferMethodType<Config>[I]["method"] };
-  verify: (proof: Proof<InferProvableOrUndefined<Get<Config, "publicInput">>, InferProvableOrVoid<Get<Config, "publicOutput">>>) => Promise<boolean>;
-  maxProofsVerified: Promise<0 | 1 | 2>;
-  setProofsEnabled: void;
- } & { [I in keyof Config["methods"]]: Prover<InferProvableOrUndefined<Get<Config, "publicInput">>, ProvableOrUndefined<Get<Config, "publicInput">>, InferProvableOrVoid<Get<Config, "publicOutput">>, InferPrivateInput<Config>[I], InferProvableOrUndefined<InferAuxiliaryOutputs<Config>[I]>> }
+  "digest": () => Promise<string>;
+  "name": string;
+  "privateInputTypes": PrivateInputs;
+  "proofsEnabled": boolean;
+  "publicInputType": ProvableOrUndefined<Get<Config, "publicInput">>;
+  "publicOutputType": ProvableOrVoid<Get<Config, "publicOutput">>;
+  "rawMethods": { [I in keyof Config["methods"]]: Methods[I]["method"] };
+  "verify": (proof: Proof<InferProvableOrUndefined<Get<Config, "publicInput">>, InferProvableOrVoid<Get<Config, "publicOutput">>>) => Promise<boolean>;
+  "setProofsEnabled": void;
+ } & { [I in keyof Config["methods"]]: Prover<InferProvableOrUndefined<Get<Config, "publicInput">>, InferProvableOrVoid<Get<Config, "publicOutput">>, PrivateInputs[I], InferProvableOrUndefined<AuxiliaryOutputs[I]>> }
 ```
 
-Defined in: [lib/proof-system/zkprogram.ts:222](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/proof-system/zkprogram.ts#L222)
+## Type parameters
 
-Wraps config + provable code into a program capable of producing [Proof](../classes/Proof.mdx)s.
+• **Config** *extends* \{
+  `"methods"`: \{\};
+  `"publicInput"`: [`ProvableTypePure`](../type-aliases/ProvableTypePure.mdx);
+  `"publicOutput"`: [`ProvableTypePure`](../type-aliases/ProvableTypePure.mdx);
+ \}
 
-## Type Parameters
+• **Methods** *extends* \{ [I in string \| number \| symbol]: Method\<InferProvableOrUndefined\<Get\<Config, "publicInput"\>\>, InferProvableOrVoid\<Get\<Config, "publicOutput"\>\>, Config["methods"][I]\> \}
 
-• **Config** *extends* `ConfigBaseType`
+• **MethodSignatures** *extends* \{\} = `Config`\[`"methods"`\]
 
-• **_** *extends* `unknown` = `unknown`
+• **PrivateInputs** *extends* \{ [I in string \| number \| symbol]: MethodSignatures[I]["privateInputs"] \} = \{ [I in string \| number \| symbol]: MethodSignatures[I]["privateInputs"] \}
+
+• **AuxiliaryOutputs** *extends* \{ [I in string \| number \| symbol]: Get\<MethodSignatures[I], "auxiliaryOutput"\> \} = \{ [I in string \| number \| symbol]: Get\<MethodSignatures[I], "auxiliaryOutput"\> \}
 
 ## Parameters
 
-### config
-
-`Config` & \{
-  `methods`: \{ \[I in string \| number \| symbol\]: InferMethodType\<Config\>\[I\] \};
-  `name`: `string`;
-  `overrideWrapDomain`: `0` \| `2` \| `1`;
+• **config**: `Config` & \{
+  `"methods"`: \{ [I in string \| number \| symbol]: Methods[I] \};
+  `"name"`: `string`;
+  `"overrideWrapDomain"`: `0` \| `2` \| `1`;
  \}
-
-The configuration of the program, describing the type of the public input and public output, as well as defining the methods which can be executed provably.
 
 ## Returns
 
 \{
-  `analyzeMethods`: () => `Promise`\<`{ [I in keyof Config["methods"]]: UnwrapPromise<ReturnType<typeof analyzeMethod>> }`\>;
-  `auxiliaryOutputTypes`: `InferAuxiliaryOutputs`\<`Config`\>;
-  `compile`: (`options`?: \{
-     `cache`: [`Cache`](../type-aliases/Cache.mdx);
-     `forceRecompile`: `boolean`;
-     `proofsEnabled`: `boolean`;
+  `"analyzeMethods"`: () => `Promise`\<`{ [I in keyof Config["methods"]]: UnwrapPromise<ReturnType<typeof analyzeMethod>> }`\>;
+  `"auxiliaryOutputTypes"`: `AuxiliaryOutputs`;
+  `"compile"`: (`options`?: \{
+     `"cache"`: [`Cache`](../type-aliases/Cache.mdx);
+     `"forceRecompile"`: `boolean`;
+     `"proofsEnabled"`: `boolean`;
     \}) => `Promise`\<\{
-     `verificationKey`: \{
-        `data`: `string`;
-        `hash`: [`Field`](../type-aliases/Field.mdx);
+     `"verificationKey"`: \{
+        `"data"`: `string`;
+        `"hash"`: [`Field`](../type-aliases/Field.mdx);
        \};
     \}\>;
-  `digest`: () => `Promise`\<`string`\>;
-  `name`: `string`;
-  `privateInputTypes`: `InferPrivateInput`\<`Config`\>;
-  `Proof`: *typeof* [`Proof`](../classes/Proof.mdx);
-  `proofsEnabled`: `boolean`;
-  `publicInputType`: `ProvableOrUndefined`\<`Get`\<`Config`, `"publicInput"`\>\>;
-  `publicOutputType`: `ProvableOrVoid`\<`Get`\<`Config`, `"publicOutput"`\>\>;
-  `rawMethods`: `{ [I in keyof Config["methods"]]: InferMethodType<Config>[I]["method"] }`;
-  `verify`: (`proof`: [`Proof`](../classes/Proof.mdx)\<`InferProvableOrUndefined`\<`Get`\<`Config`, `"publicInput"`\>\>, `InferProvableOrVoid`\<`Get`\<`Config`, `"publicOutput"`\>\>\>) => `Promise`\<`boolean`\>;
-  `maxProofsVerified`: `Promise`\<`0` \| `1` \| `2`\>;
-  `setProofsEnabled`: `void`;
- \} & `{ [I in keyof Config["methods"]]: Prover<InferProvableOrUndefined<Get<Config, "publicInput">>, ProvableOrUndefined<Get<Config, "publicInput">>, InferProvableOrVoid<Get<Config, "publicOutput">>, InferPrivateInput<Config>[I], InferProvableOrUndefined<InferAuxiliaryOutputs<Config>[I]>> }`
+  `"digest"`: () => `Promise`\<`string`\>;
+  `"name"`: `string`;
+  `"privateInputTypes"`: `PrivateInputs`;
+  `"proofsEnabled"`: `boolean`;
+  `"publicInputType"`: `ProvableOrUndefined`\<`Get`\<`Config`, `"publicInput"`\>\>;
+  `"publicOutputType"`: `ProvableOrVoid`\<`Get`\<`Config`, `"publicOutput"`\>\>;
+  `"rawMethods"`: `{ [I in keyof Config["methods"]]: Methods[I]["method"] }`;
+  `"verify"`: (`proof`: [`Proof`](../classes/Proof.mdx)\<`InferProvableOrUndefined`\<`Get`\<`Config`, `"publicInput"`\>\>, `InferProvableOrVoid`\<`Get`\<`Config`, `"publicOutput"`\>\>\>) => `Promise`\<`boolean`\>;
+  `"setProofsEnabled"`: `void`;
+ \} & `{ [I in keyof Config["methods"]]: Prover<InferProvableOrUndefined<Get<Config, "publicInput">>, InferProvableOrVoid<Get<Config, "publicOutput">>, PrivateInputs[I], InferProvableOrUndefined<AuxiliaryOutputs[I]>> }`
 
-an object that can be used to compile, prove, and verify the program.
+## Source
 
-## Example
-
-```ts
-const ExampleProgram = ZkProgram({
-  name: 'ExampleProgram',
-  publicOutput: Int64,
-  methods: {
-    // Prove that I know 2 numbers less than 100 each, whose product is greater than 1000
-    provableMultiply: {
-      privateInputs: [Int64, Int64],
-      method: async (n1: Int64, n2: Int64) => {
-        n1.assertLessThan(100);
-        n2.assertLessThan(100);
-        const publicOutput = n1.mul(n2);
-        publicOutput.assertGreaterThan(1000);
-        return { publicOutput: n1.mul(n2) }
-      }
-    }
-  }
-});
-```
+[lib/proof-system/zkprogram.ts:174](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/proof-system/zkprogram.ts#L174)

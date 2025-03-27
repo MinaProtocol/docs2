@@ -1,5 +1,3 @@
-Defined in: [lib/provable/crypto/nullifier.ts:20](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/crypto/nullifier.ts#L20)
-
 Nullifiers are used as a public commitment to a specific anonymous account,
 to forbid actions like double spending, or allow a consistent identity between anonymous actions.
 
@@ -10,16 +8,16 @@ Paper: https://eprint.iacr.org/2022/1255.pdf
 ## Extends
 
 - \{
-  `private`: \{
-     `c`: [`Field`](Field.mdx);
-     `g_r`: [`Group`](Group.mdx);
-     `h_m_pk_r`: [`Group`](Group.mdx);
+  `"private"`: \{
+     `"c"`: `Field`;
+     `"g_r"`: `Group`;
+     `"h_m_pk_r"`: `Group`;
     \};
-  `public`: \{
-     `nullifier`: [`Group`](Group.mdx);
-     `s`: [`Scalar`](Scalar.mdx);
+  `"public"`: \{
+     `"nullifier"`: `Group`;
+     `"s"`: `Scalar`;
     \};
-  `publicKey`: [`Group`](Group.mdx);
+  `"publicKey"`: `Group`;
  \}
 
 ## Constructors
@@ -28,63 +26,38 @@ Paper: https://eprint.iacr.org/2022/1255.pdf
 
 ```ts
 new Nullifier(value: {
-  private: {
-     c: Field;
-     g_r: Group;
-     h_m_pk_r: Group;
+  "private": {
+     "c": Field;
+     "g_r": Group;
+     "h_m_pk_r": Group;
     };
-  public: {
-     nullifier: Group;
-     s: Scalar;
+  "public": {
+     "nullifier": Group;
+     "s": Scalar;
     };
-  publicKey: Group;
+  "publicKey": Group;
  }): Nullifier
 ```
 
-Defined in: [lib/provable/types/struct.ts:133](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/struct.ts#L133)
-
 #### Parameters
 
-##### value
+• **value**
 
-###### private
+• **value.private**= `undefined`
 
-\{
-  `c`: [`Field`](Field.mdx);
-  `g_r`: [`Group`](Group.mdx);
-  `h_m_pk_r`: [`Group`](Group.mdx);
- \} = `...`
+• **value.private.c**: [`Field`](Field.mdx)= `Field`
 
-###### private.c
+• **value.private.g\_r**: [`Group`](Group.mdx)= `Group`
 
-[`Field`](Field.mdx) = `Field`
+• **value.private.h\_m\_pk\_r**: [`Group`](Group.mdx)= `Group`
 
-###### private.g_r
+• **value.public**= `undefined`
 
-[`Group`](Group.mdx) = `Group`
+• **value.public.nullifier**: [`Group`](Group.mdx)= `Group`
 
-###### private.h_m_pk_r
+• **value.public.s**: [`Scalar`](Scalar.mdx)= `Scalar`
 
-[`Group`](Group.mdx) = `Group`
-
-###### public
-
-\{
-  `nullifier`: [`Group`](Group.mdx);
-  `s`: [`Scalar`](Scalar.mdx);
- \} = `...`
-
-###### public.nullifier
-
-[`Group`](Group.mdx) = `Group`
-
-###### public.s
-
-[`Scalar`](Scalar.mdx) = `Scalar`
-
-###### publicKey
-
-[`Group`](Group.mdx) = `Group`
+• **value.publicKey**: [`Group`](Group.mdx)= `Group`
 
 #### Returns
 
@@ -92,8 +65,7 @@ Defined in: [lib/provable/types/struct.ts:133](https://github.com/o1-labs/o1js/b
 
 #### Inherited from
 
-```ts
-Struct({
+`Struct({
   publicKey: Group,
   public: {
     nullifier: Group,
@@ -104,8 +76,11 @@ Struct({
     g_r: Group,
     h_m_pk_r: Group,
   },
-}).constructor
-```
+}).constructor`
+
+#### Source
+
+[lib/provable/types/struct.ts:148](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/struct.ts#L148)
 
 ## Properties
 
@@ -113,13 +88,11 @@ Struct({
 
 ```ts
 private: {
-  c: Field;
-  g_r: Group;
-  h_m_pk_r: Group;
+  "c": Field;
+  "g_r": Group;
+  "h_m_pk_r": Group;
 };
 ```
-
-Defined in: [lib/provable/crypto/nullifier.ts:26](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/crypto/nullifier.ts#L26)
 
 #### c
 
@@ -141,8 +114,7 @@ h_m_pk_r: Group = Group;
 
 #### Inherited from
 
-```ts
-Struct({
+`Struct({
   publicKey: Group,
   public: {
     nullifier: Group,
@@ -153,8 +125,11 @@ Struct({
     g_r: Group,
     h_m_pk_r: Group,
   },
-}).private
-```
+}).private`
+
+#### Source
+
+[lib/provable/crypto/nullifier.ts:26](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/crypto/nullifier.ts#L26)
 
 ***
 
@@ -162,12 +137,10 @@ Struct({
 
 ```ts
 public: {
-  nullifier: Group;
-  s: Scalar;
+  "nullifier": Group;
+  "s": Scalar;
 };
 ```
-
-Defined in: [lib/provable/crypto/nullifier.ts:22](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/crypto/nullifier.ts#L22)
 
 #### nullifier
 
@@ -183,8 +156,7 @@ s: Scalar = Scalar;
 
 #### Inherited from
 
-```ts
-Struct({
+`Struct({
   publicKey: Group,
   public: {
     nullifier: Group,
@@ -195,8 +167,11 @@ Struct({
     g_r: Group,
     h_m_pk_r: Group,
   },
-}).public
-```
+}).public`
+
+#### Source
+
+[lib/provable/crypto/nullifier.ts:22](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/crypto/nullifier.ts#L22)
 
 ***
 
@@ -206,12 +181,9 @@ Struct({
 publicKey: Group = Group;
 ```
 
-Defined in: [lib/provable/crypto/nullifier.ts:21](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/crypto/nullifier.ts#L21)
-
 #### Inherited from
 
-```ts
-Struct({
+`Struct({
   publicKey: Group,
   public: {
     nullifier: Group,
@@ -222,8 +194,11 @@ Struct({
     g_r: Group,
     h_m_pk_r: Group,
   },
-}).publicKey
-```
+}).publicKey`
+
+#### Source
+
+[lib/provable/crypto/nullifier.ts:21](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/crypto/nullifier.ts#L21)
 
 ***
 
@@ -233,12 +208,9 @@ Struct({
 static _isStruct: true;
 ```
 
-Defined in: [lib/provable/types/struct.ts:133](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/struct.ts#L133)
-
 #### Inherited from
 
-```ts
-Struct({
+`Struct({
   publicKey: Group,
   public: {
     nullifier: Group,
@@ -249,8 +221,11 @@ Struct({
     g_r: Group,
     h_m_pk_r: Group,
   },
-})._isStruct
-```
+})._isStruct`
+
+#### Source
+
+[lib/provable/types/struct.ts:148](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/struct.ts#L148)
 
 ***
 
@@ -258,20 +233,18 @@ Struct({
 
 ```ts
 static check: (value: {
-  private: {
-     c: Field;
-     g_r: Group;
-     h_m_pk_r: Group;
+  "private": {
+     "c": Field;
+     "g_r": Group;
+     "h_m_pk_r": Group;
     };
-  public: {
-     nullifier: Group;
-     s: Scalar;
+  "public": {
+     "nullifier": Group;
+     "s": Scalar;
     };
-  publicKey: Group;
+  "publicKey": Group;
  }) => void;
 ```
-
-Defined in: [lib/provable/types/provable-intf.ts:76](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/provable-intf.ts#L76)
 
 Add assertions to the proof to check if `value` is a valid member of type `T`.
 This function does not return anything, instead it creates any number of assertions to prove that `value` is a valid member of the type `T`.
@@ -280,48 +253,25 @@ For instance, calling check function on the type [Bool](Bool.mdx) asserts that t
 
 #### Parameters
 
-##### value
+• **value**
 
 the element of type `T` to put assertions on.
 
-###### private
+• **value.private**= `undefined`
 
-\{
-  `c`: [`Field`](Field.mdx);
-  `g_r`: [`Group`](Group.mdx);
-  `h_m_pk_r`: [`Group`](Group.mdx);
- \} = `...`
+• **value.private.c**: [`Field`](Field.mdx)= `Field`
 
-###### private.c
+• **value.private.g\_r**: [`Group`](Group.mdx)= `Group`
 
-[`Field`](Field.mdx) = `Field`
+• **value.private.h\_m\_pk\_r**: [`Group`](Group.mdx)= `Group`
 
-###### private.g_r
+• **value.public**= `undefined`
 
-[`Group`](Group.mdx) = `Group`
+• **value.public.nullifier**: [`Group`](Group.mdx)= `Group`
 
-###### private.h_m_pk_r
+• **value.public.s**: [`Scalar`](Scalar.mdx)= `Scalar`
 
-[`Group`](Group.mdx) = `Group`
-
-###### public
-
-\{
-  `nullifier`: [`Group`](Group.mdx);
-  `s`: [`Scalar`](Scalar.mdx);
- \} = `...`
-
-###### public.nullifier
-
-[`Group`](Group.mdx) = `Group`
-
-###### public.s
-
-[`Scalar`](Scalar.mdx) = `Scalar`
-
-###### publicKey
-
-[`Group`](Group.mdx) = `Group`
+• **value.publicKey**: [`Group`](Group.mdx)= `Group`
 
 #### Returns
 
@@ -329,8 +279,7 @@ the element of type `T` to put assertions on.
 
 #### Inherited from
 
-```ts
-Struct({
+`Struct({
   publicKey: Group,
   public: {
     nullifier: Group,
@@ -341,8 +290,11 @@ Struct({
     g_r: Group,
     h_m_pk_r: Group,
   },
-}).check
-```
+}).check`
+
+#### Source
+
+[lib/provable/types/provable-intf.ts:76](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/provable-intf.ts#L76)
 
 ***
 
@@ -350,35 +302,33 @@ Struct({
 
 ```ts
 static empty: () => {
-  private: {
-     c: Field;
-     g_r: Group;
-     h_m_pk_r: Group;
+  "private": {
+     "c": Field;
+     "g_r": Group;
+     "h_m_pk_r": Group;
     };
-  public: {
-     nullifier: Group;
-     s: Scalar;
+  "public": {
+     "nullifier": Group;
+     "s": Scalar;
     };
-  publicKey: Group;
+  "publicKey": Group;
 };
 ```
-
-Defined in: [lib/provable/types/struct.ts:143](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/struct.ts#L143)
 
 #### Returns
 
 ```ts
 {
-  private: {
-     c: Field;
-     g_r: Group;
-     h_m_pk_r: Group;
+  "private": {
+     "c": Field;
+     "g_r": Group;
+     "h_m_pk_r": Group;
     };
-  public: {
-     nullifier: Group;
-     s: Scalar;
+  "public": {
+     "nullifier": Group;
+     "s": Scalar;
     };
-  publicKey: Group;
+  "publicKey": Group;
 }
 ```
 
@@ -386,25 +336,25 @@ Defined in: [lib/provable/types/struct.ts:143](https://github.com/o1-labs/o1js/b
 
 ```ts
 private: {
-  c: Field;
-  g_r: Group;
-  h_m_pk_r: Group;
+  "c": Field;
+  "g_r": Group;
+  "h_m_pk_r": Group;
 };
 ```
 
-###### private.c
+##### private.c
 
 ```ts
 c: Field = Field;
 ```
 
-###### private.g\_r
+##### private.g\_r
 
 ```ts
 g_r: Group = Group;
 ```
 
-###### private.h\_m\_pk\_r
+##### private.h\_m\_pk\_r
 
 ```ts
 h_m_pk_r: Group = Group;
@@ -414,18 +364,18 @@ h_m_pk_r: Group = Group;
 
 ```ts
 public: {
-  nullifier: Group;
-  s: Scalar;
+  "nullifier": Group;
+  "s": Scalar;
 };
 ```
 
-###### public.nullifier
+##### public.nullifier
 
 ```ts
 nullifier: Group = Group;
 ```
 
-###### public.s
+##### public.s
 
 ```ts
 s: Scalar = Scalar;
@@ -439,8 +389,7 @@ publicKey: Group = Group;
 
 #### Inherited from
 
-```ts
-Struct({
+`Struct({
   publicKey: Group,
   public: {
     nullifier: Group,
@@ -451,8 +400,11 @@ Struct({
     g_r: Group,
     h_m_pk_r: Group,
   },
-}).empty
-```
+}).empty`
+
+#### Source
+
+[lib/provable/types/struct.ts:158](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/struct.ts#L158)
 
 ***
 
@@ -460,41 +412,37 @@ Struct({
 
 ```ts
 static fromFields: (fields: Field[]) => {
-  private: {
-     c: Field;
-     g_r: Group;
-     h_m_pk_r: Group;
+  "private": {
+     "c": Field;
+     "g_r": Group;
+     "h_m_pk_r": Group;
     };
-  public: {
-     nullifier: Group;
-     s: Scalar;
+  "public": {
+     "nullifier": Group;
+     "s": Scalar;
     };
-  publicKey: Group;
+  "publicKey": Group;
 };
 ```
 
-Defined in: [lib/provable/types/provable-intf.ts:115](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/provable-intf.ts#L115)
-
 #### Parameters
 
-##### fields
-
-[`Field`](Field.mdx)[]
+• **fields**: [`Field`](Field.mdx)[]
 
 #### Returns
 
 ```ts
 {
-  private: {
-     c: Field;
-     g_r: Group;
-     h_m_pk_r: Group;
+  "private": {
+     "c": Field;
+     "g_r": Group;
+     "h_m_pk_r": Group;
     };
-  public: {
-     nullifier: Group;
-     s: Scalar;
+  "public": {
+     "nullifier": Group;
+     "s": Scalar;
     };
-  publicKey: Group;
+  "publicKey": Group;
 }
 ```
 
@@ -502,25 +450,25 @@ Defined in: [lib/provable/types/provable-intf.ts:115](https://github.com/o1-labs
 
 ```ts
 private: {
-  c: Field;
-  g_r: Group;
-  h_m_pk_r: Group;
+  "c": Field;
+  "g_r": Group;
+  "h_m_pk_r": Group;
 };
 ```
 
-###### private.c
+##### private.c
 
 ```ts
 c: Field = Field;
 ```
 
-###### private.g\_r
+##### private.g\_r
 
 ```ts
 g_r: Group = Group;
 ```
 
-###### private.h\_m\_pk\_r
+##### private.h\_m\_pk\_r
 
 ```ts
 h_m_pk_r: Group = Group;
@@ -530,18 +478,18 @@ h_m_pk_r: Group = Group;
 
 ```ts
 public: {
-  nullifier: Group;
-  s: Scalar;
+  "nullifier": Group;
+  "s": Scalar;
 };
 ```
 
-###### public.nullifier
+##### public.nullifier
 
 ```ts
 nullifier: Group = Group;
 ```
 
-###### public.s
+##### public.s
 
 ```ts
 s: Scalar = Scalar;
@@ -555,8 +503,7 @@ publicKey: Group = Group;
 
 #### Inherited from
 
-```ts
-Struct({
+`Struct({
   publicKey: Group,
   public: {
     nullifier: Group,
@@ -567,110 +514,80 @@ Struct({
     g_r: Group,
     h_m_pk_r: Group,
   },
-}).fromFields
-```
+}).fromFields`
+
+#### Source
+
+[lib/provable/types/provable-intf.ts:115](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/provable-intf.ts#L115)
 
 ***
 
 ### fromValue
 
 ```ts
-static fromValue: (x: 
-  | {
-  private: {
-     c: Field;
-     g_r: Group;
-     h_m_pk_r: Group;
+static fromValue: (x: {
+  "private": {
+     "c": Field;
+     "g_r": Group;
+     "h_m_pk_r": Group;
     };
-  public: {
-     nullifier: Group;
-     s: Scalar;
+  "public": {
+     "nullifier": Group;
+     "s": Scalar;
     };
-  publicKey: Group;
- }
-  | {
-  private: {
-     c: bigint;
-     g_r: {
-        x: bigint;
-        y: bigint;
-       };
-     h_m_pk_r: {
-        x: bigint;
-        y: bigint;
-       };
+  "publicKey": Group;
+ } | {
+  "private": {
+     "c": Field;
+     "g_r": Group;
+     "h_m_pk_r": Group;
     };
-  public: {
-     nullifier: {
-        x: bigint;
-        y: bigint;
-       };
-     s: bigint;
+  "public": {
+     "nullifier": Group;
+     "s": Scalar;
     };
-  publicKey: {
-     x: bigint;
-     y: bigint;
-    };
+  "publicKey": Group;
  }) => {
-  private: {
-     c: Field;
-     g_r: Group;
-     h_m_pk_r: Group;
+  "private": {
+     "c": Field;
+     "g_r": Group;
+     "h_m_pk_r": Group;
     };
-  public: {
-     nullifier: Group;
-     s: Scalar;
+  "public": {
+     "nullifier": Group;
+     "s": Scalar;
     };
-  publicKey: Group;
+  "publicKey": Group;
  } & (value: {
-  private: {
-     c: string | number | bigint | Field;
-     g_r:   | Group
-        | {
-        x: number | bigint | Field;
-        y: number | bigint | Field;
-       };
-     h_m_pk_r:   | Group
-        | {
-        x: number | bigint | Field;
-        y: number | bigint | Field;
-       };
+  "private": {
+     "c": Field;
+     "g_r": Group;
+     "h_m_pk_r": Group;
     };
-  public: {
-     nullifier:   | Group
-        | {
-        x: number | bigint | Field;
-        y: number | bigint | Field;
-       };
-     s: bigint | Scalar;
+  "public": {
+     "nullifier": Group;
+     "s": Scalar;
     };
-  publicKey:   | Group
-     | {
-     x: number | bigint | Field;
-     y: number | bigint | Field;
-    };
+  "publicKey": Group;
  }) => {
-  private: {
-     c: Field;
-     g_r: Group;
-     h_m_pk_r: Group;
+  "private": {
+     "c": Field;
+     "g_r": Group;
+     "h_m_pk_r": Group;
     };
-  public: {
-     nullifier: Group;
-     s: Scalar;
+  "public": {
+     "nullifier": Group;
+     "s": Scalar;
     };
-  publicKey: Group;
+  "publicKey": Group;
 };
 ```
-
-Defined in: [lib/provable/types/provable-intf.ts:86](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/provable-intf.ts#L86)
 
 Convert provable type from a normal JS type.
 
 #### Inherited from
 
-```ts
-Struct({
+`Struct({
   publicKey: Group,
   public: {
     nullifier: Group,
@@ -681,8 +598,11 @@ Struct({
     g_r: Group,
     h_m_pk_r: Group,
   },
-}).fromValue
-```
+}).fromValue`
+
+#### Source
+
+[lib/provable/types/provable-intf.ts:86](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/provable-intf.ts#L86)
 
 ***
 
@@ -690,80 +610,52 @@ Struct({
 
 ```ts
 static toAuxiliary: (value?: {
-  private: {
-     c: Field;
-     g_r: Group;
-     h_m_pk_r: Group;
+  "private": {
+     "c": Field;
+     "g_r": Group;
+     "h_m_pk_r": Group;
     };
-  public: {
-     nullifier: Group;
-     s: Scalar;
+  "public": {
+     "nullifier": Group;
+     "s": Scalar;
     };
-  publicKey: Group;
+  "publicKey": Group;
  }) => any[];
 ```
-
-Defined in: [lib/provable/types/provable-intf.ts:47](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/provable-intf.ts#L47)
 
 A function that takes `value` (optional), an element of type `T`, as argument and
 returns an array of any type that make up the "auxiliary" (non-provable) data of `value`.
 
 #### Parameters
 
-##### value?
+• **value?**
 
 the element of type `T` to generate the auxiliary data array from, optional.
 If not provided, a default value for auxiliary data is returned.
 
-###### private
+• **value.private?**= `undefined`
 
-\{
-  `c`: [`Field`](Field.mdx);
-  `g_r`: [`Group`](Group.mdx);
-  `h_m_pk_r`: [`Group`](Group.mdx);
- \} = `...`
+• **value.private.c?**: [`Field`](Field.mdx)= `Field`
 
-###### private.c
+• **value.private.g\_r?**: [`Group`](Group.mdx)= `Group`
 
-[`Field`](Field.mdx) = `Field`
+• **value.private.h\_m\_pk\_r?**: [`Group`](Group.mdx)= `Group`
 
-###### private.g_r
+• **value.public?**= `undefined`
 
-[`Group`](Group.mdx) = `Group`
+• **value.public.nullifier?**: [`Group`](Group.mdx)= `Group`
 
-###### private.h_m_pk_r
+• **value.public.s?**: [`Scalar`](Scalar.mdx)= `Scalar`
 
-[`Group`](Group.mdx) = `Group`
-
-###### public
-
-\{
-  `nullifier`: [`Group`](Group.mdx);
-  `s`: [`Scalar`](Scalar.mdx);
- \} = `...`
-
-###### public.nullifier
-
-[`Group`](Group.mdx) = `Group`
-
-###### public.s
-
-[`Scalar`](Scalar.mdx) = `Scalar`
-
-###### publicKey
-
-[`Group`](Group.mdx) = `Group`
+• **value.publicKey?**: [`Group`](Group.mdx)= `Group`
 
 #### Returns
 
 `any`[]
 
-An array of any type describing how this `T` element is made up of "auxiliary" (non-provable) data.
-
 #### Inherited from
 
-```ts
-Struct({
+`Struct({
   publicKey: Group,
   public: {
     nullifier: Group,
@@ -774,8 +666,11 @@ Struct({
     g_r: Group,
     h_m_pk_r: Group,
   },
-}).toAuxiliary
-```
+}).toAuxiliary`
+
+#### Source
+
+[lib/provable/types/provable-intf.ts:47](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/provable-intf.ts#L47)
 
 ***
 
@@ -783,31 +678,29 @@ Struct({
 
 ```ts
 static optional toCanonical: (x: {
-  private: {
-     c: Field;
-     g_r: Group;
-     h_m_pk_r: Group;
+  "private": {
+     "c": Field;
+     "g_r": Group;
+     "h_m_pk_r": Group;
     };
-  public: {
-     nullifier: Group;
-     s: Scalar;
+  "public": {
+     "nullifier": Group;
+     "s": Scalar;
     };
-  publicKey: Group;
+  "publicKey": Group;
  }) => {
-  private: {
-     c: Field;
-     g_r: Group;
-     h_m_pk_r: Group;
+  "private": {
+     "c": Field;
+     "g_r": Group;
+     "h_m_pk_r": Group;
     };
-  public: {
-     nullifier: Group;
-     s: Scalar;
+  "public": {
+     "nullifier": Group;
+     "s": Scalar;
     };
-  publicKey: Group;
+  "publicKey": Group;
 };
 ```
-
-Defined in: [lib/provable/types/provable-intf.ts:104](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/provable-intf.ts#L104)
 
 Optional method which transforms a provable type into its canonical representation.
 
@@ -826,61 +719,38 @@ The identity function will also be used when the `toCanonical()` is not present 
 
 #### Parameters
 
-##### x
+• **x**
 
-###### private
+• **x.private**= `undefined`
 
-\{
-  `c`: [`Field`](Field.mdx);
-  `g_r`: [`Group`](Group.mdx);
-  `h_m_pk_r`: [`Group`](Group.mdx);
- \} = `...`
+• **x.private.c**: [`Field`](Field.mdx)= `Field`
 
-###### private.c
+• **x.private.g\_r**: [`Group`](Group.mdx)= `Group`
 
-[`Field`](Field.mdx) = `Field`
+• **x.private.h\_m\_pk\_r**: [`Group`](Group.mdx)= `Group`
 
-###### private.g_r
+• **x.public**= `undefined`
 
-[`Group`](Group.mdx) = `Group`
+• **x.public.nullifier**: [`Group`](Group.mdx)= `Group`
 
-###### private.h_m_pk_r
+• **x.public.s**: [`Scalar`](Scalar.mdx)= `Scalar`
 
-[`Group`](Group.mdx) = `Group`
-
-###### public
-
-\{
-  `nullifier`: [`Group`](Group.mdx);
-  `s`: [`Scalar`](Scalar.mdx);
- \} = `...`
-
-###### public.nullifier
-
-[`Group`](Group.mdx) = `Group`
-
-###### public.s
-
-[`Scalar`](Scalar.mdx) = `Scalar`
-
-###### publicKey
-
-[`Group`](Group.mdx) = `Group`
+• **x.publicKey**: [`Group`](Group.mdx)= `Group`
 
 #### Returns
 
 ```ts
 {
-  private: {
-     c: Field;
-     g_r: Group;
-     h_m_pk_r: Group;
+  "private": {
+     "c": Field;
+     "g_r": Group;
+     "h_m_pk_r": Group;
     };
-  public: {
-     nullifier: Group;
-     s: Scalar;
+  "public": {
+     "nullifier": Group;
+     "s": Scalar;
     };
-  publicKey: Group;
+  "publicKey": Group;
 }
 ```
 
@@ -888,25 +758,25 @@ The identity function will also be used when the `toCanonical()` is not present 
 
 ```ts
 private: {
-  c: Field;
-  g_r: Group;
-  h_m_pk_r: Group;
+  "c": Field;
+  "g_r": Group;
+  "h_m_pk_r": Group;
 };
 ```
 
-###### private.c
+##### private.c
 
 ```ts
 c: Field = Field;
 ```
 
-###### private.g\_r
+##### private.g\_r
 
 ```ts
 g_r: Group = Group;
 ```
 
-###### private.h\_m\_pk\_r
+##### private.h\_m\_pk\_r
 
 ```ts
 h_m_pk_r: Group = Group;
@@ -916,18 +786,18 @@ h_m_pk_r: Group = Group;
 
 ```ts
 public: {
-  nullifier: Group;
-  s: Scalar;
+  "nullifier": Group;
+  "s": Scalar;
 };
 ```
 
-###### public.nullifier
+##### public.nullifier
 
 ```ts
 nullifier: Group = Group;
 ```
 
-###### public.s
+##### public.s
 
 ```ts
 s: Scalar = Scalar;
@@ -941,8 +811,7 @@ publicKey: Group = Group;
 
 #### Inherited from
 
-```ts
-Struct({
+`Struct({
   publicKey: Group,
   public: {
     nullifier: Group,
@@ -953,8 +822,11 @@ Struct({
     g_r: Group,
     h_m_pk_r: Group,
   },
-}).toCanonical
-```
+}).toCanonical`
+
+#### Source
+
+[lib/provable/types/provable-intf.ts:104](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/provable-intf.ts#L104)
 
 ***
 
@@ -962,79 +834,51 @@ Struct({
 
 ```ts
 static toFields: (value: {
-  private: {
-     c: Field;
-     g_r: Group;
-     h_m_pk_r: Group;
+  "private": {
+     "c": Field;
+     "g_r": Group;
+     "h_m_pk_r": Group;
     };
-  public: {
-     nullifier: Group;
-     s: Scalar;
+  "public": {
+     "nullifier": Group;
+     "s": Scalar;
     };
-  publicKey: Group;
+  "publicKey": Group;
  }) => Field[];
 ```
-
-Defined in: [lib/provable/types/provable-intf.ts:36](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/provable-intf.ts#L36)
 
 A function that takes `value`, an element of type `T`, as argument and returns
 an array of [Field](Field.mdx) elements that make up the provable data of `value`.
 
 #### Parameters
 
-##### value
+• **value**
 
 the element of type `T` to generate the [Field](Field.mdx) array from.
 
-###### private
+• **value.private**= `undefined`
 
-\{
-  `c`: [`Field`](Field.mdx);
-  `g_r`: [`Group`](Group.mdx);
-  `h_m_pk_r`: [`Group`](Group.mdx);
- \} = `...`
+• **value.private.c**: [`Field`](Field.mdx)= `Field`
 
-###### private.c
+• **value.private.g\_r**: [`Group`](Group.mdx)= `Group`
 
-[`Field`](Field.mdx) = `Field`
+• **value.private.h\_m\_pk\_r**: [`Group`](Group.mdx)= `Group`
 
-###### private.g_r
+• **value.public**= `undefined`
 
-[`Group`](Group.mdx) = `Group`
+• **value.public.nullifier**: [`Group`](Group.mdx)= `Group`
 
-###### private.h_m_pk_r
+• **value.public.s**: [`Scalar`](Scalar.mdx)= `Scalar`
 
-[`Group`](Group.mdx) = `Group`
-
-###### public
-
-\{
-  `nullifier`: [`Group`](Group.mdx);
-  `s`: [`Scalar`](Scalar.mdx);
- \} = `...`
-
-###### public.nullifier
-
-[`Group`](Group.mdx) = `Group`
-
-###### public.s
-
-[`Scalar`](Scalar.mdx) = `Scalar`
-
-###### publicKey
-
-[`Group`](Group.mdx) = `Group`
+• **value.publicKey**: [`Group`](Group.mdx)= `Group`
 
 #### Returns
 
 [`Field`](Field.mdx)[]
 
-A [Field](Field.mdx) array describing how this `T` element is made up of [Field](Field.mdx) elements.
-
 #### Inherited from
 
-```ts
-Struct({
+`Struct({
   publicKey: Group,
   public: {
     nullifier: Group,
@@ -1045,8 +889,11 @@ Struct({
     g_r: Group,
     h_m_pk_r: Group,
   },
-}).toFields
-```
+}).toFields`
+
+#### Source
+
+[lib/provable/types/provable-intf.ts:36](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/provable-intf.ts#L36)
 
 ***
 
@@ -1054,73 +901,48 @@ Struct({
 
 ```ts
 static toInput: (x: {
-  private: {
-     c: Field;
-     g_r: Group;
-     h_m_pk_r: Group;
+  "private": {
+     "c": Field;
+     "g_r": Group;
+     "h_m_pk_r": Group;
     };
-  public: {
-     nullifier: Group;
-     s: Scalar;
+  "public": {
+     "nullifier": Group;
+     "s": Scalar;
     };
-  publicKey: Group;
+  "publicKey": Group;
  }) => {
-  fields: Field[];
-  packed: [Field, number][];
+  "fields": Field[];
+  "packed": [Field, number][];
 };
 ```
 
-Defined in: [lib/provable/types/struct.ts:137](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/struct.ts#L137)
-
 #### Parameters
 
-##### x
+• **x**
 
-###### private
+• **x.private**= `undefined`
 
-\{
-  `c`: [`Field`](Field.mdx);
-  `g_r`: [`Group`](Group.mdx);
-  `h_m_pk_r`: [`Group`](Group.mdx);
- \} = `...`
+• **x.private.c**: [`Field`](Field.mdx)= `Field`
 
-###### private.c
+• **x.private.g\_r**: [`Group`](Group.mdx)= `Group`
 
-[`Field`](Field.mdx) = `Field`
+• **x.private.h\_m\_pk\_r**: [`Group`](Group.mdx)= `Group`
 
-###### private.g_r
+• **x.public**= `undefined`
 
-[`Group`](Group.mdx) = `Group`
+• **x.public.nullifier**: [`Group`](Group.mdx)= `Group`
 
-###### private.h_m_pk_r
+• **x.public.s**: [`Scalar`](Scalar.mdx)= `Scalar`
 
-[`Group`](Group.mdx) = `Group`
-
-###### public
-
-\{
-  `nullifier`: [`Group`](Group.mdx);
-  `s`: [`Scalar`](Scalar.mdx);
- \} = `...`
-
-###### public.nullifier
-
-[`Group`](Group.mdx) = `Group`
-
-###### public.s
-
-[`Scalar`](Scalar.mdx) = `Scalar`
-
-###### publicKey
-
-[`Group`](Group.mdx) = `Group`
+• **x.publicKey**: [`Group`](Group.mdx)= `Group`
 
 #### Returns
 
 ```ts
 {
-  fields: Field[];
-  packed: [Field, number][];
+  "fields": Field[];
+  "packed": [Field, number][];
 }
 ```
 
@@ -1138,8 +960,7 @@ optional packed: [Field, number][];
 
 #### Inherited from
 
-```ts
-Struct({
+`Struct({
   publicKey: Group,
   public: {
     nullifier: Group,
@@ -1150,8 +971,11 @@ Struct({
     g_r: Group,
     h_m_pk_r: Group,
   },
-}).toInput
-```
+}).toInput`
+
+#### Source
+
+[lib/provable/types/struct.ts:152](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/struct.ts#L152)
 
 ***
 
@@ -1159,113 +983,64 @@ Struct({
 
 ```ts
 static toJSON: (x: {
-  private: {
-     c: Field;
-     g_r: Group;
-     h_m_pk_r: Group;
+  "private": {
+     "c": Field;
+     "g_r": Group;
+     "h_m_pk_r": Group;
     };
-  public: {
-     nullifier: Group;
-     s: Scalar;
+  "public": {
+     "nullifier": Group;
+     "s": Scalar;
     };
-  publicKey: Group;
+  "publicKey": Group;
  }) => {
-  private: {
-     c: string;
-     g_r: {
-        x: string;
-        y: string;
-       };
-     h_m_pk_r: {
-        x: string;
-        y: string;
-       };
+  "private": {
+     "c": Field;
+     "g_r": Group;
+     "h_m_pk_r": Group;
     };
-  public: {
-     nullifier: {
-        x: string;
-        y: string;
-       };
-     s: string;
+  "public": {
+     "nullifier": Group;
+     "s": Scalar;
     };
-  publicKey: {
-     x: string;
-     y: string;
-    };
+  "publicKey": Group;
 };
 ```
 
-Defined in: [lib/provable/types/struct.ts:141](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/struct.ts#L141)
-
 #### Parameters
 
-##### x
+• **x**
 
-###### private
+• **x.private**= `undefined`
 
-\{
-  `c`: [`Field`](Field.mdx);
-  `g_r`: [`Group`](Group.mdx);
-  `h_m_pk_r`: [`Group`](Group.mdx);
- \} = `...`
+• **x.private.c**: [`Field`](Field.mdx)= `Field`
 
-###### private.c
+• **x.private.g\_r**: [`Group`](Group.mdx)= `Group`
 
-[`Field`](Field.mdx) = `Field`
+• **x.private.h\_m\_pk\_r**: [`Group`](Group.mdx)= `Group`
 
-###### private.g_r
+• **x.public**= `undefined`
 
-[`Group`](Group.mdx) = `Group`
+• **x.public.nullifier**: [`Group`](Group.mdx)= `Group`
 
-###### private.h_m_pk_r
+• **x.public.s**: [`Scalar`](Scalar.mdx)= `Scalar`
 
-[`Group`](Group.mdx) = `Group`
-
-###### public
-
-\{
-  `nullifier`: [`Group`](Group.mdx);
-  `s`: [`Scalar`](Scalar.mdx);
- \} = `...`
-
-###### public.nullifier
-
-[`Group`](Group.mdx) = `Group`
-
-###### public.s
-
-[`Scalar`](Scalar.mdx) = `Scalar`
-
-###### publicKey
-
-[`Group`](Group.mdx) = `Group`
+• **x.publicKey**: [`Group`](Group.mdx)= `Group`
 
 #### Returns
 
 ```ts
 {
-  private: {
-     c: string;
-     g_r: {
-        x: string;
-        y: string;
-       };
-     h_m_pk_r: {
-        x: string;
-        y: string;
-       };
+  "private": {
+     "c": Field;
+     "g_r": Group;
+     "h_m_pk_r": Group;
     };
-  public: {
-     nullifier: {
-        x: string;
-        y: string;
-       };
-     s: string;
+  "public": {
+     "nullifier": Group;
+     "s": Scalar;
     };
-  publicKey: {
-     x: string;
-     y: string;
-    };
+  "publicKey": Group;
 }
 ```
 
@@ -1273,61 +1048,55 @@ Defined in: [lib/provable/types/struct.ts:141](https://github.com/o1-labs/o1js/b
 
 ```ts
 private: {
-  c: string;
-  g_r: {
-     x: string;
-     y: string;
-    };
-  h_m_pk_r: {
-     x: string;
-     y: string;
-    };
+  "c": Field;
+  "g_r": Group;
+  "h_m_pk_r": Group;
 };
 ```
 
-###### private.c
+##### private.c
 
 ```ts
 c: string = Field;
 ```
 
-###### private.g\_r
+##### private.g\_r
 
 ```ts
 g_r: {
-  x: string;
-  y: string;
+  "x": string;
+  "y": string;
  } = Group;
 ```
 
-###### private.g\_r.x
+##### private.g\_r.x
 
 ```ts
 x: string;
 ```
 
-###### private.g\_r.y
+##### private.g\_r.y
 
 ```ts
 y: string;
 ```
 
-###### private.h\_m\_pk\_r
+##### private.h\_m\_pk\_r
 
 ```ts
 h_m_pk_r: {
-  x: string;
-  y: string;
+  "x": string;
+  "y": string;
  } = Group;
 ```
 
-###### private.h\_m\_pk\_r.x
+##### private.h\_m\_pk\_r.x
 
 ```ts
 x: string;
 ```
 
-###### private.h\_m\_pk\_r.y
+##### private.h\_m\_pk\_r.y
 
 ```ts
 y: string;
@@ -1337,36 +1106,33 @@ y: string;
 
 ```ts
 public: {
-  nullifier: {
-     x: string;
-     y: string;
-    };
-  s: string;
+  "nullifier": Group;
+  "s": Scalar;
 };
 ```
 
-###### public.nullifier
+##### public.nullifier
 
 ```ts
 nullifier: {
-  x: string;
-  y: string;
+  "x": string;
+  "y": string;
  } = Group;
 ```
 
-###### public.nullifier.x
+##### public.nullifier.x
 
 ```ts
 x: string;
 ```
 
-###### public.nullifier.y
+##### public.nullifier.y
 
 ```ts
 y: string;
 ```
 
-###### public.s
+##### public.s
 
 ```ts
 s: string = Scalar;
@@ -1376,18 +1142,18 @@ s: string = Scalar;
 
 ```ts
 publicKey: {
-  x: string;
-  y: string;
+  "x": string;
+  "y": string;
  } = Group;
 ```
 
-###### publicKey.x
+##### publicKey.x
 
 ```ts
 x: string;
 ```
 
-###### publicKey.y
+##### publicKey.y
 
 ```ts
 y: string;
@@ -1395,8 +1161,7 @@ y: string;
 
 #### Inherited from
 
-```ts
-Struct({
+`Struct({
   publicKey: Group,
   public: {
     nullifier: Group,
@@ -1407,8 +1172,11 @@ Struct({
     g_r: Group,
     h_m_pk_r: Group,
   },
-}).toJSON
-```
+}).toJSON`
+
+#### Source
+
+[lib/provable/types/struct.ts:156](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/struct.ts#L156)
 
 ***
 
@@ -1416,115 +1184,66 @@ Struct({
 
 ```ts
 static toValue: (x: {
-  private: {
-     c: Field;
-     g_r: Group;
-     h_m_pk_r: Group;
+  "private": {
+     "c": Field;
+     "g_r": Group;
+     "h_m_pk_r": Group;
     };
-  public: {
-     nullifier: Group;
-     s: Scalar;
+  "public": {
+     "nullifier": Group;
+     "s": Scalar;
     };
-  publicKey: Group;
+  "publicKey": Group;
  }) => {
-  private: {
-     c: bigint;
-     g_r: {
-        x: bigint;
-        y: bigint;
-       };
-     h_m_pk_r: {
-        x: bigint;
-        y: bigint;
-       };
+  "private": {
+     "c": Field;
+     "g_r": Group;
+     "h_m_pk_r": Group;
     };
-  public: {
-     nullifier: {
-        x: bigint;
-        y: bigint;
-       };
-     s: bigint;
+  "public": {
+     "nullifier": Group;
+     "s": Scalar;
     };
-  publicKey: {
-     x: bigint;
-     y: bigint;
-    };
+  "publicKey": Group;
 };
 ```
-
-Defined in: [lib/provable/types/provable-intf.ts:81](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/provable-intf.ts#L81)
 
 Convert provable type to a normal JS type.
 
 #### Parameters
 
-##### x
+• **x**
 
-###### private
+• **x.private**= `undefined`
 
-\{
-  `c`: [`Field`](Field.mdx);
-  `g_r`: [`Group`](Group.mdx);
-  `h_m_pk_r`: [`Group`](Group.mdx);
- \} = `...`
+• **x.private.c**: [`Field`](Field.mdx)= `Field`
 
-###### private.c
+• **x.private.g\_r**: [`Group`](Group.mdx)= `Group`
 
-[`Field`](Field.mdx) = `Field`
+• **x.private.h\_m\_pk\_r**: [`Group`](Group.mdx)= `Group`
 
-###### private.g_r
+• **x.public**= `undefined`
 
-[`Group`](Group.mdx) = `Group`
+• **x.public.nullifier**: [`Group`](Group.mdx)= `Group`
 
-###### private.h_m_pk_r
+• **x.public.s**: [`Scalar`](Scalar.mdx)= `Scalar`
 
-[`Group`](Group.mdx) = `Group`
-
-###### public
-
-\{
-  `nullifier`: [`Group`](Group.mdx);
-  `s`: [`Scalar`](Scalar.mdx);
- \} = `...`
-
-###### public.nullifier
-
-[`Group`](Group.mdx) = `Group`
-
-###### public.s
-
-[`Scalar`](Scalar.mdx) = `Scalar`
-
-###### publicKey
-
-[`Group`](Group.mdx) = `Group`
+• **x.publicKey**: [`Group`](Group.mdx)= `Group`
 
 #### Returns
 
 ```ts
 {
-  private: {
-     c: bigint;
-     g_r: {
-        x: bigint;
-        y: bigint;
-       };
-     h_m_pk_r: {
-        x: bigint;
-        y: bigint;
-       };
+  "private": {
+     "c": Field;
+     "g_r": Group;
+     "h_m_pk_r": Group;
     };
-  public: {
-     nullifier: {
-        x: bigint;
-        y: bigint;
-       };
-     s: bigint;
+  "public": {
+     "nullifier": Group;
+     "s": Scalar;
     };
-  publicKey: {
-     x: bigint;
-     y: bigint;
-    };
+  "publicKey": Group;
 }
 ```
 
@@ -1532,61 +1251,55 @@ Convert provable type to a normal JS type.
 
 ```ts
 private: {
-  c: bigint;
-  g_r: {
-     x: bigint;
-     y: bigint;
-    };
-  h_m_pk_r: {
-     x: bigint;
-     y: bigint;
-    };
+  "c": Field;
+  "g_r": Group;
+  "h_m_pk_r": Group;
 };
 ```
 
-###### private.c
+##### private.c
 
 ```ts
 c: bigint = Field;
 ```
 
-###### private.g\_r
+##### private.g\_r
 
 ```ts
 g_r: {
-  x: bigint;
-  y: bigint;
+  "x": bigint;
+  "y": bigint;
  } = Group;
 ```
 
-###### private.g\_r.x
+##### private.g\_r.x
 
 ```ts
 x: bigint;
 ```
 
-###### private.g\_r.y
+##### private.g\_r.y
 
 ```ts
 y: bigint;
 ```
 
-###### private.h\_m\_pk\_r
+##### private.h\_m\_pk\_r
 
 ```ts
 h_m_pk_r: {
-  x: bigint;
-  y: bigint;
+  "x": bigint;
+  "y": bigint;
  } = Group;
 ```
 
-###### private.h\_m\_pk\_r.x
+##### private.h\_m\_pk\_r.x
 
 ```ts
 x: bigint;
 ```
 
-###### private.h\_m\_pk\_r.y
+##### private.h\_m\_pk\_r.y
 
 ```ts
 y: bigint;
@@ -1596,36 +1309,33 @@ y: bigint;
 
 ```ts
 public: {
-  nullifier: {
-     x: bigint;
-     y: bigint;
-    };
-  s: bigint;
+  "nullifier": Group;
+  "s": Scalar;
 };
 ```
 
-###### public.nullifier
+##### public.nullifier
 
 ```ts
 nullifier: {
-  x: bigint;
-  y: bigint;
+  "x": bigint;
+  "y": bigint;
  } = Group;
 ```
 
-###### public.nullifier.x
+##### public.nullifier.x
 
 ```ts
 x: bigint;
 ```
 
-###### public.nullifier.y
+##### public.nullifier.y
 
 ```ts
 y: bigint;
 ```
 
-###### public.s
+##### public.s
 
 ```ts
 s: bigint = Scalar;
@@ -1635,18 +1345,18 @@ s: bigint = Scalar;
 
 ```ts
 publicKey: {
-  x: bigint;
-  y: bigint;
+  "x": bigint;
+  "y": bigint;
  } = Group;
 ```
 
-###### publicKey.x
+##### publicKey.x
 
 ```ts
 x: bigint;
 ```
 
-###### publicKey.y
+##### publicKey.y
 
 ```ts
 y: bigint;
@@ -1654,8 +1364,7 @@ y: bigint;
 
 #### Inherited from
 
-```ts
-Struct({
+`Struct({
   publicKey: Group,
   public: {
     nullifier: Group,
@@ -1666,8 +1375,11 @@ Struct({
     g_r: Group,
     h_m_pk_r: Group,
   },
-}).toValue
-```
+}).toValue`
+
+#### Source
+
+[lib/provable/types/provable-intf.ts:81](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/provable-intf.ts#L81)
 
 ## Methods
 
@@ -1677,19 +1389,13 @@ Struct({
 assertUnused(witness: MerkleMapWitness, root: Field): void
 ```
 
-Defined in: [lib/provable/crypto/nullifier.ts:128](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/crypto/nullifier.ts#L128)
-
 Checks if the Nullifier has been used before.
 
 #### Parameters
 
-##### witness
+• **witness**: [`MerkleMapWitness`](MerkleMapWitness.mdx)
 
-[`MerkleMapWitness`](MerkleMapWitness.mdx)
-
-##### root
-
-[`Field`](Field.mdx)
+• **root**: [`Field`](Field.mdx)
 
 #### Returns
 
@@ -1702,6 +1408,10 @@ Checks if the Nullifier has been used before.
 nullifier.assertUnused();
 ```
 
+#### Source
+
+[lib/provable/crypto/nullifier.ts:128](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/crypto/nullifier.ts#L128)
+
 ***
 
 ### getPublicKey()
@@ -1709,8 +1419,6 @@ nullifier.assertUnused();
 ```ts
 getPublicKey(): PublicKey
 ```
-
-Defined in: [lib/provable/crypto/nullifier.ts:157](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/crypto/nullifier.ts#L157)
 
 Returns the [PublicKey](PublicKey.mdx) that is associated with this Nullifier.
 
@@ -1724,6 +1432,10 @@ Returns the [PublicKey](PublicKey.mdx) that is associated with this Nullifier.
 let pk = nullifier.getPublicKey();
 ```
 
+#### Source
+
+[lib/provable/crypto/nullifier.ts:157](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/crypto/nullifier.ts#L157)
+
 ***
 
 ### isUnused()
@@ -1732,19 +1444,13 @@ let pk = nullifier.getPublicKey();
 isUnused(witness: MerkleMapWitness, root: Field): Bool
 ```
 
-Defined in: [lib/provable/crypto/nullifier.ts:108](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/crypto/nullifier.ts#L108)
-
 Returns the state of the Nullifier.
 
 #### Parameters
 
-##### witness
+• **witness**: [`MerkleMapWitness`](MerkleMapWitness.mdx)
 
-[`MerkleMapWitness`](MerkleMapWitness.mdx)
-
-##### root
-
-[`Field`](Field.mdx)
+• **root**: [`Field`](Field.mdx)
 
 #### Returns
 
@@ -1757,6 +1463,10 @@ Returns the state of the Nullifier.
 let isUnused = nullifier.isUnused();
 ```
 
+#### Source
+
+[lib/provable/crypto/nullifier.ts:108](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/crypto/nullifier.ts#L108)
+
 ***
 
 ### key()
@@ -1764,8 +1474,6 @@ let isUnused = nullifier.isUnused();
 ```ts
 key(): Field
 ```
-
-Defined in: [lib/provable/crypto/nullifier.ts:95](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/crypto/nullifier.ts#L95)
 
 The key of the nullifier, which belongs to a unique message and a public key.
 Used as an index in Merkle trees.
@@ -1781,6 +1489,10 @@ Used as an index in Merkle trees.
 let key = nullifier.key();
 ```
 
+#### Source
+
+[lib/provable/crypto/nullifier.ts:95](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/crypto/nullifier.ts#L95)
+
 ***
 
 ### setUsed()
@@ -1789,15 +1501,11 @@ let key = nullifier.key();
 setUsed(witness: MerkleMapWitness): Field
 ```
 
-Defined in: [lib/provable/crypto/nullifier.ts:143](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/crypto/nullifier.ts#L143)
-
 Sets the Nullifier, returns the new Merkle root.
 
 #### Parameters
 
-##### witness
-
-[`MerkleMapWitness`](MerkleMapWitness.mdx)
+• **witness**: [`MerkleMapWitness`](MerkleMapWitness.mdx)
 
 #### Returns
 
@@ -1810,6 +1518,10 @@ Sets the Nullifier, returns the new Merkle root.
 let newRoot = nullifier.setUsed(witness);
 ```
 
+#### Source
+
+[lib/provable/crypto/nullifier.ts:143](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/crypto/nullifier.ts#L143)
+
 ***
 
 ### verify()
@@ -1818,15 +1530,11 @@ let newRoot = nullifier.setUsed(witness);
 verify(message: Field[]): void
 ```
 
-Defined in: [lib/provable/crypto/nullifier.ts:47](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/crypto/nullifier.ts#L47)
-
 Verifies that the Nullifier belongs to a specific message. Throws an error if the Nullifier is incorrect.
 
 #### Parameters
 
-##### message
-
-[`Field`](Field.mdx)[]
+• **message**: [`Field`](Field.mdx)[]
 
 #### Returns
 
@@ -1840,6 +1548,10 @@ let nullifierMessage = [voteId, ...otherData];
 nullifier.verify(nullifierMessage);
 ```
 
+#### Source
+
+[lib/provable/crypto/nullifier.ts:47](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/crypto/nullifier.ts#L47)
+
 ***
 
 ### createTestNullifier()
@@ -1847,8 +1559,6 @@ nullifier.verify(nullifierMessage);
 ```ts
 static createTestNullifier(message: Field[], sk: PrivateKey): Nullifier
 ```
-
-Defined in: [lib/provable/crypto/nullifier.ts:170](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/crypto/nullifier.ts#L170)
 
 _Note_: This is *not* the recommended way to create a Nullifier in production. Please use mina-signer to create Nullifiers.
 Also, this function cannot be run within provable code to avoid unintended creations of Nullifiers - a Nullifier should never be created inside proveable code (e.g. a smart contract) directly, but rather created inside the users wallet (or other secure enclaves, so the private key never leaves that enclave).
@@ -1859,17 +1569,17 @@ https://eprint.iacr.org/2022/1255.pdf chapter 3 page 14
 
 #### Parameters
 
-##### message
+• **message**: [`Field`](Field.mdx)[]
 
-[`Field`](Field.mdx)[]
-
-##### sk
-
-[`PrivateKey`](PrivateKey.mdx)
+• **sk**: [`PrivateKey`](PrivateKey.mdx)
 
 #### Returns
 
 `Nullifier`
+
+#### Source
+
+[lib/provable/crypto/nullifier.ts:170](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/crypto/nullifier.ts#L170)
 
 ***
 
@@ -1879,13 +1589,9 @@ https://eprint.iacr.org/2022/1255.pdf chapter 3 page 14
 static fromJSON(json: Nullifier): Nullifier
 ```
 
-Defined in: [lib/provable/crypto/nullifier.ts:32](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/crypto/nullifier.ts#L32)
-
 #### Parameters
 
-##### json
-
-`Nullifier`
+• **json**: `Nullifier`
 
 #### Returns
 
@@ -1893,8 +1599,7 @@ Defined in: [lib/provable/crypto/nullifier.ts:32](https://github.com/o1-labs/o1j
 
 #### Overrides
 
-```ts
-Struct({
+`Struct({
   publicKey: Group,
   public: {
     nullifier: Group,
@@ -1905,8 +1610,11 @@ Struct({
     g_r: Group,
     h_m_pk_r: Group,
   },
-}).fromJSON
-```
+}).fromJSON`
+
+#### Source
+
+[lib/provable/crypto/nullifier.ts:32](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/crypto/nullifier.ts#L32)
 
 ***
 
@@ -1915,8 +1623,6 @@ Struct({
 ```ts
 static sizeInFields(): number
 ```
-
-Defined in: [lib/provable/types/provable-intf.ts:66](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/provable-intf.ts#L66)
 
 Return the size of the `T` type in terms of [Field](Field.mdx) type, as [Field](Field.mdx) is the primitive type.
 
@@ -1928,8 +1634,7 @@ A `number` representing the size of the `T` type in terms of [Field](Field.mdx) 
 
 #### Inherited from
 
-```ts
-Struct({
+`Struct({
   publicKey: Group,
   public: {
     nullifier: Group,
@@ -1940,5 +1645,8 @@ Struct({
     g_r: Group,
     h_m_pk_r: Group,
   },
-}).sizeInFields
-```
+}).sizeInFields`
+
+#### Source
+
+[lib/provable/types/provable-intf.ts:66](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/provable-intf.ts#L66)

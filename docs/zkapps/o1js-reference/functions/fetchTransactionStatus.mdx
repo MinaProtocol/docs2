@@ -1,28 +1,19 @@
 ```ts
-function fetchTransactionStatus(
-   txId: string, 
-   graphqlEndpoint: string, 
-headers?: HeadersInit): Promise<TransactionStatus>
+function fetchTransactionStatus(txId: string, graphqlEndpoint: string): Promise<TransactionStatus>
 ```
-
-Defined in: [lib/mina/v1/fetch.ts:593](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/fetch.ts#L593)
 
 Fetches the status of a transaction.
 
 ## Parameters
 
-### txId
+• **txId**: `string`
 
-`string`
-
-### graphqlEndpoint
-
-`string` = `networkConfig.minaEndpoint`
-
-### headers?
-
-`HeadersInit`
+• **graphqlEndpoint**: `string`= `networkConfig.minaEndpoint`
 
 ## Returns
 
 `Promise`\<[`TransactionStatus`](../type-aliases/TransactionStatus.mdx)\>
+
+## Source
+
+[lib/mina/fetch.ts:598](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/fetch.ts#L598)

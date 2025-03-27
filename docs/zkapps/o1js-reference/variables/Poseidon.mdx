@@ -1,19 +1,17 @@
 ```ts
 const Poseidon: {
-  Sponge: typeof Sponge;
-  Unsafe: {
-     hashToGroup: Group;
+  "Sponge": typeof Sponge;
+  "Unsafe": {
+     "hashToGroup": Group;
     };
-  hash: Field;
-  hashPacked: Field;
-  hashToGroup: Group;
-  hashWithPrefix: Field;
-  initialState: [Field, Field, Field];
-  update: [Field, Field, Field];
+  "hash": Field;
+  "hashPacked": Field;
+  "hashToGroup": Group;
+  "hashWithPrefix": Field;
+  "initialState": [Field, Field, Field];
+  "update": [Field, Field, Field];
 };
 ```
-
-Defined in: [lib/provable/crypto/poseidon.ts:56](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/crypto/poseidon.ts#L56)
 
 ## Type declaration
 
@@ -27,11 +25,11 @@ Sponge: typeof Sponge;
 
 ```ts
 Unsafe: {
-  hashToGroup: Group;
+  "hashToGroup": Group;
 };
 ```
 
-#### Unsafe.hashToGroup()
+### Unsafe.hashToGroup()
 
 Low-level version of `Poseidon.hashToGroup()`.
 
@@ -40,13 +38,11 @@ It returns the square root of a value without constraining which of the two poss
 square roots is chosen. This allows the prover to choose between two different hashes,
 which can be a vulnerability if consuming code treats the output as unique.
 
-##### Parameters
+#### Parameters
 
-###### input
+• **input**: [`Field`](../classes/Field.mdx)[]
 
-[`Field`](../classes/Field.mdx)[]
-
-##### Returns
+#### Returns
 
 [`Group`](../classes/Group.mdx)
 
@@ -54,9 +50,7 @@ which can be a vulnerability if consuming code treats the output as unique.
 
 #### Parameters
 
-##### input
-
-[`Field`](../classes/Field.mdx)[]
+• **input**: [`Field`](../classes/Field.mdx)[]
 
 #### Returns
 
@@ -75,19 +69,15 @@ uses the `toInput()` method on the provable type to pack the input into as few
 field elements as possible. This saves constraints because packing has a much
 lower per-field element cost than hashing.
 
-#### Type Parameters
+#### Type parameters
 
 • **T**
 
 #### Parameters
 
-##### type
+• **type**: [`WithProvable`](../type-aliases/WithProvable.mdx)\<`Hashable`\<`T`\>\>
 
-[`WithProvable`](../type-aliases/WithProvable.mdx)\<`Hashable`\<`T`\>\>
-
-##### value
-
-`T`
+• **value**: `T`
 
 #### Returns
 
@@ -101,9 +91,7 @@ The output point is deterministic and its discrete log is not efficiently comput
 
 #### Parameters
 
-##### input
-
-[`Field`](../classes/Field.mdx)[]
+• **input**: [`Field`](../classes/Field.mdx)[]
 
 #### Returns
 
@@ -113,13 +101,9 @@ The output point is deterministic and its discrete log is not efficiently comput
 
 #### Parameters
 
-##### prefix
+• **prefix**: `string`
 
-`string`
-
-##### input
-
-[`Field`](../classes/Field.mdx)[]
+• **input**: [`Field`](../classes/Field.mdx)[]
 
 #### Returns
 
@@ -129,20 +113,20 @@ The output point is deterministic and its discrete log is not efficiently comput
 
 #### Returns
 
-\[[`Field`](../classes/Field.mdx), [`Field`](../classes/Field.mdx), [`Field`](../classes/Field.mdx)\]
+[[`Field`](../classes/Field.mdx), [`Field`](../classes/Field.mdx), [`Field`](../classes/Field.mdx)]
 
 ### update()
 
 #### Parameters
 
-##### state
+• **state**: [[`Field`](../classes/Field.mdx), [`Field`](../classes/Field.mdx), [`Field`](../classes/Field.mdx)]
 
-\[[`Field`](../classes/Field.mdx), [`Field`](../classes/Field.mdx), [`Field`](../classes/Field.mdx)\]
-
-##### input
-
-[`Field`](../classes/Field.mdx)[]
+• **input**: [`Field`](../classes/Field.mdx)[]
 
 #### Returns
 
-\[[`Field`](../classes/Field.mdx), [`Field`](../classes/Field.mdx), [`Field`](../classes/Field.mdx)\]
+[[`Field`](../classes/Field.mdx), [`Field`](../classes/Field.mdx), [`Field`](../classes/Field.mdx)]
+
+## Source
+
+[lib/provable/crypto/poseidon.ts:56](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/crypto/poseidon.ts#L56)

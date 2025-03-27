@@ -1,5 +1,3 @@
-Defined in: [lib/provable/merkle-map.ts:106](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/merkle-map.ts#L106)
-
 ## Extends
 
 - `CircuitValue`
@@ -12,17 +10,11 @@ Defined in: [lib/provable/merkle-map.ts:106](https://github.com/o1-labs/o1js/blo
 new MerkleMapWitness(isLefts: Bool[], siblings: Field[]): MerkleMapWitness
 ```
 
-Defined in: [lib/provable/merkle-map.ts:110](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/merkle-map.ts#L110)
-
 #### Parameters
 
-##### isLefts
+• **isLefts**: [`Bool`](Bool.mdx)[]
 
-[`Bool`](Bool.mdx)[]
-
-##### siblings
-
-[`Field`](Field.mdx)[]
+• **siblings**: [`Field`](Field.mdx)[]
 
 #### Returns
 
@@ -30,9 +22,11 @@ Defined in: [lib/provable/merkle-map.ts:110](https://github.com/o1-labs/o1js/blo
 
 #### Overrides
 
-```ts
-CircuitValue.constructor
-```
+`CircuitValue.constructor`
+
+#### Source
+
+[lib/provable/merkle-map.ts:110](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/merkle-map.ts#L110)
 
 ## Properties
 
@@ -42,7 +36,9 @@ CircuitValue.constructor
 isLefts: Bool[];
 ```
 
-Defined in: [lib/provable/merkle-map.ts:107](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/merkle-map.ts#L107)
+#### Source
+
+[lib/provable/merkle-map.ts:107](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/merkle-map.ts#L107)
 
 ***
 
@@ -52,7 +48,9 @@ Defined in: [lib/provable/merkle-map.ts:107](https://github.com/o1-labs/o1js/blo
 siblings: Field[];
 ```
 
-Defined in: [lib/provable/merkle-map.ts:108](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/merkle-map.ts#L108)
+#### Source
+
+[lib/provable/merkle-map.ts:108](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/merkle-map.ts#L108)
 
 ## Methods
 
@@ -62,13 +60,9 @@ Defined in: [lib/provable/merkle-map.ts:108](https://github.com/o1-labs/o1js/blo
 assertEquals(x: this): void
 ```
 
-Defined in: [lib/provable/types/circuit-value.ts:121](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/circuit-value.ts#L121)
-
 #### Parameters
 
-##### x
-
-`this`
+• **x**: `this`
 
 #### Returns
 
@@ -76,9 +70,11 @@ Defined in: [lib/provable/types/circuit-value.ts:121](https://github.com/o1-labs
 
 #### Inherited from
 
-```ts
-CircuitValue.assertEquals
-```
+`CircuitValue.assertEquals`
+
+#### Source
+
+[lib/provable/types/circuit-value.ts:130](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/circuit-value.ts#L130)
 
 ***
 
@@ -88,15 +84,11 @@ CircuitValue.assertEquals
 computeRootAndKey(value: Field): Field[]
 ```
 
-Defined in: [lib/provable/merkle-map.ts:121](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/merkle-map.ts#L121)
-
 Computes the merkle tree root for a given value and the key for this witness
 
 #### Parameters
 
-##### value
-
-[`Field`](Field.mdx)
+• **value**: [`Field`](Field.mdx)
 
 The value to compute the root for.
 
@@ -106,6 +98,10 @@ The value to compute the root for.
 
 A tuple of the computed merkle root, and the key that is connected to the path updated by this witness.
 
+#### Source
+
+[lib/provable/merkle-map.ts:121](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/merkle-map.ts#L121)
+
 ***
 
 ### equals()
@@ -114,13 +110,9 @@ A tuple of the computed merkle root, and the key that is connected to the path u
 equals(x: this): Bool
 ```
 
-Defined in: [lib/provable/types/circuit-value.ts:117](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/circuit-value.ts#L117)
-
 #### Parameters
 
-##### x
-
-`this`
+• **x**: `this`
 
 #### Returns
 
@@ -128,9 +120,11 @@ Defined in: [lib/provable/types/circuit-value.ts:117](https://github.com/o1-labs
 
 #### Inherited from
 
-```ts
-CircuitValue.equals
-```
+`CircuitValue.equals`
+
+#### Source
+
+[lib/provable/types/circuit-value.ts:126](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/circuit-value.ts#L126)
 
 ***
 
@@ -140,17 +134,17 @@ CircuitValue.equals
 isConstant(): boolean
 ```
 
-Defined in: [lib/provable/types/circuit-value.ts:125](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/circuit-value.ts#L125)
-
 #### Returns
 
 `boolean`
 
 #### Inherited from
 
-```ts
-CircuitValue.isConstant
-```
+`CircuitValue.isConstant`
+
+#### Source
+
+[lib/provable/types/circuit-value.ts:134](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/circuit-value.ts#L134)
 
 ***
 
@@ -160,17 +154,17 @@ CircuitValue.isConstant
 toConstant(): this
 ```
 
-Defined in: [lib/provable/types/circuit-value.ts:113](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/circuit-value.ts#L113)
-
 #### Returns
 
 `this`
 
 #### Inherited from
 
-```ts
-CircuitValue.toConstant
-```
+`CircuitValue.toConstant`
+
+#### Source
+
+[lib/provable/types/circuit-value.ts:122](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/circuit-value.ts#L122)
 
 ***
 
@@ -180,17 +174,17 @@ CircuitValue.toConstant
 toFields(): Field[]
 ```
 
-Defined in: [lib/provable/types/circuit-value.ts:79](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/circuit-value.ts#L79)
-
 #### Returns
 
 [`Field`](Field.mdx)[]
 
 #### Inherited from
 
-```ts
-CircuitValue.toFields
-```
+`CircuitValue.toFields`
+
+#### Source
+
+[lib/provable/types/circuit-value.ts:85](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/circuit-value.ts#L85)
 
 ***
 
@@ -200,17 +194,17 @@ CircuitValue.toFields
 toJSON(): any
 ```
 
-Defined in: [lib/provable/types/circuit-value.ts:109](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/circuit-value.ts#L109)
-
 #### Returns
 
 `any`
 
 #### Inherited from
 
-```ts
-CircuitValue.toJSON
-```
+`CircuitValue.toJSON`
+
+#### Source
+
+[lib/provable/types/circuit-value.ts:118](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/circuit-value.ts#L118)
 
 ***
 
@@ -220,21 +214,15 @@ CircuitValue.toJSON
 static check<T>(this: T, v: InstanceType<T>): void
 ```
 
-Defined in: [lib/provable/types/circuit-value.ts:148](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/circuit-value.ts#L148)
-
-#### Type Parameters
+#### Type parameters
 
 • **T** *extends* `AnyConstructor`
 
 #### Parameters
 
-##### this
+• **this**: `T`
 
-`T`
-
-##### v
-
-`InstanceType`\<`T`\>
+• **v**: `InstanceType`\<`T`\>
 
 #### Returns
 
@@ -242,9 +230,11 @@ Defined in: [lib/provable/types/circuit-value.ts:148](https://github.com/o1-labs
 
 #### Inherited from
 
-```ts
-CircuitValue.check
-```
+`CircuitValue.check`
+
+#### Source
+
+[lib/provable/types/circuit-value.ts:163](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/circuit-value.ts#L163)
 
 ***
 
@@ -254,9 +244,7 @@ CircuitValue.check
 static empty<T>(): InstanceType<T>
 ```
 
-Defined in: [lib/provable/types/circuit-value.ts:205](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/circuit-value.ts#L205)
-
-#### Type Parameters
+#### Type parameters
 
 • **T** *extends* `AnyConstructor`
 
@@ -266,9 +254,11 @@ Defined in: [lib/provable/types/circuit-value.ts:205](https://github.com/o1-labs
 
 #### Inherited from
 
-```ts
-CircuitValue.empty
-```
+`CircuitValue.empty`
+
+#### Source
+
+[lib/provable/types/circuit-value.ts:230](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/circuit-value.ts#L230)
 
 ***
 
@@ -278,21 +268,15 @@ CircuitValue.empty
 static fromFields<T>(this: T, xs: Field[]): InstanceType<T>
 ```
 
-Defined in: [lib/provable/types/circuit-value.ts:129](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/circuit-value.ts#L129)
-
-#### Type Parameters
+#### Type parameters
 
 • **T** *extends* `AnyConstructor`
 
 #### Parameters
 
-##### this
+• **this**: `T`
 
-`T`
-
-##### xs
-
-[`Field`](Field.mdx)[]
+• **xs**: [`Field`](Field.mdx)[]
 
 #### Returns
 
@@ -300,9 +284,11 @@ Defined in: [lib/provable/types/circuit-value.ts:129](https://github.com/o1-labs
 
 #### Inherited from
 
-```ts
-CircuitValue.fromFields
-```
+`CircuitValue.fromFields`
+
+#### Source
+
+[lib/provable/types/circuit-value.ts:138](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/circuit-value.ts#L138)
 
 ***
 
@@ -312,21 +298,15 @@ CircuitValue.fromFields
 static fromJSON<T>(this: T, value: any): InstanceType<T>
 ```
 
-Defined in: [lib/provable/types/circuit-value.ts:186](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/circuit-value.ts#L186)
-
-#### Type Parameters
+#### Type parameters
 
 • **T** *extends* `AnyConstructor`
 
 #### Parameters
 
-##### this
+• **this**: `T`
 
-`T`
-
-##### value
-
-`any`
+• **value**: `any`
 
 #### Returns
 
@@ -334,9 +314,11 @@ Defined in: [lib/provable/types/circuit-value.ts:186](https://github.com/o1-labs
 
 #### Inherited from
 
-```ts
-CircuitValue.fromJSON
-```
+`CircuitValue.fromJSON`
+
+#### Source
+
+[lib/provable/types/circuit-value.ts:208](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/circuit-value.ts#L208)
 
 ***
 
@@ -346,21 +328,15 @@ CircuitValue.fromJSON
 static fromObject<T>(this: T, value: NonMethods<InstanceType<T>>): InstanceType<T>
 ```
 
-Defined in: [lib/provable/types/circuit-value.ts:30](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/circuit-value.ts#L30)
-
-#### Type Parameters
+#### Type parameters
 
 • **T** *extends* `AnyConstructor`
 
 #### Parameters
 
-##### this
+• **this**: `T`
 
-`T`
-
-##### value
-
-`NonMethods`\<`InstanceType`\<`T`\>\>
+• **value**: `NonMethods`\<`InstanceType`\<`T`\>\>
 
 #### Returns
 
@@ -368,9 +344,11 @@ Defined in: [lib/provable/types/circuit-value.ts:30](https://github.com/o1-labs/
 
 #### Inherited from
 
-```ts
-CircuitValue.fromObject
-```
+`CircuitValue.fromObject`
+
+#### Source
+
+[lib/provable/types/circuit-value.ts:30](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/circuit-value.ts#L30)
 
 ***
 
@@ -380,21 +358,15 @@ CircuitValue.fromObject
 static fromValue<T>(this: T, value: any): InstanceType<T>
 ```
 
-Defined in: [lib/provable/types/circuit-value.ts:92](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/circuit-value.ts#L92)
-
-#### Type Parameters
+#### Type parameters
 
 • **T** *extends* `AnyConstructor`
 
 #### Parameters
 
-##### this
+• **this**: `T`
 
-`T`
-
-##### value
-
-`any`
+• **value**: `any`
 
 #### Returns
 
@@ -402,9 +374,11 @@ Defined in: [lib/provable/types/circuit-value.ts:92](https://github.com/o1-labs/
 
 #### Inherited from
 
-```ts
-CircuitValue.fromValue
-```
+`CircuitValue.fromValue`
+
+#### Source
+
+[lib/provable/types/circuit-value.ts:98](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/circuit-value.ts#L98)
 
 ***
 
@@ -414,17 +388,17 @@ CircuitValue.fromValue
 static sizeInFields(): number
 ```
 
-Defined in: [lib/provable/types/circuit-value.ts:37](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/circuit-value.ts#L37)
-
 #### Returns
 
 `number`
 
 #### Inherited from
 
-```ts
-CircuitValue.sizeInFields
-```
+`CircuitValue.sizeInFields`
+
+#### Source
+
+[lib/provable/types/circuit-value.ts:37](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/circuit-value.ts#L37)
 
 ***
 
@@ -434,17 +408,17 @@ CircuitValue.sizeInFields
 static toAuxiliary(): []
 ```
 
-Defined in: [lib/provable/types/circuit-value.ts:56](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/circuit-value.ts#L56)
-
 #### Returns
 
-\[\]
+[]
 
 #### Inherited from
 
-```ts
-CircuitValue.toAuxiliary
-```
+`CircuitValue.toAuxiliary`
+
+#### Source
+
+[lib/provable/types/circuit-value.ts:59](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/circuit-value.ts#L59)
 
 ***
 
@@ -454,21 +428,15 @@ CircuitValue.toAuxiliary
 static toCanonical<T>(this: T, value: InstanceType<T>): InstanceType<T>
 ```
 
-Defined in: [lib/provable/types/circuit-value.ts:161](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/circuit-value.ts#L161)
-
-#### Type Parameters
+#### Type parameters
 
 • **T** *extends* `AnyConstructor`
 
 #### Parameters
 
-##### this
+• **this**: `T`
 
-`T`
-
-##### value
-
-`InstanceType`\<`T`\>
+• **value**: `InstanceType`\<`T`\>
 
 #### Returns
 
@@ -476,9 +444,11 @@ Defined in: [lib/provable/types/circuit-value.ts:161](https://github.com/o1-labs
 
 #### Inherited from
 
-```ts
-CircuitValue.toCanonical
-```
+`CircuitValue.toCanonical`
+
+#### Source
+
+[lib/provable/types/circuit-value.ts:177](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/circuit-value.ts#L177)
 
 ***
 
@@ -488,21 +458,15 @@ CircuitValue.toCanonical
 static toConstant<T>(this: T, t: InstanceType<T>): InstanceType<T>
 ```
 
-Defined in: [lib/provable/types/circuit-value.ts:170](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/circuit-value.ts#L170)
-
-#### Type Parameters
+#### Type parameters
 
 • **T** *extends* `AnyConstructor`
 
 #### Parameters
 
-##### this
+• **this**: `T`
 
-`T`
-
-##### t
-
-`InstanceType`\<`T`\>
+• **t**: `InstanceType`\<`T`\>
 
 #### Returns
 
@@ -510,9 +474,11 @@ Defined in: [lib/provable/types/circuit-value.ts:170](https://github.com/o1-labs
 
 #### Inherited from
 
-```ts
-CircuitValue.toConstant
-```
+`CircuitValue.toConstant`
+
+#### Source
+
+[lib/provable/types/circuit-value.ts:189](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/circuit-value.ts#L189)
 
 ***
 
@@ -522,21 +488,15 @@ CircuitValue.toConstant
 static toFields<T>(this: T, v: InstanceType<T>): Field[]
 ```
 
-Defined in: [lib/provable/types/circuit-value.ts:42](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/circuit-value.ts#L42)
-
-#### Type Parameters
+#### Type parameters
 
 • **T** *extends* `AnyConstructor`
 
 #### Parameters
 
-##### this
+• **this**: `T`
 
-`T`
-
-##### v
-
-`InstanceType`\<`T`\>
+• **v**: `InstanceType`\<`T`\>
 
 #### Returns
 
@@ -544,9 +504,11 @@ Defined in: [lib/provable/types/circuit-value.ts:42](https://github.com/o1-labs/
 
 #### Inherited from
 
-```ts
-CircuitValue.toFields
-```
+`CircuitValue.toFields`
+
+#### Source
+
+[lib/provable/types/circuit-value.ts:42](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/circuit-value.ts#L42)
 
 ***
 
@@ -556,21 +518,15 @@ CircuitValue.toFields
 static toInput<T>(this: T, v: InstanceType<T>): HashInput
 ```
 
-Defined in: [lib/provable/types/circuit-value.ts:60](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/circuit-value.ts#L60)
-
-#### Type Parameters
+#### Type parameters
 
 • **T** *extends* `AnyConstructor`
 
 #### Parameters
 
-##### this
+• **this**: `T`
 
-`T`
-
-##### v
-
-`InstanceType`\<`T`\>
+• **v**: `InstanceType`\<`T`\>
 
 #### Returns
 
@@ -578,9 +534,11 @@ Defined in: [lib/provable/types/circuit-value.ts:60](https://github.com/o1-labs/
 
 #### Inherited from
 
-```ts
-CircuitValue.toInput
-```
+`CircuitValue.toInput`
+
+#### Source
+
+[lib/provable/types/circuit-value.ts:63](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/circuit-value.ts#L63)
 
 ***
 
@@ -590,21 +548,15 @@ CircuitValue.toInput
 static toJSON<T>(this: T, v: InstanceType<T>): any
 ```
 
-Defined in: [lib/provable/types/circuit-value.ts:175](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/circuit-value.ts#L175)
-
-#### Type Parameters
+#### Type parameters
 
 • **T** *extends* `AnyConstructor`
 
 #### Parameters
 
-##### this
+• **this**: `T`
 
-`T`
-
-##### v
-
-`InstanceType`\<`T`\>
+• **v**: `InstanceType`\<`T`\>
 
 #### Returns
 
@@ -612,9 +564,11 @@ Defined in: [lib/provable/types/circuit-value.ts:175](https://github.com/o1-labs
 
 #### Inherited from
 
-```ts
-CircuitValue.toJSON
-```
+`CircuitValue.toJSON`
+
+#### Source
+
+[lib/provable/types/circuit-value.ts:197](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/circuit-value.ts#L197)
 
 ***
 
@@ -624,21 +578,15 @@ CircuitValue.toJSON
 static toValue<T>(this: T, v: InstanceType<T>): any
 ```
 
-Defined in: [lib/provable/types/circuit-value.ts:83](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/circuit-value.ts#L83)
-
-#### Type Parameters
+#### Type parameters
 
 • **T** *extends* `AnyConstructor`
 
 #### Parameters
 
-##### this
+• **this**: `T`
 
-`T`
-
-##### v
-
-`InstanceType`\<`T`\>
+• **v**: `InstanceType`\<`T`\>
 
 #### Returns
 
@@ -646,6 +594,8 @@ Defined in: [lib/provable/types/circuit-value.ts:83](https://github.com/o1-labs/
 
 #### Inherited from
 
-```ts
-CircuitValue.toValue
-```
+`CircuitValue.toValue`
+
+#### Source
+
+[lib/provable/types/circuit-value.ts:89](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/circuit-value.ts#L89)

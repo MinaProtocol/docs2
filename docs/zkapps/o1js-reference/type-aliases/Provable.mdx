@@ -1,17 +1,15 @@
 ```ts
-type Provable<T, TValue> = {
-  check: (value: T) => void;
-  fromFields: (fields: Field[], aux: any[]) => T;
-  fromValue: (x: TValue | T) => T;
-  toAuxiliary: (value?: T) => any[];
-  toCanonical: (x: T) => T;
-  toFields: (value: T) => Field[];
-  toValue: (x: T) => TValue;
-  sizeInFields: number;
+type Provable<T, TValue>: {
+  "check": (value: T) => void;
+  "fromFields": (fields: Field[], aux: any[]) => T;
+  "fromValue": (x: TValue | T) => T;
+  "toAuxiliary": (value?: T) => any[];
+  "toCanonical": (x: T) => T;
+  "toFields": (value: T) => Field[];
+  "toValue": (x: T) => TValue;
+  "sizeInFields": number;
 };
 ```
-
-Defined in: [lib/provable/types/provable-intf.ts:27](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/provable-intf.ts#L27)
 
 `Provable<T>` is the general interface for provable types in o1js.
 
@@ -24,7 +22,7 @@ All built-in provable types in o1js ([Field](../classes/Field.mdx), [Bool](../cl
 
 Note: These methods are meant to be used by the library internally and are not directly when writing provable code.
 
-## Type Parameters
+## Type parameters
 
 • **T**
 
@@ -45,9 +43,7 @@ For instance, calling check function on the type [Bool](../classes/Bool.mdx) ass
 
 #### Parameters
 
-##### value
-
-`T`
+• **value**: `T`
 
 the element of type `T` to put assertions on.
 
@@ -63,27 +59,21 @@ fromFields: (fields: Field[], aux: any[]) => T;
 
 A function that returns an element of type `T` from the given provable and "auxiliary" data.
 
-This function is the reverse operation of calling [toFields](Provable.mdx#tofields) and toAuxilary methods on an element of type `T`.
+This function is the reverse operation of calling toFields and toAuxilary methods on an element of type `T`.
 
 #### Parameters
 
-##### fields
-
-[`Field`](../classes/Field.mdx)[]
+• **fields**: [`Field`](../classes/Field.mdx)[]
 
 an array of [Field](../classes/Field.mdx) elements describing the provable data of the new `T` element.
 
-##### aux
-
-`any`[]
+• **aux**: `any`[]
 
 an array of any type describing the "auxiliary" data of the new `T` element, optional.
 
 #### Returns
 
 `T`
-
-An element of type `T` generated from the given provable and "auxiliary" data.
 
 ### fromValue()
 
@@ -95,9 +85,7 @@ Convert provable type from a normal JS type.
 
 #### Parameters
 
-##### x
-
-`TValue` | `T`
+• **x**: `TValue` \| `T`
 
 #### Returns
 
@@ -114,9 +102,7 @@ returns an array of any type that make up the "auxiliary" (non-provable) data of
 
 #### Parameters
 
-##### value?
-
-`T`
+• **value?**: `T`
 
 the element of type `T` to generate the auxiliary data array from, optional.
 If not provided, a default value for auxiliary data is returned.
@@ -124,8 +110,6 @@ If not provided, a default value for auxiliary data is returned.
 #### Returns
 
 `any`[]
-
-An array of any type describing how this `T` element is made up of "auxiliary" (non-provable) data.
 
 ### toCanonical()?
 
@@ -150,9 +134,7 @@ The identity function will also be used when the `toCanonical()` is not present 
 
 #### Parameters
 
-##### x
-
-`T`
+• **x**: `T`
 
 #### Returns
 
@@ -169,17 +151,13 @@ an array of [Field](../classes/Field.mdx) elements that make up the provable dat
 
 #### Parameters
 
-##### value
-
-`T`
+• **value**: `T`
 
 the element of type `T` to generate the [Field](../classes/Field.mdx) array from.
 
 #### Returns
 
 [`Field`](../classes/Field.mdx)[]
-
-A [Field](../classes/Field.mdx) array describing how this `T` element is made up of [Field](../classes/Field.mdx) elements.
 
 ### toValue()
 
@@ -191,9 +169,7 @@ Convert provable type to a normal JS type.
 
 #### Parameters
 
-##### x
-
-`T`
+• **x**: `T`
 
 #### Returns
 
@@ -208,3 +184,7 @@ Return the size of the `T` type in terms of [Field](../classes/Field.mdx) type, 
 `number`
 
 A `number` representing the size of the `T` type in terms of [Field](../classes/Field.mdx) type.
+
+## Source
+
+[lib/provable/types/provable-intf.ts:27](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/provable-intf.ts#L27)

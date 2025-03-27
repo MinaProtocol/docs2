@@ -1,5 +1,3 @@
-Defined in: [lib/proof-system/circuit.ts:13](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/proof-system/circuit.ts#L13)
-
 ## Constructors
 
 ### new Circuit()
@@ -20,7 +18,9 @@ new Circuit(): Circuit
 static _main: CircuitData<any, any>;
 ```
 
-Defined in: [lib/proof-system/circuit.ts:16](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/proof-system/circuit.ts#L16)
+#### Source
+
+[lib/proof-system/circuit.ts:22](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/proof-system/circuit.ts#L22)
 
 ## Methods
 
@@ -29,8 +29,6 @@ Defined in: [lib/proof-system/circuit.ts:16](https://github.com/o1-labs/o1js/blo
 ```ts
 static generateKeypair(): Promise<Keypair>
 ```
-
-Defined in: [lib/proof-system/circuit.ts:25](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/proof-system/circuit.ts#L25)
 
 Generates a proving key and a verification key for this circuit.
 
@@ -44,6 +42,10 @@ Generates a proving key and a verification key for this circuit.
 const keypair = await MyCircuit.generateKeypair();
 ```
 
+#### Source
+
+[lib/proof-system/circuit.ts:31](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/proof-system/circuit.ts#L31)
+
 ***
 
 ### prove()
@@ -55,23 +57,15 @@ static prove(
 keypair: Keypair): Promise<Proof>
 ```
 
-Defined in: [lib/proof-system/circuit.ts:45](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/proof-system/circuit.ts#L45)
-
 Proves a statement using the private input, public input, and the [Keypair](Keypair.mdx) of the circuit.
 
 #### Parameters
 
-##### privateInput
+• **privateInput**: `any`[]
 
-`any`[]
+• **publicInput**: `any`[]
 
-##### publicInput
-
-`any`[]
-
-##### keypair
-
-[`Keypair`](Keypair.mdx)
+• **keypair**: [`Keypair`](Keypair.mdx)
 
 #### Returns
 
@@ -84,6 +78,10 @@ const keypair = await MyCircuit.generateKeypair();
 const proof = await MyCircuit.prove(privateInput, publicInput, keypair);
 ```
 
+#### Source
+
+[lib/proof-system/circuit.ts:51](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/proof-system/circuit.ts#L51)
+
 ***
 
 ### verify()
@@ -95,23 +93,15 @@ static verify(
 proof: Proof): Promise<boolean>
 ```
 
-Defined in: [lib/proof-system/circuit.ts:72](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/proof-system/circuit.ts#L72)
-
 Verifies a proof using the public input, the proof, and the initial [Keypair](Keypair.mdx) of the circuit.
 
 #### Parameters
 
-##### publicInput
+• **publicInput**: `any`[]
 
-`any`[]
+• **verificationKey**: `VerificationKey`
 
-##### verificationKey
-
-`VerificationKey`
-
-##### proof
-
-`Proof`
+• **proof**: `Proof`
 
 #### Returns
 
@@ -124,3 +114,7 @@ const keypair = await MyCircuit.generateKeypair();
 const proof = await MyCircuit.prove(privateInput, publicInput, keypair);
 const isValid = await MyCircuit.verify(publicInput, keypair.vk, proof);
 ```
+
+#### Source
+
+[lib/proof-system/circuit.ts:82](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/proof-system/circuit.ts#L82)

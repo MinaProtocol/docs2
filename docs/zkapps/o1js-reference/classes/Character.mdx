@@ -1,9 +1,7 @@
-Defined in: [lib/provable/string.ts:12](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/string.ts#L12)
-
 ## Extends
 
 - \{
-  `value`: [`Field`](Field.mdx);
+  `"value"`: `Field`;
  \}
 
 ## Constructors
@@ -14,13 +12,9 @@ Defined in: [lib/provable/string.ts:12](https://github.com/o1-labs/o1js/blob/46b
 new Character(value: number | Field): Character
 ```
 
-Defined in: [lib/provable/string.ts:13](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/string.ts#L13)
-
 #### Parameters
 
-##### value
-
-`number` | [`Field`](Field.mdx)
+• **value**: `number` \| [`Field`](Field.mdx)
 
 #### Returns
 
@@ -28,9 +22,11 @@ Defined in: [lib/provable/string.ts:13](https://github.com/o1-labs/o1js/blob/46b
 
 #### Overrides
 
-```ts
-Struct({ value: Field }).constructor
-```
+`Struct({ value: Field }).constructor`
+
+#### Source
+
+[lib/provable/string.ts:13](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/string.ts#L13)
 
 ## Properties
 
@@ -40,13 +36,13 @@ Struct({ value: Field }).constructor
 value: Field = Field;
 ```
 
-Defined in: [lib/provable/string.ts:12](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/string.ts#L12)
-
 #### Inherited from
 
-```ts
-Struct({ value: Field }).value
-```
+`Struct({ value: Field }).value`
+
+#### Source
+
+[lib/provable/string.ts:12](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/string.ts#L12)
 
 ***
 
@@ -56,13 +52,13 @@ Struct({ value: Field }).value
 static _isStruct: true;
 ```
 
-Defined in: [lib/provable/types/struct.ts:133](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/struct.ts#L133)
-
 #### Inherited from
 
-```ts
-Struct({ value: Field })._isStruct
-```
+`Struct({ value: Field })._isStruct`
+
+#### Source
+
+[lib/provable/types/struct.ts:148](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/struct.ts#L148)
 
 ***
 
@@ -70,17 +66,15 @@ Struct({ value: Field })._isStruct
 
 ```ts
 static empty: () => {
-  value: Field;
+  "value": Field;
 };
 ```
-
-Defined in: [lib/provable/types/struct.ts:143](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/struct.ts#L143)
 
 #### Returns
 
 ```ts
 {
-  value: Field;
+  "value": Field;
 }
 ```
 
@@ -92,9 +86,11 @@ value: Field = Field;
 
 #### Inherited from
 
-```ts
-Struct({ value: Field }).empty
-```
+`Struct({ value: Field }).empty`
+
+#### Source
+
+[lib/provable/types/struct.ts:158](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/struct.ts#L158)
 
 ***
 
@@ -102,23 +98,19 @@ Struct({ value: Field }).empty
 
 ```ts
 static fromFields: (fields: Field[]) => {
-  value: Field;
+  "value": Field;
 };
 ```
 
-Defined in: [lib/provable/types/provable-intf.ts:115](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/provable-intf.ts#L115)
-
 #### Parameters
 
-##### fields
-
-[`Field`](Field.mdx)[]
+• **fields**: [`Field`](Field.mdx)[]
 
 #### Returns
 
 ```ts
 {
-  value: Field;
+  "value": Field;
 }
 ```
 
@@ -130,9 +122,11 @@ value: Field = Field;
 
 #### Inherited from
 
-```ts
-Struct({ value: Field }).fromFields
-```
+`Struct({ value: Field }).fromFields`
+
+#### Source
+
+[lib/provable/types/provable-intf.ts:115](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/provable-intf.ts#L115)
 
 ***
 
@@ -140,27 +134,23 @@ Struct({ value: Field }).fromFields
 
 ```ts
 static fromJSON: (x: {
-  value: string;
+  "value": Field;
  }) => {
-  value: Field;
+  "value": Field;
 };
 ```
 
-Defined in: [lib/provable/types/struct.ts:142](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/struct.ts#L142)
-
 #### Parameters
 
-##### x
+• **x**
 
-###### value
-
-`string` = `Field`
+• **x.value**: `string`= `Field`
 
 #### Returns
 
 ```ts
 {
-  value: Field;
+  "value": Field;
 }
 ```
 
@@ -172,39 +162,39 @@ value: Field = Field;
 
 #### Inherited from
 
-```ts
-Struct({ value: Field }).fromJSON
-```
+`Struct({ value: Field }).fromJSON`
+
+#### Source
+
+[lib/provable/types/struct.ts:157](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/struct.ts#L157)
 
 ***
 
 ### fromValue
 
 ```ts
-static fromValue: (x: 
-  | {
-  value: Field;
- }
-  | {
-  value: bigint;
+static fromValue: (x: {
+  "value": Field;
+ } | {
+  "value": Field;
  }) => {
-  value: Field;
+  "value": Field;
  } & (value: {
-  value: string | number | bigint | Field;
+  "value": Field;
  }) => {
-  value: Field;
+  "value": Field;
 };
 ```
-
-Defined in: [lib/provable/types/provable-intf.ts:86](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/provable-intf.ts#L86)
 
 Convert provable type from a normal JS type.
 
 #### Inherited from
 
-```ts
-Struct({ value: Field }).fromValue
-```
+`Struct({ value: Field }).fromValue`
+
+#### Source
+
+[lib/provable/types/provable-intf.ts:86](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/provable-intf.ts#L86)
 
 ***
 
@@ -212,37 +202,33 @@ Struct({ value: Field }).fromValue
 
 ```ts
 static toAuxiliary: (value?: {
-  value: Field;
+  "value": Field;
  }) => any[];
 ```
-
-Defined in: [lib/provable/types/provable-intf.ts:47](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/provable-intf.ts#L47)
 
 A function that takes `value` (optional), an element of type `T`, as argument and
 returns an array of any type that make up the "auxiliary" (non-provable) data of `value`.
 
 #### Parameters
 
-##### value?
+• **value?**
 
 the element of type `T` to generate the auxiliary data array from, optional.
 If not provided, a default value for auxiliary data is returned.
 
-###### value
-
-[`Field`](Field.mdx) = `Field`
+• **value.value?**: [`Field`](Field.mdx)= `Field`
 
 #### Returns
 
 `any`[]
 
-An array of any type describing how this `T` element is made up of "auxiliary" (non-provable) data.
-
 #### Inherited from
 
-```ts
-Struct({ value: Field }).toAuxiliary
-```
+`Struct({ value: Field }).toAuxiliary`
+
+#### Source
+
+[lib/provable/types/provable-intf.ts:47](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/provable-intf.ts#L47)
 
 ***
 
@@ -250,13 +236,11 @@ Struct({ value: Field }).toAuxiliary
 
 ```ts
 static optional toCanonical: (x: {
-  value: Field;
+  "value": Field;
  }) => {
-  value: Field;
+  "value": Field;
 };
 ```
-
-Defined in: [lib/provable/types/provable-intf.ts:104](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/provable-intf.ts#L104)
 
 Optional method which transforms a provable type into its canonical representation.
 
@@ -275,17 +259,15 @@ The identity function will also be used when the `toCanonical()` is not present 
 
 #### Parameters
 
-##### x
+• **x**
 
-###### value
-
-[`Field`](Field.mdx) = `Field`
+• **x.value**: [`Field`](Field.mdx)= `Field`
 
 #### Returns
 
 ```ts
 {
-  value: Field;
+  "value": Field;
 }
 ```
 
@@ -297,9 +279,11 @@ value: Field = Field;
 
 #### Inherited from
 
-```ts
-Struct({ value: Field }).toCanonical
-```
+`Struct({ value: Field }).toCanonical`
+
+#### Source
+
+[lib/provable/types/provable-intf.ts:104](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/provable-intf.ts#L104)
 
 ***
 
@@ -307,36 +291,32 @@ Struct({ value: Field }).toCanonical
 
 ```ts
 static toFields: (value: {
-  value: Field;
+  "value": Field;
  }) => Field[];
 ```
-
-Defined in: [lib/provable/types/provable-intf.ts:36](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/provable-intf.ts#L36)
 
 A function that takes `value`, an element of type `T`, as argument and returns
 an array of [Field](Field.mdx) elements that make up the provable data of `value`.
 
 #### Parameters
 
-##### value
+• **value**
 
 the element of type `T` to generate the [Field](Field.mdx) array from.
 
-###### value
-
-[`Field`](Field.mdx) = `Field`
+• **value.value**: [`Field`](Field.mdx)= `Field`
 
 #### Returns
 
 [`Field`](Field.mdx)[]
 
-A [Field](Field.mdx) array describing how this `T` element is made up of [Field](Field.mdx) elements.
-
 #### Inherited from
 
-```ts
-Struct({ value: Field }).toFields
-```
+`Struct({ value: Field }).toFields`
+
+#### Source
+
+[lib/provable/types/provable-intf.ts:36](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/provable-intf.ts#L36)
 
 ***
 
@@ -344,27 +324,23 @@ Struct({ value: Field }).toFields
 
 ```ts
 static toJSON: (x: {
-  value: Field;
+  "value": Field;
  }) => {
-  value: string;
+  "value": Field;
 };
 ```
 
-Defined in: [lib/provable/types/struct.ts:141](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/struct.ts#L141)
-
 #### Parameters
 
-##### x
+• **x**
 
-###### value
-
-[`Field`](Field.mdx) = `Field`
+• **x.value**: [`Field`](Field.mdx)= `Field`
 
 #### Returns
 
 ```ts
 {
-  value: string;
+  "value": Field;
 }
 ```
 
@@ -376,9 +352,11 @@ value: string = Field;
 
 #### Inherited from
 
-```ts
-Struct({ value: Field }).toJSON
-```
+`Struct({ value: Field }).toJSON`
+
+#### Source
+
+[lib/provable/types/struct.ts:156](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/struct.ts#L156)
 
 ***
 
@@ -386,29 +364,25 @@ Struct({ value: Field }).toJSON
 
 ```ts
 static toValue: (x: {
-  value: Field;
+  "value": Field;
  }) => {
-  value: bigint;
+  "value": Field;
 };
 ```
-
-Defined in: [lib/provable/types/provable-intf.ts:81](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/provable-intf.ts#L81)
 
 Convert provable type to a normal JS type.
 
 #### Parameters
 
-##### x
+• **x**
 
-###### value
-
-[`Field`](Field.mdx) = `Field`
+• **x.value**: [`Field`](Field.mdx)= `Field`
 
 #### Returns
 
 ```ts
 {
-  value: bigint;
+  "value": Field;
 }
 ```
 
@@ -420,9 +394,11 @@ value: bigint = Field;
 
 #### Inherited from
 
-```ts
-Struct({ value: Field }).toValue
-```
+`Struct({ value: Field }).toValue`
+
+#### Source
+
+[lib/provable/types/provable-intf.ts:81](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/provable-intf.ts#L81)
 
 ## Methods
 
@@ -432,11 +408,13 @@ Struct({ value: Field }).toValue
 isNull(): Bool
 ```
 
-Defined in: [lib/provable/string.ts:17](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/string.ts#L17)
-
 #### Returns
 
 [`Bool`](Bool.mdx)
+
+#### Source
+
+[lib/provable/string.ts:17](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/string.ts#L17)
 
 ***
 
@@ -446,11 +424,13 @@ Defined in: [lib/provable/string.ts:17](https://github.com/o1-labs/o1js/blob/46b
 toField(): Field
 ```
 
-Defined in: [lib/provable/string.ts:21](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/string.ts#L21)
-
 #### Returns
 
 [`Field`](Field.mdx)
+
+#### Source
+
+[lib/provable/string.ts:21](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/string.ts#L21)
 
 ***
 
@@ -460,13 +440,13 @@ Defined in: [lib/provable/string.ts:21](https://github.com/o1-labs/o1js/blob/46b
 toString(): string
 ```
 
-Defined in: [lib/provable/string.ts:25](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/string.ts#L25)
-
-Returns a string representation of an object.
-
 #### Returns
 
 `string`
+
+#### Source
+
+[lib/provable/string.ts:25](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/string.ts#L25)
 
 ***
 
@@ -474,19 +454,15 @@ Returns a string representation of an object.
 
 ```ts
 static check(c: {
-  value: Field;
+  "value": Field;
  }): void
 ```
 
-Defined in: [lib/provable/string.ts:36](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/string.ts#L36)
-
 #### Parameters
 
-##### c
+• **c**
 
-###### value
-
-[`Field`](Field.mdx)
+• **c.value**: [`Field`](Field.mdx)
 
 #### Returns
 
@@ -494,9 +470,11 @@ Defined in: [lib/provable/string.ts:36](https://github.com/o1-labs/o1js/blob/46b
 
 #### Overrides
 
-```ts
-Struct({ value: Field }).check
-```
+`Struct({ value: Field }).check`
+
+#### Source
+
+[lib/provable/string.ts:36](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/string.ts#L36)
 
 ***
 
@@ -506,17 +484,17 @@ Struct({ value: Field }).check
 static fromString(str: string): Character
 ```
 
-Defined in: [lib/provable/string.ts:30](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/string.ts#L30)
-
 #### Parameters
 
-##### str
-
-`string`
+• **str**: `string`
 
 #### Returns
 
 [`Character`](Character.mdx)
+
+#### Source
+
+[lib/provable/string.ts:30](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/string.ts#L30)
 
 ***
 
@@ -525,8 +503,6 @@ Defined in: [lib/provable/string.ts:30](https://github.com/o1-labs/o1js/blob/46b
 ```ts
 static sizeInFields(): number
 ```
-
-Defined in: [lib/provable/types/provable-intf.ts:66](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/provable-intf.ts#L66)
 
 Return the size of the `T` type in terms of [Field](Field.mdx) type, as [Field](Field.mdx) is the primitive type.
 
@@ -538,9 +514,11 @@ A `number` representing the size of the `T` type in terms of [Field](Field.mdx) 
 
 #### Inherited from
 
-```ts
-Struct({ value: Field }).sizeInFields
-```
+`Struct({ value: Field }).sizeInFields`
+
+#### Source
+
+[lib/provable/types/provable-intf.ts:66](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/provable-intf.ts#L66)
 
 ***
 
@@ -548,19 +526,15 @@ Struct({ value: Field }).sizeInFields
 
 ```ts
 static toInput(c: {
-  value: Field;
+  "value": Field;
  }): HashInput
 ```
 
-Defined in: [lib/provable/string.ts:40](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/string.ts#L40)
-
 #### Parameters
 
-##### c
+• **c**
 
-###### value
-
-[`Field`](Field.mdx)
+• **c.value**: [`Field`](Field.mdx)
 
 #### Returns
 
@@ -568,6 +542,8 @@ Defined in: [lib/provable/string.ts:40](https://github.com/o1-labs/o1js/blob/46b
 
 #### Overrides
 
-```ts
-Struct({ value: Field }).toInput
-```
+`Struct({ value: Field }).toInput`
+
+#### Source
+
+[lib/provable/string.ts:40](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/string.ts#L40)

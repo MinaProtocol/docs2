@@ -1,5 +1,3 @@
-Defined in: [lib/mina/v1/account-update.ts:637](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L637)
-
 An [AccountUpdate](AccountUpdate.mdx) is a set of instructions for the Mina network.
 It includes Preconditions and a list of state updates, which need to
 be authorized by either a [Signature](Signature.mdx) or [Proof](Proof.mdx).
@@ -16,19 +14,19 @@ be authorized by either a [Signature](Signature.mdx) or [Proof](Proof.mdx).
 new AccountUpdate(body: Body, authorization?: {}): AccountUpdate
 ```
 
-Defined in: [lib/mina/v1/account-update.ts:656](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L656)
-
 #### Parameters
 
-##### body
+• **body**: `Body`
 
-`Body`
-
-##### authorization?
+• **authorization?**
 
 #### Returns
 
 [`AccountUpdate`](AccountUpdate.mdx)
+
+#### Source
+
+[lib/mina/account-update.ts:703](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L703)
 
 ## Properties
 
@@ -38,7 +36,9 @@ Defined in: [lib/mina/v1/account-update.ts:656](https://github.com/o1-labs/o1js/
 account: Account;
 ```
 
-Defined in: [lib/mina/v1/account-update.ts:647](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L647)
+#### Source
+
+[lib/mina/account-update.ts:694](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L694)
 
 ***
 
@@ -48,13 +48,13 @@ Defined in: [lib/mina/v1/account-update.ts:647](https://github.com/o1-labs/o1js/
 authorization: {};
 ```
 
-Defined in: [lib/mina/v1/account-update.ts:645](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L645)
-
 #### Implementation of
 
-```ts
-Types.AccountUpdate.authorization
-```
+`Types.AccountUpdate.authorization`
+
+#### Source
+
+[lib/mina/account-update.ts:691](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L691)
 
 ***
 
@@ -64,13 +64,13 @@ Types.AccountUpdate.authorization
 body: Body;
 ```
 
-Defined in: [lib/mina/v1/account-update.ts:644](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L644)
-
 #### Implementation of
 
-```ts
-Types.AccountUpdate.body
-```
+`Types.AccountUpdate.body`
+
+#### Source
+
+[lib/mina/account-update.ts:690](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L690)
 
 ***
 
@@ -80,7 +80,9 @@ Types.AccountUpdate.body
 currentSlot: CurrentSlot;
 ```
 
-Defined in: [lib/mina/v1/account-update.ts:649](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L649)
+#### Source
+
+[lib/mina/account-update.ts:696](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L696)
 
 ***
 
@@ -90,7 +92,9 @@ Defined in: [lib/mina/v1/account-update.ts:649](https://github.com/o1-labs/o1js/
 id: number;
 ```
 
-Defined in: [lib/mina/v1/account-update.ts:638](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L638)
+#### Source
+
+[lib/mina/account-update.ts:684](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L684)
 
 ***
 
@@ -100,10 +104,12 @@ Defined in: [lib/mina/v1/account-update.ts:638](https://github.com/o1-labs/o1js/
 label: string = '';
 ```
 
-Defined in: [lib/mina/v1/account-update.ts:643](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L643)
-
 A human-readable label for the account update, indicating how that update
 was created. Can be modified by applications to add richer information.
+
+#### Source
+
+[lib/mina/account-update.ts:689](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L689)
 
 ***
 
@@ -113,7 +119,9 @@ was created. Can be modified by applications to add richer information.
 lazyAuthorization: undefined | LazySignature | LazyProof | LazyNone = undefined;
 ```
 
-Defined in: [lib/mina/v1/account-update.ts:646](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L646)
+#### Source
+
+[lib/mina/account-update.ts:692](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L692)
 
 ***
 
@@ -123,7 +131,9 @@ Defined in: [lib/mina/v1/account-update.ts:646](https://github.com/o1-labs/o1js/
 network: Network;
 ```
 
-Defined in: [lib/mina/v1/account-update.ts:648](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L648)
+#### Source
+
+[lib/mina/account-update.ts:695](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L695)
 
 ***
 
@@ -131,15 +141,13 @@ Defined in: [lib/mina/v1/account-update.ts:648](https://github.com/o1-labs/o1js/
 
 ```ts
 static Actions: {
-  emptyActionState: Field;
-  fromList: Events;
-  hash: Field;
-  pushEvent: Events;
-  updateSequenceState: Field;
+  "emptyActionState": Field;
+  "fromList": Events;
+  "hash": Field;
+  "pushEvent": Events;
+  "updateSequenceState": Field;
 };
 ```
-
-Defined in: [lib/mina/v1/account-update.ts:653](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L653)
 
 #### emptyActionState()
 
@@ -151,9 +159,7 @@ Defined in: [lib/mina/v1/account-update.ts:653](https://github.com/o1-labs/o1js/
 
 ##### Parameters
 
-###### events
-
-`Event`[]
+• **events**: `Event`[]
 
 ##### Returns
 
@@ -163,9 +169,7 @@ Defined in: [lib/mina/v1/account-update.ts:653](https://github.com/o1-labs/o1js/
 
 ##### Parameters
 
-###### events
-
-`Event`[]
+• **events**: `Event`[]
 
 ##### Returns
 
@@ -175,13 +179,9 @@ Defined in: [lib/mina/v1/account-update.ts:653](https://github.com/o1-labs/o1js/
 
 ##### Parameters
 
-###### actions
+• **actions**: `Events`
 
-`Events`
-
-###### action
-
-[`Field`](Field.mdx)[]
+• **action**: [`Field`](Field.mdx)[]
 
 ##### Returns
 
@@ -191,37 +191,17 @@ Defined in: [lib/mina/v1/account-update.ts:653](https://github.com/o1-labs/o1js/
 
 ##### Parameters
 
-###### state
+• **state**: [`Field`](Field.mdx)
 
-[`Field`](Field.mdx)
-
-###### sequenceEventsHash
-
-[`Field`](Field.mdx)
+• **sequenceEventsHash**: [`Field`](Field.mdx)
 
 ##### Returns
 
 [`Field`](Field.mdx)
 
-***
+#### Source
 
-### check()
-
-```ts
-static check: (x: AccountUpdate) => void = Types.AccountUpdate.check;
-```
-
-Defined in: [lib/mina/v1/account-update.ts:1111](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L1111)
-
-#### Parameters
-
-##### x
-
-`AccountUpdate`
-
-#### Returns
-
-`void`
+[lib/mina/account-update.ts:700](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L700)
 
 ***
 
@@ -229,21 +209,17 @@ Defined in: [lib/mina/v1/account-update.ts:1111](https://github.com/o1-labs/o1js
 
 ```ts
 static Events: {
-  fromList: Events;
-  hash: Field;
-  pushEvent: Events;
+  "fromList": Events;
+  "hash": Field;
+  "pushEvent": Events;
 };
 ```
-
-Defined in: [lib/mina/v1/account-update.ts:654](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L654)
 
 #### fromList()
 
 ##### Parameters
 
-###### events
-
-`Event`[]
+• **events**: `Event`[]
 
 ##### Returns
 
@@ -253,9 +229,7 @@ Defined in: [lib/mina/v1/account-update.ts:654](https://github.com/o1-labs/o1js/
 
 ##### Parameters
 
-###### events
-
-`Event`[]
+• **events**: `Event`[]
 
 ##### Returns
 
@@ -265,17 +239,17 @@ Defined in: [lib/mina/v1/account-update.ts:654](https://github.com/o1-labs/o1js/
 
 ##### Parameters
 
-###### events
+• **events**: `Events`
 
-`Events`
-
-###### event
-
-[`Field`](Field.mdx)[]
+• **event**: [`Field`](Field.mdx)[]
 
 ##### Returns
 
 `Events`
+
+#### Source
+
+[lib/mina/account-update.ts:701](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L701)
 
 ***
 
@@ -283,43 +257,83 @@ Defined in: [lib/mina/v1/account-update.ts:654](https://github.com/o1-labs/o1js/
 
 ```ts
 static MayUseToken: {
-  InheritFromParent: {
-     inheritFromParent: Bool;
-     parentsOwnToken: Bool;
+  "InheritFromParent": {
+     "inheritFromParent": Bool;
+     "parentsOwnToken": Bool;
     };
-  isInheritFromParent: (a: AccountUpdate) => Bool;
-  isNo: (__namedParameters: AccountUpdate) => Bool;
-  isParentsOwnToken: (a: AccountUpdate) => Bool;
-  No: {
-     inheritFromParent: Bool;
-     parentsOwnToken: Bool;
+  "No": {
+     "inheritFromParent": Bool;
+     "parentsOwnToken": Bool;
     };
-  ParentsOwnToken: {
-     inheritFromParent: Bool;
-     parentsOwnToken: Bool;
+  "ParentsOwnToken": {
+     "inheritFromParent": Bool;
+     "parentsOwnToken": Bool;
     };
-  type: {};
+  "isInheritFromParent": (a: AccountUpdate) => Bool;
+  "isNo": (__namedParameters: AccountUpdate) => Bool;
+  "isParentsOwnToken": (a: AccountUpdate) => Bool;
+  "type": BaseMayUseToken;
 };
 ```
-
-Defined in: [lib/mina/v1/account-update.ts:1154](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L1154)
 
 #### InheritFromParent
 
 ```ts
 InheritFromParent: {
-  inheritFromParent: Bool;
-  parentsOwnToken: Bool;
+  "inheritFromParent": Bool;
+  "parentsOwnToken": Bool;
 };
 ```
 
-##### InheritFromParent.inheritFromParent
+#### InheritFromParent.inheritFromParent
 
 ```ts
 inheritFromParent: Bool;
 ```
 
-##### InheritFromParent.parentsOwnToken
+#### InheritFromParent.parentsOwnToken
+
+```ts
+parentsOwnToken: Bool;
+```
+
+#### No
+
+```ts
+No: {
+  "inheritFromParent": Bool;
+  "parentsOwnToken": Bool;
+};
+```
+
+#### No.inheritFromParent
+
+```ts
+inheritFromParent: Bool;
+```
+
+#### No.parentsOwnToken
+
+```ts
+parentsOwnToken: Bool;
+```
+
+#### ParentsOwnToken
+
+```ts
+ParentsOwnToken: {
+  "inheritFromParent": Bool;
+  "parentsOwnToken": Bool;
+};
+```
+
+#### ParentsOwnToken.inheritFromParent
+
+```ts
+inheritFromParent: Bool;
+```
+
+#### ParentsOwnToken.parentsOwnToken
 
 ```ts
 parentsOwnToken: Bool;
@@ -333,9 +347,7 @@ isInheritFromParent: (a: AccountUpdate) => Bool;
 
 ##### Parameters
 
-###### a
-
-[`AccountUpdate`](AccountUpdate.mdx)
+• **a**: [`AccountUpdate`](AccountUpdate.mdx)
 
 ##### Returns
 
@@ -349,9 +361,7 @@ isNo: (__namedParameters: AccountUpdate) => Bool;
 
 ##### Parameters
 
-###### \_\_namedParameters
-
-[`AccountUpdate`](AccountUpdate.mdx)
+• **\_\_namedParameters**: [`AccountUpdate`](AccountUpdate.mdx)
 
 ##### Returns
 
@@ -365,61 +375,41 @@ isParentsOwnToken: (a: AccountUpdate) => Bool;
 
 ##### Parameters
 
-###### a
-
-[`AccountUpdate`](AccountUpdate.mdx)
+• **a**: [`AccountUpdate`](AccountUpdate.mdx)
 
 ##### Returns
 
 [`Bool`](Bool.mdx)
-
-#### No
-
-```ts
-No: {
-  inheritFromParent: Bool;
-  parentsOwnToken: Bool;
-};
-```
-
-##### No.inheritFromParent
-
-```ts
-inheritFromParent: Bool;
-```
-
-##### No.parentsOwnToken
-
-```ts
-parentsOwnToken: Bool;
-```
-
-#### ParentsOwnToken
-
-```ts
-ParentsOwnToken: {
-  inheritFromParent: Bool;
-  parentsOwnToken: Bool;
-};
-```
-
-##### ParentsOwnToken.inheritFromParent
-
-```ts
-inheritFromParent: Bool;
-```
-
-##### ParentsOwnToken.parentsOwnToken
-
-```ts
-parentsOwnToken: Bool;
-```
 
 #### type
 
 ```ts
 type: {} = BaseMayUseToken;
 ```
+
+#### Source
+
+[lib/mina/account-update.ts:1235](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L1235)
+
+***
+
+### check()
+
+```ts
+static check: (x: AccountUpdate) => void = Types.AccountUpdate.check;
+```
+
+#### Parameters
+
+• **x**: `AccountUpdate`
+
+#### Returns
+
+`void`
+
+#### Source
+
+[lib/mina/account-update.ts:1187](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L1187)
 
 ***
 
@@ -429,11 +419,13 @@ type: {} = BaseMayUseToken;
 static sizeInFields: () => number = Types.AccountUpdate.sizeInFields;
 ```
 
-Defined in: [lib/mina/v1/account-update.ts:1098](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L1098)
-
 #### Returns
 
 `number`
+
+#### Source
+
+[lib/mina/account-update.ts:1174](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L1174)
 
 ***
 
@@ -443,17 +435,17 @@ Defined in: [lib/mina/v1/account-update.ts:1098](https://github.com/o1-labs/o1js
 static toFields: (x: AccountUpdate) => Field[] = Types.AccountUpdate.toFields;
 ```
 
-Defined in: [lib/mina/v1/account-update.ts:1099](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L1099)
-
 #### Parameters
 
-##### x
-
-`AccountUpdate`
+• **x**: `AccountUpdate`
 
 #### Returns
 
 [`Field`](Field.mdx)[]
+
+#### Source
+
+[lib/mina/account-update.ts:1175](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L1175)
 
 ***
 
@@ -463,19 +455,19 @@ Defined in: [lib/mina/v1/account-update.ts:1099](https://github.com/o1-labs/o1js
 static toInput: (x: AccountUpdate) => {} = Types.AccountUpdate.toInput;
 ```
 
-Defined in: [lib/mina/v1/account-update.ts:1107](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L1107)
-
 #### Parameters
 
-##### x
-
-`AccountUpdate`
+• **x**: `AccountUpdate`
 
 #### Returns
 
 ```ts
 {}
 ```
+
+#### Source
+
+[lib/mina/account-update.ts:1183](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L1183)
 
 ***
 
@@ -485,162 +477,155 @@ Defined in: [lib/mina/v1/account-update.ts:1107](https://github.com/o1-labs/o1js
 static toValue: (x: AccountUpdate) => AccountUpdate = Types.AccountUpdate.toValue;
 ```
 
-Defined in: [lib/mina/v1/account-update.ts:1116](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L1116)
-
 #### Parameters
 
-##### x
-
-`AccountUpdate`
+• **x**: `AccountUpdate`
 
 #### Returns
 
 `AccountUpdate`
 
+#### Source
+
+[lib/mina/account-update.ts:1195](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L1195)
+
 ## Accessors
 
 ### balance
 
-#### Get Signature
-
 ```ts
 get balance(): {
-  addInPlace: void;
-  subInPlace: void;
+  "addInPlace": void;
+  "subInPlace": void;
 }
 ```
 
-Defined in: [lib/mina/v1/account-update.ts:738](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L738)
-
-##### Returns
+#### Returns
 
 ```ts
 {
-  addInPlace: void;
-  subInPlace: void;
+  "addInPlace": void;
+  "subInPlace": void;
 }
 ```
 
-###### addInPlace()
+##### addInPlace()
 
 ###### Parameters
 
-###### x
-
-`string` | `number` | `bigint` | [`UInt64`](UInt64.mdx) | [`UInt32`](UInt32.mdx) | [`Int64`](Int64.mdx)
+• **x**: 
+  \| `string`
+  \| `number`
+  \| `bigint`
+  \| [`UInt64`](UInt64.mdx)
+  \| [`UInt32`](UInt32.mdx)
+  \| [`Int64`](Int64.mdx)
 
 ###### Returns
 
 `void`
 
-###### subInPlace()
+##### subInPlace()
 
 ###### Parameters
 
-###### x
-
-`string` | `number` | `bigint` | [`UInt64`](UInt64.mdx) | [`UInt32`](UInt32.mdx) | [`Int64`](Int64.mdx)
+• **x**: 
+  \| `string`
+  \| `number`
+  \| `bigint`
+  \| [`UInt64`](UInt64.mdx)
+  \| [`UInt32`](UInt32.mdx)
+  \| [`Int64`](Int64.mdx)
 
 ###### Returns
 
 `void`
+
+#### Source
+
+[lib/mina/account-update.ts:785](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L785)
 
 ***
 
 ### balanceChange
 
-#### Get Signature
-
 ```ts
 get balanceChange(): Int64
 ```
-
-Defined in: [lib/mina/v1/account-update.ts:751](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L751)
-
-##### Returns
-
-[`Int64`](Int64.mdx)
-
-#### Set Signature
 
 ```ts
 set balanceChange(x: Int64): void
 ```
 
-Defined in: [lib/mina/v1/account-update.ts:754](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L754)
+#### Parameters
 
-##### Parameters
+• **x**: [`Int64`](Int64.mdx)
 
-###### x
+#### Returns
 
 [`Int64`](Int64.mdx)
 
-##### Returns
+#### Source
 
-`void`
+[lib/mina/account-update.ts:800](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L800)
 
 ***
 
 ### publicKey
 
-#### Get Signature
-
 ```ts
 get publicKey(): PublicKey
 ```
 
-Defined in: [lib/mina/v1/account-update.ts:819](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L819)
-
-##### Returns
+#### Returns
 
 [`PublicKey`](PublicKey.mdx)
+
+#### Source
+
+[lib/mina/account-update.ts:875](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L875)
 
 ***
 
 ### tokenId
 
-#### Get Signature
-
 ```ts
 get tokenId(): Field
 ```
 
-Defined in: [lib/mina/v1/account-update.ts:685](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L685)
-
-##### Returns
+#### Returns
 
 [`Field`](Field.mdx)
+
+#### Source
+
+[lib/mina/account-update.ts:732](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L732)
 
 ***
 
 ### update
 
-#### Get Signature
-
 ```ts
 get update(): {}
 ```
 
-Defined in: [lib/mina/v1/account-update.ts:758](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L758)
-
-##### Returns
+#### Returns
 
 ```ts
 {}
 ```
+
+#### Source
+
+[lib/mina/account-update.ts:807](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L807)
 
 ## Methods
 
 ### approve()
 
 ```ts
-approve(child: 
-  | AccountUpdate
-  | AccountUpdateTree
-  | AccountUpdateForest): void
+approve(child: AccountUpdate | AccountUpdateTree | AccountUpdateForest): void
 ```
-
-Defined in: [lib/mina/v1/account-update.ts:726](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L726)
 
 Makes another [AccountUpdate](AccountUpdate.mdx) a child of this one.
 
@@ -653,13 +638,15 @@ of the proof that authorizes the parent account update.
 
 #### Parameters
 
-##### child
-
-[`AccountUpdate`](AccountUpdate.mdx) | [`AccountUpdateTree`](AccountUpdateTree.mdx) | [`AccountUpdateForest`](AccountUpdateForest.mdx)
+• **child**: [`AccountUpdate`](AccountUpdate.mdx) \| [`AccountUpdateTree`](AccountUpdateTree.mdx) \| [`AccountUpdateForest`](AccountUpdateForest.mdx)
 
 #### Returns
 
 `void`
+
+#### Source
+
+[lib/mina/account-update.ts:773](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L773)
 
 ***
 
@@ -669,11 +656,13 @@ of the proof that authorizes the parent account update.
 extractTree(): AccountUpdateTree
 ```
 
-Defined in: [lib/mina/v1/account-update.ts:951](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L951)
-
 #### Returns
 
 [`AccountUpdateTree`](AccountUpdateTree.mdx)
+
+#### Source
+
+[lib/mina/account-update.ts:1021](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L1021)
 
 ***
 
@@ -683,11 +672,13 @@ Defined in: [lib/mina/v1/account-update.ts:951](https://github.com/o1-labs/o1js/
 hash(): Field
 ```
 
-Defined in: [lib/mina/v1/account-update.ts:914](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L914)
-
 #### Returns
 
 [`Field`](Field.mdx)
+
+#### Source
+
+[lib/mina/account-update.ts:977](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L977)
 
 ***
 
@@ -697,11 +688,13 @@ Defined in: [lib/mina/v1/account-update.ts:914](https://github.com/o1-labs/o1js/
 isDummy(): Bool
 ```
 
-Defined in: [lib/mina/v1/account-update.ts:976](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L976)
-
 #### Returns
 
 [`Bool`](Bool.mdx)
+
+#### Source
+
+[lib/mina/account-update.ts:1047](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L1047)
 
 ***
 
@@ -710,8 +703,6 @@ Defined in: [lib/mina/v1/account-update.ts:976](https://github.com/o1-labs/o1js/
 ```ts
 requireSignature(): void
 ```
-
-Defined in: [lib/mina/v1/account-update.ts:838](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L838)
 
 Use this command if this account update should be signed by the account
 owner, instead of not having any authorization.
@@ -731,38 +722,36 @@ be (can be) authorized by a signature.
 
 `void`
 
+#### Source
+
+[lib/mina/account-update.ts:894](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L894)
+
 ***
 
 ### send()
 
 ```ts
 send(__namedParameters: {
-  amount: number | bigint | UInt64;
-  to:   | PublicKey
-     | AccountUpdate
-     | SmartContract;
+  "amount": number | bigint | UInt64;
+  "to": PublicKey | AccountUpdate | SmartContract;
  }): AccountUpdate
 ```
 
-Defined in: [lib/mina/v1/account-update.ts:689](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L689)
-
 #### Parameters
 
-##### \_\_namedParameters
+• **\_\_namedParameters**
 
-###### amount
+• **\_\_namedParameters.amount**: `number` \| `bigint` \| [`UInt64`](UInt64.mdx)
 
-`number` \| `bigint` \| [`UInt64`](UInt64.mdx)
-
-###### to
-
-  \| [`PublicKey`](PublicKey.mdx)
-  \| [`AccountUpdate`](AccountUpdate.mdx)
-  \| [`SmartContract`](SmartContract.mdx)
+• **\_\_namedParameters.to**: [`PublicKey`](PublicKey.mdx) \| [`AccountUpdate`](AccountUpdate.mdx) \| [`SmartContract`](SmartContract.mdx)
 
 #### Returns
 
 [`AccountUpdate`](AccountUpdate.mdx)
+
+#### Source
+
+[lib/mina/account-update.ts:736](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L736)
 
 ***
 
@@ -772,11 +761,13 @@ Defined in: [lib/mina/v1/account-update.ts:689](https://github.com/o1-labs/o1js/
 toJSON(): AccountUpdate
 ```
 
-Defined in: [lib/mina/v1/account-update.ts:903](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L903)
-
 #### Returns
 
 `AccountUpdate`
+
+#### Source
+
+[lib/mina/account-update.ts:966](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L966)
 
 ***
 
@@ -786,14 +777,16 @@ Defined in: [lib/mina/v1/account-update.ts:903](https://github.com/o1-labs/o1js/
 toPretty(): any
 ```
 
-Defined in: [lib/mina/v1/account-update.ts:1160](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L1160)
-
 Returns a JSON representation of only the fields that differ from the
 default [AccountUpdate](AccountUpdate.mdx).
 
 #### Returns
 
 `any`
+
+#### Source
+
+[lib/mina/account-update.ts:1241](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L1241)
 
 ***
 
@@ -803,11 +796,13 @@ default [AccountUpdate](AccountUpdate.mdx).
 toPrettyLayout(): void
 ```
 
-Defined in: [lib/mina/v1/account-update.ts:945](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L945)
-
 #### Returns
 
 `void`
+
+#### Source
+
+[lib/mina/account-update.ts:1015](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L1015)
 
 ***
 
@@ -815,23 +810,23 @@ Defined in: [lib/mina/v1/account-update.ts:945](https://github.com/o1-labs/o1js/
 
 ```ts
 toPublicInput(__namedParameters: {
-  accountUpdates: AccountUpdate[];
+  "accountUpdates": AccountUpdate[];
  }): ZkappPublicInput
 ```
 
-Defined in: [lib/mina/v1/account-update.ts:919](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L919)
-
 #### Parameters
 
-##### \_\_namedParameters
+• **\_\_namedParameters**
 
-###### accountUpdates
-
-[`AccountUpdate`](AccountUpdate.mdx)[]
+• **\_\_namedParameters.accountUpdates**: [`AccountUpdate`](AccountUpdate.mdx)[]
 
 #### Returns
 
 [`ZkappPublicInput`](../type-aliases/ZkappPublicInput.mdx)
+
+#### Source
+
+[lib/mina/account-update.ts:985](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L985)
 
 ***
 
@@ -844,31 +839,23 @@ static assertBetween<T>(
    upper: T): void
 ```
 
-Defined in: [lib/mina/v1/account-update.ts:786](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L786)
-
 Constrain a property to lie between lower and upper bounds.
 
-#### Type Parameters
+#### Type parameters
 
 • **T**
 
 #### Parameters
 
-##### property
-
-`OrIgnore`\<`ClosedInterval`\<`T`\>\>
+• **property**: `OrIgnore`\<`ClosedInterval`\<`T`\>\>
 
 The property to constrain
 
-##### lower
-
-`T`
+• **lower**: `T`
 
 The lower bound
 
-##### upper
-
-`T`
+• **upper**: `T`
 
 The upper bound
 
@@ -888,6 +875,10 @@ Example: To constrain the account balance of a SmartContract to lie between
 
 `void`
 
+#### Source
+
+[lib/mina/account-update.ts:835](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L835)
+
 ***
 
 ### assertEquals()
@@ -896,25 +887,19 @@ Example: To constrain the account balance of a SmartContract to lie between
 static assertEquals<T>(property: OrIgnore<T | ClosedInterval<T>>, value: T): void
 ```
 
-Defined in: [lib/mina/v1/account-update.ts:809](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L809)
-
 Fix a property to a certain value.
 
-#### Type Parameters
+#### Type parameters
 
 • **T** *extends* `object`
 
 #### Parameters
 
-##### property
-
-`OrIgnore`\<`T` \| `ClosedInterval`\<`T`\>\>
+• **property**: `OrIgnore`\<`T` \| `ClosedInterval`\<`T`\>\>
 
 The property to constrain
 
-##### value
-
-`T`
+• **value**: `T`
 
 The value it is fixed to
 
@@ -931,6 +916,10 @@ Example: To fix the account nonce of a SmartContract to 0, you can use
 
 `void`
 
+#### Source
+
+[lib/mina/account-update.ts:862](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L862)
+
 ***
 
 ### attachToTransaction()
@@ -939,20 +928,20 @@ Example: To fix the account nonce of a SmartContract to 0, you can use
 static attachToTransaction(accountUpdate: AccountUpdate): void
 ```
 
-Defined in: [lib/mina/v1/account-update.ts:1034](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L1034)
-
 Attach account update to the current transaction
 -- if in a smart contract, to its children
 
 #### Parameters
 
-##### accountUpdate
-
-[`AccountUpdate`](AccountUpdate.mdx)
+• **accountUpdate**: [`AccountUpdate`](AccountUpdate.mdx)
 
 #### Returns
 
 `void`
+
+#### Source
+
+[lib/mina/account-update.ts:1107](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L1107)
 
 ***
 
@@ -962,19 +951,19 @@ Attach account update to the current transaction
 static clone(accountUpdate: AccountUpdate): AccountUpdate
 ```
 
-Defined in: [lib/mina/v1/account-update.ts:671](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L671)
-
 Clones the [AccountUpdate](AccountUpdate.mdx).
 
 #### Parameters
 
-##### accountUpdate
-
-[`AccountUpdate`](AccountUpdate.mdx)
+• **accountUpdate**: [`AccountUpdate`](AccountUpdate.mdx)
 
 #### Returns
 
 [`AccountUpdate`](AccountUpdate.mdx)
+
+#### Source
+
+[lib/mina/account-update.ts:718](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L718)
 
 ***
 
@@ -984,8 +973,6 @@ Clones the [AccountUpdate](AccountUpdate.mdx).
 static create(publicKey: PublicKey, tokenId?: Field): AccountUpdate
 ```
 
-Defined in: [lib/mina/v1/account-update.ts:1001](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L1001)
-
 Creates an account update. If this is inside a transaction, the account
 update becomes part of the transaction. If this is inside a smart contract
 method, the account update will not only become part of the transaction,
@@ -994,17 +981,17 @@ becomes part of the proof.
 
 #### Parameters
 
-##### publicKey
+• **publicKey**: [`PublicKey`](PublicKey.mdx)
 
-[`PublicKey`](PublicKey.mdx)
-
-##### tokenId?
-
-[`Field`](Field.mdx)
+• **tokenId?**: [`Field`](Field.mdx)
 
 #### Returns
 
 [`AccountUpdate`](AccountUpdate.mdx)
+
+#### Source
+
+[lib/mina/account-update.ts:1072](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L1072)
 
 ***
 
@@ -1017,8 +1004,6 @@ static createIf(
    tokenId?: Field): AccountUpdate
 ```
 
-Defined in: [lib/mina/v1/account-update.ts:1021](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L1021)
-
 Create an account update that is added to the transaction only if a condition is met.
 
 See [AccountUpdate.create](AccountUpdate.mdx#create) for more information. In this method, you can pass in
@@ -1026,21 +1011,19 @@ a condition that determines whether the account update should be added to the tr
 
 #### Parameters
 
-##### condition
+• **condition**: [`Bool`](Bool.mdx)
 
-[`Bool`](Bool.mdx)
+• **publicKey**: [`PublicKey`](PublicKey.mdx)
 
-##### publicKey
-
-[`PublicKey`](PublicKey.mdx)
-
-##### tokenId?
-
-[`Field`](Field.mdx)
+• **tokenId?**: [`Field`](Field.mdx)
 
 #### Returns
 
 [`AccountUpdate`](AccountUpdate.mdx)
+
+#### Source
+
+[lib/mina/account-update.ts:1094](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L1094)
 
 ***
 
@@ -1049,8 +1032,6 @@ a condition that determines whether the account update should be added to the tr
 ```ts
 static createSigned(publicKey: PublicKey, tokenId?: Field): AccountUpdate
 ```
-
-Defined in: [lib/mina/v1/account-update.ts:1070](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L1070)
 
 Creates an account update, like [AccountUpdate.create](AccountUpdate.mdx#create), but also
 makes sure this account update will be authorized with a signature.
@@ -1068,17 +1049,17 @@ be (can be) authorized by a signature.
 
 #### Parameters
 
-##### publicKey
+• **publicKey**: [`PublicKey`](PublicKey.mdx)
 
-[`PublicKey`](PublicKey.mdx)
-
-##### tokenId?
-
-[`Field`](Field.mdx)
+• **tokenId?**: [`Field`](Field.mdx)
 
 #### Returns
 
 [`AccountUpdate`](AccountUpdate.mdx)
+
+#### Source
+
+[lib/mina/account-update.ts:1143](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L1143)
 
 ***
 
@@ -1088,8 +1069,6 @@ be (can be) authorized by a signature.
 static default(address: PublicKey, tokenId?: Field): AccountUpdate
 ```
 
-Defined in: [lib/mina/v1/account-update.ts:967](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L967)
-
 Create an account update from a public key and an optional token id.
 
 **Important**: This method is different from `AccountUpdate.create()`, in that it really just creates the account update object.
@@ -1098,17 +1077,17 @@ Use this method for lower-level operations with account updates.
 
 #### Parameters
 
-##### address
+• **address**: [`PublicKey`](PublicKey.mdx)
 
-[`PublicKey`](PublicKey.mdx)
-
-##### tokenId?
-
-[`Field`](Field.mdx)
+• **tokenId?**: [`Field`](Field.mdx)
 
 #### Returns
 
 [`AccountUpdate`](AccountUpdate.mdx)
+
+#### Source
+
+[lib/mina/account-update.ts:1038](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L1038)
 
 ***
 
@@ -1118,21 +1097,19 @@ Use this method for lower-level operations with account updates.
 static defaultFeePayer(address: PublicKey, nonce: UInt32): FeePayerUnsigned
 ```
 
-Defined in: [lib/mina/v1/account-update.ts:980](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L980)
-
 #### Parameters
 
-##### address
+• **address**: [`PublicKey`](PublicKey.mdx)
 
-[`PublicKey`](PublicKey.mdx)
-
-##### nonce
-
-[`UInt32`](UInt32.mdx)
+• **nonce**: [`UInt32`](UInt32.mdx)
 
 #### Returns
 
 `FeePayerUnsigned`
+
+#### Source
+
+[lib/mina/account-update.ts:1051](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L1051)
 
 ***
 
@@ -1142,11 +1119,13 @@ Defined in: [lib/mina/v1/account-update.ts:980](https://github.com/o1-labs/o1js/
 static dummy(): AccountUpdate
 ```
 
-Defined in: [lib/mina/v1/account-update.ts:971](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L971)
-
 #### Returns
 
 [`AccountUpdate`](AccountUpdate.mdx)
+
+#### Source
+
+[lib/mina/account-update.ts:1042](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L1042)
 
 ***
 
@@ -1156,11 +1135,13 @@ Defined in: [lib/mina/v1/account-update.ts:971](https://github.com/o1-labs/o1js/
 static dummyFeePayer(): FeePayerUnsigned
 ```
 
-Defined in: [lib/mina/v1/account-update.ts:989](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L989)
-
 #### Returns
 
 `FeePayerUnsigned`
+
+#### Source
+
+[lib/mina/account-update.ts:1060](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L1060)
 
 ***
 
@@ -1170,11 +1151,13 @@ Defined in: [lib/mina/v1/account-update.ts:989](https://github.com/o1-labs/o1js/
 static empty(): AccountUpdate
 ```
 
-Defined in: [lib/mina/v1/account-update.ts:1108](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L1108)
-
 #### Returns
 
 [`AccountUpdate`](AccountUpdate.mdx)
+
+#### Source
+
+[lib/mina/account-update.ts:1184](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L1184)
 
 ***
 
@@ -1184,21 +1167,19 @@ Defined in: [lib/mina/v1/account-update.ts:1108](https://github.com/o1-labs/o1js
 static fromFields(fields: Field[], __namedParameters: any[]): AccountUpdate
 ```
 
-Defined in: [lib/mina/v1/account-update.ts:1112](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L1112)
-
 #### Parameters
 
-##### fields
+• **fields**: [`Field`](Field.mdx)[]
 
-[`Field`](Field.mdx)[]
-
-##### \_\_namedParameters
-
-`any`[]
+• **\_\_namedParameters**: `any`[]
 
 #### Returns
 
 [`AccountUpdate`](AccountUpdate.mdx)
+
+#### Source
+
+[lib/mina/account-update.ts:1188](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L1188)
 
 ***
 
@@ -1208,17 +1189,17 @@ Defined in: [lib/mina/v1/account-update.ts:1112](https://github.com/o1-labs/o1js
 static fromJSON(json: AccountUpdate): AccountUpdate
 ```
 
-Defined in: [lib/mina/v1/account-update.ts:909](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L909)
-
 #### Parameters
 
-##### json
-
-`AccountUpdate`
+• **json**: `AccountUpdate`
 
 #### Returns
 
 [`AccountUpdate`](AccountUpdate.mdx)
+
+#### Source
+
+[lib/mina/account-update.ts:972](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L972)
 
 ***
 
@@ -1228,17 +1209,17 @@ Defined in: [lib/mina/v1/account-update.ts:909](https://github.com/o1-labs/o1js/
 static fromValue(value: AccountUpdate | AccountUpdate | AccountUpdate): AccountUpdate
 ```
 
-Defined in: [lib/mina/v1/account-update.ts:1117](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L1117)
-
 #### Parameters
 
-##### value
-
-`AccountUpdate` | `AccountUpdate` | [`AccountUpdate`](AccountUpdate.mdx)
+• **value**: `AccountUpdate` \| `AccountUpdate` \| [`AccountUpdate`](AccountUpdate.mdx)
 
 #### Returns
 
 [`AccountUpdate`](AccountUpdate.mdx)
+
+#### Source
+
+[lib/mina/account-update.ts:1196](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L1196)
 
 ***
 
@@ -1248,8 +1229,6 @@ Defined in: [lib/mina/v1/account-update.ts:1117](https://github.com/o1-labs/o1js
 static fundNewAccount(feePayer: PublicKey, numberOfAccounts: number): AccountUpdate
 ```
 
-Defined in: [lib/mina/v1/account-update.ts:1088](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L1088)
-
 Use this method to pay the account creation fee for another account (or, multiple accounts using the optional second argument).
 
 Beware that you _don't_ need to specify the account that is created!
@@ -1258,15 +1237,11 @@ and require that the net balance change of the transaction covers the account cr
 
 #### Parameters
 
-##### feePayer
-
-[`PublicKey`](PublicKey.mdx)
+• **feePayer**: [`PublicKey`](PublicKey.mdx)
 
 the address of the account that pays the fee
 
-##### numberOfAccounts
-
-`number` = `1`
+• **numberOfAccounts**: `number`= `1`
 
 the number of new accounts to fund (default: 1)
 
@@ -1276,25 +1251,29 @@ the number of new accounts to fund (default: 1)
 
 they [AccountUpdate](AccountUpdate.mdx) for the account which pays the fee
 
+#### Source
+
+[lib/mina/account-update.ts:1164](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L1164)
+
 ***
 
 ### getNonce()
 
 ```ts
-static getNonce(accountUpdate: AccountUpdate | FeePayerUnsigned): UInt32
+static getNonce(accountUpdate: FeePayerUnsigned | AccountUpdate): UInt32
 ```
-
-Defined in: [lib/mina/v1/account-update.ts:862](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L862)
 
 #### Parameters
 
-##### accountUpdate
-
-[`AccountUpdate`](AccountUpdate.mdx) | `FeePayerUnsigned`
+• **accountUpdate**: `FeePayerUnsigned` \| [`AccountUpdate`](AccountUpdate.mdx)
 
 #### Returns
 
 [`UInt32`](UInt32.mdx)
+
+#### Source
+
+[lib/mina/account-update.ts:918](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L918)
 
 ***
 
@@ -1304,25 +1283,23 @@ Defined in: [lib/mina/v1/account-update.ts:862](https://github.com/o1-labs/o1js/
 static setValue<T>(maybeValue: SetOrKeep<T>, value: T): void
 ```
 
-Defined in: [lib/mina/v1/account-update.ts:762](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L762)
-
-#### Type Parameters
+#### Type parameters
 
 • **T**
 
 #### Parameters
 
-##### maybeValue
+• **maybeValue**: `SetOrKeep`\<`T`\>
 
-`SetOrKeep`\<`T`\>
-
-##### value
-
-`T`
+• **value**: `T`
 
 #### Returns
 
 `void`
+
+#### Source
+
+[lib/mina/account-update.ts:811](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L811)
 
 ***
 
@@ -1332,49 +1309,45 @@ Defined in: [lib/mina/v1/account-update.ts:762](https://github.com/o1-labs/o1js/
 static signFeePayerInPlace(feePayer: FeePayerUnsigned): void
 ```
 
-Defined in: [lib/mina/v1/account-update.ts:856](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L856)
-
 #### Parameters
 
-##### feePayer
-
-`FeePayerUnsigned`
+• **feePayer**: `FeePayerUnsigned`
 
 #### Returns
 
 `void`
+
+#### Source
+
+[lib/mina/account-update.ts:912](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L912)
 
 ***
 
 ### toAuxiliary()
 
 ```ts
-static toAuxiliary(a?: AccountUpdate): (
-  | any[]
-  | {
-  id: number;
-  label: string;
-  lazyAuthorization: undefined | LazySignature | LazyProof | LazyNone;
+static toAuxiliary(a?: AccountUpdate): (any[] | {
+  "id": number;
+  "label": string;
+  "lazyAuthorization": undefined | LazySignature | LazyProof | LazyNone;
  })[]
 ```
 
-Defined in: [lib/mina/v1/account-update.ts:1100](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L1100)
-
 #### Parameters
 
-##### a?
-
-[`AccountUpdate`](AccountUpdate.mdx)
+• **a?**: [`AccountUpdate`](AccountUpdate.mdx)
 
 #### Returns
 
-(
-  \| `any`[]
-  \| \{
-  `id`: `number`;
-  `label`: `string`;
-  `lazyAuthorization`: `undefined` \| `LazySignature` \| `LazyProof` \| `LazyNone`;
+(`any`[] \| \{
+  `"id"`: `number`;
+  `"label"`: `string`;
+  `"lazyAuthorization"`: `undefined` \| `LazySignature` \| `LazyProof` \| `LazyNone`;
  \})[]
+
+#### Source
+
+[lib/mina/account-update.ts:1176](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L1176)
 
 ***
 
@@ -1384,17 +1357,17 @@ Defined in: [lib/mina/v1/account-update.ts:1100](https://github.com/o1-labs/o1js
 static toJSON(a: AccountUpdate): AccountUpdate
 ```
 
-Defined in: [lib/mina/v1/account-update.ts:906](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L906)
-
 #### Parameters
 
-##### a
-
-[`AccountUpdate`](AccountUpdate.mdx)
+• **a**: [`AccountUpdate`](AccountUpdate.mdx)
 
 #### Returns
 
 `AccountUpdate`
+
+#### Source
+
+[lib/mina/account-update.ts:969](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L969)
 
 ***
 
@@ -1404,19 +1377,19 @@ Defined in: [lib/mina/v1/account-update.ts:906](https://github.com/o1-labs/o1js/
 static unlink(accountUpdate: AccountUpdate): void
 ```
 
-Defined in: [lib/mina/v1/account-update.ts:1051](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L1051)
-
 Disattach an account update from where it's currently located in the transaction
 
 #### Parameters
 
-##### accountUpdate
-
-[`AccountUpdate`](AccountUpdate.mdx)
+• **accountUpdate**: [`AccountUpdate`](AccountUpdate.mdx)
 
 #### Returns
 
 `void`
+
+#### Source
+
+[lib/mina/account-update.ts:1124](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L1124)
 
 ***
 
@@ -1426,45 +1399,51 @@ Disattach an account update from where it's currently located in the transaction
 static witness<T>(
    resultType: FlexibleProvable<T>, 
    compute: () => Promise<{
-  accountUpdate: AccountUpdate;
-  result: T;
+  "accountUpdate": AccountUpdate;
+  "result": T;
  }>, 
    __namedParameters: {
-  skipCheck: boolean;
+  "skipCheck": false;
  }): Promise<{
-  accountUpdate: AccountUpdate;
-  result: T;
+  "accountUpdate": AccountUpdate;
+  "result": T;
 }>
 ```
 
-Defined in: [lib/mina/v1/account-update.ts:1138](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/account-update.ts#L1138)
-
-#### Type Parameters
+#### Type parameters
 
 • **T**
 
 #### Parameters
 
-##### resultType
+• **resultType**: [`FlexibleProvable`](../type-aliases/FlexibleProvable.mdx)\<`T`\>
 
-[`FlexibleProvable`](../type-aliases/FlexibleProvable.mdx)\<`T`\>
+• **compute**
 
-##### compute
+• **\_\_namedParameters**= `{}`
 
-() => `Promise`\<\{
-  `accountUpdate`: [`AccountUpdate`](AccountUpdate.mdx);
-  `result`: `T`;
- \}\>
-
-##### \_\_namedParameters
-
-###### skipCheck
-
-`boolean` = `false`
+• **\_\_namedParameters.skipCheck**: `undefined` \| `boolean`= `false`
 
 #### Returns
 
 `Promise`\<\{
-  `accountUpdate`: [`AccountUpdate`](AccountUpdate.mdx);
-  `result`: `T`;
+  `"accountUpdate"`: [`AccountUpdate`](AccountUpdate.mdx);
+  `"result"`: `T`;
  \}\>
+
+> ##### accountUpdate
+>
+> ```ts
+> accountUpdate: AccountUpdate;
+> ```
+>
+> ##### result
+>
+> ```ts
+> result: T;
+> ```
+>
+
+#### Source
+
+[lib/mina/account-update.ts:1219](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L1219)

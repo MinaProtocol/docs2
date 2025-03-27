@@ -1,87 +1,72 @@
 ```ts
 function fetchEvents(
    accountInfo: {
-  publicKey: string;
-  tokenId: string;
+  "publicKey": string;
+  "tokenId": string;
  }, 
    graphqlEndpoint?: string, 
-   filterOptions?: EventActionFilterOptions, 
-   headers?: HeadersInit): Promise<{
-  blockHash: string;
-  blockHeight: UInt32;
-  chainStatus: string;
-  events: {
-     data: string[];
-     transactionInfo: {
-        hash: string;
-        memo: string;
-        status: string;
+   filterOptions?: EventActionFilterOptions): Promise<{
+  "blockHash": event.blockInfo.stateHash;
+  "blockHeight": UInt32;
+  "chainStatus": event.blockInfo.chainStatus;
+  "events": {
+     "data": string[];
+     "transactionInfo": {
+        "hash": string;
+        "memo": string;
+        "status": string;
        };
     }[];
-  globalSlot: UInt32;
-  parentBlockHash: string;
+  "globalSlot": UInt32;
+  "parentBlockHash": event.blockInfo.parentHash;
 }[]>
 ```
-
-Defined in: [lib/mina/v1/fetch.ts:648](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/fetch.ts#L648)
 
 Asynchronously fetches event data for an account from the Mina Archive Node GraphQL API.
 
 ## Parameters
 
-### accountInfo
+• **accountInfo**
 
 The account information object.
 
-#### publicKey
-
-`string`
+• **accountInfo.publicKey**: `string`
 
 The account public key.
 
-#### tokenId
-
-`string`
+• **accountInfo.tokenId?**: `string`
 
 The optional token ID for the account.
 
-### graphqlEndpoint?
-
-`string` = `networkConfig.archiveEndpoint`
+• **graphqlEndpoint?**: `string`= `networkConfig.archiveEndpoint`
 
 The GraphQL endpoint to query. Defaults to the Archive Node GraphQL API.
 
-### filterOptions?
-
-`EventActionFilterOptions` = `{}`
+• **filterOptions?**: `EventActionFilterOptions`= `{}`
 
 The optional filter options object.
-
-### headers?
-
-`HeadersInit`
-
-Optional headers to pass to the fetch request
 
 ## Returns
 
 `Promise`\<\{
-  `blockHash`: `string`;
-  `blockHeight`: [`UInt32`](../classes/UInt32.mdx);
-  `chainStatus`: `string`;
-  `events`: \{
-     `data`: `string`[];
-     `transactionInfo`: \{
-        `hash`: `string`;
-        `memo`: `string`;
-        `status`: `string`;
+  `"blockHash"`: `event.blockInfo.stateHash`;
+  `"blockHeight"`: [`UInt32`](../classes/UInt32.mdx);
+  `"chainStatus"`: `event.blockInfo.chainStatus`;
+  `"events"`: \{
+     `"data"`: `string`[];
+     `"transactionInfo"`: \{
+        `"hash"`: `string`;
+        `"memo"`: `string`;
+        `"status"`: `string`;
        \};
     \}[];
-  `globalSlot`: [`UInt32`](../classes/UInt32.mdx);
-  `parentBlockHash`: `string`;
+  `"globalSlot"`: [`UInt32`](../classes/UInt32.mdx);
+  `"parentBlockHash"`: `event.blockInfo.parentHash`;
  \}[]\>
 
 A promise that resolves to an array of objects containing event data, block information and transaction information for the account.
+
+## Async
 
 ## Throws
 
@@ -94,3 +79,7 @@ const accountInfo = { publicKey: 'B62qiwmXrWn7Cok5VhhB3KvCwyZ7NHHstFGbiU5n7m8s2R
 const events = await fetchEvents(accountInfo);
 console.log(events);
 ```
+
+## Source
+
+[lib/mina/fetch.ts:648](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/fetch.ts#L648)

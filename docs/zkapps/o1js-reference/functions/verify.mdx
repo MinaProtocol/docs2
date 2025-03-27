@@ -1,29 +1,17 @@
 ```ts
-function verify(proof: 
-  | ProofBase
-| JsonProof, verificationKey: string | VerificationKey): Promise<boolean>
+function verify(proof: ProofBase<any, any> | JsonProof, verificationKey: string | VerificationKey): Promise<boolean>
 ```
-
-Defined in: [lib/proof-system/zkprogram.ts:106](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/proof-system/zkprogram.ts#L106)
-
-Initializes Pickles bindings, serializes the input proof and verification key for use in OCaml, then calls into the Pickles verify function and returns the result.
 
 ## Parameters
 
-### proof
+• **proof**: [`ProofBase`](../classes/ProofBase.mdx)\<`any`, `any`\> \| [`JsonProof`](../type-aliases/JsonProof.mdx)
 
-Either a `Proof` instance or a serialized JSON proof
-
-[`ProofBase`](../classes/ProofBase.mdx) | [`JsonProof`](../type-aliases/JsonProof.mdx)
-
-### verificationKey
-
-Either a base64 serialized verification key or a `VerificationKey` instance which will be base64 serialized for use in the bindings.
-
-`string` | [`VerificationKey`](../classes/VerificationKey.mdx)
+• **verificationKey**: `string` \| [`VerificationKey`](../classes/VerificationKey.mdx)
 
 ## Returns
 
 `Promise`\<`boolean`\>
 
-A promise that resolves to a boolean indicating whether the proof is valid.
+## Source
+
+[lib/proof-system/zkprogram.ts:109](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/proof-system/zkprogram.ts#L109)

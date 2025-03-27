@@ -1,5 +1,3 @@
-Defined in: [lib/provable/bool.ts:29](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/bool.ts#L29)
-
 A boolean value. You can use it like this:
 
 ```
@@ -18,17 +16,17 @@ Use [[assertEquals]] to enforce the value of a Bool.
 new Bool(x: boolean | FieldVar | Bool): Bool
 ```
 
-Defined in: [lib/provable/bool.ts:32](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/bool.ts#L32)
-
 #### Parameters
 
-##### x
-
-`boolean` | `FieldVar` | [`Bool`](Bool.mdx)
+• **x**: `boolean` \| `FieldVar` \| [`Bool`](Bool.mdx)
 
 #### Returns
 
 [`Bool`](Bool.mdx)
+
+#### Source
+
+[lib/provable/bool.ts:33](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/bool.ts#L33)
 
 ## Properties
 
@@ -38,17 +36,9 @@ Defined in: [lib/provable/bool.ts:32](https://github.com/o1-labs/o1js/blob/46b97
 value: FieldVar;
 ```
 
-Defined in: [lib/provable/bool.ts:30](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/bool.ts#L30)
+#### Source
 
-***
-
-### sizeInBytes
-
-```ts
-static sizeInBytes: number = 1;
-```
-
-Defined in: [lib/provable/bool.ts:400](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/bool.ts#L400)
+[lib/provable/bool.ts:31](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/bool.ts#L31)
 
 ***
 
@@ -56,11 +46,9 @@ Defined in: [lib/provable/bool.ts:400](https://github.com/o1-labs/o1js/blob/46b9
 
 ```ts
 static Unsafe: {
-  fromField: Bool;
+  "fromField": Bool;
 };
 ```
-
-Defined in: [lib/provable/bool.ts:406](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/bool.ts#L406)
 
 #### fromField()
 
@@ -71,15 +59,29 @@ Only use this if you have already constrained the Field element to be 0 or 1.
 
 ##### Parameters
 
-###### x
-
-[`Field`](Field.mdx)
+• **x**: [`Field`](Field.mdx)
 
 a [Field](Field.mdx)
 
 ##### Returns
 
 [`Bool`](Bool.mdx)
+
+#### Source
+
+[lib/provable/bool.ts:373](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/bool.ts#L373)
+
+***
+
+### sizeInBytes
+
+```ts
+static sizeInBytes: number = 1;
+```
+
+#### Source
+
+[lib/provable/bool.ts:367](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/bool.ts#L367)
 
 ## Methods
 
@@ -89,15 +91,11 @@ a [Field](Field.mdx)
 and(y: boolean | Bool): Bool
 ```
 
-Defined in: [lib/provable/bool.ts:72](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/bool.ts#L72)
-
 #### Parameters
 
-##### y
+• **y**: `boolean` \| [`Bool`](Bool.mdx)
 
 A [Bool](Bool.mdx) to AND with this [Bool](Bool.mdx).
-
-`boolean` | [`Bool`](Bool.mdx)
 
 #### Returns
 
@@ -105,6 +103,10 @@ A [Bool](Bool.mdx) to AND with this [Bool](Bool.mdx).
 
 a new [Bool](Bool.mdx) that is set to true only if
 this [Bool](Bool.mdx) and `y` are also true.
+
+#### Source
+
+[lib/provable/bool.ts:73](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/bool.ts#L73)
 
 ***
 
@@ -114,25 +116,23 @@ this [Bool](Bool.mdx) and `y` are also true.
 assertEquals(y: boolean | Bool, message?: string): void
 ```
 
-Defined in: [lib/provable/bool.ts:113](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/bool.ts#L113)
-
 Proves that this [Bool](Bool.mdx) is equal to `y`.
 
 #### Parameters
 
-##### y
+• **y**: `boolean` \| [`Bool`](Bool.mdx)
 
 a [Bool](Bool.mdx).
 
-`boolean` | [`Bool`](Bool.mdx)
-
-##### message?
-
-`string`
+• **message?**: `string`
 
 #### Returns
 
 `void`
+
+#### Source
+
+[lib/provable/bool.ts:114](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/bool.ts#L114)
 
 ***
 
@@ -142,19 +142,19 @@ a [Bool](Bool.mdx).
 assertFalse(message?: string): void
 ```
 
-Defined in: [lib/provable/bool.ts:144](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/bool.ts#L144)
-
 Proves that this [Bool](Bool.mdx) is `false`.
 
 #### Parameters
 
-##### message?
-
-`string`
+• **message?**: `string`
 
 #### Returns
 
 `void`
+
+#### Source
+
+[lib/provable/bool.ts:145](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/bool.ts#L145)
 
 ***
 
@@ -164,19 +164,19 @@ Proves that this [Bool](Bool.mdx) is `false`.
 assertTrue(message?: string): void
 ```
 
-Defined in: [lib/provable/bool.ts:130](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/bool.ts#L130)
-
 Proves that this [Bool](Bool.mdx) is `true`.
 
 #### Parameters
 
-##### message?
-
-`string`
+• **message?**: `string`
 
 #### Returns
 
 `void`
+
+#### Source
+
+[lib/provable/bool.ts:131](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/bool.ts#L131)
 
 ***
 
@@ -186,21 +186,21 @@ Proves that this [Bool](Bool.mdx) is `true`.
 equals(y: boolean | Bool): Bool
 ```
 
-Defined in: [lib/provable/bool.ts:159](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/bool.ts#L159)
-
 Returns true if this [Bool](Bool.mdx) is equal to `y`.
 
 #### Parameters
 
-##### y
+• **y**: `boolean` \| [`Bool`](Bool.mdx)
 
 a [Bool](Bool.mdx).
-
-`boolean` | [`Bool`](Bool.mdx)
 
 #### Returns
 
 [`Bool`](Bool.mdx)
+
+#### Source
+
+[lib/provable/bool.ts:160](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/bool.ts#L160)
 
 ***
 
@@ -210,17 +210,13 @@ a [Bool](Bool.mdx).
 implies(y: boolean | Bool): Bool
 ```
 
-Defined in: [lib/provable/bool.ts:105](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/bool.ts#L105)
-
 Whether this Bool implies another Bool `y`.
 
 This is the same as `x.not().or(y)`: if `x` is true, then `y` must be true for the implication to be true.
 
 #### Parameters
 
-##### y
-
-`boolean` | [`Bool`](Bool.mdx)
+• **y**: `boolean` \| [`Bool`](Bool.mdx)
 
 #### Returns
 
@@ -234,19 +230,25 @@ let lessThan10 = x.lessThan(10);
 assert(isZero.implies(lessThan10), 'x = 0 implies x < 10');
 ```
 
+#### Source
+
+[lib/provable/bool.ts:106](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/bool.ts#L106)
+
 ***
 
 ### isConstant()
 
 ```ts
-isConstant(): this is { value: ConstantBoolVar }
+isConstant(): this is Object
 ```
-
-Defined in: [lib/provable/bool.ts:44](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/bool.ts#L44)
 
 #### Returns
 
-`this is { value: ConstantBoolVar }`
+`this is Object`
+
+#### Source
+
+[lib/provable/bool.ts:45](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/bool.ts#L45)
 
 ***
 
@@ -256,13 +258,15 @@ Defined in: [lib/provable/bool.ts:44](https://github.com/o1-labs/o1js/blob/46b97
 not(): Bool
 ```
 
-Defined in: [lib/provable/bool.ts:58](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/bool.ts#L58)
-
 #### Returns
 
 [`Bool`](Bool.mdx)
 
 a new [Bool](Bool.mdx) that is the negation of this [Bool](Bool.mdx).
+
+#### Source
+
+[lib/provable/bool.ts:59](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/bool.ts#L59)
 
 ***
 
@@ -272,15 +276,11 @@ a new [Bool](Bool.mdx) that is the negation of this [Bool](Bool.mdx).
 or(y: boolean | Bool): Bool
 ```
 
-Defined in: [lib/provable/bool.ts:85](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/bool.ts#L85)
-
 #### Parameters
 
-##### y
+• **y**: `boolean` \| [`Bool`](Bool.mdx)
 
 a [Bool](Bool.mdx) to OR with this [Bool](Bool.mdx).
-
-`boolean` | [`Bool`](Bool.mdx)
 
 #### Returns
 
@@ -288,6 +288,10 @@ a [Bool](Bool.mdx) to OR with this [Bool](Bool.mdx).
 
 a new [Bool](Bool.mdx) that is set to true if either
 this [Bool](Bool.mdx) or `y` is true.
+
+#### Source
+
+[lib/provable/bool.ts:86](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/bool.ts#L86)
 
 ***
 
@@ -297,13 +301,15 @@ this [Bool](Bool.mdx) or `y` is true.
 sizeInFields(): number
 ```
 
-Defined in: [lib/provable/bool.ts:184](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/bool.ts#L184)
-
 Returns the size of this type.
 
 #### Returns
 
 `number`
+
+#### Source
+
+[lib/provable/bool.ts:185](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/bool.ts#L185)
 
 ***
 
@@ -313,14 +319,16 @@ Returns the size of this type.
 toBoolean(): boolean
 ```
 
-Defined in: [lib/provable/bool.ts:215](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/bool.ts#L215)
-
 This converts the [Bool](Bool.mdx) to a JS `boolean`.
 This can only be called on non-witness values.
 
 #### Returns
 
 `boolean`
+
+#### Source
+
+[lib/provable/bool.ts:216](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/bool.ts#L216)
 
 ***
 
@@ -330,13 +338,15 @@ This can only be called on non-witness values.
 toField(): Field
 ```
 
-Defined in: [lib/provable/bool.ts:51](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/bool.ts#L51)
-
 Converts a [Bool](Bool.mdx) to a [Field](Field.mdx). `false` becomes 0 and `true` becomes 1.
 
 #### Returns
 
 [`Field`](Field.mdx)
+
+#### Source
+
+[lib/provable/bool.ts:52](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/bool.ts#L52)
 
 ***
 
@@ -346,13 +356,15 @@ Converts a [Bool](Bool.mdx) to a [Field](Field.mdx). `false` becomes 0 and `true
 toFields(): Field[]
 ```
 
-Defined in: [lib/provable/bool.ts:191](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/bool.ts#L191)
-
 Serializes this [Bool](Bool.mdx) into [Field](Field.mdx) elements.
 
 #### Returns
 
 [`Field`](Field.mdx)[]
+
+#### Source
+
+[lib/provable/bool.ts:192](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/bool.ts#L192)
 
 ***
 
@@ -362,14 +374,16 @@ Serializes this [Bool](Bool.mdx) into [Field](Field.mdx) elements.
 toJSON(): boolean
 ```
 
-Defined in: [lib/provable/bool.ts:207](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/bool.ts#L207)
-
 Serialize the [Bool](Bool.mdx) to a JSON string.
 This operation does _not_ affect the circuit and can't be used to prove anything about the string representation of the Field.
 
 #### Returns
 
 `boolean`
+
+#### Source
+
+[lib/provable/bool.ts:208](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/bool.ts#L208)
 
 ***
 
@@ -379,8 +393,6 @@ This operation does _not_ affect the circuit and can't be used to prove anything
 toString(): string
 ```
 
-Defined in: [lib/provable/bool.ts:199](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/bool.ts#L199)
-
 Serialize the [Bool](Bool.mdx) to a string, e.g. for printing.
 This operation does _not_ affect the circuit and can't be used to prove anything about the string representation of the Field.
 
@@ -388,27 +400,9 @@ This operation does _not_ affect the circuit and can't be used to prove anything
 
 `string`
 
-***
+#### Source
 
-### allTrue()
-
-```ts
-static allTrue(list: (boolean | Bool)[]): Bool
-```
-
-Defined in: [lib/provable/bool.ts:263](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/bool.ts#L263)
-
-Boolean AND operation across a list of booleans, returns `Bool(true)` if all elements in the list are true.
-
-#### Parameters
-
-##### list
-
-(`boolean` \| [`Bool`](Bool.mdx))[]
-
-#### Returns
-
-[`Bool`](Bool.mdx)
+[lib/provable/bool.ts:200](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/bool.ts#L200)
 
 ***
 
@@ -418,45 +412,21 @@ Boolean AND operation across a list of booleans, returns `Bool(true)` if all ele
 static and(x: boolean | Bool, y: boolean | Bool): Bool
 ```
 
-Defined in: [lib/provable/bool.ts:243](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/bool.ts#L243)
-
 Boolean AND operation.
 
 #### Parameters
 
-##### x
+• **x**: `boolean` \| [`Bool`](Bool.mdx)
 
-`boolean` | [`Bool`](Bool.mdx)
-
-##### y
-
-`boolean` | [`Bool`](Bool.mdx)
+• **y**: `boolean` \| [`Bool`](Bool.mdx)
 
 #### Returns
 
 [`Bool`](Bool.mdx)
 
-***
+#### Source
 
-### anyTrue()
-
-```ts
-static anyTrue(list: (boolean | Bool)[]): Bool
-```
-
-Defined in: [lib/provable/bool.ts:280](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/bool.ts#L280)
-
-Boolean OR operation across a list of booleans, returns `Bool(true)` if any element in the list is true.
-
-#### Parameters
-
-##### list
-
-(`boolean` \| [`Bool`](Bool.mdx))[]
-
-#### Returns
-
-[`Bool`](Bool.mdx)
+[lib/provable/bool.ts:244](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/bool.ts#L244)
 
 ***
 
@@ -466,23 +436,21 @@ Boolean OR operation across a list of booleans, returns `Bool(true)` if any elem
 static assertEqual(x: Bool, y: boolean | Bool): void
 ```
 
-Defined in: [lib/provable/bool.ts:297](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/bool.ts#L297)
-
 Asserts if both [Bool](Bool.mdx) are equal.
 
 #### Parameters
 
-##### x
+• **x**: [`Bool`](Bool.mdx)
 
-[`Bool`](Bool.mdx)
-
-##### y
-
-`boolean` | [`Bool`](Bool.mdx)
+• **y**: `boolean` \| [`Bool`](Bool.mdx)
 
 #### Returns
 
 `void`
+
+#### Source
+
+[lib/provable/bool.ts:264](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/bool.ts#L264)
 
 ***
 
@@ -492,17 +460,17 @@ Asserts if both [Bool](Bool.mdx) are equal.
 static check(x: Bool): void
 ```
 
-Defined in: [lib/provable/bool.ts:402](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/bool.ts#L402)
-
 #### Parameters
 
-##### x
-
-[`Bool`](Bool.mdx)
+• **x**: [`Bool`](Bool.mdx)
 
 #### Returns
 
 `void`
+
+#### Source
+
+[lib/provable/bool.ts:369](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/bool.ts#L369)
 
 ***
 
@@ -512,11 +480,13 @@ Defined in: [lib/provable/bool.ts:402](https://github.com/o1-labs/o1js/blob/46b9
 static empty(): Bool
 ```
 
-Defined in: [lib/provable/bool.ts:377](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/bool.ts#L377)
-
 #### Returns
 
 [`Bool`](Bool.mdx)
+
+#### Source
+
+[lib/provable/bool.ts:344](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/bool.ts#L344)
 
 ***
 
@@ -526,23 +496,21 @@ Defined in: [lib/provable/bool.ts:377](https://github.com/o1-labs/o1js/blob/46b9
 static equal(x: boolean | Bool, y: boolean | Bool): Bool
 ```
 
-Defined in: [lib/provable/bool.ts:308](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/bool.ts#L308)
-
 Checks two [Bool](Bool.mdx) for equality.
 
 #### Parameters
 
-##### x
+• **x**: `boolean` \| [`Bool`](Bool.mdx)
 
-`boolean` | [`Bool`](Bool.mdx)
-
-##### y
-
-`boolean` | [`Bool`](Bool.mdx)
+• **y**: `boolean` \| [`Bool`](Bool.mdx)
 
 #### Returns
 
 [`Bool`](Bool.mdx)
+
+#### Source
+
+[lib/provable/bool.ts:275](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/bool.ts#L275)
 
 ***
 
@@ -552,17 +520,17 @@ Checks two [Bool](Bool.mdx) for equality.
 static fromBytes(bytes: number[]): Bool
 ```
 
-Defined in: [lib/provable/bool.ts:389](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/bool.ts#L389)
-
 #### Parameters
 
-##### bytes
-
-`number`[]
+• **bytes**: `number`[]
 
 #### Returns
 
 [`Bool`](Bool.mdx)
+
+#### Source
+
+[lib/provable/bool.ts:356](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/bool.ts#L356)
 
 ***
 
@@ -572,19 +540,19 @@ Defined in: [lib/provable/bool.ts:389](https://github.com/o1-labs/o1js/blob/46b9
 static fromFields(fields: Field[]): Bool
 ```
 
-Defined in: [lib/provable/bool.ts:332](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/bool.ts#L332)
-
 Creates a data structure from an array of serialized [Field](Field.mdx) elements.
 
 #### Parameters
 
-##### fields
-
-[`Field`](Field.mdx)[]
+• **fields**: [`Field`](Field.mdx)[]
 
 #### Returns
 
 [`Bool`](Bool.mdx)
+
+#### Source
+
+[lib/provable/bool.ts:299](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/bool.ts#L299)
 
 ***
 
@@ -594,20 +562,20 @@ Creates a data structure from an array of serialized [Field](Field.mdx) elements
 static fromJSON(b: boolean): Bool
 ```
 
-Defined in: [lib/provable/bool.ts:366](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/bool.ts#L366)
-
 Deserialize a JSON structure into a [Bool](Bool.mdx).
 This operation does _not_ affect the circuit and can't be used to prove anything about the string representation of the Field.
 
 #### Parameters
 
-##### b
-
-`boolean`
+• **b**: `boolean`
 
 #### Returns
 
 [`Bool`](Bool.mdx)
+
+#### Source
+
+[lib/provable/bool.ts:333](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/bool.ts#L333)
 
 ***
 
@@ -617,19 +585,19 @@ This operation does _not_ affect the circuit and can't be used to prove anything
 static fromValue(b: boolean | Bool): Bool
 ```
 
-Defined in: [lib/provable/bool.ts:349](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/bool.ts#L349)
-
 `Provable<Bool>.fromValue()`
 
 #### Parameters
 
-##### b
-
-`boolean` | [`Bool`](Bool.mdx)
+• **b**: `boolean` \| [`Bool`](Bool.mdx)
 
 #### Returns
 
 [`Bool`](Bool.mdx)
+
+#### Source
+
+[lib/provable/bool.ts:316](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/bool.ts#L316)
 
 ***
 
@@ -639,19 +607,19 @@ Defined in: [lib/provable/bool.ts:349](https://github.com/o1-labs/o1js/blob/46b9
 static not(x: boolean | Bool): Bool
 ```
 
-Defined in: [lib/provable/bool.ts:233](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/bool.ts#L233)
-
 Boolean negation.
 
 #### Parameters
 
-##### x
-
-`boolean` | [`Bool`](Bool.mdx)
+• **x**: `boolean` \| [`Bool`](Bool.mdx)
 
 #### Returns
 
 [`Bool`](Bool.mdx)
+
+#### Source
+
+[lib/provable/bool.ts:234](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/bool.ts#L234)
 
 ***
 
@@ -661,23 +629,21 @@ Boolean negation.
 static or(x: boolean | Bool, y: boolean | Bool): Bool
 ```
 
-Defined in: [lib/provable/bool.ts:253](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/bool.ts#L253)
-
 Boolean OR operation.
 
 #### Parameters
 
-##### x
+• **x**: `boolean` \| [`Bool`](Bool.mdx)
 
-`boolean` | [`Bool`](Bool.mdx)
-
-##### y
-
-`boolean` | [`Bool`](Bool.mdx)
+• **y**: `boolean` \| [`Bool`](Bool.mdx)
 
 #### Returns
 
 [`Bool`](Bool.mdx)
+
+#### Source
+
+[lib/provable/bool.ts:254](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/bool.ts#L254)
 
 ***
 
@@ -687,25 +653,23 @@ Boolean OR operation.
 static readBytes<N>(bytes: number[], offset: NonNegativeInteger<N>): [Bool, number]
 ```
 
-Defined in: [lib/provable/bool.ts:393](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/bool.ts#L393)
-
-#### Type Parameters
+#### Type parameters
 
 • **N** *extends* `number`
 
 #### Parameters
 
-##### bytes
+• **bytes**: `number`[]
 
-`number`[]
-
-##### offset
-
-`NonNegativeInteger`\<`N`\>
+• **offset**: `NonNegativeInteger`\<`N`\>
 
 #### Returns
 
-\[[`Bool`](Bool.mdx), `number`\]
+[[`Bool`](Bool.mdx), `number`]
+
+#### Source
+
+[lib/provable/bool.ts:360](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/bool.ts#L360)
 
 ***
 
@@ -715,13 +679,15 @@ Defined in: [lib/provable/bool.ts:393](https://github.com/o1-labs/o1js/blob/46b9
 static sizeInFields(): number
 ```
 
-Defined in: [lib/provable/bool.ts:373](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/bool.ts#L373)
-
 Returns the size of this type.
 
 #### Returns
 
 `number`
+
+#### Source
+
+[lib/provable/bool.ts:340](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/bool.ts#L340)
 
 ***
 
@@ -731,19 +697,19 @@ Returns the size of this type.
 static toAuxiliary(_?: Bool): []
 ```
 
-Defined in: [lib/provable/bool.ts:325](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/bool.ts#L325)
-
 Static method to serialize a [Bool](Bool.mdx) into its auxiliary data.
 
 #### Parameters
 
-##### \_?
-
-[`Bool`](Bool.mdx)
+• **\_?**: [`Bool`](Bool.mdx)
 
 #### Returns
 
-\[\]
+[]
+
+#### Source
+
+[lib/provable/bool.ts:292](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/bool.ts#L292)
 
 ***
 
@@ -753,17 +719,17 @@ Static method to serialize a [Bool](Bool.mdx) into its auxiliary data.
 static toBytes(b: Bool): number[]
 ```
 
-Defined in: [lib/provable/bool.ts:385](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/bool.ts#L385)
-
 #### Parameters
 
-##### b
-
-[`Bool`](Bool.mdx)
+• **b**: [`Bool`](Bool.mdx)
 
 #### Returns
 
 `number`[]
+
+#### Source
+
+[lib/provable/bool.ts:352](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/bool.ts#L352)
 
 ***
 
@@ -773,17 +739,17 @@ Defined in: [lib/provable/bool.ts:385](https://github.com/o1-labs/o1js/blob/46b9
 static toField(x: boolean | Bool): Field
 ```
 
-Defined in: [lib/provable/bool.ts:226](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/bool.ts#L226)
-
 #### Parameters
 
-##### x
-
-`boolean` | [`Bool`](Bool.mdx)
+• **x**: `boolean` \| [`Bool`](Bool.mdx)
 
 #### Returns
 
 [`Field`](Field.mdx)
+
+#### Source
+
+[lib/provable/bool.ts:227](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/bool.ts#L227)
 
 ***
 
@@ -793,19 +759,19 @@ Defined in: [lib/provable/bool.ts:226](https://github.com/o1-labs/o1js/blob/46b9
 static toFields(x: Bool): Field[]
 ```
 
-Defined in: [lib/provable/bool.ts:318](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/bool.ts#L318)
-
 Static method to serialize a [Bool](Bool.mdx) into an array of [Field](Field.mdx) elements.
 
 #### Parameters
 
-##### x
-
-[`Bool`](Bool.mdx)
+• **x**: [`Bool`](Bool.mdx)
 
 #### Returns
 
 [`Field`](Field.mdx)[]
+
+#### Source
+
+[lib/provable/bool.ts:285](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/bool.ts#L285)
 
 ***
 
@@ -813,23 +779,19 @@ Static method to serialize a [Bool](Bool.mdx) into an array of [Field](Field.mdx
 
 ```ts
 static toInput(x: Bool): {
-  packed: [Field, number][];
+  "packed": [Field, number][];
 }
 ```
 
-Defined in: [lib/provable/bool.ts:381](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/bool.ts#L381)
-
 #### Parameters
 
-##### x
-
-[`Bool`](Bool.mdx)
+• **x**: [`Bool`](Bool.mdx)
 
 #### Returns
 
 ```ts
 {
-  packed: [Field, number][];
+  "packed": [Field, number][];
 }
 ```
 
@@ -839,6 +801,10 @@ Defined in: [lib/provable/bool.ts:381](https://github.com/o1-labs/o1js/blob/46b9
 packed: [Field, number][];
 ```
 
+#### Source
+
+[lib/provable/bool.ts:348](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/bool.ts#L348)
+
 ***
 
 ### toJSON()
@@ -847,20 +813,20 @@ packed: [Field, number][];
 static toJSON(x: Bool): boolean
 ```
 
-Defined in: [lib/provable/bool.ts:358](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/bool.ts#L358)
-
 Serialize a [Bool](Bool.mdx) to a JSON string.
 This operation does _not_ affect the circuit and can't be used to prove anything about the string representation of the Field.
 
 #### Parameters
 
-##### x
-
-[`Bool`](Bool.mdx)
+• **x**: [`Bool`](Bool.mdx)
 
 #### Returns
 
 `boolean`
+
+#### Source
+
+[lib/provable/bool.ts:325](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/bool.ts#L325)
 
 ***
 
@@ -870,16 +836,16 @@ This operation does _not_ affect the circuit and can't be used to prove anything
 static toValue(x: Bool): boolean
 ```
 
-Defined in: [lib/provable/bool.ts:342](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/bool.ts#L342)
-
 `Provable<Bool>.toValue()`
 
 #### Parameters
 
-##### x
-
-[`Bool`](Bool.mdx)
+• **x**: [`Bool`](Bool.mdx)
 
 #### Returns
 
 `boolean`
+
+#### Source
+
+[lib/provable/bool.ts:309](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/bool.ts#L309)

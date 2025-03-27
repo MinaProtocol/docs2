@@ -1,63 +1,22 @@
 ```ts
 function Struct<A, T, V, J, Pure>(type: A): (value: T) => T & {
-  _isStruct: true;
+  "_isStruct": true;
  } & Pure extends true ? ProvablePure<T, V> : Provable<T, V> & {
-  empty: () => T;
-  fromJSON: (x: J) => T;
-  fromValue: (value: From<A>) => T;
-  toInput: (x: T) => {
-     fields: Field[];
-     packed: [Field, number][];
+  "empty": () => T;
+  "fromJSON": (x: J) => T;
+  "fromValue": (value: From<A>) => T;
+  "toInput": (x: T) => {
+     "fields": Field[];
+     "packed": [Field, number][];
     };
-  toJSON: (x: T) => J;
+  "toJSON": (x: T) => J;
 }
 ```
-
-Defined in: [lib/provable/types/struct.ts:125](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/struct.ts#L125)
 
 `Struct` lets you declare composite types for use in o1js circuits.
 
 These composite types can be passed in as arguments to smart contract methods, used for on-chain state variables
 or as event / action types.
-
-## Type Parameters
-
-• **A**
-
-• **T** *extends* `unknown` = [`InferProvable`](../type-aliases/InferProvable.mdx)\<`A`\>
-
-• **V** *extends* `unknown` = `InferValue`\<`A`\>
-
-• **J** *extends* `unknown` = `InferJson`\<`A`\>
-
-• **Pure** *extends* `boolean` = `IsPure`\<`A`\>
-
-## Parameters
-
-### type
-
-`A`
-
-Object specifying the layout of the `Struct`
-
-## Returns
-
-(`value`: `T`) => `T` & \{
-  `_isStruct`: `true`;
- \} & `Pure` *extends* `true` ? [`ProvablePure`](../type-aliases/ProvablePure.mdx)\<`T`, `V`\> : [`Provable`](../type-aliases/Provable.mdx)\<`T`, `V`\> & \{
-  `empty`: () => `T`;
-  `fromJSON`: (`x`: `J`) => `T`;
-  `fromValue`: (`value`: `From`\<`A`\>) => `T`;
-  `toInput`: (`x`: `T`) => \{
-     `fields`: [`Field`](../type-aliases/Field.mdx)[];
-     `packed`: \[[`Field`](../type-aliases/Field.mdx), `number`\][];
-    \};
-  `toJSON`: (`x`: `T`) => `J`;
- \}
-
-Class which you can extend
-
-## Example
 
 Here's an example of creating a "Voter" struct, which holds a public key and a collection of votes on 3 different proposals:
 ```ts
@@ -119,4 +78,45 @@ class Voter extends Struct({
 Again, it's important to note that this doesn't enable you to prove anything about the `fullName` string.
 From the circuit point of view, it simply doesn't exist!
 
-**Note**: Ensure you do not use or extend `Struct` as a type directly. Instead, always call it as a function to construct a type. `Struct` is not a valid provable type itself, types created with `Struct(...)` are.
+## Type parameters
+
+• **A**
+
+• **T** *extends* `unknown` = [`InferProvable`](../type-aliases/InferProvable.mdx)\<`A`\>
+
+• **V** *extends* `unknown` = `InferValue`\<`A`\>
+
+• **J** *extends* `unknown` = `InferJson`\<`A`\>
+
+• **Pure** *extends* `boolean` = `IsPure`\<`A`\>
+
+## Parameters
+
+• **type**: `A`
+
+Object specifying the layout of the `Struct`
+
+## Returns
+
+(`value`: `T`) => `T` & \{
+  `"_isStruct"`: `true`;
+ \} & `Pure` *extends* `true` ? [`ProvablePure`](../type-aliases/ProvablePure.mdx)\<`T`, `V`\> : `Provable`\<`T`, `V`\> & \{
+  `"empty"`: () => `T`;
+  `"fromJSON"`: (`x`: `J`) => `T`;
+  `"fromValue"`: (`value`: `From`\<`A`\>) => `T`;
+  `"toInput"`: (`x`: `T`) => \{
+     `"fields"`: [`Field`](../type-aliases/Field.mdx)[];
+     `"packed"`: [[`Field`](../type-aliases/Field.mdx), `number`][];
+    \};
+  `"toJSON"`: (`x`: `T`) => `J`;
+ \}
+
+Class which you can extend
+
+## Note
+
+Ensure you do not use or extend `Struct` as a type directly. Instead, always call it as a function to construct a type. `Struct` is not a valid provable type itself, types created with `Struct(...)` are.
+
+## Source
+
+[lib/provable/types/struct.ts:140](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/struct.ts#L140)

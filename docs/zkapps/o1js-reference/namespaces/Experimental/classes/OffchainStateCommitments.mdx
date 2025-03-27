@@ -1,5 +1,3 @@
-Defined in: [index.ts:153](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/index.ts#L153)
-
 Commitments that keep track of the current state of an offchain Merkle tree constructed from actions.
 Intended to be stored on-chain.
 
@@ -17,29 +15,21 @@ Fields:
 
 ```ts
 new OffchainStateCommitments(value: {
-  actionState: Field;
-  length: Field;
-  root: Field;
+  "actionState": Field;
+  "length": Field;
+  "root": Field;
  }): OffchainStateCommitments
 ```
 
-Defined in: [lib/provable/types/struct.ts:133](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/struct.ts#L133)
-
 #### Parameters
 
-##### value
+• **value**
 
-###### actionState
+• **value.actionState**: [`Field`](../../../classes/Field.mdx)= `Field`
 
-[`Field`](../../../classes/Field.mdx) = `Field`
+• **value.length**: [`Field`](../../../classes/Field.mdx)= `Field`
 
-###### length
-
-[`Field`](../../../classes/Field.mdx) = `Field`
-
-###### root
-
-[`Field`](../../../classes/Field.mdx) = `Field`
+• **value.root**: [`Field`](../../../classes/Field.mdx)= `Field`
 
 #### Returns
 
@@ -47,9 +37,11 @@ Defined in: [lib/provable/types/struct.ts:133](https://github.com/o1-labs/o1js/b
 
 #### Inherited from
 
-```ts
-OffchainState_.OffchainStateCommitments.constructor
-```
+`OffchainState_.OffchainStateCommitments.constructor`
+
+#### Source
+
+[lib/provable/types/struct.ts:148](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/struct.ts#L148)
 
 ## Properties
 
@@ -59,13 +51,13 @@ OffchainState_.OffchainStateCommitments.constructor
 actionState: Field = Field;
 ```
 
-Defined in: [lib/mina/v1/actions/offchain-state-rollup.ts:45](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/actions/offchain-state-rollup.ts#L45)
-
 #### Inherited from
 
-```ts
-OffchainState_.OffchainStateCommitments.actionState
-```
+`OffchainState_.OffchainStateCommitments.actionState`
+
+#### Source
+
+[lib/mina/actions/offchain-state-rollup.ts:49](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/actions/offchain-state-rollup.ts#L49)
 
 ***
 
@@ -75,13 +67,13 @@ OffchainState_.OffchainStateCommitments.actionState
 length: Field = Field;
 ```
 
-Defined in: [lib/mina/v1/actions/offchain-state-rollup.ts:42](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/actions/offchain-state-rollup.ts#L42)
-
 #### Inherited from
 
-```ts
-OffchainState_.OffchainStateCommitments.length
-```
+`OffchainState_.OffchainStateCommitments.length`
+
+#### Source
+
+[lib/mina/actions/offchain-state-rollup.ts:46](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/actions/offchain-state-rollup.ts#L46)
 
 ***
 
@@ -91,13 +83,13 @@ OffchainState_.OffchainStateCommitments.length
 root: Field = Field;
 ```
 
-Defined in: [lib/mina/v1/actions/offchain-state-rollup.ts:41](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/actions/offchain-state-rollup.ts#L41)
-
 #### Inherited from
 
-```ts
-OffchainState_.OffchainStateCommitments.root
-```
+`OffchainState_.OffchainStateCommitments.root`
+
+#### Source
+
+[lib/mina/actions/offchain-state-rollup.ts:45](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/actions/offchain-state-rollup.ts#L45)
 
 ***
 
@@ -107,13 +99,13 @@ OffchainState_.OffchainStateCommitments.root
 static _isStruct: true;
 ```
 
-Defined in: [lib/provable/types/struct.ts:133](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/struct.ts#L133)
-
 #### Inherited from
 
-```ts
-OffchainState_.OffchainStateCommitments._isStruct
-```
+`OffchainState_.OffchainStateCommitments._isStruct`
+
+#### Source
+
+[lib/provable/types/struct.ts:148](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/struct.ts#L148)
 
 ***
 
@@ -121,13 +113,11 @@ OffchainState_.OffchainStateCommitments._isStruct
 
 ```ts
 static check: (value: {
-  actionState: Field;
-  length: Field;
-  root: Field;
+  "actionState": Field;
+  "length": Field;
+  "root": Field;
  }) => void;
 ```
-
-Defined in: [lib/provable/types/provable-intf.ts:76](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/provable-intf.ts#L76)
 
 Add assertions to the proof to check if `value` is a valid member of type `T`.
 This function does not return anything, instead it creates any number of assertions to prove that `value` is a valid member of the type `T`.
@@ -136,21 +126,15 @@ For instance, calling check function on the type [Bool](../../../classes/Bool.md
 
 #### Parameters
 
-##### value
+• **value**
 
 the element of type `T` to put assertions on.
 
-###### actionState
+• **value.actionState**: [`Field`](../../../classes/Field.mdx)= `Field`
 
-[`Field`](../../../classes/Field.mdx) = `Field`
+• **value.length**: [`Field`](../../../classes/Field.mdx)= `Field`
 
-###### length
-
-[`Field`](../../../classes/Field.mdx) = `Field`
-
-###### root
-
-[`Field`](../../../classes/Field.mdx) = `Field`
+• **value.root**: [`Field`](../../../classes/Field.mdx)= `Field`
 
 #### Returns
 
@@ -158,9 +142,11 @@ the element of type `T` to put assertions on.
 
 #### Inherited from
 
-```ts
-OffchainState_.OffchainStateCommitments.check
-```
+`OffchainState_.OffchainStateCommitments.check`
+
+#### Source
+
+[lib/provable/types/provable-intf.ts:76](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/provable-intf.ts#L76)
 
 ***
 
@@ -168,21 +154,19 @@ OffchainState_.OffchainStateCommitments.check
 
 ```ts
 static empty: () => {
-  actionState: Field;
-  length: Field;
-  root: Field;
+  "actionState": Field;
+  "length": Field;
+  "root": Field;
 };
 ```
-
-Defined in: [lib/provable/types/struct.ts:143](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/struct.ts#L143)
 
 #### Returns
 
 ```ts
 {
-  actionState: Field;
-  length: Field;
-  root: Field;
+  "actionState": Field;
+  "length": Field;
+  "root": Field;
 }
 ```
 
@@ -206,9 +190,11 @@ root: Field = Field;
 
 #### Inherited from
 
-```ts
-OffchainState_.OffchainStateCommitments.empty
-```
+`OffchainState_.OffchainStateCommitments.empty`
+
+#### Source
+
+[lib/provable/types/struct.ts:158](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/struct.ts#L158)
 
 ***
 
@@ -216,27 +202,23 @@ OffchainState_.OffchainStateCommitments.empty
 
 ```ts
 static fromFields: (fields: Field[]) => {
-  actionState: Field;
-  length: Field;
-  root: Field;
+  "actionState": Field;
+  "length": Field;
+  "root": Field;
 };
 ```
 
-Defined in: [lib/provable/types/provable-intf.ts:115](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/provable-intf.ts#L115)
-
 #### Parameters
 
-##### fields
-
-[`Field`](../../../classes/Field.mdx)[]
+• **fields**: [`Field`](../../../classes/Field.mdx)[]
 
 #### Returns
 
 ```ts
 {
-  actionState: Field;
-  length: Field;
-  root: Field;
+  "actionState": Field;
+  "length": Field;
+  "root": Field;
 }
 ```
 
@@ -260,9 +242,11 @@ root: Field = Field;
 
 #### Inherited from
 
-```ts
-OffchainState_.OffchainStateCommitments.fromFields
-```
+`OffchainState_.OffchainStateCommitments.fromFields`
+
+#### Source
+
+[lib/provable/types/provable-intf.ts:115](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/provable-intf.ts#L115)
 
 ***
 
@@ -270,41 +254,33 @@ OffchainState_.OffchainStateCommitments.fromFields
 
 ```ts
 static fromJSON: (x: {
-  actionState: string;
-  length: string;
-  root: string;
+  "actionState": Field;
+  "length": Field;
+  "root": Field;
  }) => {
-  actionState: Field;
-  length: Field;
-  root: Field;
+  "actionState": Field;
+  "length": Field;
+  "root": Field;
 };
 ```
 
-Defined in: [lib/provable/types/struct.ts:142](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/struct.ts#L142)
-
 #### Parameters
 
-##### x
+• **x**
 
-###### actionState
+• **x.actionState**: `string`= `Field`
 
-`string` = `Field`
+• **x.length**: `string`= `Field`
 
-###### length
-
-`string` = `Field`
-
-###### root
-
-`string` = `Field`
+• **x.root**: `string`= `Field`
 
 #### Returns
 
 ```ts
 {
-  actionState: Field;
-  length: Field;
-  root: Field;
+  "actionState": Field;
+  "length": Field;
+  "root": Field;
 }
 ```
 
@@ -328,49 +304,49 @@ root: Field = Field;
 
 #### Inherited from
 
-```ts
-OffchainState_.OffchainStateCommitments.fromJSON
-```
+`OffchainState_.OffchainStateCommitments.fromJSON`
+
+#### Source
+
+[lib/provable/types/struct.ts:157](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/struct.ts#L157)
 
 ***
 
 ### fromValue
 
 ```ts
-static fromValue: (x: 
-  | {
-  actionState: Field;
-  length: Field;
-  root: Field;
- }
-  | {
-  actionState: bigint;
-  length: bigint;
-  root: bigint;
+static fromValue: (x: {
+  "actionState": Field;
+  "length": Field;
+  "root": Field;
+ } | {
+  "actionState": Field;
+  "length": Field;
+  "root": Field;
  }) => {
-  actionState: Field;
-  length: Field;
-  root: Field;
+  "actionState": Field;
+  "length": Field;
+  "root": Field;
  } & (value: {
-  actionState: string | number | bigint | Field;
-  length: string | number | bigint | Field;
-  root: string | number | bigint | Field;
+  "actionState": Field;
+  "length": Field;
+  "root": Field;
  }) => {
-  actionState: Field;
-  length: Field;
-  root: Field;
+  "actionState": Field;
+  "length": Field;
+  "root": Field;
 };
 ```
-
-Defined in: [lib/provable/types/provable-intf.ts:86](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/provable-intf.ts#L86)
 
 Convert provable type from a normal JS type.
 
 #### Inherited from
 
-```ts
-OffchainState_.OffchainStateCommitments.fromValue
-```
+`OffchainState_.OffchainStateCommitments.fromValue`
+
+#### Source
+
+[lib/provable/types/provable-intf.ts:86](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/provable-intf.ts#L86)
 
 ***
 
@@ -378,47 +354,39 @@ OffchainState_.OffchainStateCommitments.fromValue
 
 ```ts
 static toAuxiliary: (value?: {
-  actionState: Field;
-  length: Field;
-  root: Field;
+  "actionState": Field;
+  "length": Field;
+  "root": Field;
  }) => any[];
 ```
-
-Defined in: [lib/provable/types/provable-intf.ts:47](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/provable-intf.ts#L47)
 
 A function that takes `value` (optional), an element of type `T`, as argument and
 returns an array of any type that make up the "auxiliary" (non-provable) data of `value`.
 
 #### Parameters
 
-##### value?
+• **value?**
 
 the element of type `T` to generate the auxiliary data array from, optional.
 If not provided, a default value for auxiliary data is returned.
 
-###### actionState
+• **value.actionState?**: [`Field`](../../../classes/Field.mdx)= `Field`
 
-[`Field`](../../../classes/Field.mdx) = `Field`
+• **value.length?**: [`Field`](../../../classes/Field.mdx)= `Field`
 
-###### length
-
-[`Field`](../../../classes/Field.mdx) = `Field`
-
-###### root
-
-[`Field`](../../../classes/Field.mdx) = `Field`
+• **value.root?**: [`Field`](../../../classes/Field.mdx)= `Field`
 
 #### Returns
 
 `any`[]
 
-An array of any type describing how this `T` element is made up of "auxiliary" (non-provable) data.
-
 #### Inherited from
 
-```ts
-OffchainState_.OffchainStateCommitments.toAuxiliary
-```
+`OffchainState_.OffchainStateCommitments.toAuxiliary`
+
+#### Source
+
+[lib/provable/types/provable-intf.ts:47](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/provable-intf.ts#L47)
 
 ***
 
@@ -426,17 +394,15 @@ OffchainState_.OffchainStateCommitments.toAuxiliary
 
 ```ts
 static optional toCanonical: (x: {
-  actionState: Field;
-  length: Field;
-  root: Field;
+  "actionState": Field;
+  "length": Field;
+  "root": Field;
  }) => {
-  actionState: Field;
-  length: Field;
-  root: Field;
+  "actionState": Field;
+  "length": Field;
+  "root": Field;
 };
 ```
-
-Defined in: [lib/provable/types/provable-intf.ts:104](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/provable-intf.ts#L104)
 
 Optional method which transforms a provable type into its canonical representation.
 
@@ -455,27 +421,21 @@ The identity function will also be used when the `toCanonical()` is not present 
 
 #### Parameters
 
-##### x
+• **x**
 
-###### actionState
+• **x.actionState**: [`Field`](../../../classes/Field.mdx)= `Field`
 
-[`Field`](../../../classes/Field.mdx) = `Field`
+• **x.length**: [`Field`](../../../classes/Field.mdx)= `Field`
 
-###### length
-
-[`Field`](../../../classes/Field.mdx) = `Field`
-
-###### root
-
-[`Field`](../../../classes/Field.mdx) = `Field`
+• **x.root**: [`Field`](../../../classes/Field.mdx)= `Field`
 
 #### Returns
 
 ```ts
 {
-  actionState: Field;
-  length: Field;
-  root: Field;
+  "actionState": Field;
+  "length": Field;
+  "root": Field;
 }
 ```
 
@@ -499,9 +459,11 @@ root: Field = Field;
 
 #### Inherited from
 
-```ts
-OffchainState_.OffchainStateCommitments.toCanonical
-```
+`OffchainState_.OffchainStateCommitments.toCanonical`
+
+#### Source
+
+[lib/provable/types/provable-intf.ts:104](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/provable-intf.ts#L104)
 
 ***
 
@@ -509,46 +471,38 @@ OffchainState_.OffchainStateCommitments.toCanonical
 
 ```ts
 static toFields: (value: {
-  actionState: Field;
-  length: Field;
-  root: Field;
+  "actionState": Field;
+  "length": Field;
+  "root": Field;
  }) => Field[];
 ```
-
-Defined in: [lib/provable/types/provable-intf.ts:36](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/provable-intf.ts#L36)
 
 A function that takes `value`, an element of type `T`, as argument and returns
 an array of [Field](../../../classes/Field.mdx) elements that make up the provable data of `value`.
 
 #### Parameters
 
-##### value
+• **value**
 
 the element of type `T` to generate the [Field](../../../classes/Field.mdx) array from.
 
-###### actionState
+• **value.actionState**: [`Field`](../../../classes/Field.mdx)= `Field`
 
-[`Field`](../../../classes/Field.mdx) = `Field`
+• **value.length**: [`Field`](../../../classes/Field.mdx)= `Field`
 
-###### length
-
-[`Field`](../../../classes/Field.mdx) = `Field`
-
-###### root
-
-[`Field`](../../../classes/Field.mdx) = `Field`
+• **value.root**: [`Field`](../../../classes/Field.mdx)= `Field`
 
 #### Returns
 
 [`Field`](../../../classes/Field.mdx)[]
 
-A [Field](../../../classes/Field.mdx) array describing how this `T` element is made up of [Field](../../../classes/Field.mdx) elements.
-
 #### Inherited from
 
-```ts
-OffchainState_.OffchainStateCommitments.toFields
-```
+`OffchainState_.OffchainStateCommitments.toFields`
+
+#### Source
+
+[lib/provable/types/provable-intf.ts:36](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/provable-intf.ts#L36)
 
 ***
 
@@ -556,39 +510,31 @@ OffchainState_.OffchainStateCommitments.toFields
 
 ```ts
 static toInput: (x: {
-  actionState: Field;
-  length: Field;
-  root: Field;
+  "actionState": Field;
+  "length": Field;
+  "root": Field;
  }) => {
-  fields: Field[];
-  packed: [Field, number][];
+  "fields": Field[];
+  "packed": [Field, number][];
 };
 ```
 
-Defined in: [lib/provable/types/struct.ts:137](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/struct.ts#L137)
-
 #### Parameters
 
-##### x
+• **x**
 
-###### actionState
+• **x.actionState**: [`Field`](../../../classes/Field.mdx)= `Field`
 
-[`Field`](../../../classes/Field.mdx) = `Field`
+• **x.length**: [`Field`](../../../classes/Field.mdx)= `Field`
 
-###### length
-
-[`Field`](../../../classes/Field.mdx) = `Field`
-
-###### root
-
-[`Field`](../../../classes/Field.mdx) = `Field`
+• **x.root**: [`Field`](../../../classes/Field.mdx)= `Field`
 
 #### Returns
 
 ```ts
 {
-  fields: Field[];
-  packed: [Field, number][];
+  "fields": Field[];
+  "packed": [Field, number][];
 }
 ```
 
@@ -606,9 +552,11 @@ optional packed: [Field, number][];
 
 #### Inherited from
 
-```ts
-OffchainState_.OffchainStateCommitments.toInput
-```
+`OffchainState_.OffchainStateCommitments.toInput`
+
+#### Source
+
+[lib/provable/types/struct.ts:152](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/struct.ts#L152)
 
 ***
 
@@ -616,41 +564,33 @@ OffchainState_.OffchainStateCommitments.toInput
 
 ```ts
 static toJSON: (x: {
-  actionState: Field;
-  length: Field;
-  root: Field;
+  "actionState": Field;
+  "length": Field;
+  "root": Field;
  }) => {
-  actionState: string;
-  length: string;
-  root: string;
+  "actionState": Field;
+  "length": Field;
+  "root": Field;
 };
 ```
 
-Defined in: [lib/provable/types/struct.ts:141](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/struct.ts#L141)
-
 #### Parameters
 
-##### x
+• **x**
 
-###### actionState
+• **x.actionState**: [`Field`](../../../classes/Field.mdx)= `Field`
 
-[`Field`](../../../classes/Field.mdx) = `Field`
+• **x.length**: [`Field`](../../../classes/Field.mdx)= `Field`
 
-###### length
-
-[`Field`](../../../classes/Field.mdx) = `Field`
-
-###### root
-
-[`Field`](../../../classes/Field.mdx) = `Field`
+• **x.root**: [`Field`](../../../classes/Field.mdx)= `Field`
 
 #### Returns
 
 ```ts
 {
-  actionState: string;
-  length: string;
-  root: string;
+  "actionState": Field;
+  "length": Field;
+  "root": Field;
 }
 ```
 
@@ -674,9 +614,11 @@ root: string = Field;
 
 #### Inherited from
 
-```ts
-OffchainState_.OffchainStateCommitments.toJSON
-```
+`OffchainState_.OffchainStateCommitments.toJSON`
+
+#### Source
+
+[lib/provable/types/struct.ts:156](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/struct.ts#L156)
 
 ***
 
@@ -684,43 +626,35 @@ OffchainState_.OffchainStateCommitments.toJSON
 
 ```ts
 static toValue: (x: {
-  actionState: Field;
-  length: Field;
-  root: Field;
+  "actionState": Field;
+  "length": Field;
+  "root": Field;
  }) => {
-  actionState: bigint;
-  length: bigint;
-  root: bigint;
+  "actionState": Field;
+  "length": Field;
+  "root": Field;
 };
 ```
-
-Defined in: [lib/provable/types/provable-intf.ts:81](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/provable-intf.ts#L81)
 
 Convert provable type to a normal JS type.
 
 #### Parameters
 
-##### x
+• **x**
 
-###### actionState
+• **x.actionState**: [`Field`](../../../classes/Field.mdx)= `Field`
 
-[`Field`](../../../classes/Field.mdx) = `Field`
+• **x.length**: [`Field`](../../../classes/Field.mdx)= `Field`
 
-###### length
-
-[`Field`](../../../classes/Field.mdx) = `Field`
-
-###### root
-
-[`Field`](../../../classes/Field.mdx) = `Field`
+• **x.root**: [`Field`](../../../classes/Field.mdx)= `Field`
 
 #### Returns
 
 ```ts
 {
-  actionState: bigint;
-  length: bigint;
-  root: bigint;
+  "actionState": Field;
+  "length": Field;
+  "root": Field;
 }
 ```
 
@@ -744,9 +678,11 @@ root: bigint = Field;
 
 #### Inherited from
 
-```ts
-OffchainState_.OffchainStateCommitments.toValue
-```
+`OffchainState_.OffchainStateCommitments.toValue`
+
+#### Source
+
+[lib/provable/types/provable-intf.ts:81](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/provable-intf.ts#L81)
 
 ## Methods
 
@@ -756,13 +692,9 @@ OffchainState_.OffchainStateCommitments.toValue
 static emptyFromHeight(height: number): OffchainStateCommitments
 ```
 
-Defined in: [lib/mina/v1/actions/offchain-state-rollup.ts:47](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/actions/offchain-state-rollup.ts#L47)
-
 #### Parameters
 
-##### height
-
-`number`
+• **height**: `number`
 
 #### Returns
 
@@ -770,9 +702,11 @@ Defined in: [lib/mina/v1/actions/offchain-state-rollup.ts:47](https://github.com
 
 #### Inherited from
 
-```ts
-OffchainState_.OffchainStateCommitments.emptyFromHeight
-```
+`OffchainState_.OffchainStateCommitments.emptyFromHeight`
+
+#### Source
+
+[lib/mina/actions/offchain-state-rollup.ts:51](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/actions/offchain-state-rollup.ts#L51)
 
 ***
 
@@ -781,8 +715,6 @@ OffchainState_.OffchainStateCommitments.emptyFromHeight
 ```ts
 static sizeInFields(): number
 ```
-
-Defined in: [lib/provable/types/provable-intf.ts:66](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/provable-intf.ts#L66)
 
 Return the size of the `T` type in terms of [Field](../../../classes/Field.mdx) type, as [Field](../../../classes/Field.mdx) is the primitive type.
 
@@ -794,6 +726,8 @@ A `number` representing the size of the `T` type in terms of [Field](../../../cl
 
 #### Inherited from
 
-```ts
-OffchainState_.OffchainStateCommitments.sizeInFields
-```
+`OffchainState_.OffchainStateCommitments.sizeInFields`
+
+#### Source
+
+[lib/provable/types/provable-intf.ts:66](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/provable-intf.ts#L66)

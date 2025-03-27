@@ -1,10 +1,13 @@
 ```ts
-type IncludedTransaction = Pick<PendingTransaction, "transaction" | "toJSON" | "toPretty" | "hash" | "data"> & {
-  status: "included";
+type IncludedTransaction: Pick<PendingTransaction, 
+  | "transaction"
+  | "toJSON"
+  | "toPretty"
+  | "hash"
+  | "data"> & {
+  "status": "included";
 };
 ```
-
-Defined in: [lib/mina/v1/transaction.ts:276](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/mina/v1/transaction.ts#L276)
 
 Represents a transaction that has been successfully included in a block.
 
@@ -28,3 +31,7 @@ try {
   console.error('Transaction failed to be included in a block:', error);
 }
 ```
+
+## Source
+
+[lib/mina/transaction.ts:258](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/transaction.ts#L258)

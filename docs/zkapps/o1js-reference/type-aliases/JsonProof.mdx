@@ -1,15 +1,11 @@
 ```ts
-type JsonProof = {
-  maxProofsVerified: 0 | 1 | 2;
-  proof: Base64ProofString;
-  publicInput: string[];
-  publicOutput: string[];
+type JsonProof: {
+  "maxProofsVerified": 0 | 1 | 2;
+  "proof": string;
+  "publicInput": string[];
+  "publicOutput": string[];
 };
 ```
-
-Defined in: [lib/proof-system/zkprogram.ts:136](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/proof-system/zkprogram.ts#L136)
-
-Serializable representation of a Pickles proof, useful for caching compiled proofs.
 
 ## Type declaration
 
@@ -22,7 +18,7 @@ maxProofsVerified: 0 | 1 | 2;
 ### proof
 
 ```ts
-proof: Base64ProofString;
+proof: string;
 ```
 
 ### publicInput
@@ -31,12 +27,12 @@ proof: Base64ProofString;
 publicInput: string[];
 ```
 
-Array of string, where each string is a `Field` in the publicInput of this proof
-
 ### publicOutput
 
 ```ts
 publicOutput: string[];
 ```
 
-Array of string, where each string is a `Field` in the publicOutput of this proof
+## Source
+
+[lib/proof-system/zkprogram.ts:146](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/proof-system/zkprogram.ts#L146)

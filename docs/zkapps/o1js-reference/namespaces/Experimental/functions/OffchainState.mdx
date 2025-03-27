@@ -1,12 +1,10 @@
 ```ts
 function OffchainState<Config>(config: Config, options?: {
-  logTotalCapacity: number;
-  maxActionsPerProof: number;
-  maxActionsPerUpdate: number;
+  "logTotalCapacity": number;
+  "maxActionsPerProof": number;
+  "maxActionsPerUpdate": number;
 }): OffchainState<Config>
 ```
-
-Defined in: [index.ts:143](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/index.ts#L143)
 
 Offchain state for a `SmartContract`.
 
@@ -36,21 +34,17 @@ offchainState.setContractInstance(contract);
 
 See the individual methods on `offchainState` for more information on usage.
 
-## Type Parameters
+## Type parameters
 
 • **Config** *extends* \{\}
 
 ## Parameters
 
-### config
+• **config**: `Config`
 
-`Config`
+• **options?**
 
-### options?
-
-#### logTotalCapacity
-
-`number`
+• **options.logTotalCapacity?**: `number`
 
 The base-2 logarithm of the total capacity of the offchain state.
 
@@ -64,13 +58,9 @@ which we will make proof creation slightly faster.
 Instead, you could also use a smaller total capacity to increase the `maxActionsPerProof`, so that fewer proofs are required,
 which will reduce the proof time even more, but only in the case of many actions.
 
-#### maxActionsPerProof
+• **options.maxActionsPerProof?**: `number`
 
-`number`
-
-#### maxActionsPerUpdate
-
-`number`
+• **options.maxActionsPerUpdate?**: `number`
 
 The maximum number of offchain state actions that can be included in a single account update.
 
@@ -83,3 +73,7 @@ Note: When increasing this, consider decreasing `maxActionsPerProof` or `logTota
 ## Returns
 
 `OffchainState`\<`Config`\>
+
+## Source
+
+[index.ts:170](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/index.ts#L170)

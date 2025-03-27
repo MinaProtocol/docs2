@@ -1,10 +1,8 @@
 ```ts
-type ProvablePure<T, TValue> = Omit<Provable<T, TValue>, "fromFields"> & {
-  fromFields: (fields: Field[]) => T;
+type ProvablePure<T, TValue>: Omit<Provable<T, TValue>, "fromFields"> & {
+  "fromFields": (fields: Field[]) => T;
 };
 ```
-
-Defined in: [lib/provable/types/provable-intf.ts:114](https://github.com/o1-labs/o1js/blob/46b9772d07785397c4bd76a102bc9f6730d321bb/src/lib/provable/types/provable-intf.ts#L114)
 
 `ProvablePure<T>` is a special kind of [Provable](Provable.mdx) interface, where the "auxiliary" (non-provable) data is empty.
 This means the type consists only of field elements, in that sense it is "pure".
@@ -22,16 +20,18 @@ fromFields: (fields: Field[]) => T;
 
 #### Parameters
 
-##### fields
-
-[`Field`](../classes/Field.mdx)[]
+• **fields**: [`Field`](../classes/Field.mdx)[]
 
 #### Returns
 
 `T`
 
-## Type Parameters
+## Type parameters
 
 • **T**
 
 • **TValue** = `any`
+
+## Source
+
+[lib/provable/types/provable-intf.ts:114](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/provable-intf.ts#L114)
