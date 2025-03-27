@@ -216,7 +216,7 @@ const senderPrivateKey = senderPublicKey.key;
   });
   await txn1.prove();
   const pendingTx = await txn1
-    .sign([senderPrivateKey, basicTreeZkAppPrivateKey])
+    .sign([senderPrivateKey])
     .send();
   await pendingTx.wait();
 
