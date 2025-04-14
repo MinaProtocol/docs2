@@ -1,4 +1,4 @@
-# Mina zkApp: 02 Private Inputs And Hash Functions
+# zkApp: Private Inputs And Hash Functions
 
 This Private Inputs and Hash Functions tutorial helps you to learn about private inputs, hash functions, and adding a second value as an input.
 
