@@ -19,6 +19,8 @@ While most protocols have just one primary group of node operators (often called
 
 SNARK workers are integral to the Mina network's health because these nodes are responsible for snarking, or producing SNARK proofs, of transactions in the network. By producing these proofs, snark workers help maintain the succinctness of the Mina blockchain.
 
+A SNARK worker consists of a single snark coordinator and multiple SNARK runners. The coordinator is responsible for receiving works from block producers, selecting works and issuing them to SNARK runners; the SNARK runners are actually responsible to generate work. This architecture allow us to split work into small fine grain, and abuse parallelism. For example, we may break a single ZKApp command in to multiple small "runs" and assign them to multiple runners. There's no secure mechanism inside the cluster so it's supposed to be ran by a single party. 
+
 Read on to learn why SNARK workers are needed, how the economic incentives align, and operational details of performing SNARK work. Feel free to click through to any of the sections that are most relevant to your needs.
 
 Note: The theory of zk-SNARKs is not covered. Deep knowledge of SNARKs is not required to read this section, but it is helpful to understand in general how SNARKs work and what they are useful for. To learn more, check out this
