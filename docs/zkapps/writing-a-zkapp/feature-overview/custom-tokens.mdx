@@ -30,7 +30,7 @@ If you want to create a fungible token you can use the
 Blockchain applications have various use cases for custom tokens, including a real-world financial asset, stake in an on-chain protocol, or even skill points in a game.
 
 Most blockchains, like Ethereum, do not natively support custom tokens. You implement custom tokens as smart contracts on top of the execution layer of the underlying protocol.
-Token standards ensure the interoperability of applications on Etherum, these standardisations are agree upon in ERCs, Ethereum Request for customElements, such as the fungible token standard [ERC-20](https://ethereum.org/en/developers/docs/standards/tokens/erc-20/).
+Token standards ensure the interoperability of applications on Ethereum, these standardisations are agree upon in ERCs, Ethereum Request for customElements, such as the fungible token standard [ERC-20](https://ethereum.org/en/developers/docs/standards/tokens/erc-20/).
 The Ethereum community has created and agreed upon other reference implementations and standardisation that are audited and easy to configure, such as [ERC-721](https://ethereum.org/en/developers/docs/standards/tokens/erc-721/) for NFTs.
 
 Mina supports custom token functionality at a low level in the tech stack. Mina treats custom tokens almost the same way as the native MINA token. This approach offers the following benefits:
@@ -107,7 +107,7 @@ Each subclass token contract that inherits the default `TokenContract` must impl
 approveBase(forest: AccountUpdateForest): void;
 ```
 
-The `TokenContract` also containts helper methods that make it easy to iterate through and approve a forest of child account updates.
+The `TokenContract` also contains helper methods that make it easy to iterate through and approve a forest of child account updates.
 The usual implementation is as easy as this:
 
 
@@ -174,7 +174,7 @@ abstract class TokenContract extends SmartContract {
 }
 ```
 
-Which utlizses the `Approvable` API to send token from an account to another one.
+Which utilizes the `Approvable` API to send token from an account to another one.
 
 ## Custom Token Terminology
 

@@ -305,7 +305,7 @@ To unpack what happens here, the first line of the method creates a new, empty a
 let senderUpdate = AccountUpdate.create(this.sender);
 ```
 
-- `AccountUpdate` is the class in o1js that represents account udpates.
+- `AccountUpdate` is the class in o1js that represents account updates.
 - `AccountUpdate.create()` instantiates this class and attaches the update to the current transaction at the same level where `create` is called.
 
   If it is called inside an `@method`, the `AccountUpdate` is created as a child (public input) of the zkApp update.
