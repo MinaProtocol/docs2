@@ -17,6 +17,7 @@ keywords:
   - mina
   - typescript
   - methods
+pagination_prev: zkapps/o1js/index
 ---
 
 # o1js Basic Concepts
