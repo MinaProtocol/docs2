@@ -1,0 +1,288 @@
+---
+id: mina-signer
+title: Mina Signer
+description: A NodeJS/Browser-compatible JavaScript library for the Mina Protocol
+---
+
+Mina Signer is a NodeJS/Browser compatible JavaScript library tailored for the Mina Protocol. This library aids developers in seamlessly signing transactions and generating keys. A noteworthy feature is the ability to sign transactions offline, allowing for their broadcasting to the network whenever required. It also supports functionalities such as signing zkApp transactions, verifying these transactions, generating nullifiers, and more.
+
+## Installation
+
+To incorporate Mina Signer into your project:
+
+```sh
+npm install mina-signer
+```
+
+## Mina Protocol Usage
+
+Mina Signer offers a wide range of features for the Mina Protocol:
+
+- Generate keys
+- Sign transactions
+- Verify transactions
+
+Additionally, it ensures compatibility across various networks, like mainnet and testnet.
+
+### Specifying the network
+
+When importing and initializing Mina Signer, it's imperative to designate the desired network.
+Different networks may employ varying cryptographic methods. This specification is executed by supplying the network parameter during the constructor's invocation.
+Possible values are `mainnet` and `testnet`.
+
+:::tip
+By default, if no network is explicitly chosen, `mainnet` is the default choice. For the Berkeley network, use `testnet`.
+:::
+
+```js
+import Client from 'mina-signer';
+const MainnetClient = new Client({ network: 'mainnet' }); // Specify mainnet
+const TestnetClient = new Client({ network: 'testnet' }); // Specify testnet (Berkeley)
+```
+
+### Generating keys
+
+With Mina Signer, generating keypairs is straightforward.
+
+```js
+import Client from 'mina-signer';
+const client = new Client({ network: 'mainnet' }); // Specify mainnet
+const keypair = client.genKeys(); // Generates a public and private keypair
+```
+
+### Signing & Verifying Transactions
+
+Mina Signer facilitates both transaction and stake delegation signing and verification. To sign a transaction, the sender's private must be provided.
+Conversely, for verification, the sender's public key must be provided. Post-signing, the Mina Daemon can be utilized to broadcast the payment or delegation.
+
+#### Payments
+
+Payments are transactions that transfer funds from one account to another. To sign a payment, the following parameters must be provided:
+
+```js
+import Client from 'mina-signer';
+const client = new Client({ network: 'mainnet' });
+const keypair = client.genKeys();
+
+const payment = client.signPayment(
+  {
+    to: keypair.publicKey, // Public key of the recipient
+    from: keypair.publicKey, // Public key of the sender
+    amount: '1', // Amount to be sent (in nano MINA)
+    fee: '1', // Fee to be paid (in nano MINA)
+    nonce: '0', // Nonce of the sender
+  },
+  keypair.privateKey
+);
+
+const verifiedPayment = client.verifyPayment(payment);
+```
+
+#### Delegations
+
+Stake delegations are a way for users to delegate their stake to a validator. This allows the validator to produce blocks on behalf of the delegator. To sign a stake delegation, the following parameters must be provided:
+
+```js
+import Client from 'mina-signer';
+const client = new Client({ network: 'mainnet' });
+const keypair = client.genKeys();
+
+const delegation = client.signStakeDelegation(
+  {
+    to: keypair.publicKey, // Public key of the validator
+    from: keypair.publicKey, // Public key of the delegator
+    fee: '1', // Fee to be paid (in nano MINA)
+    nonce: '0', // Nonce of the delegator
+  },
+  keypair.privateKey
+);
+
+const verifiedDelegation = client.verifyStakeDelegation(delegation);
+```
+
+#### Generic Signing
+
+Mina Signer can accept a generic payload and determine the most apt signing approach via `signTransaction()`.
+This functionality is especially beneficial for applications that support different types of transactions.
+
+```js
+import Client from 'mina-signer';
+const client = new Client({ network: 'mainnet' });
+const keypair = client.genKeys();
+
+// Sign a payment
+client.signTransaction(
+  {
+    to: keypair.publicKey,
+    from: keypair.publicKey,
+    amount: '1',
+    fee: '1',
+    nonce: '0',
+  },
+  keypair.privateKey
+);
+
+// Sign a delegation
+client.signTransaction(
+  {
+    to: keypair.publicKey,
+    from: keypair.publicKey,
+    fee: '1',
+    nonce: '0',
+  },
+  keypair.privateKey
+);
+
+
+// Sign a zkApp transaction
+client.signTransaction(
+  {
+    zkappCommand: ...,
+    feePayer: ...
+  },
+  keypair.privateKey
+);
+
+// Sign a simple string payload
+client.signTransaction('Hello World', keypair.privateKey);
+```
+
+#### Rosetta
+
+For those developing with [Rosetta](https://www.rosetta-api.org/), Mina Signer provides an avenue to transform a signed Rosetta transaction into a Mina-compliant transaction, ready for broadcasting through the Mina Daemon.
+
+```js
+import Client from 'mina-signer';
+const client = new Client({ network: 'mainnet' });
+
+const signedRosettaTx = '...';
+const signedGraphQLCommand =
+  client.signedRosettaTransactionToSignedCommand(signedRosettaTx);
+```
+
+### Payment & Delegation Transaction Hashes
+
+In addition to signing/verifying payments/delegations for the Mina Protocol, Mina Signer allows you to compute the hash that will be used to identify the transaction on the blockchain. This is useful for applications that require the transaction hash before the transaction is broadcasted to the network.
+
+```js
+import Client from 'mina-signer';
+const client = new Client({ network: 'mainnet' });
+const keypair = client.genKeys();
+
+const payment = client.signTransaction(
+  {
+    to: keypair.publicKey,
+    from: keypair.publicKey,
+    amount: '1',
+    fee: '1',
+    nonce: '0',
+  },
+  keypair.privateKey
+);
+const hashedPayment = client.hashPayment(payment);
+
+const delegation = client.signTransaction(
+  {
+    to: keypair.publicKey,
+    from: keypair.publicKey,
+    fee: '1',
+    nonce: '0',
+  },
+  keypair.privateKey
+);
+const hashedDelegation = client.hashStakeDelegation(delegation);
+```
+
+## o1js Usage
+
+Mina Signer can seamlessly integrate with [o1js](/zkapps/o1js),delivering an array of features for zkApps like:
+
+- zkApp transaction signing and verification
+- Field payload signing and verification
+- Nullifier generation
+
+### Signing & Verifying zkApp transactions
+
+Mina Signer supports signing and verifying zkApp transactions. o1js itself can be used to sign zkApp transactions,
+but Mina Signer offers the ability to sign a zkApp transaction that can easily be broadcasted with a Mina Daemon. This can be very useful for wallet applications that want to support zkApps.
+
+```js
+import Client from 'mina-signer';
+import { Mina } from 'o1js';
+
+const client = new Client({ network: 'testnet' });
+const keypair = client.genKeys();
+
+const zkAppTransaction = await Mina.transaction(feePayerAddress, () => {
+  // ... Interact with a zkApp inside this block to produce a zkApp transaction
+});
+
+// Sign the zkApp transaction with Mina Signer
+const signedZkAppTransaction = client.signZkappCommand(
+  {
+    zkappCommand: JSON.parse(JSON.stringify(txn.transaction)),
+    feePayer: {
+      feePayer: keypair.publicKey,
+      fee: '1',
+      nonce: '0',
+      memo: 'memo',
+    },
+  },
+  keypair.privateKey
+);
+
+// Verify the zkApp transaction with Mina Signer
+const verifiedZkAppTransaction = client.verifyZkappCommand(
+  signedZkAppTransaction
+);
+```
+
+Firstly, when supplying the input parameters for `signZkappCommand()`, we must first parse the zkApp transaction into a string and then into a JSON object. This is because the types generated from `Mina.transaction()` are not compatible with the types used by Mina Signer.
+Secondly, we specify the `feePayer` object which contains the public key of the fee payer, the fee to be paid, the nonce of the fee payer, and the memo of the transaction. The `feePayer` object is used to sign the zkApp transaction.
+
+:::tip
+Use o1js to sign zkApp transactions if you can, as it's more ergonomic and easier to use. Only use `Mina Signer` if you need to sign zkApp transactions offline and broadcast at a later time (e.g. wallet software).
+:::
+
+### Signing/Verifying Field payloads
+
+Mina Signer can sign and validate Field payloads. This is invaluable when ensuring a Field payload's authenticity, as it confirms the payload remains untampered by external parties.
+
+```js
+import Client from 'mina-signer';
+const client = new Client({ network: 'testnet' });
+const keypair = client.genKeys();
+
+const fields = [10n, 20n, 30n, 340817401n, 2091283n, 1n, 0n];
+const signedFields = client.signFields(fields, keypair.privateKey);
+const verifiedFields = client.verifyFields(signedFields);
+```
+
+If you are using o1js to generate Field payloads, you must convert the Fields to BigInts before signing/verifying them.
+In Mina Signer, the Field type is a BigInt (while in o1js they are a seperate data structure), so you must convert the fields from o1js to BigInts before signing/verifying them.
+
+```js
+import Client from 'mina-signer';
+import { Field } from 'o1js';
+const client = new Client({ network: 'testnet' });
+const keypair = client.genKeys();
+
+const fields = [Field(10), Field(20)].map((f) => f.toBigInt());
+const signedFields = client.signFields(fields, keypair.privateKey);
+const verifiedFields = client.verifyFields(signedFields);
+```
+
+### Nullifiers
+
+Mina Signer supports generating nullifiers for zkApp transactions. In the world of cryptography, nullifiers play a pivotal role.
+They stand as unique markers, maintaining anonymity yet ensuring account reliability, and staving off illicit undertakings like double-spends.
+To generate a nullifier, provide a message (an array of BigInts) and the sender's private key.
+
+```js
+import Client from 'mina-signer';
+const client = new Client({ network: 'testnet' });
+const keypair = client.genKeys();
+
+const message = [10n, 20n, 30n, 340817401n, 2091283n, 1n, 0n];
+const nullifier = client.createNullifier(message, keypair.privateKey);
+```
