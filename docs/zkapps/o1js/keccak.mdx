@@ -25,7 +25,7 @@ Because of the common usage of Keccak in Ethereum, it is a key component of o1js
 
 ## Keccak and Poseidon
 
-As an o1js developer, you are likely familar with the [Poseidon](https://o1-labs.github.io/proof-systems/specs/poseidon.html) zero knowledge native hash function. Poseidon operates over the native [Pallas base field](https://electriccoin.co/blog/the-pasta-curves-for-halo-2-and-beyond/) and uses parameters generated specifically for Mina which makes Poseidon the most efficient hash function available in o1js.
+As an o1js developer, you are likely familiar with the [Poseidon](https://o1-labs.github.io/proof-systems/specs/poseidon.html) zero knowledge native hash function. Poseidon operates over the native [Pallas base field](https://electriccoin.co/blog/the-pasta-curves-for-halo-2-and-beyond/) and uses parameters generated specifically for Mina which makes Poseidon the most efficient hash function available in o1js.
 
 In contrast, Keccak is a hash function that requires binary arithmetic. It operates over binary data and is not native to most zero knowledge proofs. For this reason, Keccak is not as efficient as Poseidon, but it is still very useful for verifying Ethereum transactions and blocks.
 So, when you choose what hash function to use, important considerations include the use case and the data that needs to be hashed.
