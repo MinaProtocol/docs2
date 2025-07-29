@@ -1425,6 +1425,7 @@ module.exports = {
             },
           ],
         },
+        'zkapps/public-rpc-endpoints',
         'zkapps/roadmap',
         'zkapps/faq',
         'zkapps/standards',
