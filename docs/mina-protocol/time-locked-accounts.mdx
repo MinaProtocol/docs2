@@ -26,7 +26,7 @@ A time-lock consists of the following fields `initial_minimum_balance`, `cliff` 
 
 You can still use an account if it has a time-lock, as long as the account holds enough funds. The amount of funds that are time-locked starts off as `initial_minimum_balance` at the beginning of the network. Once the network reaches a block height equal to the `cliff`, the time-locked amount begins to decrease by the `vesting_increment` amount every `vesting_period`.
 
-For a more technical explanaition of this process, please see [RFC-0025](https://github.com/MinaProtocol/mina/blob/master/rfcs/0025-time-locked-accounts.md) which has a more in-depth overview.
+For a more technical explanation of this process, please see [RFC-0025](https://github.com/MinaProtocol/mina/blob/master/rfcs/0025-time-locked-accounts.md) which has a more in-depth overview.
 
 ### Liquid Balance Details:
 
