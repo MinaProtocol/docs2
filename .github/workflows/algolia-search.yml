@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [wait-for-vercel]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Run algolia/docsearch-scraper
         run: |
           docker pull algolia/docsearch-scraper
