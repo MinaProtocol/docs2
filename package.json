@@ -25,7 +25,7 @@
     "@docusaurus/plugin-sitemap": "^2.4.1",
     "@docusaurus/preset-classic": "^2.4.1",
     "@docusaurus/theme-classic": "^2.4.1",
-    "@docusaurus/theme-search-algolia": "^2.4.1",
+    "@docusaurus/theme-search-algolia": "^3.8.1",
     "@mdx-js/react": "^1.6.21",
     "@svgr/webpack": "^5.5.0",
     "@types/shelljs": "^0.8.11",
