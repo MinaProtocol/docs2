@@ -11,14 +11,14 @@ This flow is also described in the [Construction API Overview](https://docs.clou
 :::
 
 The steps needed to send payment in MINA token are following:
-1. Given a key pair, derive the account indentifier using `/construction/derive` endpoint
+1. Given a key pair, derive the account identifier using `/construction/derive` endpoint
 1. Call `/construction/preprocess` and `/construction/metadata` to construct parameters for `/construction/payloads` request
 1. Create an unsigned transaction blob using `construction/payloads` endpoint
 1. Call `construction/parse` (optional) to check if the unsigned transaction does what you expect
 1. Use detached signer to sign the transaction
 1. Call `construction/combine` to generate signed blob to be sent via `/construction/submit` endpoint
 1. Call `construction/parse` again (optional) to confirm correctness of the signed transaction
-1. Get a future transaction hash using `/construction/hash` enpoint
+1. Get a future transaction hash using `/construction/hash` endpoint
 1. Submit the signed transaction blob via `/construction/submit` endpoint
 
 For ease of readability, this sample implementation skips the sanity checks (steps 4 and 7) and combines steps 2 and 3 in a single `tx_payloads` function call.

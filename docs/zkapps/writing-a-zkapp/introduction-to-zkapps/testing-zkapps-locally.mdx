@@ -158,12 +158,12 @@ describe('Add smart contract integration test', () => {
     await txn.sign([feePayerKey, zkAppPrivateKey]).send();
   });
 
-  it('sets intitial state of num to 1', async () => {
+  it('sets initial state of num to 1', async () => {
     currentState = zkAppInstance.num.get();
     expect(currentState).toEqual(Field(1));
   });
 
-  it('correctly updates num from intial state to 3', async () => {
+  it('correctly updates num from initial state to 3', async () => {
     txn = await Mina.transaction(feePayer, async () => {
       await zkApp.update();
     });

@@ -131,7 +131,7 @@ You can configure different network properties as appropriate to your testing re
 
 ### Start the network without the archive data tools
 
-By default, the Lightnet blockchian network starting up also launches the archive data tools such as the `Mina archive process`, the `PostgreSQL RDBMS` and the `Archive-Node-API` application.
+By default, the Lightnet blockchain network starting up also launches the archive data tools such as the `Mina archive process`, the `PostgreSQL RDBMS` and the `Archive-Node-API` application.
 
 To use fewer resources when your testing does not require the archive data tools, you can start the network without them.
 
@@ -258,7 +258,7 @@ To get the network status use the following command:
 $ zk lightnet status
 ```
 
-The network status is returned, including HTTP endpoints, network propertis and state, code snippet of a zkApp using o1js API, and more.
+The network status is returned, including HTTP endpoints, network properties and state, code snippet of a zkApp using o1js API, and more.
 
 ## Blockchain accounts
 
@@ -314,7 +314,7 @@ Use HTTP endpoints to manage accounts:
 ### Lightnet o1js API namespace
 
 The `acquireKeyPair()`, `releaseKeyPair()`,  and `listAcquiredKeyPairs()` methods in the `Lightnet` o1js API namespace handle the communication with the running Mina accounts manager helper tool.
-For details, see the source code comments of the correspointing [namespace](https://github.com/o1-labs/o1js/blob/23cdfa3e17a8e8132b70895d34aab711cebd676f/src/lib/mina/fetch.ts#L804) methods.
+For details, see the source code comments of the corresponding [namespace](https://github.com/o1-labs/o1js/blob/23cdfa3e17a8e8132b70895d34aab711cebd676f/src/lib/mina/fetch.ts#L804) methods.
 
 For the real-world example of using Lightnet and o1js API, see [run-live.ts](https://github.com/o1-labs/o1js/blob/main/src/examples/zkapps/hello-world/run-live.ts) example file.
 
