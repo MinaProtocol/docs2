@@ -40,7 +40,7 @@
     "react-dom": "^17.0.1",
     "rehype-katex": "5",
     "remark-math": "3",
-    "sass": "^1.54.9",
+    "sass": "^1.91.0",
     "url-loader": "^4.1.1"
   },
   "devDependencies": {
