@@ -18,7 +18,7 @@
     "update-sidebar": "node scripts/update-sidebars-o1js-api.js && npx prettier --config .prettierrc --write sidebars.js"
   },
   "dependencies": {
-    "@docusaurus/core": "^3.8.0",
+    "@docusaurus/core": "^3.9.1",
     "@docusaurus/cssnano-preset": "^3.8.0",
     "@docusaurus/plugin-client-redirects": "^3.8.0",
     "@docusaurus/plugin-debug": "^3.8.0",
