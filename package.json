@@ -19,7 +19,7 @@
     "validate-docker-images": "node scripts/validate-docker-images.js"
   },
   "dependencies": {
-    "@docusaurus/core": "^3.8.0",
+    "@docusaurus/core": "^3.9.2",
     "@docusaurus/cssnano-preset": "^3.8.0",
     "@docusaurus/plugin-client-redirects": "^3.8.0",
     "@docusaurus/plugin-debug": "^3.8.0",
