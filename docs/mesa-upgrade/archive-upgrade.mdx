@@ -1,0 +1,108 @@
+---
+title: Archive Upgrade
+sidebar_label: Archive Upgrade
+hide_title: true
+description: A guide on how to upgrade your Mina archive node to the Mesa version.
+keywords:
+  - Mesa
+  - upgrade
+  - archive
+  - mina archive node
+  - archive node
+---
+
+# Archive Upgrade
+
+To successfully upgrade the archive database into the Mesa version of the Mina network, you must ensure that your environment meets the foundational requirements.
+
+## Migration host
+
+- PostgreSQL database for database server
+- If you use Docker, then any of the supported OS by Mina (bullseye, focal, noble, bookworm or jammy) with at least 32 GB of RAM
+- gsutil application from Google Cloud Suite in version 5 or later
+- (Optional) Docker in version 23.0 or later
+
+## Archive database
+
+One of the most obvious prerequisites is a Mainnet database. If you don't have an existing database with Devnet/Mainnet archive data,
+you can always download it from the O1Labs Google Cloud bucket.
+
+## Upgrade process
+
+### Upgrade script
+
+Assuming that you have a PostgreSQL database with Mainnet archive data, in order to upgrade it to Mesa version, you need to run SQL upgrade script.
+We put all efforts to make the upgrade process as smooth as possible. Script can be run on archive node which is online or offline.
+Script can be run multiple times, it will skip steps that were already completed. It also performs sanity checks before each step to ensure that the upgrade process is successful.
+Finally it creates new table (version) in the database to keep track of the upgrade process.
+
+#### Getting the script
+
+You can find the SQL upgrade script in the Mina repository on GitHub. Make sure to download the latest version of the script before proceeding.
+You can download the script directly using the following command:
+
+```bash
+curl -O https://raw.githubusercontent.com/MinaProtocol/mina/main/src/app/archive_postgres/upgrade/migration.sql
+```
+
+We also ship the script in the Mina archive Docker image and Debian package.
+
+```bash
+docker run --rm minaprotocol/mina-archive:4.0.0-ae112d3-bullseye-mainnet cat /usr/local/bin/migration.sql > migration.sql
+```
+
+```bash
+ # setup the Mina repository and install the archive package
+
+ apt-get install mina-archive
+ cat /etc/mina/archive/upgrade-to-mesa.sql
+ cat /etc/mina/archive/downgrade-to-berkeley.sql
+
+```
+
+#### Running the script
+
+To run the rollback script, you need to execute the following command:
+
+```bash
+psql -U <username> -d <database> -f /etc/mina/archive/downgrade-to-berkeley.sql
+```
+
+Make sure to replace `<username>` and `<database>` with your actual PostgreSQL username and database name.
+
+
+#### Rollback
+
+You can rollback the upgrade process by restoring the database from a backup taken before running the upgrade script.
+Another is to run rollback script which is part of the upgrade script. It will drop all tables and other database objects created by the upgrade script.
+It will also update the version table to reflect the rollback.
+
+##### Running the rollback script
+
+To run the rollback script, you need to execute the following command:
+
+```bash
+psql -U <username> -d <database> -f /etc/mina/archive/downgrade-to-berkeley.sql
+```
+
+Make sure to replace `<username>` and `<database>` with your actual PostgreSQL username and database name.
+
+
+### Post-upgrade steps
+
+After successfully running the upgrade script, you DO NOT need to restart your archive node or Rosetta API.
+Changes in upgrade script are backward compatible and will be picked up by the archive node and Rosetta API automatically.
+
+### Verification
+To verify that the upgrade was successful, you can check the version table in the PostgreSQL database.
+
+You can do this by running the following command:
+```bash
+psql -U <username> -d <database> -c "SELECT * FROM version;"
+```
+Make sure to replace `<username>` and `<database>` with your actual PostgreSQL username and database name.
+
+If the upgrade was successful, you should see the new version number in the output.
+
+We put a lot of effort into making the upgrade process as smooth as possible.
+However, if you encounter any issues or need assistance, please reach out to the Mina community on [Discord](https://discord.gg/minaprotocol) or [GitHub Discussions](https://github.com/MinaProtocol/mina/discussions).

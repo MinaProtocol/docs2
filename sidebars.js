@@ -37,6 +37,20 @@ module.exports = {
         'berkeley-upgrade/appendix',
       ],
     },
+        {
+      type: 'category',
+      label: 'Mesa Upgrade',
+      link: {
+        type: 'doc',
+        id: 'mesa-upgrade/requirements',
+      },
+      items: [
+        'mesa-upgrade/upgrade-steps',
+        'mesa-upgrade/archive-upgrade',
+        'mesa-upgrade/flags-configs',
+        'mesa-upgrade/appendix',
+      ],
+    },
     {
       type: 'category',
       label: 'Using Mina',
