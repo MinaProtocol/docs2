@@ -277,6 +277,16 @@ module.exports = {
       crossorigin: 'anonymous',
     },
   ],
+  scripts: [
+    {
+    src: "https://dashboard.letmeexplain.ai/embed/lme_chatbot_widget.js", // LetMeExplain embed script
+    async: false,
+    },
+    {
+      src: "/js/enable_lme_chatbot.js", // Custom initialization script
+      defer: true,
+    },
+  ],
 
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
