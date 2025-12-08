@@ -126,7 +126,7 @@ docker run --name mina -d \
        --restart=always \
        -v $(pwd)/.mina-config:/data/.mina-config \
        -v $(pwd)/.mina-env:/entrypoint.d/mina-env \
-       gcr.io/o1labs-192920/mina-daemon:3.1.0-ae112d3-bullseye-devnet \
+       minaprotocol/mina-daemon:3.1.0-ae112d3-bullseye-devnet \
        daemon
 ```
 

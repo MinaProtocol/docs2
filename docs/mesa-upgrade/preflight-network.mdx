@@ -32,8 +32,8 @@ The Mesa preflight network uses the following build versions:
 Docker images are available for both `amd64` and `arm64` architectures:
 
 - **Mina Daemon:** `gcr.io/o1labs-192920/mina-daemon:4.0.0-preflight1-b649c79-bookworm-mesa`
-- **Archive Node:** `gcr.io/o1labs-192920/mina-archive-mesa:4.0.0-preflight1-b649c79-bookworm-mesa`
-- **Rosetta:** `gcr.io/o1labs-192920/mina-rosetta-mesa:4.0.0-preflight1-b649c79-bookworm-mesa`
+- **Archive Node:** `gcr.io/o1labs-192920/mina-archive:4.0.0-preflight1-b649c79-bookworm-mesa`
+- **Rosetta:** `gcr.io/o1labs-192920/mina-rosetta:4.0.0-preflight1-b649c79-bookworm-mesa`
 
 Images are available for both **bookworm** and **noble** distributions.
 
@@ -174,7 +174,7 @@ mina-archive run \
 docker run --name mina-archive-mesa -d \
   -p 3086:3086 \
   --restart=always \
-  gcr.io/o1labs-192920/mina-archive-mesa:4.0.0-preflight1-b649c79-bookworm-mesa \
+  gcr.io/o1labs-192920/mina-archive:4.0.0-preflight1-b649c79-bookworm-mesa \
   mina-archive run \
   --postgres-uri postgresql://archive_user:your-secure-password@postgres-host:5432/archive \
   --server-port 3086
@@ -226,7 +226,7 @@ mina-rosetta \
 docker run --name mina-rosetta-mesa -d \
   -p 3087:3087 \
   --restart=always \
-  gcr.io/o1labs-192920/mina-rosetta-mesa:4.0.0-preflight1-b649c79-bookworm-mesa \
+  gcr.io/o1labs-192920/mina-rosetta:4.0.0-preflight1-b649c79-bookworm-mesa \
   --port 3087 \
   --archive-uri http://archive-host:3086/graphql \
   --graphql-uri http://mina-daemon-host:3085/graphql

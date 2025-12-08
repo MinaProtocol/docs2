@@ -15,7 +15,8 @@
     "write-translations": "docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids",
     "typecheck": "tsc",
-    "update-sidebar": "node scripts/update-sidebars-o1js-api.js && npx prettier --config .prettierrc --write sidebars.js"
+    "update-sidebar": "node scripts/update-sidebars-o1js-api.js && npx prettier --config .prettierrc --write sidebars.js",
+    "validate-docker-images": "node scripts/validate-docker-images.js"
   },
   "dependencies": {
     "@docusaurus/core": "^3.8.0",

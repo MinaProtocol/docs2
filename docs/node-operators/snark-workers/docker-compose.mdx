@@ -18,7 +18,7 @@ Copy and paste the provided configuration into a `docker-compose.yml` file. Then
 services:
   generate_wallet_key:
     image: 'minaprotocol/mina-daemon:3.1.0-ae112d3-bullseye-mainnet'
-    # image: 'gcr.io/o1labs-192920/mina-daemon:3.1.0-alpha1-56cdb61-bullseye-devnet' # Use this image for Devnet
+    # image: 'minaprotocol/mina-daemon:3.1.0-alpha1-56cdb61-bullseye-devnet' # Use this image for Devnet
     environment:
       MINA_PRIVKEY_PASS: PssW0rD
     entrypoint: []
@@ -32,7 +32,7 @@ services:
       - './node/mina-config:/data/.mina-config'
   mina_snark_coordinator:
     image: 'minaprotocol/mina-daemon:3.1.0-ae112d3-bullseye-mainnet'
-    # image: 'gcr.io/o1labs-192920/mina-daemon:3.1.0-alpha1-56cdb61-bullseye-devnet' # Use this image for Devnet
+    # image: 'minaprotocol/mina-daemon:3.1.0-alpha1-56cdb61-bullseye-devnet' # Use this image for Devnet
     restart: always
     environment:
       MINA_PRIVKEY_PASS: PssW0rD
@@ -61,7 +61,7 @@ services:
         condition: service_completed_successfully
   mina_snark_worker:
     image: 'minaprotocol/mina-daemon:3.1.0-ae112d3-bullseye-mainnet'
-    # image: 'gcr.io/o1labs-192920/mina-daemon:3.1.0-alpha1-56cdb61-bullseye-devnet' # Use this image for Devnet
+    # image: 'minaprotocol/mina-daemon:3.1.0-alpha1-56cdb61-bullseye-devnet' # Use this image for Devnet
     restart: always
     entrypoint: []
     command: >
