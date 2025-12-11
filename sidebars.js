@@ -40,7 +40,17 @@ module.exports = {
     {
       type: 'category',
       label: 'Mesa Upgrade',
-      items: ['mesa-upgrade/preflight-network', 'mesa-upgrade/archive-upgrade'],
+      link: {
+        type: 'doc',
+        id: 'mesa-upgrade/requirements',
+      },
+      items: [
+        'mesa-upgrade/preflight-network',
+        'mesa-upgrade/upgrade-steps',
+        'mesa-upgrade/archive-upgrade',
+        'mesa-upgrade/flags-configs',
+        'mesa-upgrade/appendix',
+      ],
     },
     {
       type: 'category',

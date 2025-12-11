@@ -1,0 +1,42 @@
+---
+title: Appendix
+sidebar_label: Appendix
+hide_title: true
+description: Mesa Upgrade Appendix
+keywords:
+  - Mesa
+  - upgrade
+  - appendix
+---
+
+# Appendix
+
+## Upgrading archive nodes from Berkeley to Mesa
+
+Below we presents details what was changed in the archive node database schema between Berkeley and Mesa version.
+
+**Zkapp_state_nullable additional Columns **
+   - The `zkapp_state_nullable` table has been modified to include a new columns `element8` to `element31` which are nullable and can store additional state information for zkApps.
+
+```sql
+, element8          int     REFERENCES zkapp_field(id)
+...
+, element31         int    REFERENCES zkapp_field(id)
+);
+
+```
+
+**Version table**
+
+We also introduced a new table `version` to keep track of the database schema version.
+Purpose of this table is to help with future database migrations. Table tracks which migration scripts were applied and when.
+Ultimately it helps to determine the current version of the database schema. And helps to avoid applying the same migration script multiple times.
+
+This table is created if it does not exist already. Rollback and upgrade scripts will insert a new row with the version number and timestamp when the script was applied.
+
+```sql
+CREATE TABLE IF NOT EXISTS version (
+    version_num INT PRIMARY KEY,
+    applied_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+```
