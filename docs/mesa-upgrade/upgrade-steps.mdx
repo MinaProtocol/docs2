@@ -100,8 +100,6 @@ There will be both Docker images and archive node releases available to choose f
     - Operators shall import the SQL dump file provided by o1Labs to a freshly created database.
     - Operators should direct their Mesa archive process to the newly created database.
 
-**Please note:** both the _trustless_ and _trustful_ migration processes will discard all Mainnet blocks that are not canonical. If you wish to preserve the entire block history, i.e. including non-canonical blocks, you should maintain the Mainnet archive node database for posterior querying needs.
-
 ### Exchanges
 1. Exchanges shall disable MINA deposits and withdrawals during the entirety of the upgrade downtime, since the _stop-transaction-slot_ until the Mainnet Mesa network is operational.
 2. After the Mesa releases are published, exchanges should upgrade their nodes and prepare for the new network to start block production.
