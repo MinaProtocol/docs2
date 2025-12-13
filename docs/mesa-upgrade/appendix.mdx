@@ -17,6 +17,8 @@ Below we present details of what changed in the archive node database schema bet
 
 ### Extended zkApp State Fields
 
+Both zkApp state tables have been modified to support additional state elements:
+
 **zkapp_states_nullable table**
    - Added columns `element8` through `element31` (nullable integer fields)
    - Each new column references `zkapp_field(id)`
@@ -39,31 +41,24 @@ ALTER TABLE zkapp_states ADD COLUMN IF NOT EXISTS element8 INT DEFAULT <zero_fie
 ALTER TABLE zkapp_states ADD COLUMN IF NOT EXISTS element31 INT DEFAULT <zero_field_id> NOT NULL REFERENCES zkapp_field(id);
 ```
 
-### Migration History Tracking
+This expansion allows zkApps to store up to 31 state elements instead of the previous 8, significantly increasing the state storage capacity for complex smart contracts.
 
-The upgrade introduces a new `migration_history` table to track database schema migrations. This helps manage future upgrades and prevents applying the same migration multiple times.
+### Version Tracking
 
-**migration_status enum type**
+The upgrade introduces a new `version` table to keep track of the database schema version. The purpose of this table is to help with future database migrations. The table tracks which migration scripts were applied and when.
+
+**version table**
 ```sql
-CREATE TYPE migration_status AS ENUM ('starting', 'applied', 'failed');
-```
-
-**migration_history table**
-```sql
-CREATE TABLE IF NOT EXISTS migration_history (
-    commit_start_at   TIMESTAMPTZ NOT NULL DEFAULT NOW() PRIMARY KEY,
-    protocol_version  TEXT NOT NULL,
-    migration_version TEXT NOT NULL,
-    description       TEXT NOT NULL,
-    status            migration_status NOT NULL
+CREATE TABLE IF NOT EXISTS version (
+    version_num INT PRIMARY KEY,
+    applied_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 ```
 
-The table tracks:
-- **commit_start_at**: Timestamp when the migration started
-- **protocol_version**: Target protocol version (e.g., '4.0.0' for Mesa)
-- **migration_version**: Version of the migration script itself (e.g., '0.0.5')
-- **description**: Human-readable description of the migration
-- **status**: Current state of the migration (starting, applied, or failed)
+The version table provides:
+- **Migration tracking**: Records which migrations have been applied
+- **Timestamp tracking**: Shows when each migration was executed
+- **Idempotency**: Prevents duplicate migration runs
+- **Version identification**: Easily identify the current database schema version
 
-The migration script uses protocol version '3.0.0' for Berkeley and '4.0.0' for Mesa, with built-in safety checks to prevent reapplying migrations or running them on incorrect database versions.
+The table is created if it does not exist already. Rollback and upgrade scripts will insert a new row with the version number and timestamp when the script was applied.

@@ -4,7 +4,7 @@ sidebar_label: Post-Upgrade Flags and Configurations
 hide_title: true
 description: Post-Upgrade Flags and Configurations for Mainnet
 keywords:
-  - Berkeley
+  - Mesa
   - upgrade
   - flags
   - configurations
@@ -12,7 +12,7 @@ keywords:
 
 # Post-Upgrade Flags and Configurations for Mainnet
 
-Please refer to the Berkeley node release notes [here](https://github.com/MinaProtocol/mina/releases/tag/3.0.3).
+Please refer to the Mesa node release notes [here](https://github.com/MinaProtocol/mina/releases/tag/4.0.0).
 
 ### Network details
 
@@ -27,7 +27,7 @@ Seed List
 https://bootnodes.minaprotocol.com/networks/mainnet.txt
 
 Node build
-https://github.com/MinaProtocol/mina/releases/tag/3.0.3
+https://github.com/MinaProtocol/mina/releases/tag/4.0.0
 ```
 
 ### Block Producer's
@@ -87,8 +87,8 @@ Running an Archive Node involves setting up a non-block-producing node and a Pos
 For more information about running archive nodes, see [Archive Node](/node-operators/archive-node).
 
 The PostgreSQL database requires two schemas:
-1. The PostgreSQL schema used by the Mina archive database: in the [release notes](https://github.com/MinaProtocol/mina/releases/tag/3.0.3)
-2. The PostgreSQL schema extensions to support zkApp commands: in the [release notes](https://github.com/MinaProtocol/mina/releases/tag/3.0.3)
+1. The PostgreSQL schema used by the Mina archive database: in the [release notes](https://github.com/MinaProtocol/mina/releases/tag/4.0.0)
+2. The PostgreSQL schema extensions to support zkApp commands: in the [release notes](https://github.com/MinaProtocol/mina/releases/tag/4.0.0)
 
 The non-block-producing node must be configured with the following flags:
 ```
@@ -127,7 +127,7 @@ docker run
 --name rosetta --rm \
 -p 3088:3088 \
 --entrypoint '' \
-minaprotocol/mina-rosetta:3.1.0-ae112d3-bullseye-mainnet \
+minaprotocol/mina-rosetta:4.0.0-bullseye-mainnet \
 /usr/local/bin/mina-rosetta \
 --archive-uri "${PG_CONNECTION_STRING}" \
 --graphql-uri "${GRAPHQL_URL}" \
