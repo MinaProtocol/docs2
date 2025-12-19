@@ -34,7 +34,7 @@ The first step to connecting to Mainnet is to install the latest daemon version.
 
 ### Ubuntu 20.04 and Debian 11
 
-To install the latest [Mainnet **Stable** Release 3.1.0](https://github.com/MinaProtocol/mina/releases/tag/3.1.0), use the [Installation](/node-operators/block-producer-node/getting-started#installation) steps for your environment.
+To install the latest [Mainnet **Stable** Release 3.3.0](https://github.com/MinaProtocol/mina/releases/tag/3.3.0), use the [Installation](/node-operators/block-producer-node/getting-started#installation) steps for your environment.
 
 ## Start a standalone mina node
 
@@ -179,7 +179,7 @@ docker run --name mina -d \
 --mount "type=bind,source=$(pwd)/.mina-env,dst=/entrypoint.d/mina-env,readonly" \
 --mount "type=bind,source=$(pwd)/keys,dst=/keys,readonly" \
 --mount "type=bind,source=$(pwd)/.mina-config,dst=/root/.mina-config" \
-minaprotocol/mina-daemon:3.1.0-ae112d3-bullseye-mainnet \
+minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet \
 daemon
 ```
 

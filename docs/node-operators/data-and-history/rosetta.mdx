@@ -30,7 +30,7 @@ We recommend using Rosetta API if you are:
 
 1. [Install Docker](https://www.docker.com/get-started) and check that your Docker configuration has at least 12 GB RAM (the recommended amount is 16 GB).
 
-2. Use the official image `minaprotocol/mina-rosetta:3.1.0-ae112d3-focal-mainnet`, which is built in exactly this way by buildkite CI/CD.
+2. Use the official image `minaprotocol/mina-rosetta:3.3.0-8c0c2e6-focal-mainnet`, which is built in exactly this way by buildkite CI/CD.
 
 :::note
 
@@ -61,7 +61,7 @@ To run docker-start.sh and connect to the live Mainnet:
     docker run -it --rm --name rosetta \
         --entrypoint=./docker-start.sh \
         -p 8302:8302 -p 3085:3085 -p 3086:3086 -p 3087:3087 \
-        minaprotocol/mina-rosetta:3.1.0-ae112d3-focal-mainnet
+        minaprotocol/mina-rosetta:3.3.0-8c0c2e6-focal-mainnet
 
 
 #### Mainnet:Offline
@@ -73,7 +73,7 @@ To run docker-standalone-start.sh and connect to the offline Mainnet:
     docker run -it --rm --name rosetta \
         --entrypoint=./docker-standalone-start.sh \
         -p 8302:8302 -p 3085:3085 -p 3086:3086 -p 3087:3087 \
-        minaprotocol/mina-rosetta:3.1.0-ae112d3-focal-mainnet
+        minaprotocol/mina-rosetta:3.3.0-8c0c2e6-focal-mainnet
 
 #### Demo:Offline
 
@@ -84,7 +84,7 @@ To run the docker-demo-start.sh and connect to the demo network:
     docker run -it --rm --name rosetta \
         --entrypoint=./docker-demo-start.sh \
         -p 8302:8302 -p 3085:3085 -p 3086:3086 -p 3087:3087 \
-        minaprotocol/mina-rosetta:3.1.0-ae112d3-focal-mainnet
+        minaprotocol/mina-rosetta:3.3.0-8c0c2e6-focal-mainnet
 
 #### Devnet:Online
 
