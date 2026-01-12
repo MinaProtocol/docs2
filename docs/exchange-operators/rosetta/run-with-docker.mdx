@@ -47,7 +47,7 @@ Run the container with following command (replace the image tag with one from do
     docker run -it --rm --name rosetta \
         --entrypoint=./docker-start.sh \
         -p 10101:10101 -p 3085:3085 -p 3086:3086 -p 3087:3087 \
-        minaprotocol/mina-rosetta:3.1.0-ae112d3-bullseye-mainnet
+        minaprotocol/mina-rosetta:3.3.0-8c0c2e6-bullseye-mainnet
 ```
 
 You can also create a file with the environment variables and pass it to the docker run command with `--env-file` flag. For example, create a file named `mainnet.env` with the following content:

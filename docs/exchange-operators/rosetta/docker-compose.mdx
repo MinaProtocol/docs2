@@ -35,7 +35,7 @@ services:
     ports:
       - '5432:5432'
   bootstrap_db:
-    image: 'minaprotocol/mina-archive:3.1.0-ae112d3-bullseye'
+    image: 'minaprotocol/mina-archive:3.3.0-8c0c2e6-bullseye-mainnet'
     command: >
       bash -c '
       curl -O https://storage.googleapis.com/mina-archive-dumps/mainnet-archive-dump-$(date +%F_0000).sql.tar.gz;
@@ -52,7 +52,7 @@ services:
       postgres:
         condition: service_healthy
   missing_blocks_guardian:
-    image: 'minaprotocol/mina-archive:3.1.0-ae112d3-bullseye'
+    image: 'minaprotocol/mina-archive:3.3.0-8c0c2e6-bullseye-mainnet'
     command: >
       bash -c '
       curl -O https://raw.githubusercontent.com/MinaFoundation/helm-charts/main/mina-archive/scripts/missing-blocks-guardian-command.sh;
@@ -65,7 +65,7 @@ services:
       bootstrap_db:
         condition: service_completed_successfully
   mina_archive:
-    image: 'minaprotocol/mina-archive:3.1.0-ae112d3-bullseye'
+    image: 'minaprotocol/mina-archive:3.3.0-8c0c2e6-bullseye-mainnet'
     restart: always
     command:
       - mina-archive
@@ -80,7 +80,7 @@ services:
       bootstrap_db:
         condition: service_completed_successfully
   mina_node:
-    image: 'minaprotocol/mina-daemon:3.1.0-ae112d3-bullseye-mainnet'
+    image: 'minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet'
     restart: always
     environment:
       MINA_LIBP2P_PASS: PssW0rD
@@ -100,7 +100,7 @@ services:
       bootstrap_db:
         condition: service_completed_successfully
   mina_rosetta:
-    image: 'minaprotocol/mina-rosetta:3.1.0-ae112d3-bullseye-mainnet'
+    image: 'minaprotocol/mina-rosetta:3.3.0-8c0c2e6-bullseye-mainnet'
     restart: always
     environment:
       MINA_ROSETTA_MAX_DB_POOL_SIZE: 80
