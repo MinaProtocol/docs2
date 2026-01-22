@@ -1,0 +1,137 @@
+---
+title: Post-Upgrade Flags and Configurations for Mainnet
+sidebar_label: Post-Upgrade Flags and Configurations
+hide_title: true
+description: Post-Upgrade Flags and Configurations for Mainnet
+keywords:
+  - Mesa
+  - upgrade
+  - flags
+  - configurations
+---
+
+# Post-Upgrade Flags and Configurations for Mainnet
+
+Please refer to the Mesa node release notes [here](https://github.com/MinaProtocol/mina/releases/tag/4.0.0).
+
+### Network details
+
+```
+Chain ID
+a7351abc7ddf2ea92d1b38cc8e636c271c1dfd2c081c637f62ebc2af34eb7cc1
+
+Git SHA-1
+ae112d3a96fe71b4ccccf3c54e7b7494db4898a4
+
+Seed List
+https://bootnodes.minaprotocol.com/networks/mainnet.txt
+
+Node build
+https://github.com/MinaProtocol/mina/releases/tag/4.0.0
+```
+
+### Block Producer's
+
+Start your node post-upgrade in Mainnet with the flags and environment variables listed below.
+
+```
+mina daemon
+--block-producer-key <path to the wallet private key file>
+--config-directory <path to the mina configuration directory>
+--file-log-rotations 500
+--generate-genesis-proof true
+--libp2p-keypair <keyfile path>
+--log-json
+--peer-list-url https://bootnodes.minaprotocol.com/networks/mainnet.txt
+
+ENVIRONMENT VARIABLES
+RAYON_NUM_THREADS=6
+MINA_LIBP2P_PASS
+MINA_PRIVKEY_PASS
+```
+
+### SNARK Coordinator
+Configure your node post-upgrade in Mainnet with specific flags and environment variables as listed.
+
+```
+mina daemon
+--config-directory <path to the mina configuration directory>
+--enable-peer-exchange true
+--file-log-rotations 500
+--libp2p-keypair <keyfile path>
+--log-json
+--peer-list-url https://bootnodes.minaprotocol.com/networks/mainnet.txt
+--run-snark-coordinator <public key>
+--snark-worker-fee 0.001
+--work-selection [seq|rand|roffset]
+
+ENVIRONMENT VARIABLES
+MINA_LIBP2P_PASS
+```
+
+### SNARK Workers
+Connect to a SNARK Coordinator node if required and run the following flags.
+```
+mina internal snark-worker
+--proof-level full
+--shutdown-on-disconnect false
+--daemon-address <snark coordinator IP:port>
+
+ENVIRONMENT VARIABLES
+RAYON_NUM_THREADS:8
+```
+
+### Archive Node
+Running an Archive Node involves setting up a non-block-producing node and a PostgreSQL database configured with specific flags and environment variables.
+
+For more information about running archive nodes, see [Archive Node](/node-operators/archive-node).
+
+The PostgreSQL database requires two schemas:
+1. The PostgreSQL schema used by the Mina archive database: in the [release notes](https://github.com/MinaProtocol/mina/releases/tag/4.0.0)
+2. The PostgreSQL schema extensions to support zkApp commands: in the [release notes](https://github.com/MinaProtocol/mina/releases/tag/4.0.0)
+
+The non-block-producing node must be configured with the following flags:
+```
+mina daemon
+--archive-address <archive_address>:<archive_port - use 3086>
+--config-directory <path to mina config>
+--enable-peer-exchange true
+--file-log-rotations 500
+--generate-genesis-proof true
+--libp2p-keypair <keyfile path>
+--log-json
+--peer-list-url https://bootnodes.minaprotocol.com/networks/mainnet.txt
+
+ENVIRONMENT VARIABLES
+MINA_LIBP2P_PASS
+```
+
+This non-block-producing node connects to the archive node with the addresses and port specified in the `--archive-address` flag.
+
+The **archive node** command looks like this:
+
+```
+mina-archive run
+--metrics-port <port>
+--postgres-uri postgres://<user>:<password>@<address>:<port>/<db>
+--server-port 3086
+--log-json
+--log-level DEBUG
+```
+
+### Rosetta API
+Once you have the Archive Node stack up and running, start the Rosetta API Docker image with the following command:
+
+```
+docker run
+--name rosetta --rm \
+-p 3088:3088 \
+--entrypoint '' \
+minaprotocol/mina-rosetta:4.0.0-bullseye-mainnet \
+/usr/local/bin/mina-rosetta \
+--archive-uri "${PG_CONNECTION_STRING}" \
+--graphql-uri "${GRAPHQL_URL}" \
+--log-json \
+--log-level ${LOG_LEVEL} \
+--port 3088
+```
