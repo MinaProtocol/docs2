@@ -1,0 +1,64 @@
+---
+title: Appendix
+sidebar_label: Appendix
+hide_title: true
+description: Mesa Upgrade Appendix
+keywords:
+  - Mesa
+  - upgrade
+  - appendix
+---
+
+# Appendix
+
+## Upgrading archive nodes from Berkeley to Mesa
+
+Below we present details of what changed in the archive node database schema between Berkeley and Mesa versions.
+
+### Extended zkApp State Fields
+
+Both zkApp state tables have been modified to support additional state elements:
+
+**zkapp_states_nullable table**
+   - Added columns `element8` through `element31` (nullable integer fields)
+   - Each new column references `zkapp_field(id)`
+   - These fields allow zkApps to store additional state information beyond the original 8 elements
+
+```sql
+ALTER TABLE zkapp_states_nullable ADD COLUMN IF NOT EXISTS element8 INT REFERENCES zkapp_field(id);
+...
+ALTER TABLE zkapp_states_nullable ADD COLUMN IF NOT EXISTS element31 INT REFERENCES zkapp_field(id);
+```
+
+**zkapp_states table**
+   - Added columns `element8` through `element31` (non-nullable integer fields)
+   - Each new column references `zkapp_field(id)` with a default value pointing to the zero field
+   - Unlike the nullable version, these fields are required and default to the zero field ID
+
+```sql
+ALTER TABLE zkapp_states ADD COLUMN IF NOT EXISTS element8 INT DEFAULT <zero_field_id> NOT NULL REFERENCES zkapp_field(id);
+...
+ALTER TABLE zkapp_states ADD COLUMN IF NOT EXISTS element31 INT DEFAULT <zero_field_id> NOT NULL REFERENCES zkapp_field(id);
+```
+
+This expansion allows zkApps to store up to 31 state elements instead of the previous 8, significantly increasing the state storage capacity for complex smart contracts.
+
+### Version Tracking
+
+The upgrade introduces a new `version` table to keep track of the database schema version. The purpose of this table is to help with future database migrations. The table tracks which migration scripts were applied and when.
+
+**version table**
+```sql
+CREATE TABLE IF NOT EXISTS version (
+    version_num INT PRIMARY KEY,
+    applied_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+The version table provides:
+- **Migration tracking**: Records which migrations have been applied
+- **Timestamp tracking**: Shows when each migration was executed
+- **Idempotency**: Prevents duplicate migration runs
+- **Version identification**: Easily identify the current database schema version
+
+The table is created if it does not exist already. Rollback and upgrade scripts will insert a new row with the version number and timestamp when the script was applied.
