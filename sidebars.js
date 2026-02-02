@@ -1431,6 +1431,7 @@ module.exports = {
             },
           ],
         },
+        'zkapps/mina-signer',
         'zkapps/roadmap',
         'zkapps/faq',
         'zkapps/standards',
