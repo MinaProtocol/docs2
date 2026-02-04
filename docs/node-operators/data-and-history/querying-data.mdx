@@ -99,7 +99,7 @@ query StakingInfo {
 
 If the delegateAccount.publicKey is null, then this account is "staking directly" and this private key should be used for block production directly.
 
-Note that the actual staking and delegating in the current "epoch" is drawn from the "staking ledger". We are currently implementing a mechanism for accessing this staking ledger directly, but for now you'll need to periodically query for this information and store it internally and then refer to it when it becomes active. On epoch transitions, a new staking ledger is selected by promoting the SNARKed ledger of the last block two epochs prior. In practice, this is between 2-4 weeks.
+Note that the actual staking and delegating in the current "epoch" is drawn from the "staking ledger". We are currently implementing a mechanism for accessing this staking ledger directly, but for now you'll need to periodically query for this information and store it internally and then refer to it when it becomes active. On epoch transitions, a new staking ledger is selected by promoting the SNARKed ledger of the last block two epochs prior. In practice, this is between 1-2 weeks.
 
 ### Get Transaction Details
 
