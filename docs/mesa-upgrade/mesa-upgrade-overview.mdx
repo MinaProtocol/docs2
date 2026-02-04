@@ -115,9 +115,9 @@ Mesa replaces the cost-based model with a simpler **segment-count model**. Each 
 
 This means:
 
-- **Up to 16 proof-based account updates** per transaction (previously ~6)
-- **Up to 16 signed-single account updates** per transaction
-- **Up to 32 signature-based account updates** if all are paired (16 pairs)
+- **Up to 15 proof-based account updates** per transaction (previously ~5)
+- **Up to 16 signed-single account updates** per transaction (including fee payer)
+- **Up to 32 signature-based account updates** if all are paired (16 pairs, one including the fee payer)
 - Any combination where `proof_segments + signed_single_segments + signed_pair_segments <= 16`
 
 This enables fitting more account updates into one transaction, whether by multiple calls or interactions with zkApps, or more logic in your zkApp including cross-calls with other zkApps within one zkApp method.
