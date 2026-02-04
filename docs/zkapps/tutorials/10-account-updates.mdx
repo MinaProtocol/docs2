@@ -21,6 +21,12 @@ keywords:
 
 The fundamental data structure that Mina transactions are built from is called an _account update_. Account updates are a flexible and powerful data structure that can express all kinds of updates, events, and preconditions you use to develop smart contracts.
 
+:::info Mesa Upgrade
+
+The account updates limit has been increased from ~6 to **16 segments per transaction**. See the [Mesa upgrade overview](/mesa-upgrade/mesa-upgrade-overview#mip-9-increased-account-update-limits) for more details.
+
+:::
+
 Each zkApp transaction constructed by o1js is composed of one or more [AccountUpdate](../o1js-reference/classes/AccountUpdate) classes, which are a set of instructions for the Mina network to perform, such as altering on-chain state, emitting an event, and so on.
 
 Each `AccountUpdate` can make assertions about its account, apply updates to its account, and make assertions about its child `AccountUpdates`.

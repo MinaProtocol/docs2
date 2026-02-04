@@ -21,7 +21,7 @@ import MigrateBanner from '@site/src/components/snippets/migrate-banner.mdx';
 
 In a zkApp, you can access the current [on-chain state](/zkapps/writing-a-zkapp/introduction-to-zkapps/how-to-write-a-zkapp#on-chain-state) and many other on-chain values of the account.
 
-The zkApp account's on-chain state can be updated by account updates included in a transaction (see [Tutorial 10: Account Updates](/zkapps/tutorials/account-updates)). On the Mina blockchain, each zkApp account provides eight fields of ~32 bytes each of arbitrary storage for the on-chain state.
+The zkApp account's on-chain state can be updated by account updates included in a transaction (see [Tutorial 10: Account Updates](/zkapps/tutorials/account-updates)). On the Mina blockchain, each zkApp account provides 32 fields of ~32 bytes each of arbitrary storage for the on-chain state.
 
 Two possible use cases:
 
@@ -116,7 +116,7 @@ this.account.nonce.get(): UInt32;
 this.account.delegate.get(): PublicKey;
 // boolean indicating whether an account is new (= didn't exist before the transaction)
 this.account.isNew.get(): Bool;
-// boolean indicating whether all 8 on-chain state fields where last changed by a transaction
+// boolean indicating whether all 32 on-chain state fields where last changed by a transaction
 // authorized by a zkApp proof (as opposed to a signature)
 this.account.provedState.get(): Bool;
 // hash receipt which includes all prior transaction to an account
