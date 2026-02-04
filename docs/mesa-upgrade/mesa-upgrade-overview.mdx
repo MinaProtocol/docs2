@@ -1,12 +1,14 @@
 ---
 title: Mesa Upgrade Overview
 sidebar_label: Overview
-description: Overview of the Mesa upgrade for the Mina network, including MIP-7 (expanded on-chain state), MIP-8 (actions and events), and MIP-9 (account update limits).
+description: Overview of the Mesa upgrade for the Mina network, including MIP-6 (slot time reduction), MIP-7 (expanded on-chain state), MIP-8 (actions and events), and MIP-9 (account update limits).
 keywords:
   - Mesa upgrade
+  - MIP-6
   - MIP-7
   - MIP-8
   - MIP-9
+  - slot time
   - on-chain state
   - account updates
   - actions
@@ -20,6 +22,30 @@ keywords:
 The Mesa upgrade is Mina Protocol's hard fork that bundles four Mina Improvement Proposals (MIPs 6-9). These proposals were approved through an on-chain community vote.
 
 This page summarizes the key changes that affect zkApp developers.
+
+## MIP-6: Slot Time Reduction
+
+The slot duration has been halved, increasing block production frequency and reducing transaction inclusion latency.
+
+### Before Mesa
+
+| Parameter     | Value                |
+| ------------- | -------------------- |
+| Slot duration | 180 seconds (3 min)  |
+
+### After Mesa
+
+| Parameter     | Value                |
+| ------------- | -------------------- |
+| Slot duration | 90 seconds (1.5 min) |
+
+The 50% reduction in slot time means blocks are produced twice as frequently, which roughly halves the time it takes for transactions to be included in a block.
+
+:::note
+
+The reduced slot time does not mean every transaction is included within 90 seconds. Transaction inclusion latency ranges from roughly 40 to 600 seconds, which is approximately half the previous range. The slot duration defines the block production window, not a guarantee on individual transaction confirmation time.
+
+:::
 
 ## MIP-7: Expanded On-Chain State
 

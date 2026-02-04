@@ -51,15 +51,15 @@ With each subsequent block, a recipient has a higher degree of confidence that t
 
 In the Bitcoin network, a transaction is confirmed after [6 blocks](https://en.bitcoin.it/wiki/Confirmation) (60 mins) with an assumption that an attacker is unlikely to amass more than 10% of the hashrate.
 
-With a slot duration of 3 mins and assuming 90% honest stake, the following table shows the finality in blocks, the average time it takes to produce the corresponding number of blocks, and the confidence that payment will be confirmed.
+With a slot duration of 90 seconds and assuming 90% honest stake, the following table shows the finality in blocks, the average time it takes to produce the corresponding number of blocks, and the confidence that payment will be confirmed.
 
 | Finality (in blocks) | Average time for finality | Finality confidence (%) |
 | -------------------- | ------------------------- | ----------------------- |
-| 8                    | 33 mins                   | 98.6709                 |
-| 15                   | 60 mins                   | 99.9231                 |
-| 23                   | 1hr 32mins                | 99.9965                 |
-| 30                   | 2hrs                      | 99.9998                 |
-| 38                   | 2hrs 32mins               | 100                     |
+| 8                    | 16 mins                   | 98.6709                 |
+| 15                   | 30 mins                   | 99.9231                 |
+| 23                   | 46 mins                   | 99.9965                 |
+| 30                   | 60 mins                   | 99.9998                 |
+| 38                   | 1hr 16mins                | 100                     |
 
 Average time is calculated based on consensus constants that determine the number of slots filled per epoch. This is currently set to 75%.
 
