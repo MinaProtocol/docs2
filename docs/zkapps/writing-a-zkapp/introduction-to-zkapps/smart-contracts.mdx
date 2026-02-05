@@ -110,9 +110,9 @@ class HelloWorld extends SmartContract {
 }
 ```
 
-Here, `x` is of type `Field`. Like with method inputs, only o1js structs can be used for state variables. The state can consist of at most 8 fields of 32 bytes each. These states are stored on the zkApp account.
+Here, `x` is of type `Field`. Like with method inputs, only o1js structs can be used for state variables. The state can consist of at most 32 fields of 32 bytes each. These states are stored on the zkApp account.
 
-Some structs take up more than one `Field`. For example, a `PublicKey` needs two of the eight fields.
+Some structs take up more than one `Field`. For example, a `PublicKey` needs two of the 32 fields.
 
 States are initialized with the `State()` function.
 

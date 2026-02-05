@@ -123,6 +123,6 @@ Export these ledgers using the mina cli command:
 
     mina ledger export [current-staged-ledger|staking-epoch-ledger|next-epoch-ledger]
 
-Epoch ledger transition happens once every 14 days (given slot-time = 3mins and slots-per-epoch = 7140). 
+Epoch ledger transition happens once every 7 days (given slot-time = 90 seconds and slots-per-epoch = 7140).
 
 The window to backup a staking ledger is ~27 days considering "next" staking ledger is finalized after k (currently 290) blocks in the current epoch and therefore is available for the rest of the current epoch and the entire next epoch.

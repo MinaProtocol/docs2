@@ -11,7 +11,7 @@ This document aims to explain the different components that you should think abo
 
 ## Staking Rewards
 
-The coinbase reward for producing a block is 720 tokens. 
+The coinbase reward for producing a block is 360 MINA. 
 
 ## Dumping Staking Ledgers
 
@@ -59,7 +59,7 @@ It requires an argument to identifier of the ledger you wish to export. The tabl
 <br />
 
 
-In order to ensure you always have each staking ledger available for use after epochs have expired, we recommend exporting the staking-epoch-ledger every (7140 × 3) ÷ 60 = 357 hours (there are 7140 slots in an epoch, and each slot is 3 minutes long).
+In order to ensure you always have each staking ledger available for use after epochs have expired, we recommend exporting the staking-epoch-ledger every (7140 × 1.5) ÷ 60 = 178.5 hours (there are 7140 slots in an epoch, and each slot is 90 seconds long).
 
 By default, ledgers are exported as json data. See `mina ledger export -help` for documentation of flags which will enable other formats. When output as json, the ledger will be represented as an array of account objects. Below is an example of what an account object in json looks like.
 

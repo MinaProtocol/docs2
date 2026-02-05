@@ -65,6 +65,12 @@ A zkApp can retrieve events and actions from one or more Mina archive nodes. If 
 
 :::
 
+:::info Mesa Upgrade
+
+With the [Mesa upgrade](/mesa-upgrade/mesa-upgrade-overview), the per-transaction capacity for events has been increased from 100 to **1,024 field elements**. This allows zkApps to emit richer, more detailed events within a single transaction.
+
+:::
+
 This is all you need to know about events! Think of them as a convenience feature -- a lightweight way of attaching information about your smart contract execution to expose the event to the outside world,  such as your UI. Don't treat events as fully-fledged storage that can be safely accessed in smart contracts.
 
 ### Events: API reference

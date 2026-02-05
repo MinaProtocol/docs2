@@ -60,7 +60,7 @@ As shown, the maximum amount of unlocked tokens is defined by the `initialMinimu
 
 The other timing-related properties are:
 
-- `cliffTime`: The initial time period during which all tokens are locked (should be from the current slot onwards). Note that 'time' is measured in Mina by 'slots', where 1 slot is 3min.
+- `cliffTime`: The initial time period during which all tokens are locked (should be from the current slot onwards). Note that 'time' is measured in Mina by 'slots', where 1 slot is 90 seconds.
 - `cliffAmount`: The quantity of tokens to be unlocked when the cliff time has elapsed. If this amount is greater or equal the 'initial minimum balance', all tokens are unlocked after the cliff time elapses.
 - `vestingPeriod`: After the cliff time elapses, tokens can be set to unlock periodically at a fixed interval, by a fixed quantity. The vesting period is the length of that interval.
 - `vestingIncrement`: The quantity of tokens that are unlocked after each vesting period elapses.
