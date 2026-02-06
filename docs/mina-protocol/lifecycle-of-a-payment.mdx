@@ -35,7 +35,7 @@ Any member of the network can create a payment and share it with the Mina networ
 
 ### Step 2: To produce a block, Bob's payment gets put in a todo list
 
-A block producer node is chosen on the network for a given time slot. The currently active producer choses in-flight payments based on payment fees and places them in a list to be processed called a transition block. Block producers earn mina for building these blocks. The producer generates a SNARK defining the structure of the transition block as compared to the previous block (but not yet verifying these new payments). The producer transmits this new information for SNARK workers to process.
+A block producer node is chosen on the network for a given time slot. The currently active producer chooses in-flight payments based on payment fees and places them in a list to be processed called a transition block. Block producers earn mina for building these blocks. The producer generates a SNARK defining the structure of the transition block as compared to the previous block (but not yet verifying these new payments). The producer transmits this new information for SNARK workers to process.
 
 ### Step 3: To prove a SNARK transaction, Bob's payment gets SNARK-signed
 
