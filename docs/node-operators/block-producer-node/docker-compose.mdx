@@ -29,7 +29,7 @@ services:
         chmod -R 0600 /data/.mina-config/keys/wallet-key
       '
     volumes:
-      - './node/mina-config:/data/.mina-config'
+      - './node/mina-config:/root/.mina-config'
   mina_block_producer:
     image: 'minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet'
     # image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet' # Use this image for Devnet
@@ -45,7 +45,7 @@ services:
       '
     # use  --peer-list-url https://bootnodes.minaprotocol.com/networks/devnet.txt for Devnet
     volumes:
-      - './node/mina-config:/data/.mina-config'
+      - './node/mina-config:/root/.mina-config'
     ports:
       - '8302:8302'
     depends_on:
