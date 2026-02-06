@@ -15,68 +15,203 @@ keywords:
   - protokit
 ---
 
-:::info
 
-To protect end users and ensure your zkApps are secure, consider the information at [Security and zkApps](/zkapps/writing-a-zkapp/introduction-to-zkapps/secure-zkapps) while architecting your solution and consider a third-party security audit before deploying to Mina mainnet.
+#  zkApp Development Frameworks
 
-:::
+Applications on Mina are called zkApps, and they come in a wide range of forms, including DeFi, games, state bridges, and more. However, due to Mina’s client-side execution model, the developer experience differs somewhat from that of other blockchain networks, such as Ethereum.
 
-# zkApp Development Frameworks
+Developers build zkApps with **o1js**. Developers can either use o1js directly or use o1js with **Protokit**, a framework built on top of o1js. Both options offer the full benefits of Mina’s verifiable, privacy-preserving zero knowledge proofs, but offer different tradeoffs between developer experience, performance, and decentralization.
 
-Developers building zkApps in the Mina ecosystem can leverage two different frameworks, each tailored to optimize different types of solutions.
-Explore the options below to find the perfect fit for your project.
+<table>
+  <tr>
+   <td>Info
+   </td>
+  </tr>
+  <tr>
+   <td>Please note that Protokit is in alpha, and settlement support with reorgs is still in progress.
+   </td>
+  </tr>
+</table>
+
+
+This page provides a guide to choosing the best approach for your zkApp development - o1js directly or Protokit on top of o1js.
 
 If you are unsure about any of the information presented here and need guidance on choosing the most suitable framework for you, drop by [Discord](https://discord.gg/minaprotocol) and let us help!
 
-## [o1js](/zkapps/o1js)
 
-o1js is the framework for building **zkApps on the Mina L1** and new infrastructure such as rollups.  
-o1js is TypeScript based for ease of use, comes with a host of built-in features, is extensible to suit various use cases, and takes full advantage of the unique aspects of the Mina protocol.
+## Choosing a framework
 
-o1js is also the **zkDSL** used for:
+Developers can build zkApps either directly with **o1js**, or with **o1js** + **Protokit**.
 
-- Writing general-purpose zk circuits.
-- Constructing new primitives and data structures.
+Protokit is built on top of o1js and simplifies the development of **zkApps with concurrent users requiring a shared state**, such as DEXes or games. Protokit is recommended for most developers.
 
-There are some key considerations when choosing to build a zkApp with o1js on Mina L1:
+o1js is the best way to write **custom zero knowledge circuits** and construct low-level primitives on Mina, such as an NFT standard or a zkML library.
 
-- zkApps are subject to protocol throughput limitations.
-- At present, zkApps that require support for multiple concurrent users require specific architecture to avoid race conditions:
-  - Where more than the eight on-chain field elements are required to manage state, and access to that state is not shared between users, the experimental [Offchain Storage API](/zkapps/writing-a-zkapp/feature-overview/offchain-storage) offers a solution.
-  - Where concurrent access to _shared global state_ is required, the required architecture is available **out of the box** when using the Protokit framework to build your zkApp as an zkApp-chain (L2). There is currently no easy-to-use equivalent for shared state in o1js L1 contracts.
 
-Start here:
+<table>
+  <tr>
+   <td>Info
+   </td>
+  </tr>
+  <tr>
+   <td>For developers coming from the Ethereum ecosystem, think of zkApps like smart contracts that can be verified off-chain. 
+<p>
+This enables Mina to employ a client-side execution model, which gives Mina its scalability and privacy properties, but it can make it difficult to develop applications with concurrent users requiring a shared state. Protokit builds on top of o1js to solve these concurrency challenges.
+   </td>
+  </tr>
+</table>
 
-- [Developer documentation](/zkapps/o1js)
-- [o1js repository](https://github.com/o1-labs/o1js)
-- [Discord](https://discord.gg/minaprotocol)
 
-## [Protokit](https://protokit.dev/)
 
-Protokit is a powerful framework designed to build **ZK appchains and smart contracts** that are user-facing, privacy-preserving, interoperable.  
-It offers a familiar developer experience similar to Solidity dApps, making it easier and intuitive for developers to leverage ZK in their blockchain solutions.
+## [Protokit](https://docs.minaprotocol.com/zkapps/zkapp-development-frameworks#protokit)
 
-It provides a full set of tools necessary for:
+Protokit is designed for **zkApps with concurrent users requiring a shared state**, for example, DEXes and most games. In addition to this Protokit provides an integrated verifiable data storage solution that further simplifies the developer experience compared to o1js. 
 
-- zkApps that require high throughput or multiple concurrent users.
-- zkApps that require shared or global state access.
-- Developers familiar with execution environments such as EVM.
-- Developers who wish to leverage the modular architecture of Protokit.
+Protokit can operate in two modes: Based Sequencing and Hybrid Sequencing.
 
-Start here:
+In **Based Sequencing mode**, Protokit sends all transactions to the Mina L1, providing the decentralization guarantees of the L1, but limited to the L1’s throughput and latency. Based Sequencing mode is best for zkApps where censorship resistance and liveness are more important than the additional performance benefits.
 
-- [Developer documentation](https://protokit.dev/docs/what-is-protokit)
-- [Protokit repository](https://github.com/proto-kit)
-- [Starter Kit](https://github.com/proto-kit/starter-kit)
-- [Discord](https://discord.gg/bEGZTWRy)
+In **Hybrid Sequencing mode**, Protokit runs an off-chain sequencer with off-chain data availability, providing higher throughput and lower latency than the Mina L1 but at the expense of decentralization. Hybrid Sequencing mode is best for zkApps where performance is critical.
 
-## Framework comparison
+**Important:** Users of a zkApp in Hybrid Sequencing mode can always **submit transactions directly to the L1**, for example, to withdraw funds (in case the zkApp sequencer is unavailable) but it does rely on the Protokit’s data availability (DA). Solutions are in the works for DA guarantees even in Hybrid Sequencing mode so that developers can get higher throughput and latency while retaining censorship resistance and liveness guarantees.
 
-|| o1js SmartContract | Protokit |
-|--|--|--|
-|**Production readiness**|v1.0 released, internal audit complete, 3rd party audit in progress.|Beta release, internal audit in progress, 3rd party audit not started. Testnet only.|
-|**Censorship resistance**|Decentralized and censorship resistant.|Censorship resistance via hybrid sequencing model.|
-|**Support for multi-user apps**|Many multi-user use cases require sophisticated architecture and are limited by L1 throughput.|Capable of handling higher throughput and multiple concurrent users, thanks to Protokit's modular sequencer.|
-|**Execution environment**|Proving off-chain, verification on-chain, transaction ordering possible on-chain.|Hybrid execution model, both on-chain (sequencer) and off-chain thanks to recursive zk-proofs, verification on-chain (MINA L1).|
-|**DX**|New programming model, distinct from traditional web3.0 development.|Module oriented app-chain development, similiar to Substrate Pallets, Cosmos SDK Modules or EVM smart contracts.|
-|**Composability**|Fully composable. Contracts can call other contracts directly within a single transaction.|Protokit supports bi-directional L2 &harr; L1 messaging out of the box.|
+Start developing zkApps with Protokit here:
+
+
+
+* [Developer documentation](https://protokit.dev/docs/what-is-protokit)
+* [Protokit repository](https://github.com/proto-kit)
+* [Starter Kit](https://github.com/proto-kit/starter-kit)
+
+
+## o1js[​](https://docs.minaprotocol.com/zkapps/zkapp-development-frameworks#o1js)
+
+[o1js](https://docs.minaprotocol.com/zkapps/o1js) is the best way to author **highly-optimized ZK circuits and primitives**, but it does not provide an easy-to-use solution for managing a shared global state.
+
+o1js can be used directly on the Mina L1, and is thus limited by the L1’s throughput and latency, but maintains strong decentralization guarantees.
+
+
+<table>
+  <tr>
+   <td>Info
+   </td>
+  </tr>
+  <tr>
+   <td><strong>Did you know?</strong> zkApps written directly with o1js can orchestrate concurrent users requiring shared state using Mina L1’s <a href="https://docs.minaprotocol.com/zkapps/writing-a-zkapp/feature-overview/actions-and-reducer">Actions & Reducer</a>, but it requires significant development to orchestrate Action & Reducers. At its core, Protokit is a framework for orchestrating the Mina L1 Actions & Reducers out of the box.
+   </td>
+  </tr>
+</table>
+
+
+Start developing zkApps with o1js here:
+
+
+
+* [Developer documentation](https://docs.minaprotocol.com/zkapps/o1js)
+* [o1js repository](https://github.com/o1-labs/o1js)
+* [Discord](https://discord.gg/minaprotocol)
+
+
+## Choosing between Protokit and o1js
+
+**Still can’t decide between Protokit and o1js?** 
+
+This section provides a comparison table to help zkApp developers choose which framework to use.
+
+
+<table>
+  <tr>
+   <td>
+   </td>
+   <td><strong>Protokit Hybrid</strong>
+   </td>
+   <td><strong>Protokit Based</strong>
+   </td>
+   <td><strong>o1js</strong>
+   </td>
+  </tr>
+  <tr>
+   <td><strong>Concurrency</strong>
+   </td>
+   <td>✅
+   </td>
+   <td>✅
+   </td>
+   <td>🟡
+   </td>
+  </tr>
+  <tr>
+   <td><strong>Shared State</strong>
+   </td>
+   <td>✅
+   </td>
+   <td>✅
+   </td>
+   <td>🟡
+   </td>
+  </tr>
+  <tr>
+   <td><strong>Throughput</strong>
+   </td>
+   <td>✅
+   </td>
+   <td>🟡
+   </td>
+   <td>🟡
+   </td>
+  </tr>
+  <tr>
+   <td><strong>Latency</strong>
+   </td>
+   <td>✅
+   </td>
+   <td>🟡
+   </td>
+   <td>🟡
+   </td>
+  </tr>
+  <tr>
+   <td><strong>Censorship Resistance</strong>
+   </td>
+   <td>🟡
+   </td>
+   <td>✅
+   </td>
+   <td>✅
+   </td>
+  </tr>
+  <tr>
+   <td><strong>Liveness</strong>
+   </td>
+   <td>🟡
+   </td>
+   <td>✅
+   </td>
+   <td>✅
+   </td>
+  </tr>
+  <tr>
+   <td><strong>Security</strong>
+   </td>
+   <td>✅
+   </td>
+   <td>✅
+   </td>
+   <td>✅
+   </td>
+  </tr>
+</table>
+
+
+**Understanding the performance vs. centralization tradeoff**
+
+Protokit includes an off-chain sequencer and off-chain storage. If one or the other becomes inaccessible, users may find they can no longer access the zkApp including any tokens they may have in the zkApp.
+
+If the Protokit instance’s sequencer is unavailable but the storage is still accessible, users may submit transactions (e.g. withdrawals) directly to the Mina L1.
+
+If the Protokit instance’s storage is inaccessible, users will not be able to submit transactions to the Mina L1 and their tokens may be locked until the storage can be recovered.
+
+Solutions are in the works for DA guarantees even in Hybrid Sequencing mode so that developers can get higher throughput and latency while retaining censorship resistance and liveness guarantees.
+
+
+
