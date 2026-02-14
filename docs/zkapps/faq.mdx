@@ -112,6 +112,23 @@ this.num.requireEquals(currentState);
 
 This ensures that the transaction fails if the value of the field in question has changed.
 
+### How do I restrict a provable method so that it can be invoked only by a specific address?
+
+There are a number of ways to accomplish this:
+- Provably add a signed child account update. Then, the method can be invoked only with a signature from the predefined address.
+```TypeScript
+// in your method create empty signed account update
+AccountUpdate.createSigned(someAddress);
+```
+
+```TypeScript
+// later, sign the tx
+tx.sign([privateKeyOfAddress]);
+```
+
+- Require a private key as a private input, and check that `privateKey.toPublicKey().assertEquals(this.address)`
+- Require a signature as an input.
+
 ### Can I pass hex values into Fields?
 
 Yes, just pass in the appropriate BigInt literal.
