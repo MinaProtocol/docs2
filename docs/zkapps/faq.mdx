@@ -114,7 +114,7 @@ This ensures that the transaction fails if the value of the field in question ha
 ### How do I restrict a provable method so that it can be invoked only by a specific address?
 
 There are a number of ways to accomplish this:
-- Provably add a signed child account update. Then, the method can be invoked only with a signature from the predefined address.
+- Provably add a signed child account update. Then, you can invoke the method only with a signature from the predefined address.
 ```TypeScript
 // in your method create empty signed account update
 AccountUpdate.createSigned(someAddress);
@@ -172,6 +172,6 @@ Yes. It is possible to use the Kimchi proof system without the Pickles recursion
 
 Pasta curves (Pallas and Vesta). See [Pasta Curves](https://o1-labs.github.io/proof-systems/specs/pasta.html?highlight=curves#pasta-curves) in the Mina book.
 
-### When do I use Provable conditional logic? 
+### When do I use provable conditional logic? 
 
-Are there situations in which I would not want to use the Provable versions? If the conditional logic is not part of your provable code, you do not need to use Provable conditional statements.
+Are there situations in which I would not want to use the provable versions? If the conditional logic is not part of your provable code, you do not need to use Provable conditional statements.
