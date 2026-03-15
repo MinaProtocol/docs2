@@ -1,0 +1,41 @@
+---
+title: Berkeley Upgrade
+sidebar_label: Berkeley Upgrade
+hide_title: true
+description: Overview of the Berkeley network upgrade for Mina Protocol — the transition to the Berkeley proof system with zkApp support.
+keywords:
+  - Berkeley
+  - upgrade
+  - hard fork
+  - zkApps
+---
+
+# Berkeley Upgrade
+
+The Berkeley upgrade was the most significant network upgrade in Mina's history, transitioning mainnet from the legacy proof system to the Berkeley proof system. It was completed in June 2024.
+
+## What Berkeley Introduced
+
+### zkApp Programmability
+
+Berkeley brought full zkApp (zero-knowledge application) support to mainnet. Developers can deploy smart contracts that execute off-chain computation and generate zero-knowledge proofs verified on-chain, enabling privacy-preserving applications with minimal on-chain footprint.
+
+### Recursive Proofs
+
+The upgrade enabled recursive proof composition, allowing proofs to verify other proofs. This is foundational to Mina's constant-size blockchain — the entire chain state can be verified with a single proof regardless of history length.
+
+### New Transaction Model
+
+Berkeley introduced a new transaction format supporting zkApp commands alongside traditional payment and delegation transactions. This included on-chain state storage for smart contracts, events, and actions.
+
+### Archive Database Migration
+
+The upgrade required a full archive database migration from the legacy schema to the Berkeley schema. This was the most operationally intensive part of the upgrade for archive node operators, taking up to 48 hours for the trustless migration path.
+
+## Upgrade Details
+
+- **Release**: [3.0.0](https://github.com/MinaProtocol/mina/releases/tag/3.0.0) (Berkeley mainnet release)
+- **Upgrade mode**: Manual only (automode was not available for Berkeley)
+- **Archive migration**: Trustless (48h) or trustful (o1Labs database export)
+
+For the operational details of the Berkeley upgrade, see the sub-pages below. These are preserved for historical reference.
