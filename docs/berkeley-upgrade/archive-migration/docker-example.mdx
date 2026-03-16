@@ -57,7 +57,7 @@ psql mainnet_really_migrated -f create_schema.sql
 # Start migration
 docker create --name mainnet-db-migration \
        -v $(pwd)/mainnet-migration:/data \
-       --network mainnet gcr.io/o1labs-192920/mina-archive-migration:3.0.1-e848ecb-bullseye -- bash -c '
+       --network mainnet minaprotocol/mina-archive-migration:3.0.1-e848ecb-bullseye -- bash -c '
         wget http://673156464838-mina-genesis-ledgers.s3-website-us-west-2.amazonaws.com/mainnet/genesis_ledger.json; mina-berkeley-migration-script initial \
           --genesis-ledger genesis_ledger.json \
           --source-db postgres://mina:minamina@postgres:5432/mainnet_balances_migrated \

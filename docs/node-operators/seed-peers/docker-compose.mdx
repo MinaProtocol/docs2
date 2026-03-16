@@ -16,7 +16,7 @@ Copy and paste the provided configuration into a `docker-compose.yml` file. Then
 ```yaml
 services:
   generate_libp2p_key:
-    image: 'minaprotocol/mina-daemon:3.1.0-ae112d3-bullseye-mainnet'
+    image: 'minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet'
     environment:
       MINA_LIBP2P_PASS: PssW0rD
     entrypoint: []
@@ -29,8 +29,8 @@ services:
     volumes:
       - './node/mina-config:/data/.mina-config'
   mina_node:
-    image: 'minaprotocol/mina-daemon:3.1.0-ae112d3-bullseye-mainnet'
-    # image: 'gcr.io/o1labs-192920/mina-daemon:3.1.0-alpha1-56cdb61-bullseye-devnet' # Use this image for Devnet
+    image: 'minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet'
+    # image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet' # Use this image for Devnet
     restart: always
     environment:
       MINA_LIBP2P_PASS: PssW0rD

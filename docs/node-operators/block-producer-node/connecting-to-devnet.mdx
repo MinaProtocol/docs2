@@ -42,7 +42,7 @@ sudo rm /etc/apt/sources.list.d/mina*.list
 sudo echo "deb [trusted=yes] http://packages.o1test.net $(lsb_release -cs) devnet" | sudo tee /etc/apt/sources.list.d/mina-devnet.list
 sudo apt-get install --yes apt-transport-https
 sudo apt-get update
-sudo apt-get install --yes curl unzip mina-devnet=3.1.0-alpha1
+sudo apt-get install --yes curl unzip mina-devnet=3.3.0-alpha1
 ```
 
 To check that daemon installed correctly:
@@ -126,7 +126,7 @@ docker run --name mina -d \
        --restart=always \
        -v $(pwd)/.mina-config:/data/.mina-config \
        -v $(pwd)/.mina-env:/entrypoint.d/mina-env \
-       gcr.io/o1labs-192920/mina-daemon:3.1.0-ae112d3-bullseye-devnet \
+       gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet \
        daemon
 ```
 

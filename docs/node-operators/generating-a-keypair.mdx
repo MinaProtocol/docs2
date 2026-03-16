@@ -93,7 +93,7 @@ Make sure to set a new and secure password for commands in follow-steps . Mina w
 ```
 echo "deb [trusted=yes] http://packages.o1test.net $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/mina.list
 sudo apt-get update
-sudo apt-get install -y mina-mainnet=3.1.0-ae112d3
+sudo apt-get install -y mina-mainnet=3.3.0-8c0c2e6
 ```
 2. Verify that mina installed correctly:
 
@@ -121,7 +121,7 @@ mina advanced generate-keypair --privkey-path ~/keys/my-wallet
 cd ~
 docker run -it --rm --entrypoint "" \
        --volume $(pwd)/keys:/keys \
-       minaprotocol/mina-daemon:3.1.0-ae112d3-bullseye-mainnet \
+       minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet \
        mina advanced generate-keypair --privkey-path /keys/my-wallet
 ```
 
@@ -155,7 +155,7 @@ On Docker:
 ```
 docker run -it --rm --entrypoint "" \
         --volume $(pwd)/keys:/keys \
-        minaprotocol/mina-daemon:3.1.0-ae112d3-bullseye-mainnet \
+        minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet \
         mina advanced validate-keypair --privkey-path /keys/my-wallet
 ```
 

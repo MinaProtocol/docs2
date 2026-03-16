@@ -1,0 +1,286 @@
+---
+title: Connect to Mesa Preflight Network
+sidebar_label: Preflight Network
+description: Instructions for connecting to the Mesa upgrade preflight network for testing and validation.
+keywords:
+  - Mesa upgrade
+  - preflight network
+  - testing network
+  - mesa daemon
+  - docker
+  - debian packages
+---
+
+# Connect to Mesa Preflight Network
+
+The Mesa preflight network is a testing environment for validating the Mesa upgrade before deployment to devnet and mainnet. This network allows node operators and developers to test their infrastructure and applications with the new Mesa release.
+
+:::caution Preflight Network Notice
+
+The preflight network is intended for testing purposes only. This network may experience instability, breaking changes, and unexpected behavior. Data on this network should not be considered persistent or reliable.
+
+:::
+
+## Available Build Versions
+
+The Mesa preflight network uses the following build versions:
+
+**Version:** `4.0.0-preflight1-b649c79`
+
+### Docker Images
+
+Docker images are available for both `amd64` and `arm64` architectures:
+
+- **Mina Daemon:** `gcr.io/o1labs-192920/mina-daemon:4.0.0-preflight1-b649c79-bookworm-mesa`
+- **Archive Node:** `gcr.io/o1labs-192920/mina-archive:4.0.0-preflight1-b649c79-bookworm-mesa`
+- **Rosetta:** `gcr.io/o1labs-192920/mina-rosetta:4.0.0-preflight1-b649c79-bookworm-mesa`
+
+Images are available for both **bookworm** and **noble** distributions.
+
+### Debian Packages
+
+Debian packages are available from the unstable repository:
+
+**Repository:** `unstable.apt.packages.minaprotocol.com`
+**Channel:** `preflight`
+
+Available packages:
+- `mina-mesa` (version `4.0.0-preflight1-b649c79`)
+- `mina-archive-mesa` (version `4.0.0-preflight1-b649c79`)
+- `mina-rosetta-mesa` (version `4.0.0-preflight1-b649c79`)
+
+Packages are available for **bookworm** and **noble** distributions.
+
+For detailed information about the Debian repository structure and configuration, please refer to the [Debian Repository documentation](https://unstable.apt.packages.minaprotocol.com/).
+
+## Connecting to the Network
+
+To connect your node to the Mesa preflight network, you must use the preflight network seed peer list.
+
+### Required Parameter
+
+Add the following parameter to your mina daemon command:
+
+```bash
+--peer-list-url https://storage.googleapis.com/o1labs-gitops-infrastructure/mina-mesa-network/mina-mesa-network-seeds.txt
+```
+
+### Example: Running with Docker
+
+To start a Mina daemon node using Docker:
+
+```bash
+docker run --name mina-mesa-preflight -d \
+  -p 8302:8302 \
+  --restart=always \
+  gcr.io/o1labs-192920/mina-daemon:4.0.0-preflight1-b649c79-bookworm-mesa \
+  daemon \
+  --peer-list-url https://storage.googleapis.com/o1labs-gitops-infrastructure/mina-mesa-network/mina-mesa-network-seeds.txt
+```
+
+For production deployments, you'll want to mount configuration directories and add additional flags:
+
+```bash
+docker run --name mina-mesa-preflight -d \
+  -p 8302:8302 \
+  --restart=always \
+  -v $(pwd)/.mina-config:/data/.mina-config \
+  gcr.io/o1labs-192920/mina-daemon:4.0.0-preflight1-b649c79-bookworm-mesa \
+  daemon \
+  --peer-list-url https://storage.googleapis.com/o1labs-gitops-infrastructure/mina-mesa-network/mina-mesa-network-seeds.txt \
+  --libp2p-keypair /data/.mina-config/keys/libp2p-key
+```
+
+### Example: Running with Debian Package
+
+First, install dependencies and configure the repository:
+
+```bash
+# Step 1: Install dependencies
+sudo apt-get install -y lsb-release ca-certificates wget gnupg
+
+# Step 2: Import the GPG key
+wget -q https://unstable.apt.packages.minaprotocol.com/repo-signing-key.gpg \
+  -O /etc/apt/trusted.gpg.d/minaprotocol.gpg
+
+# Step 3: Add the unstable repository with preflight channel
+echo "deb https://unstable.apt.packages.minaprotocol.com $(lsb_release -cs) preflight" | \
+  sudo tee /etc/apt/sources.list.d/mina-preflight.list
+
+# Step 4: Update and install
+sudo apt-get update
+sudo apt-get install -y mina-mesa=4.0.0-preflight1-b649c79
+```
+
+Then start the daemon:
+
+```bash
+mina daemon \
+  --peer-list-url https://storage.googleapis.com/o1labs-gitops-infrastructure/mina-mesa-network/mina-mesa-network-seeds.txt \
+  --libp2p-keypair ~/.mina-config/keys/libp2p-key
+```
+
+### Running Archive Node
+
+:::info Upgrading from Berkeley to Mesa
+
+If you have an existing Berkeley archive database that you want to upgrade to Mesa, please refer to the comprehensive [Archive Upgrade](archive-upgrade) guide for detailed instructions on:
+- Migration prerequisites and requirements
+- Running the upgrade script
+- Rollback procedures
+- Database schema changes
+- Verification steps
+
+:::
+
+#### Installing and Running Mesa Archive Node
+
+An archive node stores the full history of the blockchain and provides a GraphQL API for querying historical data. It requires a PostgreSQL database.
+
+**Installation with Debian:**
+
+```bash
+# Step 1: Install dependencies
+sudo apt-get install -y lsb-release ca-certificates wget gnupg postgresql postgresql-contrib
+
+# Step 2: Import the GPG key
+wget -q https://unstable.apt.packages.minaprotocol.com/repo-signing-key.gpg \
+  -O /etc/apt/trusted.gpg.d/minaprotocol.gpg
+
+# Step 3: Add the repository
+echo "deb https://unstable.apt.packages.minaprotocol.com $(lsb_release -cs) preflight" | \
+  sudo tee /etc/apt/sources.list.d/mina-preflight.list
+
+# Step 4: Install mina-archive-mesa
+sudo apt-get update
+sudo apt-get install -y mina-archive-mesa=4.0.0-preflight1-b649c79
+
+# Step 5: Create PostgreSQL database
+sudo -u postgres createdb archive
+sudo -u postgres createuser archive_user
+sudo -u postgres psql -c "ALTER USER archive_user WITH PASSWORD 'your-secure-password';"
+sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE archive TO archive_user;"
+
+# Step 6: Start the archive node
+mina-archive run \
+  --postgres-uri postgresql://archive_user:your-secure-password@localhost:5432/archive \
+  --server-port 3086
+```
+
+**Using Docker:**
+
+```bash
+# Start the archive node (assumes you have a PostgreSQL server running)
+docker run --name mina-archive-mesa -d \
+  -p 3086:3086 \
+  --restart=always \
+  gcr.io/o1labs-192920/mina-archive:4.0.0-preflight1-b649c79-bookworm-mesa \
+  mina-archive run \
+  --postgres-uri postgresql://archive_user:your-secure-password@postgres-host:5432/archive \
+  --server-port 3086
+```
+
+**Connecting Mina Daemon to Archive:**
+
+Configure your mina daemon to send blocks to the archive node:
+
+```bash
+mina daemon \
+  --peer-list-url https://storage.googleapis.com/o1labs-gitops-infrastructure/mina-mesa-network/mina-mesa-network-seeds.txt \
+  --archive-address localhost:3086
+```
+
+### Installing and Running Rosetta
+
+Rosetta is a standardized API for blockchain integration. The Rosetta API requires both a mina daemon and an archive node.
+
+**Installation with Debian:**
+
+```bash
+# Step 1: Install dependencies (if not already done)
+sudo apt-get install -y lsb-release ca-certificates wget gnupg
+
+# Step 2: Import the GPG key (if not already done)
+wget -q https://unstable.apt.packages.minaprotocol.com/repo-signing-key.gpg \
+  -O /etc/apt/trusted.gpg.d/minaprotocol.gpg
+
+# Step 3: Add the repository (if not already done)
+echo "deb https://unstable.apt.packages.minaprotocol.com $(lsb_release -cs) preflight" | \
+  sudo tee /etc/apt/sources.list.d/mina-preflight.list
+
+# Step 4: Install mina-rosetta-mesa
+sudo apt-get update
+sudo apt-get install -y mina-rosetta-mesa=4.0.0-preflight1-b649c79
+
+# Step 5: Start Rosetta
+# Rosetta connects to both the mina daemon and archive node
+mina-rosetta \
+  --port 3087 \
+  --archive-uri http://localhost:3086/graphql \
+  --graphql-uri http://localhost:3085/graphql
+```
+
+**Using Docker:**
+
+```bash
+docker run --name mina-rosetta-mesa -d \
+  -p 3087:3087 \
+  --restart=always \
+  gcr.io/o1labs-192920/mina-rosetta:4.0.0-preflight1-b649c79-bookworm-mesa \
+  --port 3087 \
+  --archive-uri http://archive-host:3086/graphql \
+  --graphql-uri http://mina-daemon-host:3085/graphql
+```
+
+**Note:** Rosetta requires:
+- A running mina daemon (GraphQL endpoint, typically port 3085)
+- A running archive node (GraphQL endpoint, typically port 3086)
+- Both must be fully synced for Rosetta to function properly
+
+## Nightly Builds
+
+In addition to the preflight release builds, nightly builds are also available for testing the latest changes.
+
+**Repository:** `nightly.apt.packages.minaprotocol.com`
+
+Nightly builds are available for both Debian packages and Docker images. These builds represent the latest development state and may be even more unstable than preflight releases.
+
+For more information about nightly builds and repository configuration, see the [Debian Repository documentation](https://nightly.apt.packages.minaprotocol.com/).
+
+## Verification
+
+After starting your node, verify connectivity to the preflight network:
+
+### Check Node Status
+
+```bash
+# For Docker
+docker exec -it mina-mesa-preflight mina client status
+
+# For Debian installation
+mina client status
+```
+
+### Monitor Logs
+
+```bash
+# For Docker
+docker logs -f mina-mesa-preflight
+
+# For systemd service (Debian)
+journalctl -u mina -f
+```
+
+## Support and Feedback
+
+If you encounter issues or have feedback about the Mesa preflight network:
+
+1. Check the [Mina Protocol Discord](https://discord.gg/minaprotocol) for community support
+2. Report issues on the [Mina GitHub repository](https://github.com/MinaProtocol/mina/issues)
+3. Join the Mesa upgrade discussions in the community channels
+
+## Next Steps
+
+- Explore additional Mesa upgrade documentation
+- Test your applications and infrastructure against the preflight network
+- Provide feedback to help improve the Mesa upgrade process

@@ -60,7 +60,7 @@ As shown, the maximum amount of unlocked tokens is defined by the `initialMinimu
 
 The other timing-related properties are:
 
-- `cliffTime`: The initial time period during which all tokens are locked. Note that 'time' is measured in Mina by 'slots', where 1 slot is 3min.
+- `cliffTime`: The initial time period during which all tokens are locked (should be from the current slot onwards). Note that 'time' is measured in Mina by 'slots', where 1 slot is 3min.
 - `cliffAmount`: The quantity of tokens to be unlocked when the cliff time has elapsed. If this amount is greater or equal the 'initial minimum balance', all tokens are unlocked after the cliff time elapses.
 - `vestingPeriod`: After the cliff time elapses, tokens can be set to unlock periodically at a fixed interval, by a fixed quantity. The vesting period is the length of that interval.
 - `vestingIncrement`: The quantity of tokens that are unlocked after each vesting period elapses.
@@ -98,11 +98,14 @@ If you want all tokens to unlock after a certain time, then the only properties 
   const tokensToLock = UInt64.from(10e9);
 
   // calculate 1 week in slots
-  const cliffTime = UInt32.from((60 / 3) * 24 * 7);
+  const cliffPeriod = UInt32.from((60 / 3) * 24 * 7);
+
+  // fetch the current slot from the network
+  const currentSlot = this.network.globalSlotSinceGenesis.get();
 
   accountUpdate.account.timing.set({
     initialMinimumBalance: tokensToLock,
-    cliffTime,
+    cliffTime: currentSlot + cliffPeriod,
     cliffAmount: tokensToLock,
     vestingPeriod: UInt32.from(1), // 0 is not allowed; default value is 1
     vestingIncrement: UInt64.from(0),
