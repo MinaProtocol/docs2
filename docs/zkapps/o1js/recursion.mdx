@@ -14,6 +14,10 @@ keywords:
   - blockchain compression
 ---
 
+import MigrateBanner from '@site/src/components/snippets/migrate-banner.mdx';
+
+<MigrateBanner />
+
 # Recursion
 
 Kimchi, the custom proof system that backs o1js, supports arbitrary infinite recursive proof construction of circuits through integration with the Pickles recursive system. Mina Protocol is the only blockchain that offers infinite recursion.
@@ -35,9 +39,9 @@ zkProgram is available as a top-level import. `Experimental.ZkProgram` is deprec
 
 In o1js, you can use `ZkProgram()` to define the steps of a recursive program. Like `SmartContract()` methods, `ZkProgram()` methods execute off-chain.
 
-After performing the desired recursive steps, you can settle the interaction on Mina's blockchain by embedding  `ZkProgram` within a `SmartContract` method that verifies the underlying proof of execution and extracts the output that can be used elsewhere in the method (like storing the output in app-state, for example).
+After performing the desired recursive steps, you can settle the interaction on Mina's blockchain by embedding `ZkProgram` within a `SmartContract` method that verifies the underlying proof of execution and extracts the output that can be used elsewhere in the method (like storing the output in app-state, for example).
 
-Similar to methods within the `SmartContract` class, inputs to `ZkProgram` are _private by default_ and are never seen by the Mina network.  Unlike `SmartContract` methods, as the zkApp developer you choose the shape of the public input to all methods within a `ZkProgram`.
+Similar to methods within the `SmartContract` class, inputs to `ZkProgram` are _private by default_ and are never seen by the Mina network. Unlike `SmartContract` methods, as the zkApp developer you choose the shape of the public input to all methods within a `ZkProgram`.
 
 ## Example: Recursively verify a simple program in a zkApp
 
@@ -47,18 +51,18 @@ This simple example has only one method that proves the public input it received
 import { Field, ZkProgram } from 'o1js';
 
 const SimpleProgram = ZkProgram({
-  name: "simple-program-example",
+  name: 'simple-program-example',
   publicInput: Field,
 
   methods: {
-   run: {
+    run: {
       privateInputs: [],
 
       async method(publicInput: Field) {
         publicInput.assertEquals(Field(0));
       },
-    }
-  }
+    },
+  },
 });
 ```
 
@@ -71,7 +75,7 @@ const { verificationKey } = await SimpleProgram.compile();
 Now, you can use it to create a proof:
 
 ```typescript
-const proof = await SimpleProgram.run(Field(0));
+const { proof } = await SimpleProgram.run(Field(0));
 ```
 
 To verify this proof from within any method of your `SmartContract` class:
@@ -98,7 +102,7 @@ This program describes a recursive operation of adding one repeatedly to a numbe
 import { SelfProof, Field, ZkProgram, verify } from 'o1js';
 
 const AddOne = ZkProgram({
-  name: "add-one-example",
+  name: 'add-one-example',
   publicInput: Field,
 
   methods: {
@@ -129,19 +133,19 @@ First, compile this program and make the base proof as before:
 ```typescript
 const { verificationKey } = await AddOne.compile();
 
-const proof = await AddOne.baseCase(Field(0));
+const { proof } = await AddOne.baseCase(Field(0));
 ```
 
 This time, use this proof as input to recursively add one again:
 
 ```typescript
-const proof1 = await AddOne.step(Field(1), proof);
+const { proof: proof1 } = await AddOne.step(Field(1), proof);
 ```
 
 Repeat this as many times as you want:
 
 ```typescript
-const proof2 = await AddOne.step(Field(2), proof1);
+const { proof: proof2 } = await AddOne.step(Field(2), proof1);
 ```
 
 Finally, verify the proof from within a SmartContract like the earlier example:
@@ -164,14 +168,14 @@ This example program describes a very simple rollup for adding numbers:
 import { SelfProof, Field, ZkProgram, verify } from 'o1js';
 
 let RollupAdd = ZkProgram({
-  name: "rollup-add-example",
+  name: 'rollup-add-example',
   publicInput: Field,
 
   methods: {
     baseCase: {
       privateInputs: [],
 
-      async method(publicInput: Field) { },
+      async method(publicInput: Field) {},
     },
 
     step: {
@@ -199,7 +203,7 @@ You can also use ZkProgram directly to prove and verify arbitrary zero knowledge
 ```typescript
 const { verificationKey } = await MyProgram.compile();
 
-const proof = await MyProgram.base(Field(0));
+const { proof } = await MyProgram.base(Field(0));
 ```
 
 Now you can directly verify a JSON-encoded version of the proof to get back a boolean value that tells you if the proof is valid:

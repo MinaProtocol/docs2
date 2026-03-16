@@ -20,6 +20,8 @@ const zkAppAddress = zkAppPrivateKey.toPublicKey();
 
 const zkAppInstance = new IncrementSecret(zkAppAddress);
 const deployTxn = await Mina.transaction(deployerAccount, async () => {
+  // 1 Mina fee is required to create a new account for the zkApp
+  // This line means the deployer account will pay the fee for any account created in this transaction
   AccountUpdate.fundNewAccount(deployerAccount);
   await zkAppInstance.deploy();
   await zkAppInstance.initState(salt, Field(750));

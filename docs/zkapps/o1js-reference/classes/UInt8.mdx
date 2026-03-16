@@ -35,7 +35,7 @@ The max value of a [UInt8](UInt8.mdx) is `2^8 - 1 = 255`.
 
 #### Source
 
-[lib/provable/int.ts:1312](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/int.ts#L1312)
+[lib/provable/int.ts:1456](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1456)
 
 ## Properties
 
@@ -53,7 +53,7 @@ value: Field = Field;
 
 #### Source
 
-[lib/provable/int.ts:1302](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/int.ts#L1302)
+[lib/provable/int.ts:1446](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1446)
 
 ***
 
@@ -65,7 +65,7 @@ static NUM_BITS: number = 8;
 
 #### Source
 
-[lib/provable/int.ts:1304](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/int.ts#L1304)
+[lib/provable/int.ts:1448](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1448)
 
 ***
 
@@ -94,7 +94,7 @@ Only use this if you know what you are doing, otherwise use the safe [UInt8.from
 
 #### Source
 
-[lib/provable/int.ts:1318](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/int.ts#L1318)
+[lib/provable/int.ts:1462](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1462)
 
 ***
 
@@ -112,7 +112,7 @@ static _isStruct: true;
 
 #### Source
 
-[lib/provable/types/struct.ts:144](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/types/struct.ts#L144)
+[lib/provable/types/struct.ts:148](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/struct.ts#L148)
 
 ***
 
@@ -146,7 +146,7 @@ value: Field = Field;
 
 #### Source
 
-[lib/provable/types/struct.ts:154](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/types/struct.ts#L154)
+[lib/provable/types/struct.ts:158](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/struct.ts#L158)
 
 ***
 
@@ -184,7 +184,7 @@ value: Field = Field;
 
 #### Source
 
-[lib/provable/types/provable-intf.ts:87](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/types/provable-intf.ts#L87)
+[lib/provable/types/provable-intf.ts:115](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/provable-intf.ts#L115)
 
 ***
 
@@ -226,7 +226,7 @@ value: Field = Field;
 
 #### Source
 
-[lib/provable/types/struct.ts:153](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/types/struct.ts#L153)
+[lib/provable/types/struct.ts:157](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/struct.ts#L157)
 
 ***
 
@@ -256,7 +256,7 @@ Convert provable type from a normal JS type.
 
 #### Source
 
-[lib/provable/types/provable-intf.ts:76](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/types/provable-intf.ts#L76)
+[lib/provable/types/provable-intf.ts:86](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/provable-intf.ts#L86)
 
 ***
 
@@ -292,7 +292,64 @@ If not provided, a default value for auxiliary data is returned.
 
 #### Source
 
-[lib/provable/types/provable-intf.ts:37](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/types/provable-intf.ts#L37)
+[lib/provable/types/provable-intf.ts:47](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/provable-intf.ts#L47)
+
+***
+
+### toCanonical()?
+
+```ts
+static optional toCanonical: (x: {
+  "value": Field;
+ }) => {
+  "value": Field;
+};
+```
+
+Optional method which transforms a provable type into its canonical representation.
+
+This is needed for types that have multiple representations of the same underlying value,
+and might even not have perfect completeness for some of those representations.
+
+An example is the `ForeignField` class, which allows non-native field elements to exist in unreduced form.
+The unreduced form is not perfectly complete, for example, addition of two unreduced field elements can cause a prover error.
+
+Specific protocols need to be able to protect themselves against incomplete operations at all costs.
+For example, when using actions and reducer, the reducer must be able to produce a proof regardless of the input action.
+`toCanonical()` converts any input into a safe form and enables us to handle cases like this generically.
+
+Note: For most types, this method is the identity function.
+The identity function will also be used when the `toCanonical()` is not present on a type.
+
+#### Parameters
+
+• **x**
+
+• **x.value**: [`Field`](Field.mdx)= `Field`
+
+#### Returns
+
+```ts
+{
+  "value": Field;
+}
+```
+
+##### value
+
+```ts
+value: Field = Field;
+```
+
+#### Inherited from
+
+`Struct({
+  value: Field,
+}).toCanonical`
+
+#### Source
+
+[lib/provable/types/provable-intf.ts:104](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/provable-intf.ts#L104)
 
 ***
 
@@ -327,7 +384,7 @@ the element of type `T` to generate the [Field](Field.mdx) array from.
 
 #### Source
 
-[lib/provable/types/provable-intf.ts:26](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/types/provable-intf.ts#L26)
+[lib/provable/types/provable-intf.ts:36](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/provable-intf.ts#L36)
 
 ***
 
@@ -369,7 +426,7 @@ value: string = Field;
 
 #### Source
 
-[lib/provable/types/struct.ts:152](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/types/struct.ts#L152)
+[lib/provable/types/struct.ts:156](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/struct.ts#L156)
 
 ***
 
@@ -413,7 +470,43 @@ value: bigint = Field;
 
 #### Source
 
-[lib/provable/types/provable-intf.ts:71](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/types/provable-intf.ts#L71)
+[lib/provable/types/provable-intf.ts:81](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/provable-intf.ts#L81)
+
+## Accessors
+
+### one
+
+```ts
+get static one(): UInt8
+```
+
+Static method to create a [UInt8](UInt8.mdx) with value `1`.
+
+#### Returns
+
+[`UInt8`](UInt8.mdx)
+
+#### Source
+
+[lib/provable/int.ts:1483](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1483)
+
+***
+
+### zero
+
+```ts
+get static zero(): UInt8
+```
+
+Static method to create a [UInt8](UInt8.mdx) with value `0`.
+
+#### Returns
+
+[`UInt8`](UInt8.mdx)
+
+#### Source
+
+[lib/provable/int.ts:1477](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1477)
 
 ## Methods
 
@@ -447,7 +540,7 @@ if the result is greater than 255.
 
 #### Source
 
-[lib/provable/int.ts:1342](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/int.ts#L1342)
+[lib/provable/int.ts:1499](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1499)
 
 ***
 
@@ -475,7 +568,7 @@ the [UInt8](UInt8.mdx) value to compare & assert with this [UInt8](UInt8.mdx).
 
 #### Source
 
-[lib/provable/int.ts:1608](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/int.ts#L1608)
+[lib/provable/int.ts:1765](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1765)
 
 ***
 
@@ -503,7 +596,7 @@ the [UInt8](UInt8.mdx) value to compare & assert with this [UInt8](UInt8.mdx).
 
 #### Source
 
-[lib/provable/int.ts:1584](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/int.ts#L1584)
+[lib/provable/int.ts:1741](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1741)
 
 ***
 
@@ -531,7 +624,7 @@ the [UInt8](UInt8.mdx) value to compare & assert with this [UInt8](UInt8.mdx).
 
 #### Source
 
-[lib/provable/int.ts:1596](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/int.ts#L1596)
+[lib/provable/int.ts:1753](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1753)
 
 ***
 
@@ -559,7 +652,7 @@ the [UInt8](UInt8.mdx) value to compare & assert with this [UInt8](UInt8.mdx).
 
 #### Source
 
-[lib/provable/int.ts:1502](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/int.ts#L1502)
+[lib/provable/int.ts:1659](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1659)
 
 ***
 
@@ -587,7 +680,7 @@ the [UInt8](UInt8.mdx) value to compare & assert with this [UInt8](UInt8.mdx).
 
 #### Source
 
-[lib/provable/int.ts:1527](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/int.ts#L1527)
+[lib/provable/int.ts:1684](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1684)
 
 ***
 
@@ -618,7 +711,7 @@ quotient.assertEquals(3);
 
 #### Source
 
-[lib/provable/int.ts:1395](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/int.ts#L1395)
+[lib/provable/int.ts:1552](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1552)
 
 ***
 
@@ -666,7 +759,7 @@ remainder: UInt8;
 
 #### Source
 
-[lib/provable/int.ts:1422](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/int.ts#L1422)
+[lib/provable/int.ts:1579](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1579)
 
 ***
 
@@ -696,7 +789,7 @@ UInt8.from(5).greaterThan(3);
 
 #### Source
 
-[lib/provable/int.ts:1558](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/int.ts#L1558)
+[lib/provable/int.ts:1715](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1715)
 
 ***
 
@@ -726,7 +819,7 @@ UInt8.from(3).greaterThanOrEqual(3);
 
 #### Source
 
-[lib/provable/int.ts:1572](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/int.ts#L1572)
+[lib/provable/int.ts:1729](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1729)
 
 ***
 
@@ -755,7 +848,7 @@ UInt8.from(2).lessThan(UInt8.from(3));
 
 #### Source
 
-[lib/provable/int.ts:1481](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/int.ts#L1481)
+[lib/provable/int.ts:1638](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1638)
 
 ***
 
@@ -784,7 +877,7 @@ UInt8.from(3).lessThanOrEqual(UInt8.from(5));
 
 #### Source
 
-[lib/provable/int.ts:1459](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/int.ts#L1459)
+[lib/provable/int.ts:1616](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1616)
 
 ***
 
@@ -814,7 +907,7 @@ mod.assertEquals(20);
 
 #### Source
 
-[lib/provable/int.ts:1409](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/int.ts#L1409)
+[lib/provable/int.ts:1566](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1566)
 
 ***
 
@@ -848,7 +941,7 @@ if the result is greater than 255.
 
 #### Source
 
-[lib/provable/int.ts:1378](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/int.ts#L1378)
+[lib/provable/int.ts:1535](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1535)
 
 ***
 
@@ -882,7 +975,7 @@ if the result is less than 0.
 
 #### Source
 
-[lib/provable/int.ts:1360](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/int.ts#L1360)
+[lib/provable/int.ts:1517](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1517)
 
 ***
 
@@ -902,7 +995,7 @@ Serialize the [UInt8](UInt8.mdx) to a bigint.
 
 #### Source
 
-[lib/provable/int.ts:1636](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/int.ts#L1636)
+[lib/provable/int.ts:1793](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1793)
 
 ***
 
@@ -922,7 +1015,7 @@ Serialize the [UInt8](UInt8.mdx) to a number.
 
 #### Source
 
-[lib/provable/int.ts:1627](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/int.ts#L1627)
+[lib/provable/int.ts:1784](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1784)
 
 ***
 
@@ -942,7 +1035,7 @@ Serialize the [UInt8](UInt8.mdx) to a string, e.g. for printing.
 
 #### Source
 
-[lib/provable/int.ts:1618](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/int.ts#L1618)
+[lib/provable/int.ts:1775](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1775)
 
 ***
 
@@ -960,7 +1053,7 @@ Turns a [UInt8](UInt8.mdx) into a [UInt32](UInt32.mdx).
 
 #### Source
 
-[lib/provable/int.ts:1656](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/int.ts#L1656)
+[lib/provable/int.ts:1813](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1813)
 
 ***
 
@@ -978,7 +1071,7 @@ Turns a [UInt8](UInt8.mdx) into a [UInt64](UInt64.mdx).
 
 #### Source
 
-[lib/provable/int.ts:1663](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/int.ts#L1663)
+[lib/provable/int.ts:1820](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1820)
 
 ***
 
@@ -996,7 +1089,7 @@ Creates a [UInt8](UInt8.mdx) with a value of 255.
 
 #### Source
 
-[lib/provable/int.ts:1670](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/int.ts#L1670)
+[lib/provable/int.ts:1827](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1827)
 
 ***
 
@@ -1029,7 +1122,7 @@ Proves that the input is in the [0, 255] range.
 
 #### Source
 
-[lib/provable/int.ts:1644](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/int.ts#L1644)
+[lib/provable/int.ts:1801](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1801)
 
 ***
 
@@ -1063,7 +1156,7 @@ Creates a new [UInt8](UInt8.mdx).
 
 #### Source
 
-[lib/provable/int.ts:1677](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/int.ts#L1677)
+[lib/provable/int.ts:1834](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1834)
 
 ***
 
@@ -1089,7 +1182,7 @@ A `number` representing the size of the `T` type in terms of [Field](Field.mdx) 
 
 #### Source
 
-[lib/provable/types/provable-intf.ts:56](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/types/provable-intf.ts#L56)
+[lib/provable/types/provable-intf.ts:66](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/provable-intf.ts#L66)
 
 ***
 
@@ -1119,4 +1212,4 @@ static toInput(x: {
 
 #### Source
 
-[lib/provable/int.ts:1649](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/int.ts#L1649)
+[lib/provable/int.ts:1806](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/int.ts#L1806)

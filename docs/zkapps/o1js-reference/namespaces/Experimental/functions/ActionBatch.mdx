@@ -1,0 +1,719 @@
+```ts
+function ActionBatch<A>(actionType: A): (value: {
+  "isRecursive": Bool;
+  "onchainActionState": Field;
+  "onchainStack": Field;
+  "processedActionState": Field;
+  "stack": MerkleList<MerkleList<Hashed<InferProvable<A, Field>>>>;
+  "useOnchainStack": Bool;
+  "witnesses": Unconstrained<ActionWitnesses>;
+ }) => {
+  "isRecursive": Bool;
+  "onchainActionState": Field;
+  "onchainStack": Field;
+  "processedActionState": Field;
+  "stack": MerkleList<MerkleList<Hashed<InferProvable<A, Field>>>>;
+  "useOnchainStack": Bool;
+  "witnesses": Unconstrained<ActionWitnesses>;
+ } & {
+  "_isStruct": true;
+ } & Provable<{
+  "isRecursive": Bool;
+  "onchainActionState": Field;
+  "onchainStack": Field;
+  "processedActionState": Field;
+  "stack": MerkleList<MerkleList<Hashed<InferProvable<A, Field>>>>;
+  "useOnchainStack": Bool;
+  "witnesses": Unconstrained<ActionWitnesses>;
+ }, {
+  "isRecursive": Bool;
+  "onchainActionState": Field;
+  "onchainStack": Field;
+  "processedActionState": Field;
+  "stack": any;
+  "useOnchainStack": Bool;
+  "witnesses": ActionWitnesses;
+ }> & {
+  "empty": () => {
+     "isRecursive": Bool;
+     "onchainActionState": Field;
+     "onchainStack": Field;
+     "processedActionState": Field;
+     "stack": MerkleList<MerkleList<Hashed<InferProvable<A, Field>>>>;
+     "useOnchainStack": Bool;
+     "witnesses": Unconstrained<ActionWitnesses>;
+    };
+  "fromJSON": (x: {
+     "isRecursive": Bool;
+     "onchainActionState": Field;
+     "onchainStack": Field;
+     "processedActionState": Field;
+     "stack": {
+        "_emptyHash": null | string;
+        "_innerProvable": null | {
+           "check": {};
+           "empty": {};
+           "fromFields": {};
+           "fromValue": {};
+           "toAuxiliary": {};
+           "toCanonical": null | {};
+           "toFields": {};
+           "toInput": {};
+           "toValue": {};
+           "sizeInFields": ;
+          };
+        "_nextHash": null | {};
+        "_provable": null | {
+           "check": {};
+           "empty": {};
+           "fromFields": {};
+           "fromValue": {};
+           "toAuxiliary": {};
+           "toCanonical": null | {};
+           "toFields": {};
+           "toInput": {};
+           "toValue": {};
+           "sizeInFields": ;
+          };
+        "empty": {};
+        "emptyHash": string;
+        "from": {};
+        "fromReverse": {};
+        "prototype": {
+           "Constructor": {
+              "_emptyHash": null | string;
+              "_innerProvable": null | {
+                 "check": {};
+                 "empty": {};
+                 "fromFields": {};
+                 "fromValue": {};
+                 "toAuxiliary": {};
+                 "toCanonical": null | {};
+                 "toFields": {};
+                 "toInput": {};
+                 "toValue": {};
+                 "sizeInFields": ;
+                };
+              "_nextHash": null | {};
+              "_provable": null | {
+                 "check": {};
+                 "empty": {};
+                 "fromFields": {};
+                 "fromValue": {};
+                 "toAuxiliary": {};
+                 "toCanonical": null | {};
+                 "toFields": {};
+                 "toInput": {};
+                 "toValue": {};
+                 "sizeInFields": ;
+                };
+              "emptyHash": string;
+              "prototype": { hash: string; data: { get: {}; set: {}; setTo: {}; updateAsProver: {}; }; isEmpty: {}; push: {}; pushIf: {}; popExn: {}; pop: {}; popIf: {}; popIfUnsafe: {}; clone: {}; forEach: {}; startIterating: {}; startIteratingFromLast: {}; ... 4 more ...; readonly innerProvable: { ...; }; };
+              "create": ;
+             };
+           "data": {
+              "get": ;
+              "set": ;
+              "setTo": ;
+              "updateAsProver": ;
+             };
+           "hash": string;
+           "innerProvable": {
+              "check": {};
+              "empty": {};
+              "fromFields": {};
+              "fromValue": {};
+              "toAuxiliary": {};
+              "toCanonical": null | {};
+              "toFields": {};
+              "toInput": {};
+              "toValue": {};
+              "sizeInFields": ;
+             };
+           "clone": ;
+           "forEach": ;
+           "isEmpty": ;
+           "lengthUnconstrained": ;
+           "nextHash": ;
+           "pop": ;
+           "popExn": ;
+           "popIf": ;
+           "popIfUnsafe": ;
+           "push": ;
+           "pushIf": ;
+           "startIterating": ;
+           "startIteratingFromLast": ;
+           "toArrayUnconstrained": ;
+          };
+        "provable": {
+           "check": {};
+           "empty": {};
+           "fromFields": {};
+           "fromValue": {};
+           "toAuxiliary": {};
+           "toCanonical": null | {};
+           "toFields": {};
+           "toInput": {};
+           "toValue": {};
+           "sizeInFields": ;
+          };
+        "create": ;
+       };
+     "useOnchainStack": Bool;
+     "witnesses": {
+        "check": {};
+        "empty": {};
+        "fromFields": {};
+        "fromValue": {};
+        "toAuxiliary": {};
+        "toCanonical": null | {};
+        "toFields": {};
+        "toInput": {};
+        "toValue": {};
+        "sizeInFields": ;
+       };
+    }) => {
+     "isRecursive": Bool;
+     "onchainActionState": Field;
+     "onchainStack": Field;
+     "processedActionState": Field;
+     "stack": MerkleList<MerkleList<Hashed<InferProvable<A, Field>>>>;
+     "useOnchainStack": Bool;
+     "witnesses": Unconstrained<ActionWitnesses>;
+    };
+  "fromValue": (value: {
+     "isRecursive": Bool;
+     "onchainActionState": Field;
+     "onchainStack": Field;
+     "processedActionState": Field;
+     "stack": any;
+     "useOnchainStack": Bool;
+     "witnesses": ActionWitnesses | Unconstrained<ActionWitnesses>;
+    }) => {
+     "isRecursive": Bool;
+     "onchainActionState": Field;
+     "onchainStack": Field;
+     "processedActionState": Field;
+     "stack": MerkleList<MerkleList<Hashed<InferProvable<A, Field>>>>;
+     "useOnchainStack": Bool;
+     "witnesses": Unconstrained<ActionWitnesses>;
+    };
+  "toInput": (x: {
+     "isRecursive": Bool;
+     "onchainActionState": Field;
+     "onchainStack": Field;
+     "processedActionState": Field;
+     "stack": MerkleList<MerkleList<Hashed<InferProvable<A, Field>>>>;
+     "useOnchainStack": Bool;
+     "witnesses": Unconstrained<ActionWitnesses>;
+    }) => {
+     "fields": Field[];
+     "packed": [Field, number][];
+    };
+  "toJSON": (x: {
+     "isRecursive": Bool;
+     "onchainActionState": Field;
+     "onchainStack": Field;
+     "processedActionState": Field;
+     "stack": MerkleList<MerkleList<Hashed<InferProvable<A, Field>>>>;
+     "useOnchainStack": Bool;
+     "witnesses": Unconstrained<ActionWitnesses>;
+    }) => {
+     "isRecursive": Bool;
+     "onchainActionState": Field;
+     "onchainStack": Field;
+     "processedActionState": Field;
+     "stack": {
+        "_emptyHash": null | string;
+        "_innerProvable": null | {
+           "check": {};
+           "empty": {};
+           "fromFields": {};
+           "fromValue": {};
+           "toAuxiliary": {};
+           "toCanonical": null | {};
+           "toFields": {};
+           "toInput": {};
+           "toValue": {};
+           "sizeInFields": ;
+          };
+        "_nextHash": null | {};
+        "_provable": null | {
+           "check": {};
+           "empty": {};
+           "fromFields": {};
+           "fromValue": {};
+           "toAuxiliary": {};
+           "toCanonical": null | {};
+           "toFields": {};
+           "toInput": {};
+           "toValue": {};
+           "sizeInFields": ;
+          };
+        "empty": {};
+        "emptyHash": string;
+        "from": {};
+        "fromReverse": {};
+        "prototype": {
+           "Constructor": {
+              "_emptyHash": null | string;
+              "_innerProvable": null | {
+                 "check": {};
+                 "empty": {};
+                 "fromFields": {};
+                 "fromValue": {};
+                 "toAuxiliary": {};
+                 "toCanonical": null | {};
+                 "toFields": {};
+                 "toInput": {};
+                 "toValue": {};
+                 "sizeInFields": ;
+                };
+              "_nextHash": null | {};
+              "_provable": null | {
+                 "check": {};
+                 "empty": {};
+                 "fromFields": {};
+                 "fromValue": {};
+                 "toAuxiliary": {};
+                 "toCanonical": null | {};
+                 "toFields": {};
+                 "toInput": {};
+                 "toValue": {};
+                 "sizeInFields": ;
+                };
+              "emptyHash": string;
+              "prototype": { hash: string; data: { get: {}; set: {}; setTo: {}; updateAsProver: {}; }; isEmpty: {}; push: {}; pushIf: {}; popExn: {}; pop: {}; popIf: {}; popIfUnsafe: {}; clone: {}; forEach: {}; startIterating: {}; startIteratingFromLast: {}; ... 4 more ...; readonly innerProvable: { ...; }; };
+              "create": ;
+             };
+           "data": {
+              "get": ;
+              "set": ;
+              "setTo": ;
+              "updateAsProver": ;
+             };
+           "hash": string;
+           "innerProvable": {
+              "check": {};
+              "empty": {};
+              "fromFields": {};
+              "fromValue": {};
+              "toAuxiliary": {};
+              "toCanonical": null | {};
+              "toFields": {};
+              "toInput": {};
+              "toValue": {};
+              "sizeInFields": ;
+             };
+           "clone": ;
+           "forEach": ;
+           "isEmpty": ;
+           "lengthUnconstrained": ;
+           "nextHash": ;
+           "pop": ;
+           "popExn": ;
+           "popIf": ;
+           "popIfUnsafe": ;
+           "push": ;
+           "pushIf": ;
+           "startIterating": ;
+           "startIteratingFromLast": ;
+           "toArrayUnconstrained": ;
+          };
+        "provable": {
+           "check": {};
+           "empty": {};
+           "fromFields": {};
+           "fromValue": {};
+           "toAuxiliary": {};
+           "toCanonical": null | {};
+           "toFields": {};
+           "toInput": {};
+           "toValue": {};
+           "sizeInFields": ;
+          };
+        "create": ;
+       };
+     "useOnchainStack": Bool;
+     "witnesses": {
+        "check": {};
+        "empty": {};
+        "fromFields": {};
+        "fromValue": {};
+        "toAuxiliary": {};
+        "toCanonical": null | {};
+        "toFields": {};
+        "toInput": {};
+        "toValue": {};
+        "sizeInFields": ;
+       };
+    };
+}
+```
+
+Provable type that represents a batch of actions.
+
+## Type parameters
+
+• **A** *extends* `Actionable`\<`any`\>
+
+## Parameters
+
+• **actionType**: `A`
+
+## Returns
+
+(`value`: \{
+  `"isRecursive"`: `Bool`;
+  `"onchainActionState"`: `Field`;
+  `"onchainStack"`: `Field`;
+  `"processedActionState"`: `Field`;
+  `"stack"`: [`MerkleList`](../../../classes/MerkleList.mdx)\<[`MerkleList`](../../../classes/MerkleList.mdx)\<[`Hashed`](../../../classes/Hashed.mdx)\<`InferProvable`\<`A`, [`Field`](../../../classes/Field.mdx)\>\>\>\>;
+  `"useOnchainStack"`: `Bool`;
+  `"witnesses"`: [`Unconstrained`](../../../classes/Unconstrained.mdx)\<`ActionWitnesses`\>;
+ \}) => \{
+  `"isRecursive"`: `Bool`;
+  `"onchainActionState"`: `Field`;
+  `"onchainStack"`: `Field`;
+  `"processedActionState"`: `Field`;
+  `"stack"`: [`MerkleList`](../../../classes/MerkleList.mdx)\<[`MerkleList`](../../../classes/MerkleList.mdx)\<[`Hashed`](../../../classes/Hashed.mdx)\<`InferProvable`\<`A`, [`Field`](../../../classes/Field.mdx)\>\>\>\>;
+  `"useOnchainStack"`: `Bool`;
+  `"witnesses"`: [`Unconstrained`](../../../classes/Unconstrained.mdx)\<`ActionWitnesses`\>;
+ \} & \{
+  `"_isStruct"`: `true`;
+ \} & `Provable`\<\{
+  `"isRecursive"`: `Bool`;
+  `"onchainActionState"`: `Field`;
+  `"onchainStack"`: `Field`;
+  `"processedActionState"`: `Field`;
+  `"stack"`: [`MerkleList`](../../../classes/MerkleList.mdx)\<[`MerkleList`](../../../classes/MerkleList.mdx)\<[`Hashed`](../../../classes/Hashed.mdx)\<`InferProvable`\<`A`, [`Field`](../../../classes/Field.mdx)\>\>\>\>;
+  `"useOnchainStack"`: `Bool`;
+  `"witnesses"`: [`Unconstrained`](../../../classes/Unconstrained.mdx)\<`ActionWitnesses`\>;
+ \}, \{
+  `"isRecursive"`: `Bool`;
+  `"onchainActionState"`: `Field`;
+  `"onchainStack"`: `Field`;
+  `"processedActionState"`: `Field`;
+  `"stack"`: `any`;
+  `"useOnchainStack"`: `Bool`;
+  `"witnesses"`: `ActionWitnesses`;
+ \}\> & \{
+  `"empty"`: () => \{
+     `"isRecursive"`: `Bool`;
+     `"onchainActionState"`: `Field`;
+     `"onchainStack"`: `Field`;
+     `"processedActionState"`: `Field`;
+     `"stack"`: [`MerkleList`](../../../classes/MerkleList.mdx)\<[`MerkleList`](../../../classes/MerkleList.mdx)\<[`Hashed`](../../../classes/Hashed.mdx)\<`InferProvable`\<`A`, [`Field`](../../../classes/Field.mdx)\>\>\>\>;
+     `"useOnchainStack"`: `Bool`;
+     `"witnesses"`: [`Unconstrained`](../../../classes/Unconstrained.mdx)\<`ActionWitnesses`\>;
+    \};
+  `"fromJSON"`: (`x`: \{
+     `"isRecursive"`: `Bool`;
+     `"onchainActionState"`: `Field`;
+     `"onchainStack"`: `Field`;
+     `"processedActionState"`: `Field`;
+     `"stack"`: \{
+        `"_emptyHash"`: `null` \| `string`;
+        `"_innerProvable"`: `null` \| \{
+           `"check"`: \{\};
+           `"empty"`: \{\};
+           `"fromFields"`: \{\};
+           `"fromValue"`: \{\};
+           `"toAuxiliary"`: \{\};
+           `"toCanonical"`: `null` \| \{\};
+           `"toFields"`: \{\};
+           `"toInput"`: \{\};
+           `"toValue"`: \{\};
+           `"sizeInFields"`: ;
+          \};
+        `"_nextHash"`: `null` \| \{\};
+        `"_provable"`: `null` \| \{
+           `"check"`: \{\};
+           `"empty"`: \{\};
+           `"fromFields"`: \{\};
+           `"fromValue"`: \{\};
+           `"toAuxiliary"`: \{\};
+           `"toCanonical"`: `null` \| \{\};
+           `"toFields"`: \{\};
+           `"toInput"`: \{\};
+           `"toValue"`: \{\};
+           `"sizeInFields"`: ;
+          \};
+        `"empty"`: \{\};
+        `"emptyHash"`: `string`;
+        `"from"`: \{\};
+        `"fromReverse"`: \{\};
+        `"prototype"`: \{
+           `"Constructor"`: \{
+              `"_emptyHash"`: `null` \| `string`;
+              `"_innerProvable"`: `null` \| \{
+                 `"check"`: \{\};
+                 `"empty"`: \{\};
+                 `"fromFields"`: \{\};
+                 `"fromValue"`: \{\};
+                 `"toAuxiliary"`: \{\};
+                 `"toCanonical"`: `null` \| \{\};
+                 `"toFields"`: \{\};
+                 `"toInput"`: \{\};
+                 `"toValue"`: \{\};
+                 `"sizeInFields"`: ;
+                \};
+              `"_nextHash"`: `null` \| \{\};
+              `"_provable"`: `null` \| \{
+                 `"check"`: \{\};
+                 `"empty"`: \{\};
+                 `"fromFields"`: \{\};
+                 `"fromValue"`: \{\};
+                 `"toAuxiliary"`: \{\};
+                 `"toCanonical"`: `null` \| \{\};
+                 `"toFields"`: \{\};
+                 `"toInput"`: \{\};
+                 `"toValue"`: \{\};
+                 `"sizeInFields"`: ;
+                \};
+              `"emptyHash"`: `string`;
+              `"prototype"`: \{ hash: string; data: \{ get: \{\}; set: \{\}; setTo: \{\}; updateAsProver: \{\}; \}; isEmpty: \{\}; push: \{\}; pushIf: \{\}; popExn: \{\}; pop: \{\}; popIf: \{\}; popIfUnsafe: \{\}; clone: \{\}; forEach: \{\}; startIterating: \{\}; startIteratingFromLast: \{\}; ... 4 more ...; readonly innerProvable: \{ ...; \}; \};
+              `"create"`: ;
+             \};
+           `"data"`: \{
+              `"get"`: ;
+              `"set"`: ;
+              `"setTo"`: ;
+              `"updateAsProver"`: ;
+             \};
+           `"hash"`: `string`;
+           `"innerProvable"`: \{
+              `"check"`: \{\};
+              `"empty"`: \{\};
+              `"fromFields"`: \{\};
+              `"fromValue"`: \{\};
+              `"toAuxiliary"`: \{\};
+              `"toCanonical"`: `null` \| \{\};
+              `"toFields"`: \{\};
+              `"toInput"`: \{\};
+              `"toValue"`: \{\};
+              `"sizeInFields"`: ;
+             \};
+           `"clone"`: ;
+           `"forEach"`: ;
+           `"isEmpty"`: ;
+           `"lengthUnconstrained"`: ;
+           `"nextHash"`: ;
+           `"pop"`: ;
+           `"popExn"`: ;
+           `"popIf"`: ;
+           `"popIfUnsafe"`: ;
+           `"push"`: ;
+           `"pushIf"`: ;
+           `"startIterating"`: ;
+           `"startIteratingFromLast"`: ;
+           `"toArrayUnconstrained"`: ;
+          \};
+        `"provable"`: \{
+           `"check"`: \{\};
+           `"empty"`: \{\};
+           `"fromFields"`: \{\};
+           `"fromValue"`: \{\};
+           `"toAuxiliary"`: \{\};
+           `"toCanonical"`: `null` \| \{\};
+           `"toFields"`: \{\};
+           `"toInput"`: \{\};
+           `"toValue"`: \{\};
+           `"sizeInFields"`: ;
+          \};
+        `"create"`: ;
+       \};
+     `"useOnchainStack"`: `Bool`;
+     `"witnesses"`: \{
+        `"check"`: \{\};
+        `"empty"`: \{\};
+        `"fromFields"`: \{\};
+        `"fromValue"`: \{\};
+        `"toAuxiliary"`: \{\};
+        `"toCanonical"`: `null` \| \{\};
+        `"toFields"`: \{\};
+        `"toInput"`: \{\};
+        `"toValue"`: \{\};
+        `"sizeInFields"`: ;
+       \};
+    \}) => \{
+     `"isRecursive"`: `Bool`;
+     `"onchainActionState"`: `Field`;
+     `"onchainStack"`: `Field`;
+     `"processedActionState"`: `Field`;
+     `"stack"`: [`MerkleList`](../../../classes/MerkleList.mdx)\<[`MerkleList`](../../../classes/MerkleList.mdx)\<[`Hashed`](../../../classes/Hashed.mdx)\<`InferProvable`\<`A`, [`Field`](../../../classes/Field.mdx)\>\>\>\>;
+     `"useOnchainStack"`: `Bool`;
+     `"witnesses"`: [`Unconstrained`](../../../classes/Unconstrained.mdx)\<`ActionWitnesses`\>;
+    \};
+  `"fromValue"`: (`value`: \{
+     `"isRecursive"`: `Bool`;
+     `"onchainActionState"`: `Field`;
+     `"onchainStack"`: `Field`;
+     `"processedActionState"`: `Field`;
+     `"stack"`: `any`;
+     `"useOnchainStack"`: `Bool`;
+     `"witnesses"`: `ActionWitnesses` \| [`Unconstrained`](../../../classes/Unconstrained.mdx)\<`ActionWitnesses`\>;
+    \}) => \{
+     `"isRecursive"`: `Bool`;
+     `"onchainActionState"`: `Field`;
+     `"onchainStack"`: `Field`;
+     `"processedActionState"`: `Field`;
+     `"stack"`: [`MerkleList`](../../../classes/MerkleList.mdx)\<[`MerkleList`](../../../classes/MerkleList.mdx)\<[`Hashed`](../../../classes/Hashed.mdx)\<`InferProvable`\<`A`, [`Field`](../../../classes/Field.mdx)\>\>\>\>;
+     `"useOnchainStack"`: `Bool`;
+     `"witnesses"`: [`Unconstrained`](../../../classes/Unconstrained.mdx)\<`ActionWitnesses`\>;
+    \};
+  `"toInput"`: (`x`: \{
+     `"isRecursive"`: `Bool`;
+     `"onchainActionState"`: `Field`;
+     `"onchainStack"`: `Field`;
+     `"processedActionState"`: `Field`;
+     `"stack"`: [`MerkleList`](../../../classes/MerkleList.mdx)\<[`MerkleList`](../../../classes/MerkleList.mdx)\<[`Hashed`](../../../classes/Hashed.mdx)\<`InferProvable`\<`A`, [`Field`](../../../classes/Field.mdx)\>\>\>\>;
+     `"useOnchainStack"`: `Bool`;
+     `"witnesses"`: [`Unconstrained`](../../../classes/Unconstrained.mdx)\<`ActionWitnesses`\>;
+    \}) => \{
+     `"fields"`: [`Field`](../../../classes/Field.mdx)[];
+     `"packed"`: [[`Field`](../../../classes/Field.mdx), `number`][];
+    \};
+  `"toJSON"`: (`x`: \{
+     `"isRecursive"`: `Bool`;
+     `"onchainActionState"`: `Field`;
+     `"onchainStack"`: `Field`;
+     `"processedActionState"`: `Field`;
+     `"stack"`: [`MerkleList`](../../../classes/MerkleList.mdx)\<[`MerkleList`](../../../classes/MerkleList.mdx)\<[`Hashed`](../../../classes/Hashed.mdx)\<`InferProvable`\<`A`, [`Field`](../../../classes/Field.mdx)\>\>\>\>;
+     `"useOnchainStack"`: `Bool`;
+     `"witnesses"`: [`Unconstrained`](../../../classes/Unconstrained.mdx)\<`ActionWitnesses`\>;
+    \}) => \{
+     `"isRecursive"`: `Bool`;
+     `"onchainActionState"`: `Field`;
+     `"onchainStack"`: `Field`;
+     `"processedActionState"`: `Field`;
+     `"stack"`: \{
+        `"_emptyHash"`: `null` \| `string`;
+        `"_innerProvable"`: `null` \| \{
+           `"check"`: \{\};
+           `"empty"`: \{\};
+           `"fromFields"`: \{\};
+           `"fromValue"`: \{\};
+           `"toAuxiliary"`: \{\};
+           `"toCanonical"`: `null` \| \{\};
+           `"toFields"`: \{\};
+           `"toInput"`: \{\};
+           `"toValue"`: \{\};
+           `"sizeInFields"`: ;
+          \};
+        `"_nextHash"`: `null` \| \{\};
+        `"_provable"`: `null` \| \{
+           `"check"`: \{\};
+           `"empty"`: \{\};
+           `"fromFields"`: \{\};
+           `"fromValue"`: \{\};
+           `"toAuxiliary"`: \{\};
+           `"toCanonical"`: `null` \| \{\};
+           `"toFields"`: \{\};
+           `"toInput"`: \{\};
+           `"toValue"`: \{\};
+           `"sizeInFields"`: ;
+          \};
+        `"empty"`: \{\};
+        `"emptyHash"`: `string`;
+        `"from"`: \{\};
+        `"fromReverse"`: \{\};
+        `"prototype"`: \{
+           `"Constructor"`: \{
+              `"_emptyHash"`: `null` \| `string`;
+              `"_innerProvable"`: `null` \| \{
+                 `"check"`: \{\};
+                 `"empty"`: \{\};
+                 `"fromFields"`: \{\};
+                 `"fromValue"`: \{\};
+                 `"toAuxiliary"`: \{\};
+                 `"toCanonical"`: `null` \| \{\};
+                 `"toFields"`: \{\};
+                 `"toInput"`: \{\};
+                 `"toValue"`: \{\};
+                 `"sizeInFields"`: ;
+                \};
+              `"_nextHash"`: `null` \| \{\};
+              `"_provable"`: `null` \| \{
+                 `"check"`: \{\};
+                 `"empty"`: \{\};
+                 `"fromFields"`: \{\};
+                 `"fromValue"`: \{\};
+                 `"toAuxiliary"`: \{\};
+                 `"toCanonical"`: `null` \| \{\};
+                 `"toFields"`: \{\};
+                 `"toInput"`: \{\};
+                 `"toValue"`: \{\};
+                 `"sizeInFields"`: ;
+                \};
+              `"emptyHash"`: `string`;
+              `"prototype"`: \{ hash: string; data: \{ get: \{\}; set: \{\}; setTo: \{\}; updateAsProver: \{\}; \}; isEmpty: \{\}; push: \{\}; pushIf: \{\}; popExn: \{\}; pop: \{\}; popIf: \{\}; popIfUnsafe: \{\}; clone: \{\}; forEach: \{\}; startIterating: \{\}; startIteratingFromLast: \{\}; ... 4 more ...; readonly innerProvable: \{ ...; \}; \};
+              `"create"`: ;
+             \};
+           `"data"`: \{
+              `"get"`: ;
+              `"set"`: ;
+              `"setTo"`: ;
+              `"updateAsProver"`: ;
+             \};
+           `"hash"`: `string`;
+           `"innerProvable"`: \{
+              `"check"`: \{\};
+              `"empty"`: \{\};
+              `"fromFields"`: \{\};
+              `"fromValue"`: \{\};
+              `"toAuxiliary"`: \{\};
+              `"toCanonical"`: `null` \| \{\};
+              `"toFields"`: \{\};
+              `"toInput"`: \{\};
+              `"toValue"`: \{\};
+              `"sizeInFields"`: ;
+             \};
+           `"clone"`: ;
+           `"forEach"`: ;
+           `"isEmpty"`: ;
+           `"lengthUnconstrained"`: ;
+           `"nextHash"`: ;
+           `"pop"`: ;
+           `"popExn"`: ;
+           `"popIf"`: ;
+           `"popIfUnsafe"`: ;
+           `"push"`: ;
+           `"pushIf"`: ;
+           `"startIterating"`: ;
+           `"startIteratingFromLast"`: ;
+           `"toArrayUnconstrained"`: ;
+          \};
+        `"provable"`: \{
+           `"check"`: \{\};
+           `"empty"`: \{\};
+           `"fromFields"`: \{\};
+           `"fromValue"`: \{\};
+           `"toAuxiliary"`: \{\};
+           `"toCanonical"`: `null` \| \{\};
+           `"toFields"`: \{\};
+           `"toInput"`: \{\};
+           `"toValue"`: \{\};
+           `"sizeInFields"`: ;
+          \};
+        `"create"`: ;
+       \};
+     `"useOnchainStack"`: `Bool`;
+     `"witnesses"`: \{
+        `"check"`: \{\};
+        `"empty"`: \{\};
+        `"fromFields"`: \{\};
+        `"fromValue"`: \{\};
+        `"toAuxiliary"`: \{\};
+        `"toCanonical"`: `null` \| \{\};
+        `"toFields"`: \{\};
+        `"toInput"`: \{\};
+        `"toValue"`: \{\};
+        `"sizeInFields"`: ;
+       \};
+    \};
+ \}
+
+## Source
+
+[index.ts:213](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/index.ts#L213)

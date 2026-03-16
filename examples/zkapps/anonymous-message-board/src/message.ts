@@ -53,22 +53,22 @@ export class Message extends SmartContract {
     const signerPublicKey = signerPrivateKey.toPublicKey();
 
     // Get approved public keys
-    const user1 = this.user1.get();
-    const user2 = this.user2.get();
-    const user3 = this.user3.get();
+    const user1 = this.user1.getAndRequireEquals();
+    const user2 = this.user2.getAndRequireEquals();
+    const user3 = this.user3.getAndRequireEquals();
 
     // Assert that signerPublicKey is one of the approved public keys
     signerPublicKey
       .equals(user1)
       .or(signerPublicKey.equals(user2))
       .or(signerPublicKey.equals(user3))
-      .assertEquals(true);
+      .assertTrue();
 
     // Update on-chain message state
     this.message.set(message);
 
     // Compute new messageHistoryHash
-    const oldHash = this.messageHistoryHash.get();
+    const oldHash = this.messageHistoryHash.getAndRequireEquals();
     const newHash = Poseidon.hash([message, oldHash]);
 
     // Update on-chain messageHistoryHash

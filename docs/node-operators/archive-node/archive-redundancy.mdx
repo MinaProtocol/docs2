@@ -37,7 +37,7 @@ Similarly, it is possible to have multiple archive processes write to the same d
 
 However, multiple archive processes concurrently writing to a database could cause data inconsistencies (explained in https://github.com/MinaProtocol/mina/issues/7567). To avoid this, set the transaction isolation level of the archive database to `Serializable` with the following query:
 
-    ALTER DATABASE <DATABASE NAME> SET DEFAULT_TRANSACTION_ISOLATION TO SERIALIZABLE ;
+    ALTER DATABASE `<DATABASE NAME>` SET DEFAULT_TRANSACTION_ISOLATION TO SERIALIZABLE ;
 
 Set the transaction level after you create the [database](/node-operators/archive-node/getting-started) and before you connect an archive process to it.
 

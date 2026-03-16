@@ -27,6 +27,7 @@ function LocalBlockchain(__namedParameters: {
   "getNetworkState": PreconditionBaseTypes<{}>;
   "hasAccount": boolean;
   "incrementGlobalSlot": void;
+  "resetProofsEnabled": void;
   "sendTransaction": PendingTransactionPromise;
   "setBlockchainLength": void;
   "setGlobalSlot": void;
@@ -73,6 +74,7 @@ A mock Mina blockchain running locally and useful for testing.
   `"getNetworkState"`: `PreconditionBaseTypes`\<\{\}\>;
   `"hasAccount"`: `boolean`;
   `"incrementGlobalSlot"`: `void`;
+  `"resetProofsEnabled"`: `void`;
   `"sendTransaction"`: [`PendingTransactionPromise`](../type-aliases/PendingTransactionPromise.mdx);
   `"setBlockchainLength"`: `void`;
   `"setGlobalSlot"`: `void`;
@@ -253,6 +255,12 @@ A mock Mina blockchain running locally and useful for testing.
 >
 > `void`
 >
+> ### resetProofsEnabled()
+>
+> #### Returns
+>
+> `void`
+>
 > ### sendTransaction()
 >
 > #### Parameters
@@ -318,4 +326,4 @@ A mock Mina blockchain running locally and useful for testing.
 
 ## Source
 
-[lib/mina/local-blockchain.ts:68](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/mina/local-blockchain.ts#L68)
+[lib/mina/local-blockchain.ts:72](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/local-blockchain.ts#L72)

@@ -1,0 +1,200 @@
+---
+title: Upgradability
+hide_title: true
+description: Detailed guide on upgrading zkapps by setting the verification key
+keywords:
+  - permissions
+  - zkapp development
+  - smart contracts
+  - mina
+  - smart contract security
+  - smart contract Upgradability
+  - o1js
+  - mina transaction
+  - blockchain
+---
+
+import MigrateBanner from '@site/src/components/snippets/migrate-banner.mdx';
+
+<MigrateBanner />
+
+# ZkApp Upgradability
+
+The Mina protocol allows for the upgrading of verification keys on-chain.  This article will demonstrate how to upgrade a ZkApp.
+
+### First: A note on Permissions
+
+Permissions regarding ZkApp upgrades are thoroughly covered in: [Permissions](/zkapps/writing-a-zkapp/feature-overview/permissions#upgradeability-of-smart-contracts).  The Permissions article explains the security assumptions in more detail, while this article explains how to perform an upgrade.
+
+### Second: A note on Mina's execution model
+
+Upgradability on other blockchains may mean that a user thinks they're using one program, but since it has been upgraded, they are actually using another program.  Two programs with the same function signature may have very different behavior and result in a bad or unsafe user experience.  Mina's execution model is different.  On Mina, users run their own program and upload the proof to the blockchain for verification only.  So what it means to upgrade a ZkApp is only to change the verification key on-chain.  Proofs generated with an older prover function will not be valid, and users will need to download the new prover function to generate a valid proof.
+
+## Baseline ZkApp
+
+For example, let's use our standard `Add` example smart contract as the baseline ZkApp.
+
+```ts
+import { Field, SmartContract, state, State, method } from 'o1js';
+
+export class Add extends SmartContract {
+  @state(Field) num = State<Field>();
+
+  init() {
+    super.init();
+    this.num.set(Field(1));
+  }
+
+  @method async update() {
+    const currentState = this.num.getAndRequireEquals();
+    const newState = currentState.add(2);
+    this.num.set(newState);
+  }
+}
+```
+
+This contract has a verification key of `"27729068461170601362912907281403262888852363473424470267835507636847418791713"`
+
+## Upgraded ZkApp
+
+For our upgraded contract, let's use this updated example which adds by 4 instead of by 2.
+
+```ts
+import { Field, SmartContract, state, State, method } from 'o1js';
+
+export class AddV2 extends SmartContract {
+  @state(Field) num = State<Field>();
+
+  init() {
+    super.init();
+    this.num.set(Field(1));
+  }
+
+  @method async update() {
+    const currentState = this.num.getAndRequireEquals();
+    const newState = currentState.add(4);
+    this.num.set(newState);
+  }
+}
+```
+
+This contract has a verification key of `"18150279532259194644722165513074833862035641840431153413486908511595437348455"`
+
+## Upgrading a ZkApp
+
+Upgrading a ZkApp by signature can be done if you control the private key of a ZkApp.  To do this, you need to sign a transaction that upgrades the ZkApp with that key.
+
+Imagine we have already deployed the `Add` contract, and we have the private key available as `zkAppKey`
+
+```ts
+const verificationKey = (await AddV2.compile()).verificationKey;
+const contractAddress = zkAppKey.toPublicKey();
+
+const upgradeTx = await Mina.transaction({ sender, fee },
+  async () => {
+    const update = AccountUpdate.createSigned(contractAddress);
+    update.account.verificationKey.set(verificationKey);
+  }
+);
+await upgradeTx.sign([senderKey, zkAppKey]).prove();
+await upgradeTx.send();
+```
+
+And just like that, when the transaction is applied to the blockchain, the verification key at the ZkApp address will be updated from `"27729068461170601362912907281403262888852363473424470267835507636847418791713"` to `"18150279532259194644722165513074833862035641840431153413486908511595437348455"`!
+
+## Upgrades with More Surface Area
+
+In the previous example, we changed one small variable in the smart contract but kept the state and methods the same.  However, there is no limit to what you can change via upgrade.  Let's go through one more example where more things have changed.
+
+```ts
+import { Field, SmartContract, state, State, method } from 'o1js';
+
+export class AddV3 extends SmartContract {
+  @state(Field) num = State<Field>();
+  @state(Field) callCount = State<Field>();
+
+  init() {
+    super.init();
+    this.num.set(Field(1));
+  }
+
+  @method async add2() {
+    this.add(2);
+  }
+
+  @method async add5() {
+    this.add(5);
+  }
+
+  @method async add10() {
+    this.add(10);
+  }
+
+  async add(n: number) {
+    const callCount = this.callCount.getAndRequireEquals();
+    const currentState = this.num.getAndRequireEquals();
+    const newState = currentState.add(n);
+    this.callCount.set(callCount.add(1));
+    this.num.set(newState);
+  }
+}
+```
+
+This new contract is more of a departure from our original design.  It has an extra piece of state that tracks how many times it has been called, and it allows for different operands to be used in the addition.  It is a valid upgrade path to go from `AddV1` to `AddV3`.
+
+```ts
+// The same pattern applies!
+const verificationKey = (await AddV3.compile()).verificationKey;
+const contractAddress = zkAppKey.toPublicKey();
+
+const upgradeTx = await Mina.transaction({ sender, fee },
+  async () => {
+    const update = AccountUpdate.createSigned(contractAddress);
+    update.account.verificationKey.set(verificationKey);
+  }
+);
+await upgradeTx.sign([senderKey, zkAppKey]).prove();
+await upgradeTx.send();
+```
+
+### State Variables
+
+**Warning**: If you change the order of the state in your upgraded contract, the upgrade will not match the states in the correct order
+
+Keep in mind that the state won't be reset when you upgrade.  `init` will also not be called again.  No raw values in the current state of your deployed contract will be edited by an upgrade other than the verification key.
+
+Make sure to avoid re-ordering state variables as in this unsafe example:
+
+```ts
+import { Field, SmartContract, state, State, method } from 'o1js';
+
+export class AddV3Unsafe extends SmartContract {
+  @state(Field) callCount = State<Field>(); // `num` used to be first!
+  @state(Field) num = State<Field>();
+
+  init() {
+    super.init();
+    this.num.set(Field(1));
+  }
+
+  @method async add2() {
+    this.add(2);
+  }
+
+  @method async add5() {
+    this.add(5);
+  }
+
+  @method async add10() {
+    this.add(10);
+  }
+
+  async add(n: number) {
+    const callCount = this.callCount.getAndRequireEquals();
+    const currentState = this.num.getAndRequireEquals();
+    const newState = currentState.add(n);
+    this.callCount.set(callCount.add(1));
+    this.num.set(newState);
+  }
+}
+```

@@ -230,7 +230,7 @@ function Footer(): JSX.Element | null {
           </ul>
         </div>
         <div className={styles.minaFooter_legals__info}>
-          ©2023 Mina Foundation. All rights reserved.
+          ©2024 Mina Foundation. All rights reserved.
         </div>
       </div>
     </footer>

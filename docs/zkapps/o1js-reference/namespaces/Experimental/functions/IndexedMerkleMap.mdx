@@ -21,7 +21,7 @@ Indexed Merkle maps can be used directly in provable code:
 ZkProgram({
   methods: {
     test: {
-      privateInputs: [MerkleMap.provable, Field],
+      privateInputs: [MerkleMap, Field],
 
       method(map: MerkleMap, key: Field) {
         // get the value associated with `key`
@@ -49,4 +49,4 @@ effciently computable as a hash image, and this update doesn't affect the Merkle
 
 ## Source
 
-[index.ts:156](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/index.ts#L156)
+[index.ts:166](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/index.ts#L166)

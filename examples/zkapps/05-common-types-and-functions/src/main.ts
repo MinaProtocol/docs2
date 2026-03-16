@@ -179,6 +179,8 @@ const senderPrivateKey = senderPublicKey.key;
 
   // deploy the smart contract
   const deployTxn = await Mina.transaction(deployerAccount, async () => {
+    // 1 Mina fee is required to create a new account for the zkApp
+    // This line means the deployer account will pay the fee for any account created in this transaction
     AccountUpdate.fundNewAccount(deployerAccount);
     await zkApp.deploy();
     // get the root of the new tree to use as the initial tree root
@@ -214,7 +216,7 @@ const senderPrivateKey = senderPublicKey.key;
   });
   await txn1.prove();
   const pendingTx = await txn1
-    .sign([senderPrivateKey, basicTreeZkAppPrivateKey])
+    .sign([senderPrivateKey])
     .send();
   await pendingTx.wait();
 

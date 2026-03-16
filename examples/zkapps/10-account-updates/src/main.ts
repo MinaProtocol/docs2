@@ -3,8 +3,6 @@ import { SecondaryZkApp } from './SecondaryZkApp.js';
 
 import { Field, Mina, PrivateKey, AccountUpdate } from 'o1js';
 
-// import { showTxn, saveTxn, printTxn } from 'mina-transaction-visualizer';
-
 (async function main() {
   const proofsEnabled = false;
   const Local = await Mina.LocalBlockchain({ proofsEnabled });
@@ -45,8 +43,6 @@ import { Field, Mina, PrivateKey, AccountUpdate } from 'o1js';
   await deployTxn.prove();
   deployTxn.sign([deployerKey, proofsOnlySk, secondarySk]);
 
-  // await showTxn(deployTxn, 'deploy_txn', legend);
-
   await deployTxn.send();
 
   // ----------------------------------------------------
@@ -57,9 +53,6 @@ import { Field, Mina, PrivateKey, AccountUpdate } from 'o1js';
 
   await txn1.prove();
 
-  // // await showTxn(txn1, 'txn1', legend);
-  // // await saveTxn(txn1, 'txn1', legend, './txn1.png');
-
   await txn1.sign([deployerKey]);
 
   // ----------------------------------------------------
@@ -69,9 +62,6 @@ import { Field, Mina, PrivateKey, AccountUpdate } from 'o1js';
   });
 
   await txn2.prove();
-
-  // await showTxn(txn2, 'txn2', legend);
-  // await saveTxn(txn2, 'txn2', legend, './txn2.png');
 
   await txn2.sign([deployerKey]).send();
 })();

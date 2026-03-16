@@ -4,19 +4,62 @@ title: How to Delegate
 
 import Subhead from "@site/src/components/common/Subhead";
 
+<Subhead>
+Learn how to delegate MINA and receive staking rewards.  
+
 # How to Delegate
 
-<Subhead>
-Learn how to delegate MINA and receive staking rewards
-</Subhead>
+</Subhead>  
 
-Instead of running your own node, you can delegate MINA to a validator (block producer) and receive staking rewards.
+Instead of running your own node, you can delegate your MINA tokens to a validator (also called a block producer) and may receive staking rewards in return. 
+
+Delegation is simple, requires no technical expertise, and allows you to participate in securing the Mina network while potentially earning variable rewards, which have historically averaged around 7% annually depending on network conditions and validator performance.
+
+Rewards are provided by independent validators. No entity custodies, controls, or guarantees any staking returns. Past performance is not indicative of future results
+
+### Understanding Staking vs Delegating
+
+**Delegating (recommended for most users):** You assign your MINA to a validator who runs the infrastructure. You earn rewards without needing to run a node yourself. This is what most MINA holders do.
+
+**Running a block producer (advanced):** You operate your own node 24/7 to produce blocks directly. This requires technical knowledge, reliable infrastructure, and constant monitoring. [**More info here.**](https://minaprotocol.com/node-operators)
+
+**This guide focuses on delegating**, which is simple and accessible to everyone.
+
+### Why Delegate MINA?
+
+- **No minimum amount required** - Delegate any amount of MINA
+- **No lock-up period** - Your MINA stays in your wallet and remains accessible
+- **No slashing risk** - Tokens aren’t taken for validator downtime or misbehavior
+- **Earn rewards by helping secure the Mina network** - delegating your MINA supports decentralization and may yield variable staking returns (recently ~7% annually, depending on validator performance and network conditions).
+- **Support decentralization** - Help secure and decentralize the Mina network
+
+Even if you don't stake Mina, your wallet may still be called upon to produce a block. If you aren't delegating or staking, no block will be produced and no transactions get processed in that slot. By delegating or staking your MINA, you ensure it actively helps produce blocks and secure the network.
 
 ### Prerequisites
 
-First, ensure you installed a Mina wallet with funds.
+Before delegating, ensure you have:
+1. A Mina wallet installed (Auro, Clorio, or Ledger)
+2. MINA tokens in your wallet
+3. A small amount of MINA for transaction fees
 
-### Delegating MINA
+### How Delegation Works
+
+When you delegate MINA to a validator:
+
+1. Your tokens **never leave your wallet** - you maintain full control
+2. The validator uses your stake weight to increase their chances of producing blocks
+3. When the validator wins a block (720 MINA reward), they distribute rewards proportionally to all delegators
+4. The validator takes a commission fee and you receive your share of the remaining rewards
+5. It takes **2-4 weeks** for your delegation to become active on the network
+6. You can change validators anytime with no penalties
+
+:::note
+
+Values like staking rewards, epoch duration, and APY are subject to change with network upgrades. After the upcoming Mesa upgrade, block rewards will decrease from 720 to 360 MINA per block, and epoch duration will reduce from 2-4 weeks to 1-2 weeks.
+
+:::
+
+### How to Delegate Mina
 
 Here’s how to delegate MINA within common wallets:
 
@@ -46,7 +89,7 @@ Here’s how to delegate MINA within common wallets:
 </center>
 <br></br>
 
-- [**Ledger Hardware Wallet**](https://www.ledger.com/mina-wallet) - Follow the [instructions on creating a Ledger Mina account via Auro Wallet](https://support.ledger.com/hc/en-us/articles/5458493215901-Creating-a-Ledger-MINA-account-via-Auro-Wallet?docs=true), then see the instructions for staking MINA on Auro wallet above.
+- [**Ledger Hardware Wallet**](https://www.ledger.com/mina-wallet) - Follow the [instructions on creating a Ledger Mina account via Auro Wallet](https://www.ledger.com/coin/wallet/mina-protocol#learn-more), then see the instructions for staking MINA on Auro wallet above.
 - [**Pallad**](https://get.pallad.co/website) - Open the wallet, tap upper-right Menu button. Select "*Staking*" from the sidebar menu. Click "*Stake*", paste validator public key or use "*Find a validator*". Tap "*Next*", enter your spending password and submit to confirm the transaction.
 
 <center>
@@ -62,6 +105,33 @@ Here’s how to delegate MINA within common wallets:
 
 :::note
 
-When sending transactions on a blockchain, such as Mina, senders must include a transaction fee. Most wallets calculate a recommended fee. You can also view a suggested fee amount based on current network transaction volume at this community-created [Gas Station website](https://fees.mina.tools/).
+Mention of third-party wallets or exchanges is for informational purposes only and does not constitute an endorsement or guarantee. Please review each provider’s terms and regional availability before use.
 
 :::
+
+### Choosing a Validator
+
+Most wallets display a list of available validators with their commission rates and statistics. You can also:
+- Browse validators on [MinaScan](https://minascan.io/mainnet/validators/terms)
+- Ask the community in [Mina Discord](https://discord.gg/minaprotocol)
+- Check Block Producer’s performance on this [Uptime Tracker](https://uptime.minaprotocol.com/)
+
+When selecting a validator to delegate to, consider these factors:
+
+- **Commission Rate:** Validators charge a fee from block rewards before distributing to delegators. Lower commission means you keep more of your rewards, but reliable validators need sustainable fees to maintain quality infrastructure.
+- **Block Production Rate & Performance:** Check the validator's uptime and block production history. 
+- **Reputation & Transparency:** Choose validators who are active on X or Discord with transparent communication about their operations. 
+- **Network Decentralization:** Supporting smaller, reliable validators helps decentralize the network and improve security for everyone. 
+
+### Choosing a Validator
+
+Your delegation will become active after **2-4 weeks** (1-2 epochs). Here are some extra things to note:
+
+- **Checking Your Status:** Most wallets show your current delegation status, including:
+    - Which validator you're delegated to
+    - When your delegation becomes active
+    - Your earned rewards
+- **Receiving Rewards:** Rewards are automatically credited to your account every epoch assuming your validator successfully produces blocks.. You don't need to claim them manually - they simply appear in your wallet balance.
+- **Changing Validators:** You can change validators anytime by submitting a new delegation transaction. The change will take effect after 1-2 epochs. There are no penalties for switching.
+- **Undelegating:** To stop delegating, you can delegate to yourself (your own public key) or simply let your current delegation remain inactive. Your MINA is always accessible regardless of delegation status.
+- **Transaction Fees:** When sending transactions on a blockchain, such as Mina, senders must include a transaction fee. Most wallets calculate a recommended fee automatically.

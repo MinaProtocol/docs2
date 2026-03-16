@@ -70,7 +70,7 @@ internal snark-worker --proof-level full --shutdown-on-disconnect false --daemon
 To start a SNARK-worker, run `mina daemon` with these flags:
 
 ```sh
---run-snark-worker <PUBLICKEY>\ --snark-worker-fee <FEE> --work-selection <seq|rand>
+--run-snark-worker <PUBLICKEY>\ --snark-worker-fee <FEE> --work-selection <seq|rand|roffset>
 ```
 
 Use the `--snark-worker-parallelism` flag to set the number of threads used in snark working, this does not affect block production.

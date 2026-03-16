@@ -11,6 +11,10 @@ keywords:
   - zero knowledge proofs
 ---
 
+import MigrateBanner from '@site/src/components/snippets/migrate-banner.mdx';
+
+<MigrateBanner />
+
 # Security and zkApps
 
 On this page, you will find guidance for how to think about security when building zkApps. We also provide a list of best practices and common pitfalls to help you avoid vulnerabilities.
@@ -19,8 +23,7 @@ On this page, you will find guidance for how to think about security when buildi
 
 Apart from acquiring a solid understanding of security aspects of zkApps, we recommend that critical applications also get audited by independent security experts.
 
-There has been an internal audit of the o1js code base already, [the results of which you can find here](/zkapps/o1js#audits-of-o1js).
-
+There has been an internal audit of the o1js code base already, [the results of which you can find here](/zkapps/o1js#audits-of-o1js).  You can also see the results of a third-party audit, performed by Veridise, [here](https://github.com/o1-labs/o1js/blob/a09c5167c4df64f879684e5af14c59cf7a6fce11/audits/VAR_o1js_240318_o1js_V3.pdf).
 ## Attack model
 
 The first and most important step for zkApp developers is to understand the attack model of zkApps, which differs from traditional web apps in important ways. In essence, there are two new kinds of attack:

@@ -8,6 +8,10 @@ keywords:
   - o1js
 ---
 
+import MigrateBanner from '@site/src/components/snippets/migrate-banner.mdx';
+
+<MigrateBanner />
+
 # Bitwise Operations
 
 Bitwise operations manipulate individual bits within a binary representation of a number. They can, at times, resemble boolean operations but apply to a sequence of bits instead of booleans. Bitwise operations are generally available in most programming languages, including TypeScript. o1js provides versions of them that operate on `Field` elements and result in the necessary circuit constraints to generate a zero knowledge proof of the computation. This is especially useful when implementing hashing algorithms such as SHA256.
@@ -120,7 +124,7 @@ c.assertEquals(0b0110);
 leftShift32(field: Field, bits: number) => Field
 ```
 
-The `leftShift32()` gadget is a provable equivalent to the [Left shift (<<)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Left_shift) operator in JavaScript. It moves the bits of a binary number to the left by the specified number of `bits`. Any bits that fall off the left side are discarded. 0s are padded in from the right. It returns a new `Field` element that is range-checked to 32 bits.
+The `leftShift32()` gadget is a provable equivalent to the [Left shift (&lt;&lt;)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Left_shift) operator in JavaScript. It moves the bits of a binary number to the left by the specified number of `bits`. Any bits that fall off the left side are discarded. 0s are padded in from the right. It returns a new `Field` element that is range-checked to 32 bits.
 
 The input `Field` must not exceed 32 bits in size. You can use [rangeCheck32](#rangecheck32) to ensure this.
 
@@ -138,7 +142,7 @@ y.assertEquals(0b110000); // 48 in binary
 leftShift64(field: Field, bits: number) => Field
 ```
 
-The `leftShift64()` gadget is a provable equivalent to the [Left shift (<<)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Left_shift) operator in JavaScript. It moves the bits of a binary number to the left by the specified number of `bits`. Any bits that fall off the left side are discarded. 0s are padded in from the right. It returns a new `Field` element that is range-checked to 64 bits.
+The `leftShift64()` gadget is a provable equivalent to the [Left shift (&lt;&lt;)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Left_shift) operator in JavaScript. It moves the bits of a binary number to the left by the specified number of `bits`. Any bits that fall off the left side are discarded. 0s are padded in from the right. It returns a new `Field` element that is range-checked to 64 bits.
 
 The input `Field` must not exceed 64 bits in size. You can use [rangeCheck64](#rangecheck64) to ensure this.
 

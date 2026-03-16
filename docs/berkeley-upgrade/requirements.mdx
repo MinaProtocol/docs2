@@ -30,7 +30,7 @@ Please note the following are the hardware requirements for each node type after
 
 :::caution
 
-If you have `mina-generate-keypair` installed, you will need to first `sudo apt remove mina-generate-keypair` before installing `mina-mainnet=3.0.0-93e0279`.  
+If you have `mina-generate-keypair` installed, you will need to first `sudo apt remove mina-generate-keypair` before installing `mina-mainnet=3.1.0-ae112d3`.
 The `mina-generate-keypair` binary is now installed as part of the mina-mainnet package.
 
 :::
@@ -56,8 +56,8 @@ Ensure your nodes are set to restart automatically after a crash. For guidance, 
 
 ### Generation of libp2p keypair
 
-To ensure connectivity across the network, it is essential that all seed nodes start with the **same** `libp2p` keypair.  
-This consistency allows other nodes in the network to reliably connect.  
+To ensure connectivity across the network, it is essential that all seed nodes start with the **same** `libp2p` keypair.
+This consistency allows other nodes in the network to reliably connect.
 Although the same libp2p keys can be reused from before the upgrade, if you need to manually generate new libp2p keys, use the following command:
 
 ```

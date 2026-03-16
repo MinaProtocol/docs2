@@ -6,7 +6,7 @@ keywords:
   - Reference
 ---
 
-# o1js &nbsp; [![npm version](https://img.shields.io/npm/v/o1js.svg?style=flat)](https://www.npmjs.com/package/o1js) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/o1-labs/o1js/blob/main/CONTRIBUTING.md)
+# o1js &nbsp; [![npm version](https://img.shields.io/npm/v/o1js.svg?style=flat)](https://www.npmjs.com/package/o1js) [![npm](https://img.shields.io/npm/dm/o1js)](https://www.npmjs.com/package/o1js) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/o1-labs/o1js/blob/main/CONTRIBUTING.md)
 
 ℹ️ **o1js** is an evolution of [SnarkyJS](https://www.npmjs.com/package/snarkyjs) which saw
 49 updated versions over two years of development with 43,141 downloads.
@@ -46,7 +46,7 @@ o1js is automatically included when you create a project using the [zkApp CLI](h
 
 - For a list of changes between versions, see the [CHANGELOG](https://github.com/o1-labs/o1js/blob/main/CHANGELOG.md).
 
-- To stay up to date with o1js, see the [O(1) Labs Blog](https://blog.o1labs.org/tagged/o1js).
+- To stay up to date with o1js, see the [O(1) Labs Blog](https://www.o1labs.org/blog?topics=o1js).
 
 ## Contributing
 
@@ -64,6 +64,7 @@ High-quality community packages from open source developers are available for yo
 
 - **o1js-elgamal** A partially homomorphic encryption library for o1js based on Elgamal encryption: [GitHub](https://github.com/Trivo25/o1js-elgamal) and [npm](https://www.npmjs.com/package/o1js-elgamal)
 - **o1js-pack** A library for o1js that allows a zkApp developer to pack extra data into a single Field. [GitHub](https://github.com/45930/o1js-pack) and [npm](https://www.npmjs.com/package/o1js-pack)
+- **zk-regex-o1js** A CLI tool for compiling ZK Regex circuits in o1js. [Github](https://github.com/Shigoto-dev19/zk-regex-o1js) and [npm](https://www.npmjs.com/package/zk-regex-o1js)
 
 To include your package, see [Creating high-quality community packages](https://github.com/o1-labs/o1js/blob/main/CONTRIBUTING.md#creating-high-quality-community-packages).
 
@@ -86,10 +87,8 @@ To include your package, see [Creating high-quality community packages](https://
 | [CircuitString](classes/CircuitString.mdx) | - |
 | [DynamicProof](classes/DynamicProof.mdx) | The `DynamicProof` class enables circuits to verify proofs using in-ciruit verfication keys. |
 | [EcdsaSignature](classes/EcdsaSignature.mdx) | - |
-| [EcdsaSignatureV2](classes/EcdsaSignatureV2.mdx) | - |
 | [Field](classes/Field.mdx) | A [Field](classes/Field.mdx) is an element of a prime order [finite field](https://en.wikipedia.org/wiki/Finite_field). |
 | [ForeignCurve](classes/ForeignCurve.mdx) | - |
-| [ForeignCurveV2](classes/ForeignCurveV2.mdx) | - |
 | [ForeignField](classes/ForeignField.mdx) | - |
 | [Group](classes/Group.mdx) | An element of a Group. |
 | [Hashed](classes/Hashed.mdx) | `Hashed<T>` represents a type `T` by its hash. |
@@ -108,6 +107,7 @@ To include your package, see [Creating high-quality community packages](https://
 | [ProofBase](classes/ProofBase.mdx) | - |
 | [PublicKey](classes/PublicKey.mdx) | A public key, which is also an address on the Mina network. |
 | [Scalar](classes/Scalar.mdx) | Represents a [Scalar](classes/Scalar.mdx). |
+| [ScalarField](classes/ScalarField.mdx) | ForeignField representing the scalar field of Pallas and the base field of Vesta |
 | [SelfProof](classes/SelfProof.mdx) | - |
 | [Sign](classes/Sign.mdx) | - |
 | [Signature](classes/Signature.mdx) | A Schnorr [Signature](classes/Signature.mdx) over the Pasta Curves. |
@@ -143,17 +143,24 @@ To include your package, see [Creating high-quality community packages](https://
 | [Provable](type-aliases/Provable.mdx) | `Provable<T>` is the general interface for provable types in o1js. |
 | [ProvableExtended](type-aliases/ProvableExtended.mdx) | - |
 | [ProvableHashable](type-aliases/ProvableHashable.mdx) | - |
+| [ProvableHashable](type-aliases/ProvableHashable-1.mdx) | - |
 | [ProvablePure](type-aliases/ProvablePure.mdx) | `ProvablePure<T>` is a special kind of [Provable](type-aliases/Provable.mdx) interface, where the "auxiliary" (non-provable) data is empty. |
+| [ProvableType](type-aliases/ProvableType.mdx) | - |
+| [ProvableTypePure](type-aliases/ProvableTypePure.mdx) | - |
+| [ProvableWithEmpty](type-aliases/ProvableWithEmpty.mdx) | - |
 | [Reducer](type-aliases/Reducer.mdx) | - |
 | [ScalarConst](type-aliases/ScalarConst.mdx) | - |
 | [State](type-aliases/State.mdx) | Gettable and settable state that can be checked for equality. |
 | [Struct](type-aliases/Struct.mdx) | - |
+| [ToProvable](type-aliases/ToProvable.mdx) | - |
 | [TransactionPromise](type-aliases/TransactionPromise.mdx) | A `Promise<Transaction>` with some additional methods for making chained method calls |
 | [TransactionStatus](type-aliases/TransactionStatus.mdx) | INCLUDED: A transaction that is on the longest chain |
+| [TupleN](type-aliases/TupleN.mdx) | tuple type that has the length as generic parameter |
 | [Undefined](type-aliases/Undefined.mdx) | - |
 | [VarField](type-aliases/VarField.mdx) | - |
 | [Void](type-aliases/Void.mdx) | - |
 | [WithHash](type-aliases/WithHash.mdx) | - |
+| [WithProvable](type-aliases/WithProvable.mdx) | - |
 | [Witness](type-aliases/Witness.mdx) | - |
 | [ZkProgram](type-aliases/ZkProgram.mdx) | - |
 | [ZkappPublicInput](type-aliases/ZkappPublicInput.mdx) | The public input for zkApps consists of certain hashes of the proving |
@@ -170,8 +177,10 @@ To include your package, see [Creating high-quality community packages](https://
 | [Keccak](variables/Keccak.mdx) | - |
 | [Permissions](variables/Permissions.mdx) | - |
 | [Poseidon](variables/Poseidon.mdx) | - |
+| [ProvableType](variables/ProvableType.mdx) | - |
 | [TokenId](variables/TokenId.mdx) | - |
 | [TransactionVersion](variables/TransactionVersion.mdx) | - |
+| [TupleN](variables/TupleN.mdx) | - |
 | [Undefined](variables/Undefined.mdx) | - |
 | [Void](variables/Void.mdx) | - |
 | [ZkappPublicInput](variables/ZkappPublicInput.mdx) | - |
@@ -193,10 +202,8 @@ To include your package, see [Creating high-quality community packages](https://
 | [checkZkappTransaction](functions/checkZkappTransaction.mdx) | - |
 | [circuitMain](functions/circuitMain.mdx) | - |
 | [conditionalSwap](functions/conditionalSwap.mdx) | - |
-| [createEcdsa](functions/createEcdsa.mdx) | - |
-| [createEcdsaV2](functions/createEcdsaV2.mdx) | Create a class [EcdsaSignatureV2](classes/EcdsaSignatureV2.mdx) for verifying ECDSA signatures on the given curve. |
-| [createForeignCurve](functions/createForeignCurve.mdx) | - |
-| [createForeignCurveV2](functions/createForeignCurveV2.mdx) | Create a class representing an elliptic curve group, which is different from the native [Group](classes/Group.mdx). |
+| [createEcdsa](functions/createEcdsa.mdx) | Create a class [EcdsaSignature](classes/EcdsaSignature.mdx) for verifying ECDSA signatures on the given curve. |
+| [createForeignCurve](functions/createForeignCurve.mdx) | Create a class representing an elliptic curve group, which is different from the native [Group](classes/Group.mdx). |
 | [createForeignField](functions/createForeignField.mdx) | Create a class representing a prime order finite field, which is different from the native [Field](classes/Field.mdx). |
 | [declareMethods](functions/declareMethods.mdx) | `declareMethods` can be used in place of the `@method` decorator |
 | [declareState](functions/declareState.mdx) | `declareState` can be used in place of the `@state` decorator to declare on-chain state on a SmartContract. |

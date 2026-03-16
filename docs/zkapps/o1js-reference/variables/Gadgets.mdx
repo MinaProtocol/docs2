@@ -1,5 +1,6 @@
 ```ts
 const Gadgets: {
+  "BLAKE2B": BLAKE2B;
   "Field3": {
      "provable": {
         "fromValue": Field3;
@@ -23,10 +24,17 @@ const Gadgets: {
      "neg": Field3;
      "sub": Field3;
      "sum": Field3;
+     "toCanonical": Field3;
     };
   "SHA256": SHA256;
   "addMod32": (x: Field, y: Field) => Field;
-  "divMod32": (n: Field, quotientBits: number) => {
+  "addMod64": (x: Field, y: Field) => Field;
+  "arrayGet": (array: Field[], index: Field) => Field;
+  "divMod32": (n: Field, nBits: number) => {
+     "quotient": Field;
+     "remainder": Field;
+    };
+  "divMod64": (n: Field, nBits: number) => {
      "quotient": Field;
      "remainder": Field;
     };
@@ -37,6 +45,7 @@ const Gadgets: {
   "leftShift64": Field;
   "multiRangeCheck": void;
   "not": Field;
+  "or": Field;
   "rangeCheck16": void;
   "rangeCheck32": void;
   "rangeCheck3x12": void;
@@ -51,6 +60,59 @@ const Gadgets: {
 ```
 
 ## Type declaration
+
+### BLAKE2B
+
+```ts
+BLAKE2B: {
+  get "IV": UInt64[];
+  "hash": Bytes;
+};
+```
+
+Implementation of the [BLAKE2b hash function.](https://en.wikipedia.org/wiki/BLAKE_(hash_function)#BLAKE2) Hash function with arbitrary length output.
+
+Applies the BLAKE2b hash function to a list of byte-sized elements.
+
+The function accepts [Bytes](../type-aliases/Bytes.mdx) as the input message, which is a type that represents a static-length list of byte-sized field elements (range-checked using Gadgets.rangeCheck8).
+Alternatively, you can pass plain `number[]`, `bigint[]` or `Uint8Array` to perform a hash outside provable code.
+
+Produces an output of [Bytes](../type-aliases/Bytes.mdx) that conforms to the chosen digest length.
+
+#### Param
+
+[Bytes](../type-aliases/Bytes.mdx) representing the message to hash.
+
+```ts
+let preimage = Bytes.fromString("hello world");
+let digest = Gadgets.BLAKE2b.hash(preimage);
+```
+
+### BLAKE2B.IV
+
+```ts
+get IV(): UInt64[]
+```
+
+#### Returns
+
+[`UInt64`](../classes/UInt64.mdx)[]
+
+#### Source
+
+[lib/provable/gadgets/blake2b.ts:77](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/gadgets/blake2b.ts#L77)
+
+### BLAKE2B.hash()
+
+#### Parameters
+
+• **data**: `FlexibleBytes`
+
+• **digestLength**: `number`= `64`
+
+#### Returns
+
+`Bytes`
 
 ### Field3
 
@@ -169,6 +231,7 @@ ForeignField: {
   "neg": Field3;
   "sub": Field3;
   "sum": Field3;
+  "toCanonical": Field3;
 };
 ```
 
@@ -230,8 +293,8 @@ x + y mod f
 #### Example
 
 ```ts
-let x = Provable.witness(Field3.provable, () => Field3.from(9n));
-let y = Provable.witness(Field3.provable, () => Field3.from(10n));
+let x = Provable.witness(Field3, () => 9n);
+let y = Provable.witness(Field3, () => 10n);
 
 // range check x and y
 Gadgets.multiRangeCheck(x);
@@ -252,7 +315,7 @@ It only guarantees that the result is in the correct residue class.
 Prove that each of the given Field3 elements is "almost" reduced modulo f,
 i.e., satisfies the assumptions required by Gadgets.ForeignField.mul and other gadgets:
 - each limb is in the range [0, 2^88)
-- the most significant limb is less or equal than the modulus, x[2] <= f[2]
+- the most significant limb is less or equal than the modulus, x[2] ≤ f[2]
 
 **Note**: This method is most efficient when the number of input elements is a multiple of 3.
 
@@ -277,9 +340,9 @@ if any of the assumptions is violated.
 #### Example
 
 ```ts
-let x = Provable.witness(Field3.provable, () => Field3.from(4n));
-let y = Provable.witness(Field3.provable, () => Field3.from(5n));
-let z = Provable.witness(Field3.provable, () => Field3.from(10n));
+let x = Provable.witness(Field3, () => 4n);
+let y = Provable.witness(Field3, () => 5n);
+let z = Provable.witness(Field3, () => 10n);
 
 ForeignField.assertAlmostReduced([x, y, z], f);
 
@@ -319,7 +382,7 @@ if x is greater or equal to f.
 #### Example
 
 ```ts
-let x = Provable.witness(Field3.provable, () => Field3.from(0x1235n));
+let x = Provable.witness(Field3, () => 0x1235n);
 
  // range check limbs of x
 Gadgets.multiRangeCheck(x);
@@ -330,7 +393,7 @@ Gadgets.ForeignField.assertLessThan(x, f);
 
 ### ForeignField.assertLessThanOrEqual()
 
-Prove that x <= f for any constant f < 2^264, or for another `Field3` f.
+Prove that x ≤ f for any constant f &lt; 2^264, or for another `Field3` f.
 
 See [ForeignField.assertLessThan](../classes/ForeignField.mdx#assertlessthan) for details and usage examples.
 
@@ -475,8 +538,8 @@ So, to use the result in another foreign field multiplication, you have to add t
 // example modulus: secp256k1 prime
 let f = (1n << 256n) - (1n << 32n) - 0b1111010001n;
 
-let x = Provable.witness(Field3.provable, () => Field3.from(f - 1n));
-let y = Provable.witness(Field3.provable, () => Field3.from(f - 2n));
+let x = Provable.witness(Field3, () => f - 1n);
+let y = Provable.witness(Field3, () => f - 2n);
 
 // range check x, y and prove additional bounds x[2] <= f[2]
 ForeignField.assertAlmostReduced([x, y], f);
@@ -557,9 +620,9 @@ See Gadgets.ForeignField.add for assumptions on inputs.
 #### Example
 
 ```ts
-let x = Provable.witness(Field3.provable, () => Field3.from(4n));
-let y = Provable.witness(Field3.provable, () => Field3.from(5n));
-let z = Provable.witness(Field3.provable, () => Field3.from(10n));
+let x = Provable.witness(Field3, () => 4n);
+let y = Provable.witness(Field3, () => 5n);
+let z = Provable.witness(Field3, () => 10n);
 
 // range check x, y, z
 Gadgets.multiRangeCheck(x);
@@ -572,12 +635,31 @@ let sum = ForeignField.sum([x, y, z], [1n, -1n], 17n);
 Provable.log(sum); // ['16', '0', '0'] = limb representation of 16 = 4 + 5 - 10 mod 17
 ```
 
+### ForeignField.toCanonical()
+
+Convert x, which may be unreduced, to a canonical representative xR < f
+such that x = xR mod f
+
+Note: This method is complete, it works for all unreduced field elements.
+It can therefore be used to protect against incompleteness of field operations in other places.
+
+#### Parameters
+
+• **x**: `Field3`
+
+• **f**: `bigint`
+
+#### Returns
+
+`Field3`
+
 ### SHA256
 
 ```ts
 SHA256: {
   "compression": sha256Compression;
   "createMessageSchedule": (M: UInt32[]) => UInt32[];
+  "padding": (data: FlexibleBytes) => UInt32[][];
   get "initialState": UInt32[];
   "hash": Bytes;
 };
@@ -645,6 +727,20 @@ The 512-bit message block (16-element array of UInt32).
 
 The message schedule (64-element array of UInt32).
 
+### SHA256.padding()
+
+```ts
+padding: (data: FlexibleBytes) => UInt32[][];
+```
+
+#### Parameters
+
+• **data**: `FlexibleBytes`
+
+#### Returns
+
+[`UInt32`](../classes/UInt32.mdx)[][]
+
 ### SHA256.initialState
 
 ```ts
@@ -657,7 +753,7 @@ get initialState(): UInt32[]
 
 #### Source
 
-[lib/provable/gadgets/sha256.ts:105](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/gadgets/sha256.ts#L105)
+[lib/provable/gadgets/sha256.ts:100](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/gadgets/sha256.ts#L100)
 
 ### SHA256.hash()
 
@@ -685,10 +781,48 @@ addMod32: (x: Field, y: Field) => Field;
 
 [`Field`](../classes/Field.mdx)
 
+### addMod64()
+
+```ts
+addMod64: (x: Field, y: Field) => Field;
+```
+
+#### Parameters
+
+• **x**: [`Field`](../classes/Field.mdx)
+
+• **y**: [`Field`](../classes/Field.mdx)
+
+#### Returns
+
+[`Field`](../classes/Field.mdx)
+
+### arrayGet()
+
+```ts
+arrayGet: (array: Field[], index: Field) => Field;
+```
+
+Get value from array in O(n) rows.
+
+Assumes that index is in [0, n), returns an unconstrained result otherwise.
+
+Note: This saves 0.5*n constraints compared to equals() + switch() even if equals() were implemented optimally.
+
+#### Parameters
+
+• **array**: [`Field`](../classes/Field.mdx)[]
+
+• **index**: [`Field`](../classes/Field.mdx)
+
+#### Returns
+
+[`Field`](../classes/Field.mdx)
+
 ### divMod32()
 
 ```ts
-divMod32: (n: Field, quotientBits: number) => {
+divMod32: (n: Field, nBits: number) => {
   "quotient": Field;
   "remainder": Field;
 };
@@ -698,7 +832,43 @@ divMod32: (n: Field, quotientBits: number) => {
 
 • **n**: [`Field`](../classes/Field.mdx)
 
-• **quotientBits**: `number`= `32`
+• **nBits**: `number`= `64`
+
+#### Returns
+
+```ts
+{
+  "quotient": Field;
+  "remainder": Field;
+}
+```
+
+##### quotient
+
+```ts
+quotient: Field;
+```
+
+##### remainder
+
+```ts
+remainder: Field;
+```
+
+### divMod64()
+
+```ts
+divMod64: (n: Field, nBits: number) => {
+  "quotient": Field;
+  "remainder": Field;
+};
+```
+
+#### Parameters
+
+• **n**: [`Field`](../classes/Field.mdx)
+
+• **nBits**: `number`= `128`
 
 #### Returns
 
@@ -726,7 +896,8 @@ remainder: Field;
 Bitwise AND gadget on [Field](Field.mdx) elements. Equivalent to the [bitwise AND `&` operator in JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Bitwise_AND).
 The AND gate works by comparing two bits and returning `1` if both bits are `1`, and `0` otherwise.
 
-It can be checked by a double generic gate that verifies the following relationship between the values below (in the process it also invokes the Gadgets.xor gadget which will create additional constraints depending on `length`).
+It can be checked by a double generic gate that verifies the following relationship between the values 
+below (in the process it also invokes the Gadgets.xor gadget which will create additional constraints depending on `length`).
 
 The generic gate verifies:\
 `a + b = sum` and the conjunction equation `2 * and = sum - xor`\
@@ -737,7 +908,9 @@ Where:\
 
 You can find more details about the implementation in the [Mina book](https://o1-labs.github.io/proof-systems/specs/kimchi.html?highlight=gates#and)
 
-The `length` parameter lets you define how many bits should be compared. `length` is rounded to the nearest multiple of 16, `paddedLength = ceil(length / 16) * 16`, and both input values are constrained to fit into `paddedLength` bits. The output is guaranteed to have at most `paddedLength` bits as well.
+The `length` parameter lets you define how many bits should be compared. `length` is rounded
+to the nearest multiple of 16, `paddedLength = ceil(length / 16) * 16`, and both input values 
+are constrained to fit into `paddedLength` bits. The output is guaranteed to have at most `paddedLength` bits as well.
 
 **Note:** Specifying a larger `length` parameter adds additional constraints.
 
@@ -1006,6 +1179,42 @@ b.assertEquals(0b1010);
 #### Throws
 
 Throws an error if the input value exceeds 254 bits.
+
+### or()
+
+Bitwise OR gadget on [Field](Field.mdx) elements. Equivalent to the [bitwise OR `|` operator in JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Bitwise_OR).
+The OR gate works by comparing two bits and returning `1` if at least one bit is `1`, and `0` otherwise.
+
+The `length` parameter lets you define how many bits should be compared. `length` is rounded 
+to the nearest multiple of 16, `paddedLength = ceil(length / 16) * 16`, and both input values 
+are constrained to fit into `paddedLength` bits. The output is guaranteed to have at most `paddedLength` bits as well.
+
+**Note:** Specifying a larger `length` parameter adds additional constraints.
+
+**Note:** Both [Field](Field.mdx) elements need to fit into `2^paddedLength - 1`. Otherwise, an error is thrown and no proof can be generated.
+For example, with `length = 2` (`paddedLength = 16`), `and()` will fail for any input that is larger than `2**16`.
+
+#### Parameters
+
+• **a**: [`Field`](../classes/Field.mdx)
+
+• **b**: [`Field`](../classes/Field.mdx)
+
+• **length**: `number`
+
+#### Returns
+
+[`Field`](../classes/Field.mdx)
+
+#### Example
+
+```typescript
+let a = Field.from(3);    // ... 000011
+let b = Field.from(5);    // ... 000101
+
+let c = Gadgets.or(a, b, 16);    // ... 000111
+c.assertEquals(7);
+```
 
 ### rangeCheck16()
 
@@ -1395,4 +1604,4 @@ c.assertEquals(0b0110);
 
 ## Source
 
-[lib/provable/gadgets/gadgets.ts:36](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/gadgets/gadgets.ts#L36)
+[lib/provable/gadgets/gadgets.ts:39](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/gadgets/gadgets.ts#L39)

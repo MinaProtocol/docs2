@@ -148,7 +148,7 @@ We only need the last `k` (290) blocks of the blockchain to produce blocks. So o
 
 ### My sync status is offline?
 
-This status indicates that you have not received any messages from peers for the last ~24 minutes. Ensure that you use the `--peer-list` argument that points to `https://storage.googleapis.com/mina-seed-lists/mainnet_seeds.txt`
+This status indicates that you have not received any messages from peers for the last ~24 minutes. Ensure that you use the `--peer-list` argument that points to `https://bootnodes.minaprotocol.com/networks/mainnet.txt`
 
 See [Connect to Mainnet](./block-producer-node/connecting-to-the-network).
 
@@ -191,7 +191,7 @@ The client port `8301` should **never** be exposed to the internet. There may be
 
 ### Node fails with "Failed to find any peers, crashing as this is not a seed node"?
 
-Ensure that you use the `--peer-list` argument that points to `https://storage.googleapis.com/mina-seed-lists/mainnet_seeds.txt`
+Ensure that you use the `--peer-list` argument that points to `https://bootnodes.minaprotocol.com/networks/mainnet.txt`
 
 See [Connect to Mainnet](./block-producer-node/connecting-to-the-network).
 
@@ -338,7 +338,7 @@ If you are running a SNARK worker and not seeing any work being included in bloc
 
 Sometimes high fees will be included in blocks, and this is a function of how SNARK workers select which work to complete and which work is required to be purchased by the block producer.
 
-By default, the work selection for a SNARK worker is random. You can change this by adding the `-work-selection seq` flag to the `mina daemon` command, which will work on jobs in the order required to be included from the scan state and will likely result in your snarks being included without a potentially lengthy delay.
+By default, the work selection for a SNARK worker is random. You can change this by adding the `-work-selection` flag to the `mina daemon` command: `-work-selection seq` will work on jobs in the order required to be included from the scan state and will likely result in your snarks being included without a potentially lengthy delay; `-work-selection roffset` functions similarly to the `seq` option, but it begins processing jobs from a random offset instead of starting with the first job indicated by the scan state.
 
 For choosing fees, you can look at historical blocks to determine prices that have been bought.
 

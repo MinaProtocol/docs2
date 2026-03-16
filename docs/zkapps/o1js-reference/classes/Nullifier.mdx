@@ -80,7 +80,7 @@ new Nullifier(value: {
 
 #### Source
 
-[lib/provable/types/struct.ts:144](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/types/struct.ts#L144)
+[lib/provable/types/struct.ts:148](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/struct.ts#L148)
 
 ## Properties
 
@@ -129,7 +129,7 @@ h_m_pk_r: Group = Group;
 
 #### Source
 
-[lib/provable/crypto/nullifier.ts:26](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/crypto/nullifier.ts#L26)
+[lib/provable/crypto/nullifier.ts:26](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/crypto/nullifier.ts#L26)
 
 ***
 
@@ -171,7 +171,7 @@ s: Scalar = Scalar;
 
 #### Source
 
-[lib/provable/crypto/nullifier.ts:22](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/crypto/nullifier.ts#L22)
+[lib/provable/crypto/nullifier.ts:22](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/crypto/nullifier.ts#L22)
 
 ***
 
@@ -198,7 +198,7 @@ publicKey: Group = Group;
 
 #### Source
 
-[lib/provable/crypto/nullifier.ts:21](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/crypto/nullifier.ts#L21)
+[lib/provable/crypto/nullifier.ts:21](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/crypto/nullifier.ts#L21)
 
 ***
 
@@ -225,7 +225,7 @@ static _isStruct: true;
 
 #### Source
 
-[lib/provable/types/struct.ts:144](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/types/struct.ts#L144)
+[lib/provable/types/struct.ts:148](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/struct.ts#L148)
 
 ***
 
@@ -294,7 +294,7 @@ the element of type `T` to put assertions on.
 
 #### Source
 
-[lib/provable/types/provable-intf.ts:66](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/types/provable-intf.ts#L66)
+[lib/provable/types/provable-intf.ts:76](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/provable-intf.ts#L76)
 
 ***
 
@@ -404,7 +404,7 @@ publicKey: Group = Group;
 
 #### Source
 
-[lib/provable/types/struct.ts:154](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/types/struct.ts#L154)
+[lib/provable/types/struct.ts:158](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/struct.ts#L158)
 
 ***
 
@@ -518,7 +518,7 @@ publicKey: Group = Group;
 
 #### Source
 
-[lib/provable/types/provable-intf.ts:87](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/types/provable-intf.ts#L87)
+[lib/provable/types/provable-intf.ts:115](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/provable-intf.ts#L115)
 
 ***
 
@@ -602,7 +602,7 @@ Convert provable type from a normal JS type.
 
 #### Source
 
-[lib/provable/types/provable-intf.ts:76](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/types/provable-intf.ts#L76)
+[lib/provable/types/provable-intf.ts:86](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/provable-intf.ts#L86)
 
 ***
 
@@ -670,7 +670,163 @@ If not provided, a default value for auxiliary data is returned.
 
 #### Source
 
-[lib/provable/types/provable-intf.ts:37](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/types/provable-intf.ts#L37)
+[lib/provable/types/provable-intf.ts:47](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/provable-intf.ts#L47)
+
+***
+
+### toCanonical()?
+
+```ts
+static optional toCanonical: (x: {
+  "private": {
+     "c": Field;
+     "g_r": Group;
+     "h_m_pk_r": Group;
+    };
+  "public": {
+     "nullifier": Group;
+     "s": Scalar;
+    };
+  "publicKey": Group;
+ }) => {
+  "private": {
+     "c": Field;
+     "g_r": Group;
+     "h_m_pk_r": Group;
+    };
+  "public": {
+     "nullifier": Group;
+     "s": Scalar;
+    };
+  "publicKey": Group;
+};
+```
+
+Optional method which transforms a provable type into its canonical representation.
+
+This is needed for types that have multiple representations of the same underlying value,
+and might even not have perfect completeness for some of those representations.
+
+An example is the `ForeignField` class, which allows non-native field elements to exist in unreduced form.
+The unreduced form is not perfectly complete, for example, addition of two unreduced field elements can cause a prover error.
+
+Specific protocols need to be able to protect themselves against incomplete operations at all costs.
+For example, when using actions and reducer, the reducer must be able to produce a proof regardless of the input action.
+`toCanonical()` converts any input into a safe form and enables us to handle cases like this generically.
+
+Note: For most types, this method is the identity function.
+The identity function will also be used when the `toCanonical()` is not present on a type.
+
+#### Parameters
+
+• **x**
+
+• **x.private**= `undefined`
+
+• **x.private.c**: [`Field`](Field.mdx)= `Field`
+
+• **x.private.g\_r**: [`Group`](Group.mdx)= `Group`
+
+• **x.private.h\_m\_pk\_r**: [`Group`](Group.mdx)= `Group`
+
+• **x.public**= `undefined`
+
+• **x.public.nullifier**: [`Group`](Group.mdx)= `Group`
+
+• **x.public.s**: [`Scalar`](Scalar.mdx)= `Scalar`
+
+• **x.publicKey**: [`Group`](Group.mdx)= `Group`
+
+#### Returns
+
+```ts
+{
+  "private": {
+     "c": Field;
+     "g_r": Group;
+     "h_m_pk_r": Group;
+    };
+  "public": {
+     "nullifier": Group;
+     "s": Scalar;
+    };
+  "publicKey": Group;
+}
+```
+
+##### private
+
+```ts
+private: {
+  "c": Field;
+  "g_r": Group;
+  "h_m_pk_r": Group;
+};
+```
+
+##### private.c
+
+```ts
+c: Field = Field;
+```
+
+##### private.g\_r
+
+```ts
+g_r: Group = Group;
+```
+
+##### private.h\_m\_pk\_r
+
+```ts
+h_m_pk_r: Group = Group;
+```
+
+##### public
+
+```ts
+public: {
+  "nullifier": Group;
+  "s": Scalar;
+};
+```
+
+##### public.nullifier
+
+```ts
+nullifier: Group = Group;
+```
+
+##### public.s
+
+```ts
+s: Scalar = Scalar;
+```
+
+##### publicKey
+
+```ts
+publicKey: Group = Group;
+```
+
+#### Inherited from
+
+`Struct({
+  publicKey: Group,
+  public: {
+    nullifier: Group,
+    s: Scalar,
+  },
+  private: {
+    c: Field,
+    g_r: Group,
+    h_m_pk_r: Group,
+  },
+}).toCanonical`
+
+#### Source
+
+[lib/provable/types/provable-intf.ts:104](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/provable-intf.ts#L104)
 
 ***
 
@@ -737,7 +893,7 @@ the element of type `T` to generate the [Field](Field.mdx) array from.
 
 #### Source
 
-[lib/provable/types/provable-intf.ts:26](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/types/provable-intf.ts#L26)
+[lib/provable/types/provable-intf.ts:36](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/provable-intf.ts#L36)
 
 ***
 
@@ -819,7 +975,7 @@ optional packed: [Field, number][];
 
 #### Source
 
-[lib/provable/types/struct.ts:148](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/types/struct.ts#L148)
+[lib/provable/types/struct.ts:152](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/struct.ts#L152)
 
 ***
 
@@ -1020,7 +1176,7 @@ y: string;
 
 #### Source
 
-[lib/provable/types/struct.ts:152](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/types/struct.ts#L152)
+[lib/provable/types/struct.ts:156](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/struct.ts#L156)
 
 ***
 
@@ -1223,7 +1379,7 @@ y: bigint;
 
 #### Source
 
-[lib/provable/types/provable-intf.ts:71](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/types/provable-intf.ts#L71)
+[lib/provable/types/provable-intf.ts:81](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/provable-intf.ts#L81)
 
 ## Methods
 
@@ -1254,7 +1410,7 @@ nullifier.assertUnused();
 
 #### Source
 
-[lib/provable/crypto/nullifier.ts:128](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/crypto/nullifier.ts#L128)
+[lib/provable/crypto/nullifier.ts:128](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/crypto/nullifier.ts#L128)
 
 ***
 
@@ -1278,7 +1434,7 @@ let pk = nullifier.getPublicKey();
 
 #### Source
 
-[lib/provable/crypto/nullifier.ts:157](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/crypto/nullifier.ts#L157)
+[lib/provable/crypto/nullifier.ts:157](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/crypto/nullifier.ts#L157)
 
 ***
 
@@ -1309,7 +1465,7 @@ let isUnused = nullifier.isUnused();
 
 #### Source
 
-[lib/provable/crypto/nullifier.ts:108](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/crypto/nullifier.ts#L108)
+[lib/provable/crypto/nullifier.ts:108](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/crypto/nullifier.ts#L108)
 
 ***
 
@@ -1335,7 +1491,7 @@ let key = nullifier.key();
 
 #### Source
 
-[lib/provable/crypto/nullifier.ts:95](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/crypto/nullifier.ts#L95)
+[lib/provable/crypto/nullifier.ts:95](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/crypto/nullifier.ts#L95)
 
 ***
 
@@ -1364,7 +1520,7 @@ let newRoot = nullifier.setUsed(witness);
 
 #### Source
 
-[lib/provable/crypto/nullifier.ts:143](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/crypto/nullifier.ts#L143)
+[lib/provable/crypto/nullifier.ts:143](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/crypto/nullifier.ts#L143)
 
 ***
 
@@ -1394,7 +1550,7 @@ nullifier.verify(nullifierMessage);
 
 #### Source
 
-[lib/provable/crypto/nullifier.ts:47](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/crypto/nullifier.ts#L47)
+[lib/provable/crypto/nullifier.ts:47](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/crypto/nullifier.ts#L47)
 
 ***
 
@@ -1423,7 +1579,7 @@ https://eprint.iacr.org/2022/1255.pdf chapter 3 page 14
 
 #### Source
 
-[lib/provable/crypto/nullifier.ts:170](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/crypto/nullifier.ts#L170)
+[lib/provable/crypto/nullifier.ts:170](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/crypto/nullifier.ts#L170)
 
 ***
 
@@ -1458,7 +1614,7 @@ static fromJSON(json: Nullifier): Nullifier
 
 #### Source
 
-[lib/provable/crypto/nullifier.ts:32](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/crypto/nullifier.ts#L32)
+[lib/provable/crypto/nullifier.ts:32](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/crypto/nullifier.ts#L32)
 
 ***
 
@@ -1493,4 +1649,4 @@ A `number` representing the size of the `T` type in terms of [Field](Field.mdx) 
 
 #### Source
 
-[lib/provable/types/provable-intf.ts:56](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/types/provable-intf.ts#L56)
+[lib/provable/types/provable-intf.ts:66](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/provable-intf.ts#L66)

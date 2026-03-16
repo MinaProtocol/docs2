@@ -77,7 +77,7 @@ Additionally you can use the `mina accounts create` command to generate new acco
 
 Since the public key is quite long and difficult to remember, let's save it as an environment variable. Use the following command but replace `<YOUR-PUBLIC-KEY>` with the public key output from the previous command:
 
-    export MINA_PUBLIC_KEY=<YOUR-PUBLIC-KEY>
+    export MINA_PUBLIC_KEY=`<YOUR-PUBLIC-KEY>`
 
 Now we can access this everywhere as `$MINA_PUBLIC_KEY` -- check if it saved properly by trying `echo $MINA_PUBLIC_KEY`.
 
@@ -87,15 +87,15 @@ Note that these environment variables will only be saved for the current shell s
 
 If you are running the node on a cloud virtual machine, make sure to export and save the key file. You can export the key with:
 
-    mina accounts export --public-key <PUBLIC-KEY> --privkey-path <EXPORT-PATH>
+    mina accounts export --public-key `<PUBLIC-KEY>` --privkey-path `<EXPORT-PATH>`
 
 Then save it to your local machine, maybe using [scp](https://linux.die.net/man/1/scp):
 
-    scp <EXPORT-PATH> <LOCAL-DESTINATION>
+    scp `<EXPORT-PATH>` `<LOCAL-DESTINATION>`
 
 Later, when starting up a new VM, you can upload the key and then import it:
 
-    mina accounts import --privkey-path <PRIVATE-KEY-FILE>
+    mina accounts import --privkey-path `<PRIVATE-KEY-FILE>`
 
 :::
 
@@ -167,19 +167,19 @@ Once you feel comfortable with the basics of creating an address, and sending & 
 
 Sometimes you may wish to send many transactions: for example, to payout rewards to those delegating to you if you're running a staking pool.
 
-All information here is relevant as of the 3.0.0 build:
+All information here is relevant as of the 3.0.3 build:
 
 ### Rate limiting
 
-Currently, nodes on the network will rate limit receiving messages from a given node. As of the 3.0.0 build, your node will also follow this rate limit when sending transactions. Specifically, the limit is currently set at 10 transactions every 15 seconds computed over a 5 minute window. If you attempt to send transactions faster than this rate, your node will queue them up and flush them as older transactions expire from the window upon which the rate limit is computed. You do not need to throttle sending these transactions yourself.
+Currently, nodes on the network will rate limit receiving messages from a given node. As of the 3.0.3 build, your node will also follow this rate limit when sending transactions. Specifically, the limit is currently set at 10 transactions every 15 seconds computed over a 5 minute window. If you attempt to send transactions faster than this rate, your node will queue them up and flush them as older transactions expire from the window upon which the rate limit is computed. You do not need to throttle sending these transactions yourself.
 
 Note that older releases of the mina daemon do not perform this rate limiting; if you are running an older version, you should manually limit the number of transactions. Due to overheads from rebroadcasting transactions, we do not recommend sending more than 50 transactions every 5 minutes if you need to manually rate limit.
 
 ### My node crashed or disconnected before I could finish sending transactions
 
-The Mina daemon does _not_ currently persist the transaction pool. This means that the transactions that your node will be unaware of any transactions that you've sent so far if your node crashes in the middle of this process. As of the 3.0.0 build, you can resend all transactions (exactly in the same manner as before) and they will be rebroadcasted on the network.
+The Mina daemon does _not_ currently persist the transaction pool. This means that the transactions that your node will be unaware of any transactions that you've sent so far if your node crashes in the middle of this process. As of the 3.0.3 build, you can resend all transactions (exactly in the same manner as before) and they will be rebroadcasted on the network.
 
-If you believe you were temporarily disconnected from the network, but your node stayed online (i.e. the gossip network may have missed one or more of your transactions), as of the 3.0.0 build, you can resend any of the transactions locally and they will be broadcasted again to the network even if your node thinks they've already been shared.
+If you believe you were temporarily disconnected from the network, but your node stayed online (i.e. the gossip network may have missed one or more of your transactions), as of the 3.0.3 build, you can resend any of the transactions locally and they will be broadcasted again to the network even if your node thinks they've already been shared.
 
 ### Cancelling a transaction and setting a new fee
 

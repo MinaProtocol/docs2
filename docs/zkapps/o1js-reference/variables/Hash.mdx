@@ -1,5 +1,8 @@
 ```ts
 const Hash: {
+  "BLAKE2B": {
+     "hash": Bytes;
+    };
   "Keccak256": {
      "hash": Bytes;
     };
@@ -40,6 +43,24 @@ const Hash: {
 A collection of hash functions which can be used in provable code.
 
 ## Type declaration
+
+### BLAKE2B
+
+```ts
+BLAKE2B: {
+  "hash": Bytes;
+};
+```
+
+### BLAKE2B.hash()
+
+#### Parameters
+
+• **bytes**: `Bytes`
+
+#### Returns
+
+`Bytes`
 
 ### Keccak256
 
@@ -193,7 +214,7 @@ lower per-field element cost than hashing.
 
 #### Parameters
 
-• **type**: `Hashable`\<`T`\>
+• **type**: [`WithProvable`](../type-aliases/WithProvable.mdx)\<`Hashable`\<`T`\>\>
 
 • **value**: `T`
 
@@ -382,4 +403,4 @@ You can find the full set of Poseidon parameters [here](https://github.com/o1-la
 
 ## Source
 
-[lib/provable/crypto/hash.ts:11](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/crypto/hash.ts#L11)
+[lib/provable/crypto/hash.ts:11](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/crypto/hash.ts#L11)

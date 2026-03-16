@@ -30,7 +30,7 @@ new TokenContract(address: PublicKey, tokenId?: Field): TokenContract
 
 #### Source
 
-[lib/mina/zkapp.ts:614](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/mina/zkapp.ts#L614)
+[lib/mina/zkapp.ts:614](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/zkapp.ts#L614)
 
 ## Properties
 
@@ -46,7 +46,7 @@ address: PublicKey;
 
 #### Source
 
-[lib/mina/zkapp.ts:579](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/mina/zkapp.ts#L579)
+[lib/mina/zkapp.ts:579](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/zkapp.ts#L579)
 
 ***
 
@@ -68,7 +68,7 @@ A list of event types that can be emitted using this.emitEvent()`.
 
 #### Source
 
-[lib/mina/zkapp.ts:967](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/mina/zkapp.ts#L967)
+[lib/mina/zkapp.ts:979](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/zkapp.ts#L979)
 
 ***
 
@@ -90,6 +90,11 @@ self: SmartContract;
 
 #### getAndRequireSignature()
 
+Return a public key that is forced to sign this transaction.
+
+Note: This doesn't prove that the return value is the transaction sender, but it proves that whoever created
+the transaction controls the private key associated with the returned public key.
+
 ##### Returns
 
 [`PublicKey`](PublicKey.mdx)
@@ -103,6 +108,8 @@ Throws an error if not inside a transaction, or the sender wasn't passed in.
 **Warning**: The fact that this public key equals the current sender is not part of the proof.
 A malicious prover could use any other public key without affecting the validity of the proof.
 
+Consider using `this.sender.getAndRequireSignature()` if you need to prove that the sender controls this account.
+
 ##### Returns
 
 [`PublicKey`](PublicKey.mdx)
@@ -113,7 +120,7 @@ A malicious prover could use any other public key without affecting the validity
 
 #### Source
 
-[lib/mina/zkapp.ts:870](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/mina/zkapp.ts#L870)
+[lib/mina/zkapp.ts:868](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/zkapp.ts#L868)
 
 ***
 
@@ -129,7 +136,22 @@ tokenId: Field;
 
 #### Source
 
-[lib/mina/zkapp.ts:580](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/mina/zkapp.ts#L580)
+[lib/mina/zkapp.ts:580](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/zkapp.ts#L580)
+
+***
+
+### MAX\_ACCOUNT\_UPDATES
+
+```ts
+static MAX_ACCOUNT_UPDATES: number = 9;
+```
+
+The maximum number of account updates using the token in a single
+transaction that this contract supports.
+
+#### Source
+
+[lib/mina/token/token-contract.ts:29](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/token/token-contract.ts#L29)
 
 ***
 
@@ -145,7 +167,7 @@ static optional _maxProofsVerified: 0 | 2 | 1;
 
 #### Source
 
-[lib/mina/zkapp.ts:599](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/mina/zkapp.ts#L599)
+[lib/mina/zkapp.ts:599](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/zkapp.ts#L599)
 
 ***
 
@@ -166,7 +188,7 @@ static optional _methodMetadata: Record<string, {
 
 #### Source
 
-[lib/mina/zkapp.ts:589](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/mina/zkapp.ts#L589)
+[lib/mina/zkapp.ts:589](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/zkapp.ts#L589)
 
 ***
 
@@ -182,7 +204,7 @@ static optional _methods: MethodInterface[];
 
 #### Source
 
-[lib/mina/zkapp.ts:588](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/mina/zkapp.ts#L588)
+[lib/mina/zkapp.ts:588](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/zkapp.ts#L588)
 
 ***
 
@@ -198,7 +220,7 @@ static optional _provers: Prover[];
 
 #### Source
 
-[lib/mina/zkapp.ts:598](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/mina/zkapp.ts#L598)
+[lib/mina/zkapp.ts:598](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/zkapp.ts#L598)
 
 ***
 
@@ -229,7 +251,7 @@ hash: Field;
 
 #### Source
 
-[lib/mina/zkapp.ts:600](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/mina/zkapp.ts#L600)
+[lib/mina/zkapp.ts:600](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/zkapp.ts#L600)
 
 ## Accessors
 
@@ -247,7 +269,7 @@ Current account of the [SmartContract](SmartContract.mdx).
 
 #### Source
 
-[lib/mina/zkapp.ts:908](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/mina/zkapp.ts#L908)
+[lib/mina/zkapp.ts:920](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/zkapp.ts#L920)
 
 ***
 
@@ -305,7 +327,7 @@ Balance of this [SmartContract](SmartContract.mdx).
 
 #### Source
 
-[lib/mina/zkapp.ts:961](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/mina/zkapp.ts#L961)
+[lib/mina/zkapp.ts:973](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/zkapp.ts#L973)
 
 ***
 
@@ -325,7 +347,7 @@ or `assertEquals()` (confusing, because the developer can't know the exact slot 
 
 #### Source
 
-[lib/mina/zkapp.ts:922](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/mina/zkapp.ts#L922)
+[lib/mina/zkapp.ts:934](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/zkapp.ts#L934)
 
 ***
 
@@ -403,7 +425,7 @@ Move token balance from `from` to `to`. Returns the `to` account update.
 
 #### Source
 
-[lib/mina/token/token-contract.ts:76](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/mina/token/token-contract.ts#L76)
+[lib/mina/token/token-contract.ts:77](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/token/token-contract.ts#L77)
 
 ***
 
@@ -421,7 +443,7 @@ Current network state of the [SmartContract](SmartContract.mdx).
 
 #### Source
 
-[lib/mina/zkapp.ts:914](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/mina/zkapp.ts#L914)
+[lib/mina/zkapp.ts:926](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/zkapp.ts#L926)
 
 ***
 
@@ -439,7 +461,7 @@ Returns the current [AccountUpdate](AccountUpdate.mdx) associated to this [Smart
 
 #### Source
 
-[lib/mina/zkapp.ts:825](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/mina/zkapp.ts#L825)
+[lib/mina/zkapp.ts:823](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/zkapp.ts#L823)
 
 ## Methods
 
@@ -483,7 +505,7 @@ excluding important information from the public input.
 
 #### Source
 
-[lib/mina/zkapp.ts:947](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/mina/zkapp.ts#L947)
+[lib/mina/zkapp.ts:959](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/zkapp.ts#L959)
 
 ***
 
@@ -505,7 +527,7 @@ Approve a single account update (with arbitrarily many children).
 
 #### Source
 
-[lib/mina/token/token-contract.ts:137](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/mina/token/token-contract.ts#L137)
+[lib/mina/token/token-contract.ts:144](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/token/token-contract.ts#L144)
 
 ***
 
@@ -527,7 +549,7 @@ Approve a list of account updates (with arbitrarily many children).
 
 #### Source
 
-[lib/mina/token/token-contract.ts:145](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/mina/token/token-contract.ts#L145)
+[lib/mina/token/token-contract.ts:152](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/token/token-contract.ts#L152)
 
 ***
 
@@ -547,7 +569,7 @@ abstract approveBase(forest: AccountUpdateForest): Promise<void>
 
 #### Source
 
-[lib/mina/token/token-contract.ts:83](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/mina/token/token-contract.ts#L83)
+[lib/mina/token/token-contract.ts:84](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/token/token-contract.ts#L84)
 
 ***
 
@@ -571,7 +593,7 @@ This is provided out of the box as it is both a good example, and probably the m
 
 #### Source
 
-[lib/mina/token/token-contract.ts:121](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/mina/token/token-contract.ts#L121)
+[lib/mina/token/token-contract.ts:128](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/token/token-contract.ts#L128)
 
 ***
 
@@ -615,7 +637,7 @@ async deploy() {
 
 #### Source
 
-[lib/mina/token/token-contract.ts:51](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/mina/token/token-contract.ts#L51)
+[lib/mina/token/token-contract.ts:52](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/token/token-contract.ts#L52)
 
 ***
 
@@ -633,7 +655,7 @@ Returns the `tokenId` of the token managed by this contract.
 
 #### Source
 
-[lib/mina/token/token-contract.ts:69](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/mina/token/token-contract.ts#L69)
+[lib/mina/token/token-contract.ts:70](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/token/token-contract.ts#L70)
 
 ***
 
@@ -665,7 +687,46 @@ Emits an event. Events will be emitted as a part of the transaction and can be c
 
 #### Source
 
-[lib/mina/zkapp.ts:973](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/mina/zkapp.ts#L973)
+[lib/mina/zkapp.ts:1030](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/zkapp.ts#L1030)
+
+***
+
+### emitEventIf()
+
+```ts
+emitEventIf<K>(
+   condition: Bool, 
+   type: K, 
+   event: any): void
+```
+
+Conditionally emits an event.
+
+Events will be emitted as a part of the transaction and can be collected by archive nodes.
+
+#### Type parameters
+
+• **K** *extends* `string` \| `number`
+
+#### Parameters
+
+• **condition**: [`Bool`](Bool.mdx)
+
+• **type**: `K`
+
+• **event**: `any`
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[`SmartContract`](SmartContract.mdx).[`emitEventIf`](SmartContract.mdx#emiteventif)
+
+#### Source
+
+[lib/mina/zkapp.ts:987](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/zkapp.ts#L987)
 
 ***
 
@@ -744,7 +805,7 @@ console.log(events);
 
 #### Source
 
-[lib/mina/zkapp.ts:1019](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/mina/zkapp.ts#L1019)
+[lib/mina/zkapp.ts:1047](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/zkapp.ts#L1047)
 
 ***
 
@@ -770,7 +831,7 @@ This method is provable and is suitable as a base for implementing `approveUpdat
 
 #### Source
 
-[lib/mina/token/token-contract.ts:90](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/mina/token/token-contract.ts#L90)
+[lib/mina/token/token-contract.ts:91](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/token/token-contract.ts#L91)
 
 ***
 
@@ -802,7 +863,7 @@ class MyContract extends SmartContract {
 
 #### Source
 
-[lib/mina/zkapp.ts:773](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/mina/zkapp.ts#L773)
+[lib/mina/zkapp.ts:771](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/zkapp.ts#L771)
 
 ***
 
@@ -828,7 +889,7 @@ Same as `SmartContract.self` but explicitly creates a new [AccountUpdate](Accoun
 
 #### Source
 
-[lib/mina/zkapp.ts:860](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/mina/zkapp.ts#L860)
+[lib/mina/zkapp.ts:858](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/zkapp.ts#L858)
 
 ***
 
@@ -858,7 +919,7 @@ with the only difference being that quick mock proofs are filled in instead of r
 
 #### Source
 
-[lib/mina/zkapp.ts:806](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/mina/zkapp.ts#L806)
+[lib/mina/zkapp.ts:804](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/zkapp.ts#L804)
 
 ***
 
@@ -889,7 +950,7 @@ send(args: {
 
 #### Source
 
-[lib/mina/zkapp.ts:951](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/mina/zkapp.ts#L951)
+[lib/mina/zkapp.ts:963](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/zkapp.ts#L963)
 
 ***
 
@@ -916,7 +977,7 @@ authorization flow.
 
 #### Source
 
-[lib/mina/zkapp.ts:818](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/mina/zkapp.ts#L818)
+[lib/mina/zkapp.ts:816](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/zkapp.ts#L816)
 
 ***
 
@@ -945,7 +1006,7 @@ Transfer `amount` of tokens from `from` to `to`.
 
 #### Source
 
-[lib/mina/token/token-contract.ts:157](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/mina/token/token-contract.ts#L157)
+[lib/mina/token/token-contract.ts:164](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/token/token-contract.ts#L164)
 
 ***
 
@@ -967,7 +1028,7 @@ Returns a Proof type that belongs to this [SmartContract](SmartContract.mdx).
 
 #### Source
 
-[lib/mina/zkapp.ts:605](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/mina/zkapp.ts#L605)
+[lib/mina/zkapp.ts:605](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/zkapp.ts#L605)
 
 ***
 
@@ -1023,7 +1084,7 @@ an object, keyed by method name, each entry containing:
 
 #### Source
 
-[lib/mina/zkapp.ts:1138](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/mina/zkapp.ts#L1138)
+[lib/mina/zkapp.ts:1178](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/zkapp.ts#L1178)
 
 ***
 
@@ -1125,7 +1186,7 @@ up to several minutes if your circuit is large or your hardware is not optimal f
 
 #### Source
 
-[lib/mina/zkapp.ts:642](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/mina/zkapp.ts#L642)
+[lib/mina/zkapp.ts:642](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/zkapp.ts#L642)
 
 ***
 
@@ -1151,7 +1212,7 @@ the digest, as a hex string
 
 #### Source
 
-[lib/mina/zkapp.ts:683](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/mina/zkapp.ts#L683)
+[lib/mina/zkapp.ts:683](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/zkapp.ts#L683)
 
 ***
 
@@ -1175,4 +1236,4 @@ static runOutsideCircuit(run: () => void): void
 
 #### Source
 
-[lib/mina/zkapp.ts:1113](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/mina/zkapp.ts#L1113)
+[lib/mina/zkapp.ts:1153](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/zkapp.ts#L1153)

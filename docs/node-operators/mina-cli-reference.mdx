@@ -532,9 +532,11 @@ Mina daemon
                                                        420000ms)
                                                        (alias:
                                                        -work-reassignment-wait)
-  [--work-selection seq|rand]                          Choose work sequentially
-                                                       (seq) or randomly (rand)
-                                                       (default: rand)
+  [--work-selection seq|rand|roffset]                  Choose work sequentially
+                                                       (seq), randomly (rand) or
+                                                       sequentially with a random
+                                                       offset (roffset) (default:
+                                                       rand)
                                                        (alias: -work-selection)
   [--working-dir PATH]                                 path to chdir into before
                                                        starting (useful for

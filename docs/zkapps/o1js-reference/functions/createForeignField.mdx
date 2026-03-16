@@ -29,9 +29,9 @@ only supports addition and subtraction.
 
 This function returns the `Unreduced` class, which will cause the minimum amount of range checks to be created by default.
 If you want to do multiplication, you have two options:
-- create your field elements using the [ForeignField.AlmostReduced](../classes/ForeignField.mdx#almostreduced) constructor, or using the `.provable` type on that class.
+- create your field elements using the [ForeignField.AlmostReduced](../classes/ForeignField.mdx#almostreduced) constructor.
 ```ts
-let x = Provable.witness(ForeignField.AlmostReduced.provable, () => ForeignField.from(5));
+let x = Provable.witness(ForeignField.AlmostReduced, () => 5n);
 ```
 - create your field elements normally and convert them using `x.assertAlmostReduced()`.
 ```ts
@@ -39,7 +39,7 @@ let xChecked = x.assertAlmostReduced(); // asserts x < 2^ceil(log2(p)); returns 
 ```
 
 Similarly, there is a separate class [CanonicalForeignField](../classes/CanonicalForeignField.mdx) which represents fully reduced, "canonical" field elements.
-To convert to a canonical field element, use [ForeignField.assertCanonical](../classes/ForeignField.mdx#assertcanonical):
+To convert to a canonical field element, use `ForeignField.assertCanonical()`:
 
 ```ts
 x.assertCanonical(); // asserts x < p; returns `CanonicalForeignField`
@@ -60,4 +60,4 @@ the modulus of the finite field you are instantiating
 
 ## Source
 
-[lib/provable/foreign-field.ts:636](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/foreign-field.ts#L636)
+[lib/provable/foreign-field.ts:642](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/foreign-field.ts#L642)

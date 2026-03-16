@@ -18,6 +18,10 @@ keywords:
   - typescript library
 ---
 
+import MigrateBanner from '@site/src/components/snippets/migrate-banner.mdx';
+
+<MigrateBanner />
+
 :::info
 
 To protect end users and ensure your zkApps are secure, consider the information at [Security and zkApps](/zkapps/writing-a-zkapp/introduction-to-zkapps/secure-zkapps) while architecting your solution and consider a third-party security audit before deploying to Mina mainnet.
@@ -60,7 +64,7 @@ Start your o1js journey by learning about [basic zk programming concepts](/zkapp
 
 ## Audits of o1js
 
-* **Third-party audit (Q1/Q2 2024)**. An audit by an external security firm is ongoing and on track to complete in Q2 2024. Results will be shared when available. x
+* [**Veridise external audit (Q3 2024)**](https://github.com/o1-labs/o1js/blob/a09c5167c4df64f879684e5af14c59cf7a6fce11/audits/VAR_o1js_240318_o1js_V3.pdf).  We engaged Veridise, a security auditing company, to do a full audit of o1js version 1.  Veridise spent 39 person-weeks reviewing o1js in depth, and all issues of medium severity and higher were fixed.
 
 * [**Internal audit (Q1 2024)**](https://github.com/o1-labs/o1js/files/15192821/Internal.o1js.audit.Q1.2024.pdf). In March 2024, the o1js team spent roughly two person-weeks to conduct an internal audit of parts of the o1js code base. The audit focused on reviewing core provable code. A number of issues were found and fixed.
 

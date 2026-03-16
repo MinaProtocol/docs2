@@ -32,9 +32,9 @@ Steps to install mina, connect to the Mina Mainnet network, and test connectivit
 
 The first step to connecting to Mainnet is to install the latest daemon version.
 
-### Ubuntu 20.04 and Debian 10, 11, 12
+### Ubuntu 20.04 and Debian 11
 
-To install the latest [Mainnet **Stable** Release 3.0.0](https://github.com/MinaProtocol/mina/releases/tag/3.0.0), use the [Installation](/node-operators/block-producer-node/getting-started#installation) steps for your environment.
+To install the latest [Mainnet **Stable** Release 3.3.0](https://github.com/MinaProtocol/mina/releases/tag/3.3.0), use the [Installation](/node-operators/block-producer-node/getting-started#installation) steps for your environment.
 
 ## Start a standalone mina node
 
@@ -47,7 +47,7 @@ Auto-restart flows are in place to ensure your nodes perform optimally.
    To start a mina node instance and connect to the live network:
 
    ```sh
-   mina daemon --peer-list-url https://storage.googleapis.com/mina-seed-lists/mainnet_seeds.txt
+   mina daemon --peer-list-url https://bootnodes.minaprotocol.com/networks/mainnet.txt
    ```
 
    The `--peer-list` argument specifies the source file of seed peer addresses for the initial peer to connect to on the network. Mina is a [peer-to-peer](/glossary#peer-to-peer) protocol, so there is no dependence on a single centralized server.
@@ -55,7 +55,7 @@ Auto-restart flows are in place to ensure your nodes perform optimally.
    If you have a key with MINA stake and want to produce blocks:
 
    ```sh
-   mina daemon --peer-list-url https://storage.googleapis.com/mina-seed-lists/mainnet_seeds.txt \
+   mina daemon --peer-list-url https://bootnodes.minaprotocol.com/networks/mainnet.txt \
                --block-producer-key ~/keys/my-wallet
    ```
 
@@ -97,7 +97,7 @@ To produce blocks or otherwise customize the configuration for the mina daemon:
 
    - External port 8302
      - Change with `-external-port`
-   - Mainnet seed peers list [https://storage.googleapis.com/mina-seed-lists/mainnet_seeds.txt](https://storage.googleapis.com/mina-seed-lists/mainnet_seeds.txt)
+   - Mainnet seed peers list [https://bootnodes.minaprotocol.com/networks/mainnet.txt](https://bootnodes.minaprotocol.com/networks/mainnet.txt)
      - Change with `--peer-list-url`
 
 1. After your `.mina-env` file is ready, start a mina node instance and connect to the live network using systemctl to control systemd:
@@ -163,7 +163,7 @@ export MINA_PRIVKEY_PASS="My_V3ry_S3cure_Password"
 LOG_LEVEL=Info
 FILE_LOG_LEVEL=Debug
 EXTRA_FLAGS=" --block-producer-key <BLOCK_PRODUCER_KEY_PATH>"
-PEER_LIST_URL=https://storage.googleapis.com/mina-seed-lists/mainnet_seeds.txt
+PEER_LIST_URL=https://bootnodes.minaprotocol.com/networks/mainnet.txt
 ```
 
 Replace `<BLOCK_PRODUCER_KEY_PATH>` with the full path to your block producer private key. For example, `/home/ubuntu/keys/my-wallet`.
@@ -179,7 +179,7 @@ docker run --name mina -d \
 --mount "type=bind,source=$(pwd)/.mina-env,dst=/entrypoint.d/mina-env,readonly" \
 --mount "type=bind,source=$(pwd)/keys,dst=/keys,readonly" \
 --mount "type=bind,source=$(pwd)/.mina-config,dst=/root/.mina-config" \
-minaprotocol/mina-daemon:3.0.0-93e0279-bullseye-mainnet \
+minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet \
 daemon
 ```
 

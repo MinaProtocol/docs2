@@ -33,7 +33,7 @@ Follow the steps for your operating system.
 
 ### Ubuntu 20.04 and Debian 11
 
-Install the latest **Stable** [Mina Release 3.0.0](https://github.com/MinaProtocol/mina/releases/tag/3.0.0) or visit the [GitHub Releases Page](https://github.com/MinaProtocol/mina/releases) to install pre-release (Alpha/Beta) builds.
+Install the latest **Stable** [Mina Release 3.0.3](https://github.com/MinaProtocol/mina/releases/tag/3.0.3) or visit the [GitHub Releases Page](https://github.com/MinaProtocol/mina/releases) to install pre-release (Alpha/Beta) builds.
 
 To set up the new debian `stable` repository and install the latest version:
 
@@ -42,7 +42,7 @@ sudo rm /etc/apt/sources.list.d/mina*.list
 sudo echo "deb [trusted=yes] http://packages.o1test.net $(lsb_release -cs) devnet" | sudo tee /etc/apt/sources.list.d/mina-devnet.list
 sudo apt-get install --yes apt-transport-https
 sudo apt-get update
-sudo apt-get install --yes curl unzip mina-devnet=3.0.0
+sudo apt-get install --yes curl unzip mina-devnet=3.3.0-alpha1
 ```
 
 To check that daemon installed correctly:
@@ -54,7 +54,7 @@ mina version
 The expected output is:
 
 ```text
-Commit dc6bf78b8ddbbca3a1a248971b76af1514bf05aa on branch berkeley
+Commit 56cdb61260e6124c5f7937406859f410cc33772a on branch berkeley
 ```
 
 ## Generate keypairs
@@ -126,7 +126,7 @@ docker run --name mina -d \
        --restart=always \
        -v $(pwd)/.mina-config:/data/.mina-config \
        -v $(pwd)/.mina-env:/entrypoint.d/mina-env \
-       gcr.io/o1labs-192920/mina-daemon:3.0.0-dc6bf78-bullseye-devnet \
+       gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet \
        daemon
 ```
 

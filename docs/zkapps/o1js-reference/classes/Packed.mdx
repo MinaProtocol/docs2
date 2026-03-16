@@ -30,6 +30,10 @@ let value = packed.unpack();
 For example, it doesn't make sense to pack a _single_ Bool, because it will be 1 field element before
 and after packing. On the other hand, it does makes sense to pack a type that holds 10 or 20 Bools.
 
+**Warning**: When wrapping a type with `Packed`, make sure that that type is safe to automatically _pack_
+and _unpack_ in provable code. In particular, do not use `Packed` with types that define a custom `toInput()`
+(specifying a certain bit packing) but no corresponding `check()` method (that constrains the bit lengths of the packed parts).
+
 ## Type parameters
 
 • **T**
@@ -54,7 +58,7 @@ new Packed<T>(packed: Field[], value: Unconstrained<T>): Packed<T>
 
 #### Source
 
-[lib/provable/packed.ts:77](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/packed.ts#L77)
+[lib/provable/packed.ts:115](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/packed.ts#L115)
 
 ## Properties
 
@@ -66,7 +70,7 @@ packed: Field[];
 
 #### Source
 
-[lib/provable/packed.ts:46](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/packed.ts#L46)
+[lib/provable/packed.ts:51](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/packed.ts#L51)
 
 ***
 
@@ -78,19 +82,19 @@ value: Unconstrained<T>;
 
 #### Source
 
-[lib/provable/packed.ts:47](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/packed.ts#L47)
+[lib/provable/packed.ts:52](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/packed.ts#L52)
 
 ***
 
 ### \_innerProvable
 
 ```ts
-static _innerProvable: undefined | ProvableExtended<any>;
+static _innerProvable: undefined | ProvableHashable<any>;
 ```
 
 #### Source
 
-[lib/provable/packed.ts:119](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/packed.ts#L119)
+[lib/provable/packed.ts:144](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/packed.ts#L144)
 
 ***
 
@@ -102,7 +106,7 @@ static _provable: undefined | ProvableHashable<Packed<any>>;
 
 #### Source
 
-[lib/provable/packed.ts:118](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/packed.ts#L118)
+[lib/provable/packed.ts:143](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/packed.ts#L143)
 
 ## Accessors
 
@@ -118,23 +122,23 @@ get Constructor(): typeof Packed
 
 #### Source
 
-[lib/provable/packed.ts:121](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/packed.ts#L121)
+[lib/provable/packed.ts:146](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/packed.ts#L146)
 
 ***
 
 ### innerProvable
 
 ```ts
-get static innerProvable(): ProvableExtended<any>
+get static innerProvable(): ProvableHashable<any>
 ```
 
 #### Returns
 
-[`ProvableExtended`](../type-aliases/ProvableExtended.mdx)\<`any`\>
+[`ProvableHashable`](../type-aliases/ProvableHashable.mdx)\<`any`\>
 
 #### Source
 
-[lib/provable/packed.ts:125](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/packed.ts#L125)
+[lib/provable/packed.ts:150](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/packed.ts#L150)
 
 ## Methods
 
@@ -150,7 +154,7 @@ toFields(): Field[]
 
 #### Source
 
-[lib/provable/packed.ts:113](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/packed.ts#L113)
+[lib/provable/packed.ts:138](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/packed.ts#L138)
 
 ***
 
@@ -168,15 +172,16 @@ Unpack a value.
 
 #### Source
 
-[lib/provable/packed.ts:98](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/packed.ts#L98)
+[lib/provable/packed.ts:123](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/packed.ts#L123)
 
 ***
 
 ### create()
 
 ```ts
-static create<T>(type: ProvableExtended<T>): typeof Packed & {
-  "provable": ProvableHashable<Packed<T>>;
+static create<T, V>(type: WithProvable<ProvableHashable<T, V>>): typeof Packed & {
+  "provable": ProvableHashable<Packed<T>, V>;
+  "pack": Packed<T>;
 }
 ```
 
@@ -186,42 +191,19 @@ Create a packed representation of `type`. You can then use `PackedType.pack(x)` 
 
 • **T**
 
+• **V**
+
 #### Parameters
 
-• **type**: [`ProvableExtended`](../type-aliases/ProvableExtended.mdx)\<`T`\>
+• **type**: [`WithProvable`](../type-aliases/WithProvable.mdx)\<[`ProvableHashable`](../type-aliases/ProvableHashable.mdx)\<`T`, `V`\>\>
 
 #### Returns
 
 *typeof* [`Packed`](Packed.mdx) & \{
-  `"provable"`: [`ProvableHashable`](../type-aliases/ProvableHashable.mdx)\<[`Packed`](Packed.mdx)\<`T`\>\>;
+  `"provable"`: [`ProvableHashable`](../type-aliases/ProvableHashable.mdx)\<[`Packed`](Packed.mdx)\<`T`\>, `V`\>;
+  `"pack"`: [`Packed`](Packed.mdx)\<`T`\>;
  \}
 
 #### Source
 
-[lib/provable/packed.ts:52](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/packed.ts#L52)
-
-***
-
-### pack()
-
-```ts
-static pack<T>(x: T): Packed<T>
-```
-
-Pack a value.
-
-#### Type parameters
-
-• **T**
-
-#### Parameters
-
-• **x**: `T`
-
-#### Returns
-
-[`Packed`](Packed.mdx)\<`T`\>
-
-#### Source
-
-[lib/provable/packed.ts:85](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/packed.ts#L85)
+[lib/provable/packed.ts:57](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/packed.ts#L57)

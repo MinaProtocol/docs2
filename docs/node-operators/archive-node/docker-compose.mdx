@@ -17,7 +17,7 @@ Copy and paste the provided configuration into a `docker-compose.yml` file. Then
 ```yaml
 services:
   postgres:
-    image: postgres
+    image: postgres:17
     restart: always
     environment:
       POSTGRES_PASSWORD: postgres
@@ -32,11 +32,11 @@ services:
     ports:
       - '5432:5432'
   bootstrap_db:
-    image: 'minaprotocol/mina-archive:3.0.0-93e0279-bullseye'
-    # image: 'gcr.io/o1labs-192920/mina-archive:3.0.0-dc6bf78-bullseye' # Use this image for Devnet
+    image: 'minaprotocol/mina-archive:3.3.0-8c0c2e6-bullseye-mainnet'
+    # image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet' # Use this image for Devnet
     command: >
       bash -c '
-      curl -O https://673156464838-mina-archive-node-backups.s3.us-west-2.amazonaws.com/mainnet/mainnet-archive-dump-$(date +%F_0000).sql.tar.gz;
+      curl -O https://storage.googleapis.com/mina-archive-dumps/mainnet-archive-dump-$(date +%F_0000).sql.tar.gz;
       tar -zxvf mainnet-archive-dump-$(date +%F_0000).sql.tar.gz;
       psql postgres://postgres:postgres@postgres:5432/archive -c "
       ALTER SYSTEM SET max_connections = 500;
@@ -51,8 +51,8 @@ services:
       postgres:
         condition: service_healthy
   missing_blocks_guardian:
-    image: 'minaprotocol/mina-archive:3.0.0-93e0279-bullseye'
-    # image: 'gcr.io/o1labs-192920/mina-archive:3.0.0-dc6bf78-bullseye' # Use this image for Devnet
+    image: 'minaprotocol/mina-archive:3.3.0-8c0c2e6-bullseye-mainnet'
+    # image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet' # Use this image for Devnet
     command: >
       bash -c '
       curl -O https://raw.githubusercontent.com/MinaFoundation/helm-charts/main/mina-archive/scripts/missing-blocks-guardian-command.sh;
@@ -66,7 +66,7 @@ services:
       bootstrap_db:
         condition: service_completed_successfully
   mina_archive:
-    image: 'minaprotocol/mina-archive:3.0.0-93e0279-bullseye'
+    image: 'minaprotocol/mina-archive:3.3.0-8c0c2e6-bullseye-mainnet'
     restart: always
     command:
       - mina-archive
@@ -81,8 +81,8 @@ services:
       bootstrap_db:
         condition: service_completed_successfully
   mina_node:
-    image: 'minaprotocol/mina-daemon:3.0.0-93e0279-bullseye-mainnet'
-    # image: 'gcr.io/o1labs-192920/mina-daemon:3.0.0-dc6bf78-bullseye-devnet' # Use this image for Devnet
+    image: 'minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet'
+    # image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet' # Use this image for Devnet
     restart: always
     entrypoint: []
     command: >

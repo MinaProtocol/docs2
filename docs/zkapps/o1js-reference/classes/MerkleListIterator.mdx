@@ -39,7 +39,7 @@ new MerkleListIterator<T>(value: MerkleListIteratorBase<T>): MerkleListIterator<
 
 #### Source
 
-[lib/provable/merkle-list.ts:373](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/merkle-list.ts#L373)
+[lib/provable/merkle-list.ts:426](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/merkle-list.ts#L426)
 
 ## Properties
 
@@ -55,7 +55,7 @@ currentHash: Field;
 
 #### Source
 
-[lib/provable/merkle-list.ts:370](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/merkle-list.ts#L370)
+[lib/provable/merkle-list.ts:423](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/merkle-list.ts#L423)
 
 ***
 
@@ -71,7 +71,7 @@ currentIndex: Unconstrained<number>;
 
 #### Source
 
-[lib/provable/merkle-list.ts:371](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/merkle-list.ts#L371)
+[lib/provable/merkle-list.ts:424](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/merkle-list.ts#L424)
 
 ***
 
@@ -87,7 +87,7 @@ readonly data: Unconstrained<WithHash<T>[]>;
 
 #### Source
 
-[lib/provable/merkle-list.ts:366](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/merkle-list.ts#L366)
+[lib/provable/merkle-list.ts:419](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/merkle-list.ts#L419)
 
 ***
 
@@ -103,7 +103,7 @@ readonly hash: Field;
 
 #### Source
 
-[lib/provable/merkle-list.ts:367](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/merkle-list.ts#L367)
+[lib/provable/merkle-list.ts:420](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/merkle-list.ts#L420)
 
 ***
 
@@ -115,7 +115,7 @@ static _emptyHash: undefined | Field;
 
 #### Source
 
-[lib/provable/merkle-list.ts:666](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/merkle-list.ts#L666)
+[lib/provable/merkle-list.ts:722](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/merkle-list.ts#L722)
 
 ***
 
@@ -127,7 +127,7 @@ static _innerProvable: undefined | ProvableHashable<any>;
 
 #### Source
 
-[lib/provable/merkle-list.ts:669](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/merkle-list.ts#L669)
+[lib/provable/merkle-list.ts:725](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/merkle-list.ts#L725)
 
 ***
 
@@ -139,7 +139,7 @@ static _nextHash: undefined | (hash: Field, value: any) => Field;
 
 #### Source
 
-[lib/provable/merkle-list.ts:665](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/merkle-list.ts#L665)
+[lib/provable/merkle-list.ts:721](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/merkle-list.ts#L721)
 
 ***
 
@@ -151,7 +151,7 @@ static _provable: undefined | ProvableHashable<MerkleListIterator<any>>;
 
 #### Source
 
-[lib/provable/merkle-list.ts:668](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/merkle-list.ts#L668)
+[lib/provable/merkle-list.ts:724](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/merkle-list.ts#L724)
 
 ## Accessors
 
@@ -167,7 +167,7 @@ get Constructor(): typeof MerkleListIterator
 
 #### Source
 
-[lib/provable/merkle-list.ts:671](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/merkle-list.ts#L671)
+[lib/provable/merkle-list.ts:727](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/merkle-list.ts#L727)
 
 ***
 
@@ -263,7 +263,7 @@ isDummy: Bool;
 
 #### Source
 
-[lib/provable/merkle-list.ts:503](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/merkle-list.ts#L503)
+[lib/provable/merkle-list.ts:556](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/merkle-list.ts#L556)
 
 ***
 
@@ -279,7 +279,7 @@ get innerProvable(): ProvableHashable<T>
 
 #### Source
 
-[lib/provable/merkle-list.ts:688](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/merkle-list.ts#L688)
+[lib/provable/merkle-list.ts:744](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/merkle-list.ts#L744)
 
 ***
 
@@ -295,7 +295,7 @@ get static emptyHash(): Field
 
 #### Source
 
-[lib/provable/merkle-list.ts:683](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/merkle-list.ts#L683)
+[lib/provable/merkle-list.ts:739](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/merkle-list.ts#L739)
 
 ## Methods
 
@@ -317,7 +317,7 @@ _index(direction: "next" | "previous", i?: number): number
 
 #### Source
 
-[lib/provable/merkle-list.ts:430](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/merkle-list.ts#L430)
+[lib/provable/merkle-list.ts:483](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/merkle-list.ts#L483)
 
 ***
 
@@ -337,7 +337,7 @@ _updateIndex(direction: "next" | "previous"): void
 
 #### Source
 
-[lib/provable/merkle-list.ts:438](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/merkle-list.ts#L438)
+[lib/provable/merkle-list.ts:491](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/merkle-list.ts#L491)
 
 ***
 
@@ -357,7 +357,7 @@ assertAtEnd(message?: string): void
 
 #### Source
 
-[lib/provable/merkle-list.ts:399](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/merkle-list.ts#L399)
+[lib/provable/merkle-list.ts:452](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/merkle-list.ts#L452)
 
 ***
 
@@ -373,7 +373,7 @@ assertAtStart(): void
 
 #### Source
 
-[lib/provable/merkle-list.ts:377](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/merkle-list.ts#L377)
+[lib/provable/merkle-list.ts:430](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/merkle-list.ts#L430)
 
 ***
 
@@ -389,7 +389,7 @@ clone(): MerkleListIterator<T>
 
 #### Source
 
-[lib/provable/merkle-list.ts:560](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/merkle-list.ts#L560)
+[lib/provable/merkle-list.ts:613](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/merkle-list.ts#L613)
 
 ***
 
@@ -405,7 +405,7 @@ isAtEnd(): Bool
 
 #### Source
 
-[lib/provable/merkle-list.ts:381](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/merkle-list.ts#L381)
+[lib/provable/merkle-list.ts:434](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/merkle-list.ts#L434)
 
 ***
 
@@ -421,7 +421,7 @@ isAtStart(): Bool
 
 #### Source
 
-[lib/provable/merkle-list.ts:406](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/merkle-list.ts#L406)
+[lib/provable/merkle-list.ts:459](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/merkle-list.ts#L459)
 
 ***
 
@@ -437,7 +437,7 @@ jumpToEnd(): void
 
 #### Source
 
-[lib/provable/merkle-list.ts:385](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/merkle-list.ts#L385)
+[lib/provable/merkle-list.ts:438](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/merkle-list.ts#L438)
 
 ***
 
@@ -457,7 +457,7 @@ jumpToEndIf(condition: Bool): void
 
 #### Source
 
-[lib/provable/merkle-list.ts:390](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/merkle-list.ts#L390)
+[lib/provable/merkle-list.ts:443](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/merkle-list.ts#L443)
 
 ***
 
@@ -473,7 +473,7 @@ jumpToStart(): void
 
 #### Source
 
-[lib/provable/merkle-list.ts:410](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/merkle-list.ts#L410)
+[lib/provable/merkle-list.ts:463](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/merkle-list.ts#L463)
 
 ***
 
@@ -493,7 +493,7 @@ jumpToStartIf(condition: Bool): void
 
 #### Source
 
-[lib/provable/merkle-list.ts:417](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/merkle-list.ts#L417)
+[lib/provable/merkle-list.ts:470](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/merkle-list.ts#L470)
 
 ***
 
@@ -509,7 +509,7 @@ next(): T
 
 #### Source
 
-[lib/provable/merkle-list.ts:476](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/merkle-list.ts#L476)
+[lib/provable/merkle-list.ts:529](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/merkle-list.ts#L529)
 
 ***
 
@@ -531,7 +531,7 @@ nextHash(hash: Field, value: T): Field
 
 #### Source
 
-[lib/provable/merkle-list.ts:675](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/merkle-list.ts#L675)
+[lib/provable/merkle-list.ts:731](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/merkle-list.ts#L731)
 
 ***
 
@@ -547,7 +547,7 @@ previous(): T
 
 #### Source
 
-[lib/provable/merkle-list.ts:445](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/merkle-list.ts#L445)
+[lib/provable/merkle-list.ts:498](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/merkle-list.ts#L498)
 
 ***
 
@@ -555,7 +555,7 @@ previous(): T
 
 ```ts
 static create<T>(
-   type: ProvableHashable<T>, 
+   type: WithProvable<ProvableHashable<T>>, 
    nextHash: (hash: Field, value: T) => Field, 
    emptyHash_: Field): typeof MerkleListIterator & {
   "empty": () => MerkleListIterator<T>;
@@ -574,7 +574,7 @@ Create a Merkle array type
 
 #### Parameters
 
-• **type**: [`ProvableHashable`](../type-aliases/ProvableHashable.mdx)\<`T`\>
+• **type**: [`WithProvable`](../type-aliases/WithProvable.mdx)\<[`ProvableHashable`](../type-aliases/ProvableHashable.mdx)\<`T`\>\>
 
 • **nextHash**= `undefined`
 
@@ -592,14 +592,14 @@ Create a Merkle array type
 
 #### Source
 
-[lib/provable/merkle-list.ts:574](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/merkle-list.ts#L574)
+[lib/provable/merkle-list.ts:627](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/merkle-list.ts#L627)
 
 ***
 
 ### createFromList()
 
 ```ts
-static createFromList<T>(merkleList: typeof MerkleList): typeof MerkleListIterator & {
+static createFromList<T>(merkleList: typeof MerkleList): (value: MerkleListIteratorBase<T>) => MerkleListIterator<T> & {
   "empty": () => MerkleListIterator<T>;
   "from": (array: T[]) => MerkleListIterator<T>;
   "provable": ProvableHashable<MerkleListIterator<T>>;
@@ -618,7 +618,7 @@ static createFromList<T>(merkleList: typeof MerkleList): typeof MerkleListIterat
 
 #### Returns
 
-*typeof* [`MerkleListIterator`](MerkleListIterator.mdx) & \{
+(`value`: [`MerkleListIteratorBase`](../type-aliases/MerkleListIteratorBase.mdx)\<`T`\>) => [`MerkleListIterator`](MerkleListIterator.mdx)\<`T`\> & \{
   `"empty"`: () => [`MerkleListIterator`](MerkleListIterator.mdx)\<`T`\>;
   `"from"`: (`array`: `T`[]) => [`MerkleListIterator`](MerkleListIterator.mdx)\<`T`\>;
   `"provable"`: [`ProvableHashable`](../type-aliases/ProvableHashable.mdx)\<[`MerkleListIterator`](MerkleListIterator.mdx)\<`T`\>\>;
@@ -628,4 +628,4 @@ static createFromList<T>(merkleList: typeof MerkleList): typeof MerkleListIterat
 
 #### Source
 
-[lib/provable/merkle-list.ts:656](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/merkle-list.ts#L656)
+[lib/provable/merkle-list.ts:712](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/merkle-list.ts#L712)

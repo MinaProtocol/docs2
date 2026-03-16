@@ -2,6 +2,8 @@
 function createEcdsa(curve: CurveParams | typeof ForeignCurve): typeof EcdsaSignature
 ```
 
+Create a class [EcdsaSignature](../classes/EcdsaSignature.mdx) for verifying ECDSA signatures on the given curve.
+
 ## Parameters
 
 • **curve**: `CurveParams` \| *typeof* [`ForeignCurve`](../classes/ForeignCurve.mdx)
@@ -10,10 +12,6 @@ function createEcdsa(curve: CurveParams | typeof ForeignCurve): typeof EcdsaSign
 
 *typeof* [`EcdsaSignature`](../classes/EcdsaSignature.mdx)
 
-## Deprecated
-
-`EcdsaSignature` is now deprecated and will be removed in a future release. Please use [EcdsaSignatureV2](../classes/EcdsaSignatureV2.mdx) instead.
-
 ## Source
 
-[lib/provable/crypto/foreign-ecdsa.ts:238](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/crypto/foreign-ecdsa.ts#L238)
+[lib/provable/crypto/foreign-ecdsa.ts:246](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/crypto/foreign-ecdsa.ts#L246)

@@ -24,6 +24,10 @@ let hashed = HashedType.hash(value);
 let value = hashed.unhash();
 ```
 
+**Warning**: When wrapping a type with `Hashed`, make sure that that type is safe to automatically _pack_
+and _unpack_ in provable code. In particular, do not use `Hashed` with types that define a custom `toInput()`
+(specifying a certain bit packing) but no corresponding `check()` method  (that constrains the bit lengths of the packed parts).
+
 ## Type parameters
 
 • **T**
@@ -48,7 +52,7 @@ new Hashed<T>(hash: Field, value: Unconstrained<T>): Hashed<T>
 
 #### Source
 
-[lib/provable/packed.ts:210](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/packed.ts#L210)
+[lib/provable/packed.ts:241](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/packed.ts#L241)
 
 ## Properties
 
@@ -60,7 +64,7 @@ hash: Field;
 
 #### Source
 
-[lib/provable/packed.ts:175](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/packed.ts#L175)
+[lib/provable/packed.ts:204](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/packed.ts#L204)
 
 ***
 
@@ -72,7 +76,7 @@ value: Unconstrained<T>;
 
 #### Source
 
-[lib/provable/packed.ts:176](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/packed.ts#L176)
+[lib/provable/packed.ts:205](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/packed.ts#L205)
 
 ***
 
@@ -84,7 +88,7 @@ static _innerProvable: undefined | ProvableHashable<any>;
 
 #### Source
 
-[lib/provable/packed.ts:257](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/packed.ts#L257)
+[lib/provable/packed.ts:288](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/packed.ts#L288)
 
 ***
 
@@ -96,7 +100,7 @@ static _provable: undefined | ProvableHashable<Hashed<any>>;
 
 #### Source
 
-[lib/provable/packed.ts:256](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/packed.ts#L256)
+[lib/provable/packed.ts:287](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/packed.ts#L287)
 
 ## Accessors
 
@@ -112,7 +116,7 @@ get Constructor(): typeof Hashed
 
 #### Source
 
-[lib/provable/packed.ts:259](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/packed.ts#L259)
+[lib/provable/packed.ts:290](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/packed.ts#L290)
 
 ***
 
@@ -128,7 +132,7 @@ get static innerProvable(): ProvableHashable<any>
 
 #### Source
 
-[lib/provable/packed.ts:263](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/packed.ts#L263)
+[lib/provable/packed.ts:294](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/packed.ts#L294)
 
 ## Methods
 
@@ -144,7 +148,7 @@ toFields(): Field[]
 
 #### Source
 
-[lib/provable/packed.ts:251](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/packed.ts#L251)
+[lib/provable/packed.ts:282](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/packed.ts#L282)
 
 ***
 
@@ -162,7 +166,7 @@ Unwrap a value from its hashed variant.
 
 #### Source
 
-[lib/provable/packed.ts:239](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/packed.ts#L239)
+[lib/provable/packed.ts:270](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/packed.ts#L270)
 
 ***
 
@@ -182,15 +186,16 @@ static _hash(_: any): Field
 
 #### Source
 
-[lib/provable/packed.ts:215](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/packed.ts#L215)
+[lib/provable/packed.ts:246](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/packed.ts#L246)
 
 ***
 
 ### create()
 
 ```ts
-static create<T>(type: ProvableHashable<T>, hash?: (t: T) => Field): typeof Hashed & {
+static create<T>(type: WithProvable<ProvableHashable<T>>, hash?: (t: T) => Field): typeof Hashed & {
   "provable": ProvableHashable<Hashed<T>>;
+  "empty": Hashed<T>;
 }
 ```
 
@@ -202,7 +207,7 @@ Create a hashed representation of `type`. You can then use `HashedType.hash(x)` 
 
 #### Parameters
 
-• **type**: [`ProvableHashable`](../type-aliases/ProvableHashable.mdx)\<`T`\>
+• **type**: [`WithProvable`](../type-aliases/WithProvable.mdx)\<[`ProvableHashable`](../type-aliases/ProvableHashable.mdx)\<`T`\>\>
 
 • **hash?**
 
@@ -210,11 +215,12 @@ Create a hashed representation of `type`. You can then use `HashedType.hash(x)` 
 
 *typeof* [`Hashed`](Hashed.mdx) & \{
   `"provable"`: [`ProvableHashable`](../type-aliases/ProvableHashable.mdx)\<[`Hashed`](Hashed.mdx)\<`T`\>\>;
+  `"empty"`: [`Hashed`](Hashed.mdx)\<`T`\>;
  \}
 
 #### Source
 
-[lib/provable/packed.ts:181](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/packed.ts#L181)
+[lib/provable/packed.ts:210](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/packed.ts#L210)
 
 ***
 
@@ -248,4 +254,4 @@ Optionally, if you already have the hash, you can pass it in and avoid recomputi
 
 #### Source
 
-[lib/provable/packed.ts:228](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/packed.ts#L228)
+[lib/provable/packed.ts:259](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/packed.ts#L259)

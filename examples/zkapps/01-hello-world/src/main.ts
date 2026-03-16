@@ -19,6 +19,8 @@ const zkAppAddress = zkAppPrivateKey.toPublicKey();
 // create an instance of Square - and deploy it to zkAppAddress
 const zkAppInstance = new Square(zkAppAddress);
 const deployTxn = await Mina.transaction(deployerAccount, async () => {
+  // 1 Mina fee is required to create a new account for the zkApp
+  // This line means the deployer account will pay the fee for any account created in this transaction
   AccountUpdate.fundNewAccount(deployerAccount);
   await zkAppInstance.deploy();
 });

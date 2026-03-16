@@ -99,13 +99,13 @@ try {
 
 function getTxnUrl(graphQlUrl: string, txnHash: string | undefined) {
   const hostName = new URL(graphQlUrl).hostname;
-  const txnBroadcastServiceName = hostName
+  const isMinascan = hostName
     .split('.')
-    .filter((item) => item === 'minascan')?.[0];
+    .includes('minascan');
   const networkName = graphQlUrl
     .split('/')
     .filter((item) => item === 'mainnet' || item === 'devnet')?.[0];
-  if (txnBroadcastServiceName && networkName) {
+  if (isMinascan && networkName) {
     return `https://minascan.io/${networkName}/tx/${txnHash}?type=zk-tx`;
   }
   return `Transaction hash: ${txnHash}`;

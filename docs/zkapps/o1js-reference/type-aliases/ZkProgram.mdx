@@ -1,16 +1,17 @@
 ```ts
-type ZkProgram<S, T>: ReturnType<typeof ZkProgram>;
+type ZkProgram<Config, Methods>: ReturnType<typeof ZkProgram>;
 ```
 
 ## Type parameters
 
-• **S** *extends* \{
-  `"publicInput"`: [`FlexibleProvablePure`](FlexibleProvablePure.mdx)\<`any`\>;
-  `"publicOutput"`: [`FlexibleProvablePure`](FlexibleProvablePure.mdx)\<`any`\>;
+• **Config** *extends* \{
+  `"methods"`: `{ [I in string]: Object }`;
+  `"publicInput"`: [`ProvableTypePure`](ProvableTypePure.mdx);
+  `"publicOutput"`: [`ProvableTypePure`](ProvableTypePure.mdx);
  \}
 
-• **T** *extends* `{ [I in string]: Tuple<PrivateInput> }`
+• **Methods** *extends* `{ [I in keyof Config["methods"]]: Method<InferProvableOrUndefined<Get<Config, "publicInput">>, InferProvableOrVoid<Get<Config, "publicOutput">>, Config["methods"][I]> }`
 
 ## Source
 
-[lib/proof-system/zkprogram.ts:531](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/proof-system/zkprogram.ts#L531)
+[lib/proof-system/zkprogram.ts:174](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/proof-system/zkprogram.ts#L174)

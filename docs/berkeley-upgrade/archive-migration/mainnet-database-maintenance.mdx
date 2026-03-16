@@ -76,7 +76,7 @@ apt-get install --allow-downgrades -y "mina-archive-maintenance=$VERSION"
 To get the Docker image:
 
 ```sh
-docker pull gcr.io/o1labs-192920/mina-archive-maintenance:1.4.1
+docker pull minaprotocol/mina-archive-maintenance:1.4.1-060f0a5-bullseye
 ```
 
 ## Usage for missing or invalid nonces
@@ -143,7 +143,7 @@ where:
 
 :warning: Running a replayer from scratch on a Devnet/Mainnet database can take up to a couple of days. The recommended best practice is to break the replayer into smaller parts by using the checkpoint capabilities of the replayer.
 
-:warning: You must run the replayer using the Mainnet version. You can run it from the Docker image at `minaprotocol/mina-archive:3.0.0-93e0279-bullseye`.
+:warning: You must run the replayer using the Mainnet version. You can run it from the Docker image at `minaprotocol/mina-archive:3.1.0-ae112d3-bullseye`.
 
 ## Missing blocks
 
@@ -155,7 +155,7 @@ If you uploaded the missing blocks to Google Cloud, the missing blocks can be re
 
    The `download-missing-blocks` script uses `localhost` as the database host so the script assumes that psql is running on localhost on port 5432. Modify `PG_CONN` in `download_missing_block.sh` for your environment.
 
-1. Install the required `mina-archive-blocks` and `mina-missing-blocks-auditor` scripts that are packed in the `minaprotocol/mina-archive:3.0.0-93e0279-bullseye` Docker image.
+1. Install the required `mina-archive-blocks` and `mina-missing-blocks-auditor` scripts that are packed in the `minaprotocol/mina-archive:3.1.0-ae112d3-bullseye` Docker image.
 
 1. Export the `BLOCKS_BUCKET`:
 
@@ -183,7 +183,7 @@ O1labs maintains a Google bucket containing precomputed blocks from Devnet and M
 Note: It's important to highlight that precomputed blocks for **Devnet** between heights `2` and `1582` have missing fields or incorrect transaction data. Utilizing these blocks to patch your Devnet archive database will result in failure. For those who rely on precomputed blocks from this bucket, please follow the outlined steps:
 
 1. Download additional blocks from `gs://mina_network_block_data/devnet-extensional-bundle.tar.gz`.
-2. Install the necessary `mina-archive-blocks` script contained within the `minaprotocol/mina-archive:3.0.0-93e0279-bullseye` Docker image.
+2. Install the necessary `mina-archive-blocks` script contained within the `minaprotocol/mina-archive:3.1.0-ae112d3-bullseye` Docker image.
 3. Execute mina-archive-blocks to import the extracted blocks from step 1 using the provided command:
 
       ```sh

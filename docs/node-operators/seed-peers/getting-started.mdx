@@ -69,7 +69,7 @@ MINA_LIBP2P_PASS="My_V3ry_S3cure_Password"
 LOG_LEVEL=Info
 FILE_LOG_LEVEL=Debug
 EXTRA_FLAGS=" --libp2p-keypair <path-to-the-key-file> --seed --max-connection 100"
-PEERS_LIST_URL=https://storage.googleapis.com/mina-seed-lists/mainnet_seeds.txt
+PEERS_LIST_URL=https://bootnodes.minaprotocol.com/networks/mainnet.txt
 ```
 
 Please note that `<path-to-the-key-file>` could change in value depending on where you stored your libp2p keypair from the previous steps. In docker, the keypath will always be `/keys/filename` due to where volumes are mounted.
@@ -88,7 +88,7 @@ docker run --name mina-seed-node -d \
 -v "$(pwd)/keys:/root/keys:ro" \
 -v "$(pwd)/.mina-config:/root/.mina-config" \
 -v "$(pwd)/.mina-env:/entrypoint.d/mina-env:ro" \
-minaprotocol/mina-daemon:3.0.0-93e0279-bullseye-mainnet \
+minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet \
 daemon
 ```
 

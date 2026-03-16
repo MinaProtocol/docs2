@@ -84,7 +84,7 @@ async function main() {
       increment,
       witness
     );
-    const proof = await Rollup.oneStep(
+    const { proof } = await Rollup.oneStep(
       rollup,
       initialRoot,
       latestRoot,
@@ -110,7 +110,11 @@ async function main() {
       proof.publicInput,
       rollupProofs[i].publicInput
     );
-    let mergedProof = await Rollup.merge(rollup, proof, rollupProofs[i]);
+    let { proof: mergedProof } = await Rollup.merge(
+      rollup,
+      proof,
+      rollupProofs[i]
+    );
     proof = mergedProof;
   }
 

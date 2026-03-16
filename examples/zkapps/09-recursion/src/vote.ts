@@ -33,7 +33,7 @@ async function main() {
   );
 
   const vote0 = VoteState.newVote(votersTree.getRoot());
-  const proof0 = await Vote.create(vote0);
+  const { proof: proof0 } = await Vote.create(vote0);
 
   console.log('making proof 1');
 
@@ -51,7 +51,7 @@ async function main() {
     voterTreeWitness1,
     nullifierWitness1
   );
-  const proof1 = await Vote.applyVote(
+  const { proof: proof1 } = await Vote.applyVote(
     vote1,
     proof0,
     Bool(true),
@@ -77,7 +77,7 @@ async function main() {
     voterTreeWitness2,
     nullifierWitness2
   );
-  const proof2 = await Vote.applyVote(
+  const { proof: proof2 } = await Vote.applyVote(
     vote2,
     proof1,
     Bool(false),

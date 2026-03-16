@@ -30,7 +30,7 @@ new CircuitString(value: {
 
 #### Source
 
-[lib/provable/types/struct.ts:144](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/types/struct.ts#L144)
+[lib/provable/types/struct.ts:148](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/struct.ts#L148)
 
 ## Properties
 
@@ -46,7 +46,7 @@ values: Character[];
 
 #### Source
 
-[lib/provable/string.ts:61](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/string.ts#L61)
+[lib/provable/string.ts:65](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/string.ts#L65)
 
 ***
 
@@ -62,7 +62,7 @@ static _isStruct: true;
 
 #### Source
 
-[lib/provable/types/struct.ts:144](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/types/struct.ts#L144)
+[lib/provable/types/struct.ts:148](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/struct.ts#L148)
 
 ***
 
@@ -97,7 +97,7 @@ the element of type `T` to put assertions on.
 
 #### Source
 
-[lib/provable/types/provable-intf.ts:66](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/types/provable-intf.ts#L66)
+[lib/provable/types/provable-intf.ts:76](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/provable-intf.ts#L76)
 
 ***
 
@@ -129,7 +129,7 @@ values: Character[];
 
 #### Source
 
-[lib/provable/types/struct.ts:154](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/types/struct.ts#L154)
+[lib/provable/types/struct.ts:158](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/struct.ts#L158)
 
 ***
 
@@ -165,7 +165,7 @@ values: Character[];
 
 #### Source
 
-[lib/provable/types/provable-intf.ts:87](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/types/provable-intf.ts#L87)
+[lib/provable/types/provable-intf.ts:115](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/provable-intf.ts#L115)
 
 ***
 
@@ -209,7 +209,7 @@ values: Character[];
 
 #### Source
 
-[lib/provable/types/struct.ts:153](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/types/struct.ts#L153)
+[lib/provable/types/struct.ts:157](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/struct.ts#L157)
 
 ***
 
@@ -235,7 +235,7 @@ Convert provable type from a normal JS type.
 
 #### Source
 
-[lib/provable/types/provable-intf.ts:76](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/types/provable-intf.ts#L76)
+[lib/provable/types/provable-intf.ts:86](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/provable-intf.ts#L86)
 
 ***
 
@@ -247,7 +247,7 @@ static maxLength: number = DEFAULT_STRING_LENGTH;
 
 #### Source
 
-[lib/provable/string.ts:68](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/string.ts#L68)
+[lib/provable/string.ts:72](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/string.ts#L72)
 
 ***
 
@@ -281,7 +281,62 @@ If not provided, a default value for auxiliary data is returned.
 
 #### Source
 
-[lib/provable/types/provable-intf.ts:37](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/types/provable-intf.ts#L37)
+[lib/provable/types/provable-intf.ts:47](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/provable-intf.ts#L47)
+
+***
+
+### toCanonical()?
+
+```ts
+static optional toCanonical: (x: {
+  "values": Character[];
+ }) => {
+  "values": Character[];
+};
+```
+
+Optional method which transforms a provable type into its canonical representation.
+
+This is needed for types that have multiple representations of the same underlying value,
+and might even not have perfect completeness for some of those representations.
+
+An example is the `ForeignField` class, which allows non-native field elements to exist in unreduced form.
+The unreduced form is not perfectly complete, for example, addition of two unreduced field elements can cause a prover error.
+
+Specific protocols need to be able to protect themselves against incomplete operations at all costs.
+For example, when using actions and reducer, the reducer must be able to produce a proof regardless of the input action.
+`toCanonical()` converts any input into a safe form and enables us to handle cases like this generically.
+
+Note: For most types, this method is the identity function.
+The identity function will also be used when the `toCanonical()` is not present on a type.
+
+#### Parameters
+
+• **x**
+
+• **x.values**: [`Character`](Character.mdx)[]
+
+#### Returns
+
+```ts
+{
+  "values": Character[];
+}
+```
+
+##### values
+
+```ts
+values: Character[];
+```
+
+#### Inherited from
+
+`Struct(RawCircuitString).toCanonical`
+
+#### Source
+
+[lib/provable/types/provable-intf.ts:104](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/provable-intf.ts#L104)
 
 ***
 
@@ -314,7 +369,7 @@ the element of type `T` to generate the [Field](Field.mdx) array from.
 
 #### Source
 
-[lib/provable/types/provable-intf.ts:26](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/types/provable-intf.ts#L26)
+[lib/provable/types/provable-intf.ts:36](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/provable-intf.ts#L36)
 
 ***
 
@@ -362,7 +417,7 @@ optional packed: [Field, number][];
 
 #### Source
 
-[lib/provable/types/struct.ts:148](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/types/struct.ts#L148)
+[lib/provable/types/struct.ts:152](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/struct.ts#L152)
 
 ***
 
@@ -408,7 +463,7 @@ values: {
 
 #### Source
 
-[lib/provable/types/struct.ts:152](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/types/struct.ts#L152)
+[lib/provable/types/struct.ts:156](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/struct.ts#L156)
 
 ***
 
@@ -438,7 +493,7 @@ Convert provable type to a normal JS type.
 
 #### Source
 
-[lib/provable/types/provable-intf.ts:71](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/types/provable-intf.ts#L71)
+[lib/provable/types/provable-intf.ts:81](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/provable-intf.ts#L81)
 
 ## Methods
 
@@ -461,7 +516,7 @@ within the `maxLength` of this string (the other string can have a different max
 
 #### Source
 
-[lib/provable/string.ts:117](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/string.ts#L117)
+[lib/provable/string.ts:121](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/string.ts#L121)
 
 ***
 
@@ -497,7 +552,7 @@ mask: Bool[];
 
 #### Source
 
-[lib/provable/string.ts:80](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/string.ts#L80)
+[lib/provable/string.ts:84](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/string.ts#L84)
 
 ***
 
@@ -519,7 +574,7 @@ returns true if `this` has the same value as `other`
 
 #### Source
 
-[lib/provable/string.ts:109](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/string.ts#L109)
+[lib/provable/string.ts:113](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/string.ts#L113)
 
 ***
 
@@ -535,7 +590,7 @@ hash(): Field
 
 #### Source
 
-[lib/provable/string.ts:143](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/string.ts#L143)
+[lib/provable/string.ts:147](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/string.ts#L147)
 
 ***
 
@@ -551,7 +606,7 @@ length(): Field
 
 #### Source
 
-[lib/provable/string.ts:102](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/string.ts#L102)
+[lib/provable/string.ts:106](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/string.ts#L106)
 
 ***
 
@@ -567,7 +622,7 @@ lengthMask(): Bool[]
 
 #### Source
 
-[lib/provable/string.ts:99](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/string.ts#L99)
+[lib/provable/string.ts:103](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/string.ts#L103)
 
 ***
 
@@ -583,7 +638,7 @@ maxLength(): number
 
 #### Source
 
-[lib/provable/string.ts:75](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/string.ts#L75)
+[lib/provable/string.ts:79](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/string.ts#L79)
 
 ***
 
@@ -605,7 +660,7 @@ substring(start: number, end: number): CircuitString
 
 #### Source
 
-[lib/provable/string.ts:147](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/string.ts#L147)
+[lib/provable/string.ts:151](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/string.ts#L151)
 
 ***
 
@@ -621,7 +676,7 @@ toString(): string
 
 #### Source
 
-[lib/provable/string.ts:151](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/string.ts#L151)
+[lib/provable/string.ts:155](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/string.ts#L155)
 
 ***
 
@@ -641,7 +696,7 @@ static fromCharacters(chars: Character[]): CircuitString
 
 #### Source
 
-[lib/provable/string.ts:71](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/string.ts#L71)
+[lib/provable/string.ts:75](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/string.ts#L75)
 
 ***
 
@@ -661,7 +716,7 @@ static fromString(str: string): CircuitString
 
 #### Source
 
-[lib/provable/string.ts:155](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/string.ts#L155)
+[lib/provable/string.ts:159](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/string.ts#L159)
 
 ***
 
@@ -685,4 +740,4 @@ A `number` representing the size of the `T` type in terms of [Field](Field.mdx) 
 
 #### Source
 
-[lib/provable/types/provable-intf.ts:56](https://github.com/o1-labs/o1js/blob/72b8e2c2b9aaba4b5c12257bdd63dfe2676a3d99/src/lib/provable/types/provable-intf.ts#L56)
+[lib/provable/types/provable-intf.ts:66](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/provable/types/provable-intf.ts#L66)

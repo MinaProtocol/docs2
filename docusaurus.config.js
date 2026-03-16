@@ -250,12 +250,11 @@ module.exports = {
           remarkPlugins: [math],
           rehypePlugins: [katex],
           admonitions: {
-            tag: ':::',
             keywords: [
               'note',
               'tip',
               'info',
-              'caution',
+              'warning',
               'danger',
               'experimental',
               'successTip',
@@ -348,7 +347,7 @@ module.exports = {
       },
 
       prism: {
-        theme: require('prism-react-renderer/themes/oceanicNext'),
+        theme: require('prism-react-renderer').themes.oceanicNext,
       },
 
       colorMode: {

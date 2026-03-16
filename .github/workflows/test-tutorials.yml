@@ -1,19 +1,105 @@
 name: Test-Tutorials
-
 on:
   push:
+    branches:
+      - main
+  workflow_dispatch: {}
 
 jobs:
-  hello-world:
+  test-tutorials:
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18, 20, 22]
+        example-path:
+          - examples/zkapps/01-hello-world
+          - examples/zkapps/02-private-inputs-and-hash-functions
+          - examples/zkapps/05-common-types-and-functions
+          - examples/zkapps/09-recursion
+          - examples/zkapps/10-account-updates
+
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          # In case of version change, update README.md accordingly
-          node-version: 18
-      - run: |
-          npm ci
+          node-version: ${{ matrix.node-version }}
+      
+      - name: Set Git config (global)
+        run: |
           git config --global user.email "test@example.com"
           git config --global user.name "Test"
-          npx ts-node scripts/tutorial-runner.ts docs/zkapps/tutorials/01-hello-world.mdx
+
+      - name: Install dependencies, build and run ${{ matrix.example-path }}/build/src/main.js
+        run: |
+          cd ${{ matrix.example-path }}
+          npm ci
+          npm run build
+          example_path="${{ matrix.example-path }}"
+          if [[ "$example_path" == "examples/zkapps/09-recursion" ]]; then
+            node build/src/vote.js
+            node build/src/rollup.js
+          else
+            node build/src/main.js
+          fi
+  
+  test-features:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18, 20, 22]
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      
+      - name: Install dependencies, build and test
+        run: |
+          cd examples/zkapps/feature-overview
+          npm ci
+          npm run test
+
+  build-tutorials:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18, 20, 22]
+        example-path:
+          - examples/zkapps/04-zkapp-browser-ui
+          - examples/zkapps/07-oracles
+          - examples/zkapps/anonymous-message-board
+          - examples/zkapps/interacting-with-zkApps-server-side
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      
+      - name: Set Git config (global)
+        run: |
+          git config --global user.email "test@example.com"
+          git config --global user.name "Test"
+
+      - name: Install dependencies and build  ${{ matrix.example-path }}
+        run: |
+          cd ${{ matrix.example-path }}
+          if [ -d "contracts" ]; then
+            cd contracts 
+          fi
+          npm ci
+          npm run build
+
