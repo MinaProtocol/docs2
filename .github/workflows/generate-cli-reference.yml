@@ -2,9 +2,58 @@ name: Generate CLI Reference
 
 on:
   workflow_dispatch: {}
+  pull_request:
+    paths:
+      - 'docs/node-operators/mina-cli-reference.mdx'
+      - 'scripts/generate-cli-reference.sh'
+      - '.github/workflows/generate-cli-reference.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'docs/node-operators/mina-cli-reference.mdx'
+      - 'scripts/generate-cli-reference.sh'
+      - '.github/workflows/generate-cli-reference.yml'
 
 jobs:
-  generate-cli-reference:
+  check-cli-reference:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Mina daemon
+        run: |
+          echo "deb [trusted=yes] http://packages.o1test.net/ bookworm stable" | sudo tee /etc/apt/sources.list.d/mina.list
+          sudo apt-get update
+          sudo apt-get install -y mina-mainnet
+
+      - name: Capture installed version
+        id: version
+        run: |
+          VERSION=$(dpkg-query -W -f='${Version}' mina-mainnet)
+          echo "mina_version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Generate CLI reference
+        run: |
+          chmod +x scripts/generate-cli-reference.sh
+          ./scripts/generate-cli-reference.sh mina /tmp/mina-cli-reference
+
+      - name: Check if CLI reference is outdated
+        run: |
+          cp /tmp/mina-cli-reference/mina-cli-reference.md /tmp/generated.mdx
+          if ! diff -q docs/node-operators/mina-cli-reference.mdx /tmp/generated.mdx > /dev/null 2>&1; then
+            echo "::warning::CLI reference is outdated (current mina version: ${{ steps.version.outputs.mina_version }})"
+            diff --unified docs/node-operators/mina-cli-reference.mdx /tmp/generated.mdx || true
+            exit 1
+          else
+            echo "CLI reference is up to date with mina ${{ steps.version.outputs.mina_version }}"
+          fi
+
+  update-cli-reference:
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    needs: check-cli-reference
     runs-on: ubuntu-latest
 
     steps:
