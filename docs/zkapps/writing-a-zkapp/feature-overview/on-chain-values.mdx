@@ -50,8 +50,8 @@ this.network.timestamp.requireBetween(lower, upper);
 To use the `requireBetween()` method in a voting example, you can allow voting throughout September 2024. Timestamps are represented as a `UInt64` in milliseconds since the [UNIX epoch](https://en.wikipedia.org/wiki/Unix_time). You can use the JS `Date` object to easily convert to this representation. In the simplest case, a zkApp could just hard-code the dates:
 
 ```ts
-const startDate = UInt64.from(Date.UTC(2022, 9, 1));
-const endDate = UInt64.from(Date.UTC(2022, 10, 1));
+const startDate = UInt64.from(Date.UTC(2024, 9, 1));
+const endDate = UInt64.from(Date.UTC(2024, 10, 1));
 
 class VotingApp extends SmartContract {
   // ...
@@ -116,7 +116,7 @@ this.account.nonce.get(): UInt32;
 this.account.delegate.get(): PublicKey;
 // boolean indicating whether an account is new (= didn't exist before the transaction)
 this.account.isNew.get(): Bool;
-// boolean indicating whether all 8 on-chain state fields where last changed by a transaction
+// boolean indicating whether all 8 on-chain state fields were last changed by a transaction
 // authorized by a zkApp proof (as opposed to a signature)
 this.account.provedState.get(): Bool;
 // hash receipt which includes all prior transaction to an account

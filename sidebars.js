@@ -58,6 +58,7 @@ module.exports = {
         'using-mina/Protect-Your-MINA',
       ],
     },
+    'mina-signer',
     {
       type: 'category',
       label: 'zkApp Developers',

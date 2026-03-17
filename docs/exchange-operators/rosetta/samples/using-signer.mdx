@@ -6,7 +6,7 @@ description: Using signer tool for key pair generation and signing transactions
 # Offline signer tool
 
 According to the Rosetta specification, you use an offline tool to sign transactions and use Rosetta to submit the signed transactions.
-The Mina Rosetta implementation comes with an offline signer CLI tool and a `mina-signer` npm package. To generate a key pair, sign a transaction and verify a signature with it.
+The Mina Rosetta implementation comes with an offline signer CLI tool and a [`mina-signer`](/mina-signer) npm package. To generate a key pair, sign a transaction and verify a signature with it.
 
 In a native build, the path to the signer tool is `_build/default/src/app/rosetta/ocaml-signer/signer.exe`.
 
@@ -16,7 +16,7 @@ To simplify examples, it is referred to as the `signer` alias.
 
 ## Generating a key pair with `mina-signer`
 
-A sample code to generate a keypair:
+See [Generating Keys](/mina-signer#generating-keys) in the Mina Signer documentation for full details. A quick example:
 
 ```ts
 import { Client } from 'mina-signer'
