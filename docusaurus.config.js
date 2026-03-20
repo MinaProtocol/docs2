@@ -256,6 +256,30 @@ module.exports = {
             from: '/mesa-upgrade/archive-upgrade',
             to: '/network-upgrades/mesa/archive-upgrade',
           },
+          {
+            from: '/mesa-upgrade/flags-configs',
+            to: '/network-upgrades/mesa/upgrade-steps/post-upgrade',
+          },
+          {
+            from: '/mesa-upgrade/appendix',
+            to: '/network-upgrades/mesa/appendix',
+          },
+          {
+            from: '/mesa-upgrade/upgrade-steps/pre-upgrade',
+            to: '/network-upgrades/mesa/upgrade-steps/pre-upgrade',
+          },
+          {
+            from: '/mesa-upgrade/upgrade-steps/state-finalization',
+            to: '/network-upgrades/mesa/upgrade-steps/state-finalization',
+          },
+          {
+            from: '/mesa-upgrade/upgrade-steps/upgrade',
+            to: '/network-upgrades/mesa/upgrade-steps/upgrade',
+          },
+          {
+            from: '/mesa-upgrade/upgrade-steps/post-upgrade',
+            to: '/network-upgrades/mesa/upgrade-steps/post-upgrade',
+          },
         ],
       },
     ],
