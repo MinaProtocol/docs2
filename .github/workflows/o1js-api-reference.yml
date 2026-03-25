@@ -6,18 +6,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           # In case of version change, update README.md accordingly
           node-version: 16
 
       - name: Checkout Docs repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           path: docs
 
       - name: Checkout o1js repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: o1-labs/o1js
           path: o1js

@@ -1,86 +1,25 @@
 ---
-title: Mina Signer
+title: Mina Signer for Node Operators
 hide_title: true
-description: The Mina Signer is a NodeJS SDK which allows you to sign strings, payments, and delegations using Mina's key pairs for various specified networks.
+description: Using Mina Signer to sign and broadcast payments and delegations for node operators.
 keywords:
   - mina signer
   - sign
   - signature
+  - node operators
 ---
 
-# Mina Signer
+# Mina Signer for Node Operators
 
-The Mina Signer is a NodeJS SDK which allows you to sign strings, payments, and delegations using Mina's key pairs for various specified networks.
-
-See the [Mina Signer](https://github.com/o1-labs/o1js/tree/main/src/mina-signer) repository for installation and usage instructions.
-
+[Mina Signer](/mina-signer) is a NodeJS SDK that allows you to sign strings, payments, and delegations using Mina's key pairs for various specified networks. See the full [Mina Signer documentation](/mina-signer) for installation, API details, and usage with o1js and Rosetta.
 
 ## Migration from o1labs/client-sdk to mina-signer
 
 The signing library `o1labs/client-sdk` was deprecated some time ago and will stop working after the Mina mainnet upgrade. All users should upgrade to use the [mina-signer](https://www.npmjs.com/package/mina-signer) library.
 
-Below you will find an example of how to use the `mina-signer` library. Please keep in mind the following:
+Please keep in mind the following:
 
 1. Make sure to adjust the `nonce` to the correct nonce on the account you want to use as "sender"
 1. Update the `url` variable with an existing Mina Node GraphQL endpoint
 
-```javascript
-import { Client } from 'mina-signer';
-
-// create the client and define the keypair
-
-const client = new Client({ network: 'testnet' }); // Mind the `network` client configuration option
-
-const senderPrivateKey = 'EKFd1Gx...'; // Sender's private key
-const senderPublicKey = 'B62qrDM...'; // Sender's public key, perhaps derived from the private key using `client.derivePublicKey(senderPrivateKey)`;
-
-// define and sign payment
-
-let payment = {
-  from: senderPublicKey,
-  to: 'B62qkBw...', // Recipient public key
-  amount: 100,
-  nonce: 1,
-  fee: 1000000,
-};
-
-const signedPayment = client.signPayment(payment, senderPrivateKey);
-
-// send payment to graphql endpoint
-
-const url = 'https://qanet.minaprotocol.network/graphql';
-
-const sendPaymentMutationQuery = `
-mutation SendPayment($input: SendPaymentInput!, $signature: SignatureInput!) {
-  sendPayment(input: $input, signature: $signature) {
-    payment {
-      hash
-    }
-  }
-}
-`;
-const graphQlVariables = {
-  input: signedPayment.data,
-  signature: signedPayment.signature,
-};
-const body = JSON.stringify({
-  query: sendPaymentMutationQuery,
-  variables: graphQlVariables,
-  operationName: 'SendPayment',
-});
-
-const paymentResponse = await fetch(url, {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body
-});
-
-const paymentResponseJson = await paymentResponse.json();
-if (paymentResponse.ok) {
-  console.log(`Transaction hash: ${paymentResponseJson.data.sendPayment.payment.hash}`);
-} else {
-  console.error(JSON.stringify(paymentResponseJson));
-}
-
-
-```
+See the [Broadcasting a Signed Payment](/mina-signer#broadcasting-a-signed-payment) section for a complete example of signing and broadcasting a payment via GraphQL.
