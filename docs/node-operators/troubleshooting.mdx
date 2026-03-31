@@ -308,7 +308,7 @@ It is also possible to produce a block in catchup, and this block will also be q
 
 There are a few reasons why you could miss a slot / not successfully produce a block, for example, the node restarting and being in bootstrap at the time of producing a slot.
 
-Also, you must produce a block within the slot time (3 mins). If you are on less powerful hardware or the daemon is competing for resources, it may not produce the block in time. In this instance, you should find in your logs:
+Also, you must produce a block within the slot time (90 seconds). If you are on less powerful hardware or the daemon is competing for resources, it may not produce the block in time. In this instance, you should find in your logs:
 
 `Internally generated block $state_hash cannot be rebroadcast because it's not a valid time to do so ($timing)`
 
@@ -316,7 +316,7 @@ It is not recommended to run a SNARK worker on the same machine at the same time
 
 ### Why is the block rate so low / how often should there be a block?
 
-A slot on the current network is every 3 mins, though not all slots should have a block produced, so on average, we would expect a block every 4 mins. However, not all the stake is online and active in producing blocks, and so not all slots will have a block, and sometimes there can be long delays between blocks. As more of the stake is online and staking, this situation improves.
+A slot on the current network is every 90 seconds, though not all slots should have a block produced, so on average, we would expect a block every 2 mins. However, not all the stake is online and active in producing blocks, and so not all slots will have a block, and sometimes there can be long delays between blocks. As more of the stake is online and staking, this situation improves.
 
 ### Why does o1Labs win most of the blocks?
 

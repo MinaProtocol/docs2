@@ -41,7 +41,7 @@ you now have access to more data off-chain.
 
 Imagine a zkApp that manages a game with a leaderboard. The zkApp has a method to update a player's score if the player guesses a number correctly.
 After a player reaches a threshold score, the player can invoke another method to get a reward. Because you want many players to participate in the game,
-you are drastically limited by how much data can be stored on-chain. You will quickly run out of on-chain space with eight or more participants.
+you are drastically limited by how much data can be stored on-chain. You will quickly run out of on-chain space with 32 or more participants.
 
 A possible solution to that problem is to use the power of Merkle trees, store the public keys of each player and their corresponding scores off-chain, and reference the keys in the smart contract.
 

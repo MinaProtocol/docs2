@@ -42,7 +42,7 @@ There are some key considerations when choosing to build a zkApp with o1js on Mi
 
 - zkApps are subject to protocol throughput limitations.
 - At present, zkApps that require support for multiple concurrent users require specific architecture to avoid race conditions:
-  - Where more than the eight on-chain field elements are required to manage state, and access to that state is not shared between users, the experimental [Offchain Storage API](/zkapps/writing-a-zkapp/feature-overview/offchain-storage) offers a solution.
+  - Where more than the 32 on-chain field elements are required to manage state, and access to that state is not shared between users, the experimental [Offchain Storage API](/zkapps/writing-a-zkapp/feature-overview/offchain-storage) offers a solution.
   - Where concurrent access to _shared global state_ is required, the required architecture is available **out of the box** when using the Protokit framework to build your zkApp as an zkApp-chain (L2). There is currently no easy-to-use equivalent for shared state in o1js L1 contracts.
 
 Start here:

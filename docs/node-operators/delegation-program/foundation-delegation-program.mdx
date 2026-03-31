@@ -142,7 +142,7 @@ You must return rewards to the address specified in the [Mina Delegation Program
 
 Rewards must be distributed at least once for a given epoch. You must send one payment in the amount of your obligation to the correct address specified in the [Mina Delegation Program Return Addresses](https://docs.google.com/spreadsheets/d/1Fm4XSS9Xu4eWAhpM06sdySUKvLClR5SculXfP5o5sSc/edit?usp=sharing) mapping document and if applicable, send the correct amount to the burn address. Both payments should have a memo field with the md5 hash value of your block producer public key. This is the easiest method to avoid confusion in tracking payments and will reduce the likelihood you will be incorrectly flagged as delinquent.
 
-All the rewards for epoch N must be delivered (ie. accepted in a block, not just sent) no later than slot number 3,500 of the next epoch. This gives you about a week to sort out these payments.
+All the rewards for epoch N must be delivered (ie. accepted in a block, not just sent) no later than slot number 3,500 of the next epoch. This gives you about half a week to sort out these payments.
 
 
 ### How do I calculate the reward payout?
@@ -162,9 +162,9 @@ At the end of each epoch, do <u>all</u> of the following:
 
 2. Compute the share of stake from the token provider (from both accounts) by dividing the token provider delegation by the total stake. (i.e. `provider_share = provider_delegation / total_stake`). The resulting share should be between 0 and 1.
 
-3. For each block produced that has a non-zero block-reward on the canonical chain rewards must be calculated based on 720 MINA.
+3. For each block produced that has a non-zero block-reward on the canonical chain rewards must be calculated based on 360 MINA.
 
-4. Calculate the Mina Foundation payout by multiplying the coinbase reward (equal to `720 MINA` ) by the provider share calculated in the previous step minus an 8% percent fee. (i.e. `payout = (provider_share * 0.92) * 720)`.
+4. Calculate the Mina Foundation payout by multiplying the coinbase reward (equal to `360 MINA` ) by the provider share calculated in the previous step minus an 8% percent fee. (i.e. `payout = (provider_share * 0.92) * 360)`.
 
 5.  Send a transaction to the token provider accounts with the appropriate payout and memo - please follow the rules in the "Payout Attribution" section with your transaction.
   More details in the following source code parts: [PayoutCalculatorIsolateSuperCharge.ts](https://github.com/jrwashburn/mina-pool-payout/blob/7f00dbd9e693f76ea6a950c29862120a170625a9/src/core/payoutCalculator/PayoutCalculatorIsolateSuperCharge.ts#L126) and [ConfigurationManager.ts](https://github.com/jrwashburn/mina-pool-payout/blob/7f00dbd9e693f76ea6a950c29862120a170625a9/src/configuration/ConfigurationManager.ts#L21C15-L21C15).
@@ -191,11 +191,11 @@ Now let's consider Epoch 5. The share of the stake from the Foundation is `6 mil
 
 3 blocks are produced in this epoch that end up on the canonical chain. The blocks were won by Account A.
 
-1. Account A retains, 0.2 x 720 MINA x 3 blocks = 432 MINA.
-2. Mina Foundation, Account B, payout would be: (0.6 x 0.92) x 720 MINA x 3 blocks = 1,192.32 MINA.
-3. Account A retains 8%, (0.6 x 0.08) x 720 MINA x 3 blocks = 103.68 MINA.
-3. Account C payout would be: (0.2 x 0.92) x 720 MINA x 3 blocks = 397.44 MINA.
-4. Account A retains 8%, (0.2 x 0.08) x 720 MINA x 3 blocks = 34.56 MINA
+1. Account A retains, 0.2 x 360 MINA x 3 blocks = 216 MINA.
+2. Mina Foundation, Account B, payout would be: (0.6 x 0.92) x 360 MINA x 3 blocks = 596.16 MINA.
+3. Account A retains 8%, (0.6 x 0.08) x 360 MINA x 3 blocks = 51.84 MINA.
+3. Account C payout would be: (0.2 x 0.92) x 360 MINA x 3 blocks = 198.72 MINA.
+4. Account A retains 8%, (0.2 x 0.08) x 360 MINA x 3 blocks = 17.28 MINA
 
 
 ### Relevant Links

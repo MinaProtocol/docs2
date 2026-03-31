@@ -27,6 +27,12 @@ Please follow the guidelines [**here**](/zkapps/writing-a-zkapp/introduction-to-
 
 :::
 
+:::info Mesa Upgrade
+
+With the [Mesa upgrade](/mesa-upgrade/mesa-upgrade-overview), the per-transaction capacity for actions has been increased from 100 to **1,024 field elements**. This allows zkApps to dispatch richer, more complex actions within a single transaction.
+
+:::
+
 # Actions & Reducer
 
 Like events, **actions** are _public_ arbitrary information that are passed along with a zkApp transaction. However, actions give you additional power: you can process previous actions in a smart contract! Under the hood, this is possible because a commitment is stored to the history of dispatched actions on every account -- the **actionState**. It allows you to prove that the actions you process are, in fact, the actions that were dispatched to the same smart contract.
