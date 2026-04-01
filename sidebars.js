@@ -74,6 +74,7 @@ module.exports = {
             'network-upgrades/mesa/replayer',
             'network-upgrades/mesa/preflight-network',
             'network-upgrades/mesa/appendix',
+            'network-upgrades/mesa/glossary',
           ],
         },
       ],
