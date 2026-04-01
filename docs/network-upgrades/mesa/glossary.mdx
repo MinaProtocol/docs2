@@ -1,0 +1,121 @@
+---
+title: Glossary
+sidebar_label: Glossary
+hide_title: true
+description: Definitions of key terms used throughout the Mesa upgrade documentation — stop-slots, automode, dispatcher, trustless/trustful upgrades, and more.
+keywords:
+  - Mesa
+  - glossary
+  - terminology
+  - stop-slot
+  - automode
+  - hard fork
+---
+
+# Glossary
+
+This page defines the key terms used throughout the Mesa upgrade documentation. If you encounter an unfamiliar term in any of the upgrade guides, you can look it up here.
+
+:::tip
+Bookmark this page for quick reference while reading the upgrade docs.
+:::
+
+---
+
+## Network and Fork Terms
+
+### Hard Fork
+
+A major, non-backward-compatible network upgrade. All node operators must upgrade their software before the fork activates. After the fork, nodes running the old software can no longer participate in the network. The Mesa upgrade is a hard fork.
+
+### Stop-Slot Release
+
+The Mina release (version 3.x.x) that node operators install **before** the fork. This release contains the stop-slot logic that gracefully halts the network at the designated time. In [automode](#automode), this release also bundles both the [pre-fork](#pre-fork-binary) and [post-fork binary](#post-fork-binary).
+
+### Stop-Transaction-Slot {#stop-transaction-slot}
+
+A predefined global slot number baked into the [stop-slot release](#stop-slot-release). When the network reaches this slot, nodes stop accepting new user transactions. Block production continues with empty blocks (no user commands, no coinbase, no fee transfers) for approximately 100 more slots until the [stop-network-slot](#stop-network-slot). This is the point where exchanges must disable deposits and withdrawals.
+
+### Stop-Network-Slot {#stop-network-slot}
+
+A predefined global slot number that comes after the [stop-transaction-slot](#stop-transaction-slot). When the network reaches this slot, block production halts entirely. The network is now frozen, and the final state is used to build the Mesa release. In [automode](#automode), this is when the daemon automatically transitions to the [post-fork binary](#post-fork-binary).
+
+### State Finalization
+
+The stabilization period between the [stop-transaction-slot](#stop-transaction-slot) and the [stop-network-slot](#stop-network-slot) — approximately 100 slots (~5 hours). During this window, empty blocks are produced so that all nodes converge on the same final state. No operator action is required; nodes should remain running. See [State Finalization](/network-upgrades/mesa/upgrade-steps/state-finalization).
+
+### Mesa Genesis Timestamp
+
+The predefined time (approximately 1 hour after the Mesa release is published) at which the first block is produced on the new Mesa chain. This marks the start of the upgraded network.
+
+### Mesa Release
+
+The new Mina build (version 4.x.x) published after [state finalization](#state-finalization) is complete. It contains the Mesa chain configuration and genesis ledger derived from the final pre-fork state. In [manual mode](#manual-mode), operators install this release to join the Mesa network.
+
+### Preflight Network
+
+A testing environment for validating the Mesa upgrade before deployment to mainnet. Node operators and developers can test their infrastructure and applications against it. The preflight network may be unstable and is not intended for production use. See [Preflight Network](/network-upgrades/mesa/preflight-network).
+
+---
+
+## Upgrade Mode Terms
+
+### Automode {#automode}
+
+The recommended upgrade path for daemon nodes (block producers, SNARK coordinators). In automode, the node handles the entire fork transition automatically — no manual intervention is required during the fork window. The [stop-slot release](#stop-slot-release) ships both the [pre-fork](#pre-fork-binary) and [post-fork binary](#post-fork-binary), and the [dispatcher](#dispatcher) routes to the correct one based on the fork state. See [Upgrade Modes](/network-upgrades/mesa/upgrade-modes).
+
+### Manual Mode {#manual-mode}
+
+The traditional upgrade path where operators manually stop their node after the network halts, install the [Mesa release](#mesa-release), and restart. This gives full control over every step but requires prompt action when the release is published. See [Upgrade Modes](/network-upgrades/mesa/upgrade-modes).
+
+### Pre-Fork Binary {#pre-fork-binary}
+
+The binary that runs the current (Berkeley) chain up to the [stop-network-slot](#stop-network-slot). In [automode](#automode), this is packaged as `mina-{network}-prefork-mesa` and installed at `/usr/lib/mina/berkeley/mina`. In Docker, the auto-hardfork image includes this binary.
+
+### Post-Fork Binary {#post-fork-binary}
+
+The binary that runs the new Mesa chain after the fork activates. In [automode](#automode), this is packaged as `mina-{network}-postfork-mesa` and installed at `/usr/lib/mina/mesa/mina`. The [dispatcher](#dispatcher) switches to this binary once the [activation file](#activation-file) is created.
+
+### Dispatcher {#dispatcher}
+
+A shell script wrapper (`mina-dispatch`) installed at `/usr/local/bin/` that routes commands to the correct binary — [pre-fork](#pre-fork-binary) or [post-fork](#post-fork-binary) — based on whether the [activation file](#activation-file) exists. It only supports the `daemon` subcommand; for other commands (e.g., `client status`), use `mina-berkeley` or `mina-mesa` directly. See [Upgrade Modes - Details](/network-upgrades/mesa/upgrade-modes-details).
+
+### Activation File {#activation-file}
+
+A sentinel file created by the daemon when it reaches the [stop-network-slot](#stop-network-slot) during [automode](#automode). Its presence signals to the [dispatcher](#dispatcher) that the fork has completed and the [post-fork binary](#post-fork-binary) should be used on subsequent restarts. Located at `{config-directory}/auto-fork-mesa-{network}/activated`.
+
+---
+
+## Archive Upgrade Terms
+
+### Trustless Upgrade {#trustless}
+
+An archive database upgrade method where operators run the `upgrade_to_mesa.sql` script on their existing database. The script is backward-compatible and can be applied before the fork while the Berkeley archive node is still running. It completes in under 1 minute. See [Archive Upgrade](/network-upgrades/mesa/archive-upgrade).
+
+### Trustful Upgrade {#trustful}
+
+An archive database upgrade method where operators import an official SQL database dump published by o1Labs after the fork. This requires no pre-fork action — operators wait for the dump, create a fresh database, and import it. The trade-off is that you trust o1Labs' export rather than verifying the data yourself.
+
+### Archive Hardfork Toolbox {#hardfork-toolbox}
+
+A dedicated CLI tool (`mina-archive-hardfork-toolbox`) for verifying the integrity of archive database upgrades and fork transitions. It provides commands to validate the fork block, verify schema upgrades, and mark the canonical chain. Shipped with the Mina archive package. See [Archive Upgrade — Verification](/network-upgrades/mesa/archive-upgrade#verification-with-the-archive-hardfork-toolbox).
+
+### Replayer {#replayer}
+
+A verification tool (`mina-replayer`) that replays all transactions from a Mina archive database to reconstruct the ledger state from scratch. It can be used to verify that the archive database faithfully represents the canonical chain — both during the fork and as an ongoing integrity check. See [Archive Replayer](/network-upgrades/mesa/replayer).
+
+### Fork Config
+
+The official ledger checkpoint published with the [Mesa release](#mesa-release). Operators can compare the output of the [replayer](#replayer) against this config to verify their archive matches the canonical state used to build Mesa.
+
+---
+
+## Protocol Terms
+
+### Expanded zkApp State
+
+Mesa increases the on-chain state available to zkApps from 8 fields to 31 fields per account. This applies to both the `zkapp_states` and `zkapp_states_nullable` database tables. See the [Appendix](/network-upgrades/mesa/appendix) for schema details.
+
+### Node Status Service
+
+An opt-in telemetry feature that reports non-sensitive node data (e.g., version, sync status) to help monitor the amount of upgraded active stake during the upgrade. Can be disabled with `--node-stats-type none`.
