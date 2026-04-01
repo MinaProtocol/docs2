@@ -194,7 +194,7 @@ The checks in the tabs above cover basic health. This section provides deeper va
 
 ### Archive Node Validation
 
-Use the `mina-archive-hardfork-toolbox` to verify the migration. All commands require `--postgres-uri postgresql://<user>:<password>@<host>:<port>/<db>`. See the [Archive Upgrade](/network-upgrades/mesa/archive-upgrade#verification-with-the-archive-hardfork-toolbox) page for full toolbox documentation.
+Use the `mina-archive-hardfork-toolbox` to verify the upgrade. All commands require `--postgres-uri postgresql://<user>:<password>@<host>:<port>/<db>`. See the [Archive Upgrade](/network-upgrades/mesa/archive-upgrade#verification-with-the-archive-hardfork-toolbox) page for full toolbox documentation.
 
 **Verify schema upgrade:**
 ```bash
@@ -305,7 +305,7 @@ If you encounter any problems after the upgrade:
 
 The flags below are **unchanged from Berkeley** — if your node was running correctly before the fork, the same flags will work on Mesa. This section is provided as a reference for operators setting up fresh nodes or verifying their configuration.
 
-For full details, see the [Mesa release notes](https://github.com/MinaProtocol/mina/releases/tag/4.0.0).
+For full details, see the [Mesa release notes](https://github.com/MinaProtocol/mina/releases).
 
 :::info What changed in Mesa
 - The `--hardfork-handling` flag is **removed** (not supported on the Mesa chain). If you were using it, remove it from your startup configuration.

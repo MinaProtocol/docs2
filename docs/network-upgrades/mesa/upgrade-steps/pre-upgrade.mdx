@@ -44,10 +44,10 @@ During the Pre-Upgrade phase, node operators prepare their infrastructure for th
 
 <ul className="checklist">
   <li>Chosen an <a href="/network-upgrades/mesa/upgrade-modes">upgrade mode</a>: automode (recommended) or manual</li>
-  <li>Upgraded node to the current stable version (3.3.0)</li>
-  <li>Installed stop-slot release <a href="https://github.com/MinaProtocol/mina/releases/tag/4.0.0">4.0.0</a> <strong>before</strong> the <em>stop-transaction-slot</em></li>
+  <li>Upgraded node to the current stable version</li>
+  <li>Installed stop-slot release <a href="https://github.com/MinaProtocol/mina/releases">3.x.x</a> <strong>before</strong> the <em>stop-transaction-slot</em></li>
   <li>If using <strong>automode</strong>: installed both <code>mina-&#123;network&#125;-prefork-mesa</code> and <code>mina-&#123;network&#125;-postfork-mesa</code> packages (or the auto-hardfork Docker image)</li>
-  <li>If using <strong>manual mode</strong>: installed <code>mina-mainnet=4.0.0</code> (stop-slot release only)</li>
+  <li>If using <strong>manual mode</strong>: installed <code>mina-mainnet=3.x.x</code> (stop-slot release only)</li>
 </ul>
 
 #### Verification
@@ -79,8 +79,8 @@ During the Pre-Upgrade phase, node operators prepare their infrastructure for th
 
 <ul className="checklist">
   <li>Chosen an <a href="/network-upgrades/mesa/upgrade-modes">upgrade mode</a>: automode (recommended) or manual</li>
-  <li>Upgraded node to the current stable version (3.3.0)</li>
-  <li>Installed stop-slot release <a href="https://github.com/MinaProtocol/mina/releases/tag/4.0.0">4.0.0</a> <strong>before</strong> the <em>stop-transaction-slot</em></li>
+  <li>Upgraded node to the current stable version</li>
+  <li>Installed stop-slot release <a href="https://github.com/MinaProtocol/mina/releases">3.x.x</a> <strong>before</strong> the <em>stop-transaction-slot</em></li>
   <li>If using <strong>automode</strong>: installed both prefork and postfork packages</li>
   <li>If using <strong>manual mode</strong>: installed stop-slot release only</li>
 </ul>
@@ -124,10 +124,10 @@ SNARK workers do not need to install the stop-slot release independently. They c
   <li>If <code>mina-generate-keypair</code> is installed, remove it: <code>sudo apt remove mina-generate-keypair</code></li>
 </ul>
 
-#### Database Migration
+#### Database Upgrade
 
 <ul className="checklist">
-  <li>Chosen archive migration method: <em>trustless</em> or <em>trustful</em></li>
+  <li>Chosen archive upgrade method: <em>trustless</em> or <em>trustful</em></li>
 </ul>
 
 **If trustless:**
@@ -148,8 +148,8 @@ SNARK workers do not need to install the stop-slot release independently. They c
 #### Software Upgrade
 
 <ul className="checklist">
-  <li>Upgraded node to the current stable version (3.3.0)</li>
-  <li>Installed stop-slot release <a href="https://github.com/MinaProtocol/mina/releases/tag/4.0.0">4.0.0</a> <strong>before</strong> the <em>stop-transaction-slot</em></li>
+  <li>Upgraded node to the current stable version</li>
+  <li>Installed stop-slot release <a href="https://github.com/MinaProtocol/mina/releases">3.x.x</a> <strong>before</strong> the <em>stop-transaction-slot</em></li>
   <li>Archive node is running and capturing blocks</li>
 </ul>
 
@@ -190,8 +190,8 @@ SNARK workers do not need to install the stop-slot release independently. They c
 #### Software Upgrade
 
 <ul className="checklist">
-  <li>Upgraded node to the current stable version (3.3.0)</li>
-  <li>Installed stop-slot release <a href="https://github.com/MinaProtocol/mina/releases/tag/4.0.0">4.0.0</a> <strong>before</strong> the <em>stop-transaction-slot</em></li>
+  <li>Upgraded node to the current stable version</li>
+  <li>Installed stop-slot release <a href="https://github.com/MinaProtocol/mina/releases">3.x.x</a> <strong>before</strong> the <em>stop-transaction-slot</em></li>
 </ul>
 
 #### Operations Plan
@@ -215,23 +215,23 @@ Any transactions submitted after the _stop-transaction-slot_ **will not exist on
 ### Block Producers and SNARK Workers
 
 1. Provision servers that meet the minimum [hardware requirements](/network-upgrades/mesa/requirements), including 32 GB RAM and support for _AVX_ and _BMI2_ CPU instructions.
-2. Upgrade nodes to node version [4.0.0](https://github.com/MinaProtocol/mina/releases/tag/4.0.0), which has built-in stop slots.
+2. Upgrade nodes to the stop-slot release version [3.x.x](https://github.com/MinaProtocol/mina/releases), which has built-in stop slots.
 
 If you are using [Automode](/network-upgrades/mesa/upgrade-modes), no further action is needed until the [Post-Upgrade](/network-upgrades/mesa/upgrade-steps/post-upgrade) phase — your node will handle the transition automatically.
 
 ### Archive Node Operators and Rosetta Operators
 
-Two upgrade processes are available: _trustless_ and _trustful_. If you want to perform the _trustless_ migration, follow the steps below; otherwise, proceed to the [Upgrade](/network-upgrades/mesa/upgrade-steps/upgrade) phase. The _trustful_ migration relies on o1Labs database exports and Docker images and doesn't require any actions at this stage.
+Two upgrade processes are available: _trustless_ and _trustful_. If you want to perform the _trustless_ upgrade, follow the steps below; otherwise, proceed to the [Upgrade](/network-upgrades/mesa/upgrade-steps/upgrade) phase. The _trustful_ approach relies on o1Labs database exports and Docker images and doesn't require any actions at this stage.
 
-1. Trustless migration:
-   - Perform the archive node upgrade. Since Mainnet is a long-lived network, the upgrade process is a very fast operation and boils down to running the upgrade script against your archive. It should not take more than 1 minute, depending on your server specification and infrastructure.
+1. Trustless upgrade:
+   - Perform the archive node schema upgrade. Since Mainnet is a long-lived network, the upgrade process is a very fast operation and boils down to running the upgrade script against your archive. It should not take more than 1 minute, depending on your server specification and infrastructure.
    - For more information on the archive node upgrade process, please refer to the [Archive Upgrade](/network-upgrades/mesa/archive-upgrade) section.
 2. Provision servers that meet the minimum hardware requirements, primarily 32 GB RAM.
-3. Upgrade all nodes to the stop-slot release [4.0.0](https://github.com/MinaProtocol/mina/releases/tag/4.0.0) before the pre-defined _stop-transaction-slot_.
+3. Upgrade all nodes to the stop-slot release [3.x.x](https://github.com/MinaProtocol/mina/releases) before the pre-defined _stop-transaction-slot_.
 
 ### Exchanges
 
 1. Make sure to test your system integration with Mesa's new features. Pay special attention to:
    - If you rely on the archive node SQL database tables, please review the schema changes in the [Appendix](/network-upgrades/mesa/appendix).
 2. Provision servers that meet the minimum hardware requirements, particularly 32 GB RAM.
-3. Upgrade all nodes to the stop-slot release [4.0.0](https://github.com/MinaProtocol/mina/releases/tag/4.0.0) before the pre-defined _stop-transaction-slot_.
+3. Upgrade all nodes to the stop-slot release [3.x.x](https://github.com/MinaProtocol/mina/releases) before the pre-defined _stop-transaction-slot_.

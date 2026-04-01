@@ -247,7 +247,7 @@ This creates a checkpoint file every 10,000 blocks. If the replay is interrupted
 The replayer verifies the computed ledger Merkle root against the archive at each block. A mismatch means your archive has missing or incorrect data. Check for:
 - Missing blocks (`mina-missing-blocks-auditor`)
 - Database corruption
-- Incomplete schema migration
+- Incomplete schema upgrade
 
 ### "No blocks found before slot_chain_end"
 
@@ -264,7 +264,7 @@ mina-replayer --continue-on-error --archive-uri <uri> --input-file input.json
 
 ## Further Reading
 
-- [Archive Upgrade](/network-upgrades/mesa/archive-upgrade) — schema migration and hardfork toolbox
+- [Archive Upgrade](/network-upgrades/mesa/archive-upgrade) — schema upgrade and hardfork toolbox
 - [Post-Upgrade](/network-upgrades/mesa/upgrade-steps/post-upgrade#in-depth-validation) — post-upgrade verification procedures
 - [Replayer source code](https://github.com/MinaProtocol/mina/tree/compatible/src/app/replayer)
 - [Mesa hard fork replayer test (genesis to fork)](https://github.com/MinaProtocol/mina/pull/18613)
