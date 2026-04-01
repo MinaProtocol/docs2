@@ -12,7 +12,7 @@ keywords:
 
 # Upgrade
 
-Starting at the _stop-network-slot_ the network will not produce nor accept new blocks, resulting in halting the network. During the upgrade period, o1Labs will use automated tooling to export the network state based on the block at the slot just before the _stop-transaction-slot_. The exported state will then be baked into the new Mesa build, which will be used to initiate the upgraded network. It is during the upgrade window that the Mesa network infrastructure will be bootstrapped, and seed nodes will become available. o1Labs will also finalize the archive node migration and publish the PostgreSQL database dumps for import by the archive node operators who wish to bootstrap their archives in a trustful manner.
+Starting at the _stop-network-slot_ the network will not produce nor accept new blocks, resulting in halting the network. During the upgrade period, o1Labs will use automated tooling to export the network state based on the block at the slot just before the _stop-transaction-slot_. The exported state will then be baked into the new Mesa build, which will be used to initiate the upgraded network. It is during the upgrade window that the Mesa network infrastructure will be bootstrapped, and seed nodes will become available. o1Labs will also finalize the archive node upgrade and publish the PostgreSQL database dumps for import by the archive node operators who wish to bootstrap their archives in a trustful manner.
 
 There is a tool available to validate that the Mesa node was built from the pre-upgrade network state. To validate, follow the instructions provided in this [location](https://github.com/MinaProtocol/mina/blob/mesa/docs/upgrading-to-mesa.md).
 
@@ -31,9 +31,9 @@ If you are using **Manual mode**:
 ## Archive Node Operators and Rosetta Operators
 
 1. Upon publishing the archive node Mesa release, archive node operators and Rosetta operators should upgrade their systems. There will be both Docker images and archive node releases available to choose from.
-2. Depending on the chosen migration method:
+2. Depending on the chosen upgrade method:
    - _Trustless_
-     - Operators should direct their Mesa archive process to the previously migrated database.
+     - Operators should direct their Mesa archive process to the previously upgraded database.
    - _Trustful_
      - Operators shall import the SQL dump file provided by o1Labs to a freshly created database.
      - Operators should direct their Mesa archive process to the newly created database.

@@ -20,12 +20,12 @@ The Mesa upgrade proceeds through four sequential phases. Each phase has specifi
 
 | Phase | Description |
 |---|---|
-| [Pre-Upgrade](/network-upgrades/mesa/upgrade-steps/pre-upgrade) | Prepare infrastructure, upgrade to the stop-slot release, run archive migration scripts |
+| [Pre-Upgrade](/network-upgrades/mesa/upgrade-steps/pre-upgrade) | Prepare infrastructure, upgrade to the stop-slot release, run archive upgrade scripts |
 | [State Finalization](/network-upgrades/mesa/upgrade-steps/state-finalization) | 100-slot stabilization period — no new transactions accepted, block production continues |
 | [Upgrade](/network-upgrades/mesa/upgrade-steps/upgrade) | Network halts, state is exported, Mesa build is published |
 | [Post-Upgrade](/network-upgrades/mesa/upgrade-steps/post-upgrade) | Block production resumes on Mesa, flags and configurations for the new network |
 
-**Please note:** A simplified Node Status service will be part of the upgrade tooling and enabled by default in the Pre-Upgrade release with stop-slots ([4.0.0](https://github.com/MinaProtocol/mina/releases/tag/4.0.0)). This feature allows for a safe upgrade by monitoring the amount of upgraded active stake. Only non-sensitive data will be reported. If operators are not comfortable sharing their node version, they can disable the reports using the flag `--node-stats-type none`.
+**Please note:** A simplified Node Status service will be part of the upgrade tooling and enabled by default in the Pre-Upgrade release with stop-slots ([3.x.x](https://github.com/MinaProtocol/mina/releases)). This feature allows for a safe upgrade by monitoring the amount of upgraded active stake. Only non-sensitive data will be reported. If operators are not comfortable sharing their node version, they can disable the reports using the flag `--node-stats-type none`.
 
 Before proceeding, make sure you have reviewed the [Requirements](/network-upgrades/mesa/requirements) and chosen your [Upgrade Mode](/network-upgrades/mesa/upgrade-modes).
 
@@ -39,17 +39,17 @@ This is the simplest path. You install one update and your node handles the rest
 
 <img
   src="/img/network-upgrades/mesa/simplified-schedule.png"
-  alt="Block Producer Automode upgrade schedule: install 4.0.0 weeks before, keep node running during state finalization, node switches to Mesa automatically on fork day, monitor after"
+  alt="Block Producer Automode upgrade schedule: install stop-slot release weeks before, keep node running during state finalization, node switches to Mesa automatically on fork day, monitor after"
   width="100%"
 />
 
 **Example — Docker (automode):**
 ```bash
 # Pre-Upgrade: switch to the auto-hardfork image
-docker pull minaprotocol/mina-daemon-auto-hardfork:4.0.0-bullseye-mainnet
+docker pull minaprotocol/mina-daemon-auto-hardfork:3.x.x-bullseye-mainnet
 
 docker run --name mina -d \
-  minaprotocol/mina-daemon-auto-hardfork:4.0.0-bullseye-mainnet \
+  minaprotocol/mina-daemon-auto-hardfork:3.x.x-bullseye-mainnet \
   daemon \
     --block-producer-key /keys/my-wallet \
     --config-directory /root/.mina-config \
@@ -69,7 +69,7 @@ docker exec mina mina-mesa client status
 ```bash
 # Pre-Upgrade: install both automode packages
 sudo apt-get update
-sudo apt-get install mina-mainnet-prefork-mesa=4.0.0 mina-mainnet-postfork-mesa=4.0.0
+sudo apt-get install mina-mainnet-prefork-mesa=3.x.x mina-mainnet-postfork-mesa=3.x.x
 
 # Start your node as usual — the dispatcher routes to the correct binary
 mina daemon \
@@ -92,18 +92,18 @@ You control every step, but you need to act fast when the Mesa release is publis
 
 <img
   src="/img/network-upgrades/mesa/simplified-schedule-manual.png"
-  alt="Block Producer Manual upgrade schedule: install 4.0.0 weeks before, keep node running during state finalization, stop node and install Mesa release on fork day, monitor after"
+  alt="Block Producer Manual upgrade schedule: install stop-slot release weeks before, keep node running during state finalization, stop node and install Mesa release on fork day, monitor after"
   width="100%"
 />
 
 **Example — Docker (manual):**
 ```bash
 # Pre-Upgrade: pull the stop-slot image and start your node
-docker pull minaprotocol/mina-daemon:4.0.0-bullseye-mainnet
+docker pull minaprotocol/mina-daemon:3.x.x-bullseye-mainnet
 
 docker run --name mina -d \
   -v mina-config:/root/.mina-config \
-  minaprotocol/mina-daemon:4.0.0-bullseye-mainnet \
+  minaprotocol/mina-daemon:3.x.x-bullseye-mainnet \
   daemon \
     --block-producer-key /keys/my-wallet \
     --config-directory /root/.mina-config \
@@ -141,7 +141,7 @@ docker exec mina mina client status    # should show Mesa chain
 ```bash
 # Pre-Upgrade: install the stop-slot release
 sudo apt-get update
-sudo apt-get install mina-mainnet=4.0.0
+sudo apt-get install mina-mainnet=3.x.x
 
 # Run your node normally until the network halts at stop-network-slot
 # ...
@@ -167,21 +167,21 @@ The coordinator schedule is identical to the block producer schedule above — u
 
 ### Archive Node Operator
 
-Archive nodes do **not** support automode — they always require manual steps. You also need to handle the database migration.
+Archive nodes do **not** support automode — they always require manual steps. You also need to handle the database schema upgrade.
 
 <img
   src="/img/network-upgrades/mesa/simplified-schedule-archive.png"
-  alt="Archive Node upgrade schedule: install 4.0.0 and choose migration method weeks before, keep archive running during state finalization, point to migrated DB or import dump on fork day, verify data after"
+  alt="Archive Node upgrade schedule: install stop-slot release and choose upgrade method weeks before, keep archive running during state finalization, point to upgraded DB or import dump on fork day, verify data after"
   width="100%"
 />
 
-See [Archive Upgrade](/network-upgrades/mesa/archive-upgrade) for detailed migration instructions.
+See [Archive Upgrade](/network-upgrades/mesa/archive-upgrade) for detailed upgrade instructions.
 
 ### Exchange
 
 <img
   src="/img/network-upgrades/mesa/simplified-schedule-echanges.png"
-  alt="Exchange upgrade schedule: test integration and install 4.0.0 weeks before, disable MINA deposits and withdrawals during state finalization, install Mesa release on fork day, re-enable deposits and verify after"
+  alt="Exchange upgrade schedule: test integration and install stop-slot release weeks before, disable MINA deposits and withdrawals during state finalization, install Mesa release on fork day, re-enable deposits and verify after"
   width="100%"
 />
 

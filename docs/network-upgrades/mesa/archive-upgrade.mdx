@@ -34,7 +34,7 @@ The commands below use `<MESA_VERSION>` as a placeholder for the archive build y
 
 To successfully upgrade the archive database to Mesa, you must ensure that your environment meets the foundational requirements.
 
-## Migration host
+## Upgrade host
 
 - PostgreSQL database for database server
 - If you use Docker, then any of the supported OS by Mina (bullseye, focal, noble, bookworm or jammy) with at least 32 GB of RAM
@@ -127,7 +127,7 @@ Changes in upgrade script are backward compatible and will be picked up by the a
 
 ### Verification with the Archive Hardfork Toolbox
 
-The `mina-archive-hardfork-toolbox` is a dedicated CLI tool for verifying the integrity of archive database migrations and fork transitions. It is shipped with the Mina archive package and available as a standalone binary.
+The `mina-archive-hardfork-toolbox` is a dedicated CLI tool for verifying the integrity of archive database upgrades and fork transitions. It is shipped with the Mina archive package and available as a standalone binary.
 
 For full details, see the [toolbox README](https://github.com/MinaProtocol/mina/blob/compatible/src/app/archive_hardfork_toolbox/README.md).
 
@@ -216,7 +216,7 @@ Optionally use `--stop-at-slot <slot>` to limit how far back in history the mark
 
 :::tip Typical workflow
 1. **Before the fork**: run `fork-candidate` commands to validate the fork block
-2. **After running the upgrade script**: run `verify-upgrade` to confirm the schema migration
+2. **After running the upgrade script**: run `verify-upgrade` to confirm the schema upgrade
 3. **After the fork activates**: run `validate-fork` to confirm data integrity
 4. **For full archive verification**: run the [Archive Replayer](/network-upgrades/mesa/replayer) to replay all transactions and compare the resulting ledger against the official fork config
 :::

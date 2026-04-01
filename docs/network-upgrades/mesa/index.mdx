@@ -15,7 +15,7 @@ keywords:
 
 The Mesa upgrade is a major network upgrade (hard fork) for the Mina Protocol mainnet. It is not backward compatible and requires all nodes to upgrade.
 
-Please refer to the Mesa node release notes [here](https://github.com/MinaProtocol/mina/releases/tag/4.0.0).
+Please refer to the Mesa node release notes [here](https://github.com/MinaProtocol/mina/releases).
 
 ## What Mesa Introduces
 
@@ -27,9 +27,9 @@ Mesa extends the on-chain state available to zkApps from 8 fields to 31 fields p
 
 For the first time in Mina's history, node operators can upgrade through a hard fork **without manual intervention**. The automode mechanism ships both the pre-fork and post-fork binaries in a single package, with a dispatcher that automatically transitions to the new chain when the fork activates. See [Upgrade Modes](/network-upgrades/mesa/upgrade-modes) for details.
 
-### Simplified Archive Migration
+### Simplified Archive Upgrade
 
-Unlike the Berkeley upgrade (which required up to 48 hours for archive migration), the Mesa archive upgrade is a fast schema migration that completes in under a minute. See [Archive Upgrade](/network-upgrades/mesa/archive-upgrade).
+Unlike the Berkeley upgrade (which required up to 48 hours for archive database conversion), the Mesa archive upgrade is a fast schema upgrade that completes in under a minute. See [Archive Upgrade](/network-upgrades/mesa/archive-upgrade).
 
 ## Upgrade Flow — End-to-End Timeline
 
@@ -56,9 +56,9 @@ The upgrade moves through four phases — **Pre-Upgrade**, **State Finalization*
 | Actor | What to do |
 |---|---|
 | **All operators** | Verify [hardware requirements](/network-upgrades/mesa/requirements) (32 GB RAM, 8-core CPU with AVX/BMI2). Back up keys. |
-| **Block Producers** | Choose [upgrade mode](/network-upgrades/mesa/upgrade-modes): **automode** (recommended) or manual. Install stop-slot release [4.0.0](https://github.com/MinaProtocol/mina/releases/tag/4.0.0). If automode, install both prefork and postfork packages. |
+| **Block Producers** | Choose [upgrade mode](/network-upgrades/mesa/upgrade-modes): **automode** (recommended) or manual. Install stop-slot release [3.x.x](https://github.com/MinaProtocol/mina/releases). If automode, install both prefork and postfork packages. |
 | **SNARK Workers** | Follow the same path as block producers (automode or manual). |
-| **Archive Nodes** | Install stop-slot release. Choose migration method: _trustless_ (run migration script now) or _trustful_ (import o1Labs dump later). If trustless, run the [archive upgrade script](/network-upgrades/mesa/archive-upgrade) — it is backward compatible and can be applied early. |
+| **Archive Nodes** | Install stop-slot release. Choose upgrade method: _trustless_ (run upgrade script now) or _trustful_ (import o1Labs dump later). If trustless, run the [archive upgrade script](/network-upgrades/mesa/archive-upgrade) — it is backward compatible and can be applied early. |
 | **Exchanges** | Install stop-slot release. Update integrations (mina-signer, Rosetta API). Test on devnet. Plan deposit/withdrawal freeze window. |
 | **zkApp Developers** | Test your zkApp against the Mesa-compatible o1js version. Verify behavior before and after the upgrade on testnet. |
 
@@ -78,7 +78,7 @@ At the predefined **stop-transaction-slot**, nodes stop accepting new user trans
 |---|---|
 | **Block Producers** | **Keep your node running.** Block density during finalization is critical. Do not stop your node. |
 | **SNARK Workers** | **Keep running.** Continue producing SNARK work. |
-| **Archive Nodes** | Keep the archive node running to capture all finalized blocks. If doing trustless migration, run the upgrade script now if you haven't already. |
+| **Archive Nodes** | Keep the archive node running to capture all finalized blocks. If doing trustless upgrade, run the upgrade script now if you haven't already. |
 | **Exchanges** | **Disable MINA deposits and withdrawals.** Any transactions submitted after the stop-transaction-slot will not exist on the Mesa chain. |
 | **zkApp Developers** | No action required. Monitor announcements. |
 
@@ -147,8 +147,8 @@ You must take action on fork day: stop your node after the network halts, instal
 
 <img src="/img/network-upgrades/mesa/simplified-schedule-archive.png" alt="Archive node upgrade timeline" />
 
-Choose your migration method early:
-- **Trustless:** Run the archive upgrade script before the fork (it's backward-compatible). After the fork, point the Mesa archive node at your migrated DB.
+Choose your upgrade method early:
+- **Trustless:** Run the archive upgrade script before the fork (it's backward-compatible). After the fork, point the Mesa archive node at your upgraded DB.
 - **Trustful:** Wait for the o1Labs SQL dump after the fork and import it into a fresh database.
 
 After the fork, verify data integrity and monitor the archive daemon.
@@ -205,7 +205,7 @@ Imagine you are **Alice**, a block producer running on a Debian server. Here is 
 
 ```bash
 sudo apt-get update
-sudo apt-get install mina-mainnet-prefork-mesa=4.0.0 mina-mainnet-postfork-mesa=4.0.0
+sudo apt-get install mina-mainnet-prefork-mesa=3.x.x mina-mainnet-postfork-mesa=3.x.x
 ```
 
 She starts her node normally. The automode dispatcher runs the pre-fork binary until the fork activates.
@@ -248,10 +248,10 @@ She's done. Her node is producing blocks on Mesa.
 **Weeks before the fork** — Carlos pulls the stop-slot Docker image and starts his node:
 
 ```bash
-docker pull minaprotocol/mina-daemon:4.0.0-bullseye-mainnet
+docker pull minaprotocol/mina-daemon:3.x.x-bullseye-mainnet
 
 docker run --name mina -d \
-  minaprotocol/mina-daemon:4.0.0-bullseye-mainnet \
+  minaprotocol/mina-daemon:3.x.x-bullseye-mainnet \
   daemon \
     --block-producer-key /keys/my-wallet \
     --config-directory /root/.mina-config \
@@ -308,7 +308,7 @@ docker exec mina mina client status   # confirms Mesa chain ID
 
 ```bash
 sudo apt-get update
-sudo apt-get install mina-mainnet=4.0.0
+sudo apt-get install mina-mainnet=3.x.x
 ```
 
 She restarts her node via systemd and confirms it syncs.
@@ -348,14 +348,14 @@ mina client status   # confirms Mesa chain ID
 
 **Eve** runs an archive node, a Rosetta API instance, and a block explorer. She needs to upgrade both the daemon and the database.
 
-**Weeks before the fork** — Eve installs the stop-slot release and decides on her migration method:
+**Weeks before the fork** — Eve installs the stop-slot release and decides on her upgrade method:
 
 ```bash
 sudo apt-get update
-sudo apt-get install mina-mainnet=4.0.0
+sudo apt-get install mina-mainnet=3.x.x
 ```
 
-She chooses the **trustless** path — running the migration script early, while her archive is still online:
+She chooses the **trustless** path — running the upgrade script early, while her archive is still online:
 
 ```bash
 # Back up the database first
@@ -369,15 +369,15 @@ psql -U <user> -d archive_db -f upgrade_to_mesa.sql
 psql -U <user> -d archive_db -c "SELECT * FROM version;"
 ```
 
-The script is backward-compatible — her existing Berkeley archive node keeps working normally after the migration.
+The script is backward-compatible — her existing Berkeley archive node keeps working normally after the upgrade.
 
-> For the full archive migration guide, see [Archive Upgrade](/network-upgrades/mesa/archive-upgrade).
+> For the full archive upgrade guide, see [Archive Upgrade](/network-upgrades/mesa/archive-upgrade).
 
 **Hours before the fork (State Finalization)** — Eve keeps her archive node running to capture all finalized blocks.
 
 > For details on this phase, see [State Finalization](/network-upgrades/mesa/upgrade-steps/state-finalization).
 
-**Fork day (Upgrade)** — The network halts. Eve installs the Mesa archive release and points it at her already-migrated database:
+**Fork day (Upgrade)** — The network halts. Eve installs the Mesa archive release and points it at her already-upgraded database:
 
 ```bash
 sudo systemctl stop mina-archive
@@ -386,7 +386,7 @@ sudo systemctl stop mina
 sudo apt-get update
 sudo apt-get install mina-archive-mesa=<mesa-version> mina-mainnet-mesa=<mesa-version>
 
-# Start archive process pointing to the migrated DB
+# Start archive process pointing to the upgraded DB
 mina-archive run \
   --postgres-uri postgres://<user>:<pass>@localhost:5432/archive_db \
   --server-port 3086 \
@@ -480,7 +480,7 @@ If his zkApp does not need the new state fields, no redeployment is needed — i
 **Weeks before the fork** — Bob tests his integration (Rosetta API, mina-signer) on the [preflight network](/network-upgrades/mesa/preflight-network). He reviews [schema changes](/network-upgrades/mesa/appendix) and installs the stop-slot release:
 
 ```bash
-sudo apt-get install mina-mainnet=4.0.0
+sudo apt-get install mina-mainnet=3.x.x
 ```
 
 > For the full exchange pre-upgrade checklist, see [Pre-Upgrade](/network-upgrades/mesa/upgrade-steps/pre-upgrade).
@@ -536,5 +536,5 @@ Seed List
 https://bootnodes.minaprotocol.com/networks/mainnet.txt
 
 Node build
-https://github.com/MinaProtocol/mina/releases/tag/4.0.0
+https://github.com/MinaProtocol/mina/releases
 ```

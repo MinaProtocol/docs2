@@ -21,7 +21,7 @@ Automode is the recommended upgrade path for daemon nodes (block producers, SNAR
 
 ### How it works
 
-1. You install the stop-slot release ([4.0.0](https://github.com/MinaProtocol/mina/releases/tag/4.0.0)) during the Pre-Upgrade phase.
+1. You install the stop-slot release ([3.x.x](https://github.com/MinaProtocol/mina/releases)) during the Pre-Upgrade phase.
 2. Your node participates normally in block production through the State Finalization phase.
 3. When the network reaches the _stop-network-slot_, the node automatically:
    - Stops producing blocks on the old chain
@@ -37,7 +37,7 @@ Automode is the recommended upgrade path for daemon nodes (block producers, SNAR
 
 ### Requirements
 
-- Install the stop-slot release ([4.0.0](https://github.com/MinaProtocol/mina/releases/tag/4.0.0)) **before** the _stop-transaction-slot_
+- Install the stop-slot release ([3.x.x](https://github.com/MinaProtocol/mina/releases)) **before** the _stop-transaction-slot_
 - Ensure your node remains running through the State Finalization phase
 - Meet the [hardware requirements](/network-upgrades/mesa/requirements)
 
@@ -51,7 +51,7 @@ Manual mode gives operators full control over each step of the upgrade process.
 
 ### How it works
 
-1. You install the stop-slot release ([4.0.0](https://github.com/MinaProtocol/mina/releases/tag/4.0.0)) during the Pre-Upgrade phase.
+1. You install the stop-slot release ([3.x.x](https://github.com/MinaProtocol/mina/releases)) during the Pre-Upgrade phase.
 2. Your node participates normally through the State Finalization phase.
 3. When the network halts at the _stop-network-slot_, you:
    - Stop your node
@@ -68,7 +68,7 @@ Manual mode gives operators full control over each step of the upgrade process.
 
 ### Requirements
 
-- Install the stop-slot release ([4.0.0](https://github.com/MinaProtocol/mina/releases/tag/4.0.0)) **before** the _stop-transaction-slot_
+- Install the stop-slot release ([3.x.x](https://github.com/MinaProtocol/mina/releases)) **before** the _stop-transaction-slot_
 - Be prepared to act promptly when the Mesa release is published to minimize downtime
 - Meet the [hardware requirements](/network-upgrades/mesa/requirements)
 
