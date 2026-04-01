@@ -10,45 +10,171 @@ keywords:
 
 # Docker Compose Block Producer
 
-This example demonstrates how to run a Mina Block Producer node using Docker Compose for the Mainnet network. The Docker Compose setup includes a Mina Block Producer node, and another script to generate a wallet key.
+Run a Mina Block Producer node using Docker Compose. The setup includes a one-shot key generation service and the block producer daemon.
 
-Copy and paste the provided configuration into a `docker-compose.yml` file. Then run `docker compose up -d` to start the services, and use `docker compose logs -f` to monitor the logs.
+## Quick start
+
+:::tip
+Before running the commands below, review the [Configuration](#configuration) section to see all available options — including image tags, network selection, and ports.
+:::
+
+1. Create a project directory and save the files below:
+
+```bash
+mkdir -p mina-block-producer && cd mina-block-producer
+```
+
+2. Create the `.env` file (see [Configuration](#configuration) for all variables):
+
+```bash
+# .env
+MINA_DAEMON_IMAGE=minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet
+MINA_NETWORK=mainnet
+MINA_PEERLIST_URL=https://bootnodes.minaprotocol.com/networks/mainnet.txt
+MINA_PRIVKEY_PASS=<your-wallet-password>
+MINA_LIBP2P_PASS=<your-libp2p-password>
+MINA_P2P_PORT=8302
+```
+
+3. Create the `docker-compose.yml` (see [Docker Compose file](#docker-compose-file)).
+
+4. Start the services:
+
+```bash
+# Generate keys and start the block producer
+docker compose up -d
+
+# Follow logs
+docker compose logs -f mina_block_producer
+```
+
+## Configuration
+
+All configuration is done through a single `.env` file.
+
+### Docker image
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `MINA_DAEMON_IMAGE` | Mina daemon Docker image | `minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet` |
+
+For devnet, use the o1Labs GCR image: `gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet`
+
+### Network
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `MINA_NETWORK` | Network name | `mainnet` or `devnet` |
+| `MINA_PEERLIST_URL` | Bootstrap peers URL | `https://bootnodes.minaprotocol.com/networks/mainnet.txt` |
+| `MINA_PRIVKEY_PASS` | Passphrase for the wallet key (required) | — |
+| `MINA_LIBP2P_PASS` | Passphrase for the libp2p key (required) | — |
+
+### Ports
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `MINA_P2P_PORT` | `8302` | P2P networking port (must be reachable from the internet) |
+
+## Docker Compose file
 
 ```yaml
 services:
   generate_wallet_key:
-    image: 'minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet'
-    # image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet' # Use this image for Devnet
+    image: '${MINA_DAEMON_IMAGE}'
     environment:
-      MINA_PRIVKEY_PASS: PssW0rD
+      MINA_PRIVKEY_PASS: ${MINA_PRIVKEY_PASS}
     entrypoint: []
     command: >
       bash -c '
+        if [ -f /root/.mina-config/keys/wallet-key ]; then
+          echo "Wallet key already exists, skipping generation"
+          exit 0
+        fi
         mina advanced generate-keypair --privkey-path /root/.mina-config/keys/wallet-key
-        chmod -R 0700 /root/.mina-config/keys
-        chmod -R 0600 /root/.mina-config/keys/wallet-key
+        chmod 0700 /root/.mina-config/keys
+        chmod 0600 /root/.mina-config/keys/wallet-key
+      '
+    volumes:
+      - './node/mina-config:/root/.mina-config'
+  generate_libp2p_key:
+    image: '${MINA_DAEMON_IMAGE}'
+    environment:
+      MINA_LIBP2P_PASS: ${MINA_LIBP2P_PASS}
+    entrypoint: []
+    command: >
+      bash -c '
+        if [ -f /root/.mina-config/keys/libp2p-key ]; then
+          echo "Libp2p key already exists, skipping generation"
+          exit 0
+        fi
+        mina libp2p generate-keypair -privkey-path /root/.mina-config/keys/libp2p-key
+        chmod 0700 /root/.mina-config/keys
+        chmod 0600 /root/.mina-config/keys/libp2p-key
       '
     volumes:
       - './node/mina-config:/root/.mina-config'
   mina_block_producer:
-    image: 'minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet'
-    # image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet' # Use this image for Devnet
+    image: '${MINA_DAEMON_IMAGE}'
     restart: always
     environment:
-      MINA_PRIVKEY_PASS: PssW0rD
+      MINA_PRIVKEY_PASS: ${MINA_PRIVKEY_PASS}
+      MINA_LIBP2P_PASS: ${MINA_LIBP2P_PASS}
+      RAYON_NUM_THREADS: 6
+    healthcheck:
+      test: ["CMD-SHELL", "mina client status"]
+      interval: 60s
+      timeout: 10s
+      retries: 100
     entrypoint: []
     command: >
       bash -c '
         mina daemon \
-             --peer-list-url https://bootnodes.minaprotocol.com/networks/mainnet.txt \
-             --block-producer-key /root/.mina-config/keys/wallet-key
+             --peer-list-url ${MINA_PEERLIST_URL} \
+             --block-producer-key /root/.mina-config/keys/wallet-key \
+             --libp2p-keypair /root/.mina-config/keys/libp2p-key \
+             --config-directory /root/.mina-config \
+             --file-log-rotations 500 \
+             --generate-genesis-proof true \
+             --log-json
       '
-    # use  --peer-list-url https://bootnodes.minaprotocol.com/networks/devnet.txt for Devnet
     volumes:
       - './node/mina-config:/root/.mina-config'
     ports:
-      - '8302:8302'
+      - '${MINA_P2P_PORT:-8302}:8302'
     depends_on:
       generate_wallet_key:
         condition: service_completed_successfully
+      generate_libp2p_key:
+        condition: service_completed_successfully
+```
+
+## Data persistence
+
+Bind mounts preserve data across `docker compose down` / `up`:
+
+| Host path | Container path | Contents |
+|-----------|---------------|----------|
+| `./node/mina-config` | `/root/.mina-config` | Daemon config, wallet key, libp2p key, peers |
+
+## Verifying the deployment
+
+```bash
+# Check container status
+docker compose ps
+
+# Check sync status
+docker compose exec mina_block_producer mina client status
+
+# Follow logs
+docker compose logs -f mina_block_producer
+```
+
+## Clean start
+
+To wipe all data and start fresh:
+
+```bash
+docker compose down
+rm -rf node/
+docker compose up -d
 ```
