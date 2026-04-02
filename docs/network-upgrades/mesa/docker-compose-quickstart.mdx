@@ -15,14 +15,11 @@ keywords:
 ```yaml
 services:
   mina_node:
-    # Use the correct stop slot release auto fork docker here
     image: 'minaprotocol/mina-daemon-auto-hardfork:3.x.x-noble-mainnet'
     restart: always
     environment:
       MINA_CLIENT_TRUSTLIST: "0.0.0.0/0"
-      # Your other environment variables here
     entrypoint: []
-    # Always include `--hardfork-handling migrate-exit` so docker will use auto forking mode
     command: >
       bash -c '
         mina daemon \
@@ -32,8 +29,6 @@ services:
              --hardfork-handling migrate-exit
       '
     volumes:
-      # WARN: ensure config is persistent across docker restarts so post-fork
-      # genesis information is available for nodes running in mesa after reboot
       - './mina-config:/root/.mina-config'
     ports:
       - '3085:3085'
@@ -41,6 +36,22 @@ services:
 ```
 
 Replace `3.x.x` with the published stop-slot release from the [Mina releases page](https://github.com/MinaProtocol/mina/releases).
+
+:::tip Docker image tag
+Use the stop-slot release image for your target network. For devnet, replace the image tag suffix `mainnet` with `devnet` and use the corresponding devnet release tag.
+:::
+
+:::tip Peer list URL
+The `--peer-list-url` above points to the mainnet bootnodes. For devnet, replace it with `https://bootnodes.minaprotocol.com/networks/devnet.txt`.
+:::
+
+:::tip Additional environment variables
+Add any extra configuration (e.g. `MINA_PRIVKEY_PASS`) under the `environment` section.
+:::
+
+:::tip `--hardfork-handling migrate-exit`
+Always include this flag so the daemon uses automode and automatically exits after the stop slot, letting Docker restart it with the post-fork binary.
+:::
 
 ```bash
 docker compose up -d
