@@ -1,0 +1,51 @@
+---
+title: Docker Compose Quickstart
+sidebar_label: Docker Compose Quickstart
+hide_title: true
+description: Run a Mina node with automode enabled for the Mesa upgrade using Docker Compose.
+keywords:
+  - Mesa
+  - Docker Compose
+  - automode
+  - quickstart
+---
+
+# Docker Compose Quickstart
+
+```yaml
+services:
+  mina_node:
+    # Use the correct stop slot release auto fork docker here
+    image: 'minaprotocol/mina-daemon-auto-hardfork:3.x.x-noble-mainnet'
+    restart: always
+    environment:
+      MINA_CLIENT_TRUSTLIST: "0.0.0.0/0"
+      # Your other environment variables here
+    entrypoint: []
+    # Always include `--hardfork-handling migrate-exit` so docker will use auto forking mode
+    command: >
+      bash -c '
+        mina daemon \
+             --peer-list-url https://bootnodes.minaprotocol.com/networks/mainnet.txt \
+             --insecure-rest-server \
+             --rest-port 3085 \
+             --hardfork-handling migrate-exit
+      '
+    volumes:
+      # WARN: ensure config is persistent across docker restarts so post-fork
+      # genesis information is available for nodes running in mesa after reboot
+      - './mina-config:/root/.mina-config'
+    ports:
+      - '3085:3085'
+      - '8302:8302'
+```
+
+Replace `3.x.x` with the published stop-slot release from the [Mina releases page](https://github.com/MinaProtocol/mina/releases).
+
+```bash
+docker compose up -d
+```
+
+:::caution
+`restart: always` and the persistent `mina-config` volume are required for automode. If the volume is wiped between restarts, the node cannot transition to Mesa. See [Upgrade Modes](/network-upgrades/mesa/upgrade-modes) for details.
+:::
