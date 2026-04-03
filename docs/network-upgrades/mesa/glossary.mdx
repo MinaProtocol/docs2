@@ -78,7 +78,7 @@ The binary that runs the new Mesa chain after the fork activates. In [automode](
 
 ### Dispatcher {#dispatcher}
 
-A shell script wrapper (`mina-dispatch`) installed at `/usr/local/bin/` that routes commands to the correct binary — [pre-fork](#pre-fork-binary) or [post-fork](#post-fork-binary) — based on whether the [activation file](#activation-file) exists. It only supports the `daemon` subcommand; for other commands (e.g., `client status`), use `mina-berkeley` or `mina-mesa` directly. See [Upgrade Modes - Details](/network-upgrades/mesa/upgrade-modes-details).
+A shell script wrapper (`mina-dispatch`) installed at `/usr/local/bin/` that routes commands to the correct binary — [pre-fork](#pre-fork-binary) or [post-fork](#post-fork-binary). For `daemon`, routing is based on whether the [activation file](#activation-file) exists. For `client`, commands are always routed to the [post-fork binary](#post-fork-binary). Other subcommands (e.g., `accounts list`) are not supported — use `mina-berkeley` or `mina-mesa` directly. See [Upgrade Modes - Details](/network-upgrades/mesa/upgrade-modes-details).
 
 ### Activation File {#activation-file}
 

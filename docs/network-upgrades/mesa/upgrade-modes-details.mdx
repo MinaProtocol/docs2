@@ -58,29 +58,40 @@ When you install the automode package (or use the auto-hardfork Docker image), a
 
 ### The Dispatcher
 
-The dispatcher (`mina-dispatch`) is a shell script that acts as a transparent wrapper around the real `mina` binary. When you run any `mina` command, the dispatcher decides which binary to execute based on a simple check:
+The dispatcher (`mina-dispatch`) is a shell script that acts as a transparent wrapper around the real `mina` binary. When you run a `mina` command, the dispatcher decides which binary to execute:
 
-```
-Does the activation state file exist?
-  → NO:  route to the pre-fork (berkeley) binary
-  → YES: route to the post-fork (mesa) binary
-```
+- **`daemon` subcommand** — routes based on the activation state file:
+  ```
+  Does the activation state file exist?
+    → NO:  route to the pre-fork (berkeley) binary
+    → YES: route to the post-fork (mesa) binary
+  ```
+- **`client` subcommand** — always routes to the post-fork (mesa) binary, regardless of activation state. This works because the GraphQL schema did not change between Berkeley and Mesa.
+- **`--version`** — passed through without processing.
 
 The **activation state file** is located at `{MINA_HARDFORK_STATE_DIR}/auto-fork-mesa-{network_id}/activated` (e.g., `~/.mina-config/auto-fork-mesa-mainnet/activated` on the host, or `/root/.mina-config/auto-fork-mesa-mainnet/activated` in Docker). This file is created by the daemon itself when it detects that the network has reached the stop-network-slot.
 
 ### Dispatcher Limitations
 
 :::info Current implementation — may change in future releases
-This limitation exists because, for non-daemon commands, the dispatcher does not receive the config directory location as an argument. Without access to the config directory, it cannot check for the `activated` state file and therefore cannot determine whether the node is running Berkeley or Mesa. The `daemon` subcommand is the only one that passes `--config-directory`, which is why it is the only supported subcommand.
+This limitation exists because, for most subcommands, the dispatcher does not receive the config directory location as an argument. Without access to the config directory, it cannot check for the `activated` state file and therefore cannot determine whether the node is running Berkeley or Mesa.
 :::
 
-The dispatcher **only supports the `daemon` subcommand**. Any other subcommand (e.g., `client status`, `accounts list`, `ledger export`) will fail with an error:
+The dispatcher supports the following subcommands:
+
+| Subcommand | Routing behavior |
+|---|---|
+| `daemon` | Routes to pre-fork or post-fork binary based on activation state |
+| `client` | Always routes to the post-fork (mesa) binary |
+| `--version` | Passed through without processing |
+
+Any other subcommand (e.g., `accounts list`, `ledger export`) will fail with an error:
 
 ```
-mina-dispatch ERROR: unsupported subcommand 'client' for automatic hardfork handling
+mina-dispatch ERROR: unsupported subcommand 'accounts' for automatic hardfork handling
 ```
 
-It is the user's responsibility to invoke the correct version-specific binary for non-daemon commands:
+For unsupported subcommands, invoke the correct version-specific binary directly:
 
 | Binary | When to use | Path |
 |---|---|---|
@@ -90,7 +101,6 @@ It is the user's responsibility to invoke the correct version-specific binary fo
 ```bash
 # These work at any time — they bypass the dispatcher
 mina-berkeley client status
-mina-mesa client status
 mina-mesa accounts list
 mina-mesa ledger export
 
@@ -98,7 +108,9 @@ mina-mesa ledger export
 /usr/lib/mina/mesa/mina client status
 ```
 
-The `--version` flag is the one exception — it is passed through the dispatcher without processing.
+:::note About `client` routing
+The `client` subcommand (e.g., `mina client status`) is always routed to the mesa binary because it communicates with the running daemon over GraphQL, and the GraphQL schema did not change between Berkeley and Mesa. This means `mina client status` works through the dispatcher at any point — before or after the fork — as long as a daemon is running.
+:::
 
 ### What the Dispatcher Does for `daemon` Commands
 
@@ -267,7 +279,7 @@ ls ~/.mina-config/auto-fork-mesa-mainnet/activated
 
 ### Can I run non-daemon commands or use a specific binary version?
 
-As described in the [Dispatcher Limitations](#dispatcher-limitations) section, the dispatcher only supports the `daemon` subcommand. For any other command — including `client status`, `accounts list`, `ledger export`, and all other CLI operations — **you must use the version-specific binary directly**:
+As described in the [Dispatcher Limitations](#dispatcher-limitations) section, the dispatcher supports `daemon`, `client`, and `--version`. For any other command — including `accounts list`, `ledger export`, and other CLI operations — **you must use the version-specific binary directly**:
 
 | Binary | Description | Full path |
 |---|---|---|
