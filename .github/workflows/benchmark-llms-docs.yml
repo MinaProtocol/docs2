@@ -1,0 +1,124 @@
+name: Benchmark-LLMs-Docs
+on:
+  schedule:
+    - cron: "0 9 * * 1" # Every Monday at 9:00 UTC
+  workflow_dispatch:
+    inputs:
+      source:
+        description: "Docs source to benchmark"
+        required: false
+        default: "all"
+        type: choice
+        options:
+          - all
+          - llms
+          - full
+          - none
+      category:
+        description: "Benchmark category (empty = all)"
+        required: false
+        default: ""
+        type: choice
+        options:
+          - ""
+          - factual
+          - procedural
+          - conceptual
+          - code_generation
+          - hallucination
+      model:
+        description: "Anthropic model ID"
+        required: false
+        default: "claude-sonnet-4-6-20250514"
+        type: string
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        source: ${{ github.event_name == 'workflow_dispatch' && fromJSON(format('["{0}"]', inputs.source == 'all' && 'llms","full","none' || inputs.source)) || fromJSON('["llms","full","none"]') }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - name: Run benchmark (source=${{ matrix.source }})
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          node scripts/benchmark-llms-docs.mjs \
+            --source ${{ matrix.source }} \
+            ${{ github.event_name == 'workflow_dispatch' && inputs.category != '' && format('--category {0}', inputs.category) || '' }} \
+            --model ${{ github.event_name == 'workflow_dispatch' && inputs.model || 'claude-sonnet-4-6-20250514' }}
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-${{ matrix.source }}
+          path: benchmark-results/
+
+  summary:
+    needs: benchmark
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - name: Download all results
+        uses: actions/download-artifact@v4
+        with:
+          path: benchmark-results/
+          merge-multiple: true
+
+      - name: Generate comparison summary
+        run: |
+          node -e "
+          const fs = require('fs');
+          const files = fs.readdirSync('benchmark-results').filter(f => f.endsWith('.json'));
+
+          console.log('# Mina Docs AI Benchmark Results\n');
+          console.log('| Source | Overall | Factual | Procedural | Conceptual | Code Gen | Hallucination |');
+          console.log('|--------|---------|---------|------------|------------|----------|---------------|');
+
+          for (const file of files.sort()) {
+            const data = JSON.parse(fs.readFileSync('benchmark-results/' + file));
+            const s = data.summary;
+            const cats = s.categories;
+            const row = [
+              s.categories ? data.metadata.source : '?',
+              s.overall_percentage + '%',
+              (cats.factual?.percentage ?? '-') + '%',
+              (cats.procedural?.percentage ?? '-') + '%',
+              (cats.conceptual?.percentage ?? '-') + '%',
+              (cats.code_generation?.percentage ?? '-') + '%',
+              (cats.hallucination?.percentage ?? '-') + '%',
+            ];
+            console.log('| ' + row.join(' | ') + ' |');
+          }
+          " | tee benchmark-summary.md
+
+      - name: Post summary to job
+        run: |
+          echo "## Benchmark Summary" >> "$GITHUB_STEP_SUMMARY"
+          cat benchmark-summary.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload summary
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-summary
+          path: |
+            benchmark-summary.md
+            benchmark-results/

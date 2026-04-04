@@ -1,0 +1,89 @@
+# Mina Protocol Documentation
+
+> Mina is a lightweight blockchain powered by zero-knowledge proofs (zk-SNARKs). Unlike traditional blockchains, Mina maintains a constant ~22KB chain size. Developers build privacy-preserving smart contracts called zkApps using o1js, a TypeScript-based zk framework. The protocol uses Ouroboros Samasika proof-of-stake consensus.
+
+## Core Concepts
+
+- [Mina Protocol Overview](https://docs.minaprotocol.com/mina-protocol): How Mina works — block producers, consensus, SNARKs
+- [Block Producers](https://docs.minaprotocol.com/mina-protocol/block-producers): Block production and stake delegation
+- [Proof of Stake](https://docs.minaprotocol.com/mina-protocol/proof-of-stake): Ouroboros Samasika consensus mechanism
+- [SNARK Workers](https://docs.minaprotocol.com/mina-protocol/snark-workers): Producing zk-SNARKs to compress the chain
+- [Lifecycle of a Payment](https://docs.minaprotocol.com/mina-protocol/lifecycle-of-a-payment): Transaction flow from submission to finality
+- [Glossary](https://docs.minaprotocol.com/glossary): Key terms for Mina and zero-knowledge concepts
+
+## zkApp Development
+
+- [How zkApps Work](https://docs.minaprotocol.com/zkapps/writing-a-zkapp/introduction-to-zkapps/how-zkapps-work): Architecture of zero-knowledge smart contracts on Mina
+- [How to Write a zkApp](https://docs.minaprotocol.com/zkapps/writing-a-zkapp/introduction-to-zkapps/how-to-write-a-zkapp): Step-by-step guide to building a zkApp
+- [Smart Contracts](https://docs.minaprotocol.com/zkapps/writing-a-zkapp/introduction-to-zkapps/smart-contracts): SmartContract class, state, methods, and deployment
+- [How to Deploy a zkApp](https://docs.minaprotocol.com/zkapps/writing-a-zkapp/introduction-to-zkapps/how-to-deploy-a-zkapp): Deploying to Devnet and Mainnet
+- [Testing zkApps Locally](https://docs.minaprotocol.com/zkapps/writing-a-zkapp/introduction-to-zkapps/testing-zkapps-locally): Local testing with simulated blockchain
+- [Security and zkApps](https://docs.minaprotocol.com/zkapps/writing-a-zkapp/introduction-to-zkapps/secure-zkapps): Security best practices
+
+## o1js Framework
+
+- [Introduction to o1js](https://docs.minaprotocol.com/zkapps/o1js): General-purpose zk framework for writing zk programs and smart contracts
+- [o1js Basic Concepts](https://docs.minaprotocol.com/zkapps/o1js/basic-concepts): Field elements, built-in types, methods
+- [Recursion](https://docs.minaprotocol.com/zkapps/o1js/recursion): Recursive zk proofs
+- [Merkle Tree](https://docs.minaprotocol.com/zkapps/o1js/merkle-tree): On-chain data verification with Merkle trees
+- [Custom Tokens](https://docs.minaprotocol.com/zkapps/o1js/custom-tokens): Creating and managing custom tokens
+- [o1js API Reference](https://docs.minaprotocol.com/zkapps/o1js-reference): Full API reference for all o1js classes and functions
+
+## zkApp Features
+
+- [On-Chain Values](https://docs.minaprotocol.com/zkapps/writing-a-zkapp/feature-overview/on-chain-values): Reading and writing on-chain state
+- [Off-Chain Storage](https://docs.minaprotocol.com/zkapps/writing-a-zkapp/feature-overview/offchain-storage): Storing data off-chain with on-chain commitments
+- [Permissions](https://docs.minaprotocol.com/zkapps/writing-a-zkapp/feature-overview/permissions): Controlling account and contract permissions
+- [Events](https://docs.minaprotocol.com/zkapps/writing-a-zkapp/feature-overview/events): Emitting events from zkApps
+- [Actions & Reducer](https://docs.minaprotocol.com/zkapps/writing-a-zkapp/feature-overview/actions-and-reducer): Dispatching actions and processing with reducers
+
+## Tutorials
+
+- [Tutorial 1: Hello World](https://docs.minaprotocol.com/zkapps/tutorials/hello-world): Build your first zkApp
+- [Tutorial 2: Private Inputs and Hash Functions](https://docs.minaprotocol.com/zkapps/tutorials/private-inputs-hash-functions): Using private data in proofs
+- [Tutorial 3: Deploy to a Live Network](https://docs.minaprotocol.com/zkapps/tutorials/deploying-to-a-network): Deploy to Devnet
+- [Tutorial 4: zkApp UI with React](https://docs.minaprotocol.com/zkapps/tutorials/zkapp-ui-with-react): Build a browser frontend
+- [Tutorial 5: Common Types and Functions](https://docs.minaprotocol.com/zkapps/tutorials/common-types-and-functions): Working with o1js types
+- [Tutorial 9: Recursion](https://docs.minaprotocol.com/zkapps/tutorials/recursion): Recursive proof composition
+
+## Node Operators
+
+- [Node Operators Overview](https://docs.minaprotocol.com/node-operators): Running and maintaining Mina nodes
+- [Requirements](https://docs.minaprotocol.com/node-operators/requirements): Hardware and software requirements
+- [Block Producer Getting Started](https://docs.minaprotocol.com/node-operators/block-producer-node/getting-started): Set up a block producer node
+- [Connect to Mainnet](https://docs.minaprotocol.com/node-operators/block-producer-node/connecting-to-the-network): Join the Mina mainnet
+- [Archive Node](https://docs.minaprotocol.com/node-operators/archive-node): Store full blockchain history
+- [Staking and Snarking](https://docs.minaprotocol.com/node-operators/staking-and-snarking): Earning rewards through staking and SNARK work
+- [Generating a Key Pair](https://docs.minaprotocol.com/node-operators/generating-a-keypair): Create keys for node operation
+- [Mina CLI Reference](https://docs.minaprotocol.com/node-operators/mina-cli-reference): Full command-line reference
+
+## Using Mina
+
+- [Install a Wallet](https://docs.minaprotocol.com/using-mina/install-a-wallet): Supported wallets for MINA
+- [How to Send & Receive](https://docs.minaprotocol.com/using-mina/how-to-send-and-receive): Transferring MINA tokens
+- [How to Delegate](https://docs.minaprotocol.com/using-mina/how-to-delegate): Delegating stake to validators
+
+## Exchange Operators
+
+- [Exchange Operators Overview](https://docs.minaprotocol.com/exchange-operators): Integrating Mina on exchanges using Rosetta API
+- [FAQ Listing Mina](https://docs.minaprotocol.com/exchange-operators/faq): Common questions about listing MINA
+- [Rosetta Docker Compose](https://docs.minaprotocol.com/exchange-operators/rosetta/docker-compose): Production Rosetta deployment
+- [Code Samples](https://docs.minaprotocol.com/exchange-operators/rosetta/samples): TypeScript/Python examples for Rosetta integration
+
+## Network Upgrades
+
+- [Network Upgrades Overview](https://docs.minaprotocol.com/network-upgrades): History of Mina protocol upgrades
+- [Mesa Preflight Network](https://docs.minaprotocol.com/network-upgrades/mesa/preflight-network): Connecting to the Mesa preflight network
+
+## Optional
+
+- [Node Developers Overview](https://docs.minaprotocol.com/node-developers): Contributing to Mina protocol development
+- [Codebase Overview](https://docs.minaprotocol.com/node-developers/codebase-overview): Architecture of the Mina codebase (OCaml)
+- [GraphQL API](https://docs.minaprotocol.com/node-developers/graphql-api): Node GraphQL API reference
+- [BIP44 Information](https://docs.minaprotocol.com/node-developers/bip44): Key derivation paths for Mina
+- [Mina Signer](https://docs.minaprotocol.com/mina-signer): JavaScript library for signing transactions
+- [Mina Security](https://docs.minaprotocol.com/mina-security): Security measures and audits
+- [Berkeley Upgrade](https://docs.minaprotocol.com/network-upgrades/berkeley/upgrade-steps): Historical Berkeley hard fork upgrade steps
+- [zkApps for Ethereum Developers](https://docs.minaprotocol.com/zkapps/advanced/zkapps-for-ethereum-developers): Comparison guide for Solidity developers
+- [zkApp Development Frameworks](https://docs.minaprotocol.com/zkapps/zkapp-development-frameworks): Framework comparison
+- [Full Documentation](https://docs.minaprotocol.com/llms-full.txt): Complete documentation in a single file for LLM consumption
