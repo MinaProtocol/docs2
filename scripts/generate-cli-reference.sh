@@ -81,7 +81,7 @@ echo '```' >> "$TOP_LEVEL_FILE"
 echo "" >> "$TOP_LEVEL_FILE"
 
 # Define the main command groups to document
-declare -a GROUPS=(
+declare -a CMD_GROUPS=(
   "accounts"
   "client"
   "daemon"
@@ -90,7 +90,7 @@ declare -a GROUPS=(
   "libp2p"
 )
 
-for group in "${GROUPS[@]}"; do
+for group in "${CMD_GROUPS[@]}"; do
   echo "## mina $group" >> "$TOP_LEVEL_FILE"
   echo '```' >> "$TOP_LEVEL_FILE"
   ("$MINA_BIN" "$group" --help 2>&1 || true) >> "$TOP_LEVEL_FILE"
