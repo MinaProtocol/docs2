@@ -46,10 +46,28 @@ append_help() {
 # Generate the top-level command reference
 TOP_LEVEL_FILE="$OUTPUT_DIR/mina-cli-reference.md"
 cat > "$TOP_LEVEL_FILE" <<'HEADER'
+---
+title: Mina CLI Reference
+hide_title: true
+description: Reference for the Mina CLI (command line interface) which is the primary way to interact with the Mina network.
+keywords:
+  - Mina CLI
+  - create account
+  - send transaction
+  - reference
+---
+
 # Mina CLI Reference
 
-This document provides a reference for all Mina CLI commands. It is
-auto-generated from the `mina` binary using `scripts/generate-cli-reference.sh`.
+The Mina CLI (Command Line Interface) is the primary way for users to interact with the Mina network. It provides standard client functionality to create accounts, send transactions, and participate in consensus. There are also advanced client and daemon commands for power users.
+
+The Mina CLI is installed when you [install Mina](/node-operators/block-producer-node/getting-started#installation).
+
+:::tip
+
+Mina APIs are always improving. See `mina help` for the most up-to-date version.
+
+:::
 
 HEADER
 
@@ -58,7 +76,7 @@ echo "Generating CLI reference documentation..."
 # Top-level help
 echo "## mina" >> "$TOP_LEVEL_FILE"
 echo '```' >> "$TOP_LEVEL_FILE"
-"$MINA_BIN" --help 2>&1 || true >> "$TOP_LEVEL_FILE"
+("$MINA_BIN" --help 2>&1 || true) >> "$TOP_LEVEL_FILE"
 echo '```' >> "$TOP_LEVEL_FILE"
 echo "" >> "$TOP_LEVEL_FILE"
 
@@ -66,6 +84,7 @@ echo "" >> "$TOP_LEVEL_FILE"
 declare -a GROUPS=(
   "accounts"
   "client"
+  "daemon"
   "advanced"
   "ledger"
   "libp2p"
@@ -74,7 +93,7 @@ declare -a GROUPS=(
 for group in "${GROUPS[@]}"; do
   echo "## mina $group" >> "$TOP_LEVEL_FILE"
   echo '```' >> "$TOP_LEVEL_FILE"
-  "$MINA_BIN" "$group" --help 2>&1 || true >> "$TOP_LEVEL_FILE"
+  ("$MINA_BIN" "$group" --help 2>&1 || true) >> "$TOP_LEVEL_FILE"
   echo '```' >> "$TOP_LEVEL_FILE"
   echo "" >> "$TOP_LEVEL_FILE"
 
@@ -99,7 +118,7 @@ for group in "${GROUPS[@]}"; do
       if [[ -n "$subcmd" ]]; then
         echo "### mina $group $subcmd" >> "$TOP_LEVEL_FILE"
         echo '```' >> "$TOP_LEVEL_FILE"
-        "$MINA_BIN" "$group" "$subcmd" --help 2>&1 || true >> "$TOP_LEVEL_FILE"
+        ("$MINA_BIN" "$group" "$subcmd" --help 2>&1 || true) >> "$TOP_LEVEL_FILE"
         echo '```' >> "$TOP_LEVEL_FILE"
         echo "" >> "$TOP_LEVEL_FILE"
       fi
