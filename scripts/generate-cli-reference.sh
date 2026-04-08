@@ -113,7 +113,11 @@ for group in "${CMD_GROUPS[@]}"; do
         in_subcommands=false
         continue
       fi
-      # Extract the subcommand name (first word after leading whitespace)
+      # Subcommand lines start with 2 spaces then a non-space char;
+      # continuation/description lines have more leading whitespace.
+      if [[ ! "$line" =~ ^\ \ [^\ ] ]]; then
+        continue
+      fi
       subcmd="$(awk '{print $1}' <<< "$line")"
       if [[ -n "$subcmd" ]]; then
         echo "### mina $group $subcmd" >> "$TOP_LEVEL_FILE"
