@@ -49,9 +49,12 @@ The `--peer-list-url` above points to the mainnet bootnodes. For devnet, replace
 Add any extra configuration (e.g. `MINA_PRIVKEY_PASS`) under the `environment` section.
 :::
 
-:::tip `--hardfork-handling migrate-exit`
-Always include this flag so the daemon uses automode and automatically exits after the stop slot, letting Docker restart it with the post-fork binary.
-:::
+## Switching back to normal Docker
+
+After your node has completed the Mesa transition and you want to move off `mina-daemon-auto-hardfork`, update your Compose config as follows:
+
+- Remove `--hardfork-handling migrate-exit`.
+- Set the Docker image to the post-fork artifact, for example `minaprotocol/mina-daemon:4.0.0-noble-mainnet`.
 
 ```bash
 docker compose up -d
