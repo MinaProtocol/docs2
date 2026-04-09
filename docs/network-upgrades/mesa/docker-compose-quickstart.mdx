@@ -1,0 +1,65 @@
+---
+title: Docker Compose Quickstart
+sidebar_label: Docker Compose Quickstart
+hide_title: true
+description: Run a Mina node with automode enabled for the Mesa upgrade using Docker Compose.
+keywords:
+  - Mesa
+  - Docker Compose
+  - automode
+  - quickstart
+---
+
+# Docker Compose Quickstart
+
+```yaml
+services:
+  mina_node:
+    image: 'minaprotocol/mina-daemon-auto-hardfork:3.x.x-noble-mainnet'
+    restart: always
+    environment:
+      MINA_CLIENT_TRUSTLIST: "0.0.0.0/0"
+    entrypoint: []
+    command: >
+      bash -c '
+        mina daemon \
+             --peer-list-url https://bootnodes.minaprotocol.com/networks/mainnet.txt \
+             --insecure-rest-server \
+             --rest-port 3085 \
+             --hardfork-handling migrate-exit
+      '
+    volumes:
+      - './mina-config:/root/.mina-config'
+    ports:
+      - '3085:3085'
+      - '8302:8302'
+```
+
+Replace `3.x.x` with the published stop-slot release from the [Mina releases page](https://github.com/MinaProtocol/mina/releases).
+
+:::tip Docker image tag
+Use the stop-slot release image for your target network. For devnet, replace the image tag suffix `mainnet` with `devnet` and use the corresponding devnet release tag.
+:::
+
+:::tip Peer list URL
+The `--peer-list-url` above points to the mainnet bootnodes. For devnet, replace it with `https://bootnodes.minaprotocol.com/networks/devnet.txt`.
+:::
+
+:::tip Additional environment variables
+Add any extra configuration (e.g. `MINA_PRIVKEY_PASS`) under the `environment` section.
+:::
+
+## Switching back to normal Docker
+
+After your node has completed the Mesa transition and you want to move off `mina-daemon-auto-hardfork`, update your Compose config as follows:
+
+- Remove `--hardfork-handling migrate-exit`.
+- Set the Docker image to the post-fork artifact, for example `minaprotocol/mina-daemon:4.0.0-noble-mainnet`.
+
+```bash
+docker compose up -d
+```
+
+:::caution
+`restart: always` and the persistent `mina-config` volume are required for automode. If the volume is wiped between restarts, the node cannot transition to Mesa. See [Upgrade Modes](/network-upgrades/mesa/upgrade-modes) for details.
+:::

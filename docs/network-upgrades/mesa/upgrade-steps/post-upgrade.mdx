@@ -1,0 +1,427 @@
+---
+title: Post-Upgrade
+sidebar_label: Post-Upgrade
+hide_title: true
+description: Post-upgrade verification, health checks, and monitoring for the Mesa mainnet network.
+keywords:
+  - Mesa
+  - upgrade
+  - post-upgrade
+  - health check
+  - monitoring
+  - verification
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Post-Upgrade
+
+At approximately 1 hour after the publishing of the Mesa node release, at a predefined slot (Mesa genesis timestamp), block production starts and the network is successfully upgraded.
+
+This page helps you **verify your node is healthy** and running on the Mesa chain.
+
+## Verify Your Node
+
+<Tabs groupId="operator-type">
+<TabItem value="block-producer" label="Block Producer" default>
+
+#### 1. Confirm you are on the Mesa chain
+
+```bash
+# If using automode, check the activation file exists
+ls ~/.mina-config/auto-fork-mesa-mainnet/activated
+
+# Check node status (use mina-mesa if running automode packages)
+mina-mesa client status
+```
+
+You should see:
+- **Sync status**: `Synced`
+- **Chain ID** matching the Mesa chain ID (`a7351abc7ddf2ea92d1b38cc8e636c271c1dfd2c081c637f62ebc2af34eb7cc1`)
+- **Block height** advancing
+
+#### 2. Verify block production
+
+```bash
+# Check your recent block production
+mina-mesa client status | grep "Block"
+```
+
+If you are a Delegation Program participant, your uptime will continue to be tracked on the Mesa chain.
+
+#### 3. Check logs for errors
+
+```bash
+# Look for any errors in recent logs
+journalctl -u mina --since "1 hour ago" --no-pager | grep -i error
+
+# For Docker
+docker logs mina --since 1h 2>&1 | grep -i error
+```
+
+</TabItem>
+<TabItem value="snark" label="SNARK Coordinator / Worker">
+
+#### 1. Confirm the coordinator is on Mesa
+
+```bash
+mina-mesa client status
+```
+
+Verify **Sync status** is `Synced` and the **Chain ID** matches Mesa.
+
+#### 2. Verify SNARK workers are connected
+
+```bash
+# Check that workers are producing proofs
+mina-mesa client status | grep -i snark
+```
+
+If workers were disconnected during the fork, restart them and reconnect to the coordinator:
+
+```bash
+mina internal snark-worker \
+  --proof-level full \
+  --shutdown-on-disconnect false \
+  --daemon-address <coordinator-ip>:<port>
+```
+
+</TabItem>
+<TabItem value="archive" label="Archive Node">
+
+#### 1. Confirm the daemon and archive process are running
+
+```bash
+mina-mesa client status
+```
+
+Verify **Sync status** is `Synced`.
+
+#### 2. Verify archive data integrity
+
+```bash
+# Check the database version
+psql -U <user> -d <db> -c "SELECT * FROM version;"
+
+# Run the hardfork toolbox verification
+mina-archive-hardfork-toolbox verify-upgrade \
+  --postgres-uri postgres://<user>:<pass>@localhost:5432/<db> \
+  --protocol-version <version> \
+  --migration-version <version>
+```
+
+#### 3. Check for missing blocks
+
+Query the archive database to see if blocks are being captured:
+
+```bash
+psql -U <user> -d <db> -c "SELECT height, state_hash FROM blocks ORDER BY height DESC LIMIT 5;"
+```
+
+If blocks are missing, use the archive tooling to backfill. See [In-Depth Validation](#in-depth-validation) below.
+
+</TabItem>
+<TabItem value="rosetta" label="Rosetta API">
+
+#### 1. Complete the Archive Node checks above first
+
+Rosetta depends on a healthy archive database.
+
+#### 2. Verify Rosetta is responding
+
+```bash
+curl -s http://localhost:3088/network/list \
+  -H 'Content-Type: application/json' \
+  -d '{"metadata":{}}' | jq .
+```
+
+You should see `mainnet` in the response.
+
+#### 3. Test a balance lookup
+
+```bash
+curl -s http://localhost:3088/account/balance \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "network_identifier": {"blockchain":"mina","network":"mainnet"},
+    "account_identifier": {"address":"<your-address>"}
+  }' | jq .
+```
+
+</TabItem>
+<TabItem value="exchange" label="Exchange">
+
+#### 1. Confirm your node is on Mesa
+
+```bash
+mina client status
+```
+
+Verify **Sync status** is `Synced` and the **Chain ID** matches Mesa.
+
+#### 2. Verify your integration stack
+
+- Confirm Rosetta API is responding (if used)
+- Confirm archive database is up to date (if used directly)
+- Test a small internal MINA transfer before re-enabling customer-facing operations
+
+#### 3. Re-enable deposits and withdrawals
+
+Only re-enable MINA deposits and withdrawals after:
+- Block production is confirmed (blocks are advancing)
+- Your integration is verified end to end
+- You have confirmed balances match expectations
+
+</TabItem>
+</Tabs>
+
+## In-Depth Validation
+
+The checks in the tabs above cover basic health. This section provides deeper validation procedures for operators who want thorough verification.
+
+### Daemon Validation
+
+1. **Verify signature kind** — query the GraphQL endpoint to confirm the correct signature kind:
+   ```graphql
+   query {
+     signatureKind
+   }
+   ```
+   For mainnet, this should return `mainnet`.
+
+2. **Verify connectivity** — ensure your node has peers and is connected to the network. Check that the node is receiving and gossiping blocks.
+
+### Archive Node Validation
+
+Use the `mina-archive-hardfork-toolbox` to verify the upgrade. All commands require `--postgres-uri postgresql://<user>:<password>@<host>:<port>/<db>`. See the [Archive Upgrade](/network-upgrades/mesa/archive-upgrade#verification-with-the-archive-hardfork-toolbox) page for full toolbox documentation.
+
+**Verify schema upgrade:**
+```bash
+mina-archive-hardfork-toolbox verify-upgrade \
+  --postgres-uri <uri> \
+  --protocol-version <version> \
+  --migration-version <version>
+```
+
+You can also verify manually:
+```sql
+SELECT * FROM version;
+```
+
+**Validate fork block integrity** (after the fork activates):
+```bash
+mina-archive-hardfork-toolbox validate-fork \
+  --postgres-uri <uri> \
+  --fork-state-hash <hash> \
+  --fork-slot <slot>
+```
+
+**Verify no commands after fork point:**
+```bash
+mina-archive-hardfork-toolbox fork-candidate no-commands-after \
+  --postgres-uri <uri> \
+  --fork-state-hash <hash> \
+  --fork-slot <slot>
+```
+
+**Verify extended zkApp state columns exist:**
+```sql
+SELECT column_name FROM information_schema.columns
+WHERE table_name = 'zkapp_states_nullable'
+AND column_name LIKE 'element%'
+ORDER BY column_name;
+```
+Confirm columns `element0` through `element31` exist.
+
+**Check for missing blocks:**
+```bash
+mina-missing-blocks-auditor --archive-uri postgres://<user>:<password>@<address>:<port>/<db>
+```
+
+**Compare block heights** — the archive height should match or be close to the daemon's reported height:
+```sql
+SELECT MAX(height) FROM blocks;
+```
+
+### Rosetta API Validation
+
+Use `rosetta-cli` to verify the API conforms to the Rosetta specification:
+
+```bash
+# Spec check
+rosetta-cli check:spec --configuration-file config.json
+
+# Data check — aim for reconciliation coverage above 60%
+rosetta-cli check:data --configuration-file config.json
+
+# Construction check (after block production starts)
+rosetta-cli check:construction --configuration-file config.json --start-block 2
+```
+
+### Network-Level Checks
+
+1. **Verify seed connectivity** — confirm all seeds listed in `https://bootnodes.minaprotocol.com/networks/mainnet.txt` are connectable.
+
+2. **Verify block production** — monitor that blocks are being produced at the expected cadence via block explorers and your node's logs.
+
+3. **Verify empty blocks during finalization** — confirm that all blocks between the _stop-transaction-slot_ and _stop-network-slot_ were empty (no user transactions, no coinbase, no fee transfers):
+   ```sql
+   SELECT b.height, b.state_hash
+   FROM blocks b
+   WHERE b.global_slot_since_genesis > <stop_transaction_slot>
+   AND b.global_slot_since_genesis <= <stop_network_slot>
+   AND (
+     EXISTS (SELECT 1 FROM blocks_user_commands buc WHERE buc.block_id = b.id)
+     OR EXISTS (SELECT 1 FROM blocks_internal_commands bic WHERE bic.block_id = b.id)
+   );
+   ```
+   This query should return zero rows.
+
+---
+
+## Help Monitor the Network
+
+The Node Status service is **not enabled by default** in the Mesa release. If you wish to help o1Labs monitor network health in the initial phase, add these flags to your node:
+
+```bash
+--node-stats-type full
+--node-status-url https://nodestats.minaprotocol.com/submit/stats
+--node-error-url https://nodestats.minaprotocol.com/submit/stats
+```
+
+The error collection service reports any node crashes before the process terminates. If you are not comfortable sharing your node version, use `--node-stats-type none` or simply omit these flags.
+
+## Report Issues
+
+If you encounter any problems after the upgrade:
+
+- Report bugs on [GitHub](https://github.com/MinaProtocol/mina/issues) with the label `mesa`
+- Reach out on [Discord](https://discord.gg/minaprotocol) in the appropriate channel
+
+---
+
+## Flag and Configuration Reference
+
+The flags below are **unchanged from Berkeley** — if your node was running correctly before the fork, the same flags will work on Mesa. This section is provided as a reference for operators setting up fresh nodes or verifying their configuration.
+
+For full details, see the [Mesa release notes](https://github.com/MinaProtocol/mina/releases).
+
+:::info What changed in Mesa
+- The `--hardfork-handling` flag is **removed** (not supported on the Mesa chain). If you were using it, remove it from your startup configuration.
+- If you used manual mode, update `--genesis-ledger-dir` and `-config-file` to point to the Mesa versions (included in the package).
+- All other flags remain the same.
+:::
+
+<details>
+<summary><b>Block Producer flags</b></summary>
+
+```
+mina daemon
+  --block-producer-key <path to the wallet private key file>
+  --config-directory <path to the mina configuration directory>
+  --file-log-rotations 500
+  --generate-genesis-proof true
+  --libp2p-keypair <keyfile path>
+  --log-json
+  --peer-list-url https://bootnodes.minaprotocol.com/networks/mainnet.txt
+
+ENVIRONMENT VARIABLES
+  RAYON_NUM_THREADS=6
+  MINA_LIBP2P_PASS
+  MINA_PRIVKEY_PASS
+```
+
+</details>
+
+<details>
+<summary><b>SNARK Coordinator flags</b></summary>
+
+```
+mina daemon
+  --config-directory <path to the mina configuration directory>
+  --enable-peer-exchange true
+  --file-log-rotations 500
+  --libp2p-keypair <keyfile path>
+  --log-json
+  --peer-list-url https://bootnodes.minaprotocol.com/networks/mainnet.txt
+  --run-snark-coordinator <public key>
+  --snark-worker-fee 0.001
+  --work-selection [seq|rand|roffset]
+
+ENVIRONMENT VARIABLES
+  MINA_LIBP2P_PASS
+```
+
+</details>
+
+<details>
+<summary><b>SNARK Worker flags</b></summary>
+
+```
+mina internal snark-worker
+  --proof-level full
+  --shutdown-on-disconnect false
+  --daemon-address <snark coordinator IP:port>
+
+ENVIRONMENT VARIABLES
+  RAYON_NUM_THREADS=8
+```
+
+</details>
+
+<details>
+<summary><b>Archive Node flags</b></summary>
+
+Running an Archive Node involves a non-block-producing daemon connected to the archive process and a PostgreSQL database. For more information, see [Archive Node](/node-operators/archive-node).
+
+**Daemon (non-block-producing):**
+
+```
+mina daemon
+  --archive-address <archive_address>:3086
+  --config-directory <path to mina config>
+  --enable-peer-exchange true
+  --file-log-rotations 500
+  --generate-genesis-proof true
+  --libp2p-keypair <keyfile path>
+  --log-json
+  --peer-list-url https://bootnodes.minaprotocol.com/networks/mainnet.txt
+
+ENVIRONMENT VARIABLES
+  MINA_LIBP2P_PASS
+```
+
+**Archive process:**
+
+```
+mina-archive run
+  --metrics-port <port>
+  --postgres-uri postgres://<user>:<password>@<address>:<port>/<db>
+  --server-port 3086
+  --log-json
+  --log-level DEBUG
+```
+
+</details>
+
+<details>
+<summary><b>Rosetta API</b></summary>
+
+Once your Archive Node stack is running:
+
+```bash
+docker run \
+  --name rosetta --rm \
+  -p 3088:3088 \
+  --entrypoint '' \
+  minaprotocol/mina-rosetta:4.0.0-bullseye-mainnet \
+  /usr/local/bin/mina-rosetta \
+    --archive-uri "${PG_CONNECTION_STRING}" \
+    --graphql-uri "${GRAPHQL_URL}" \
+    --log-json \
+    --log-level ${LOG_LEVEL} \
+    --port 3088
+```
+
+</details>
