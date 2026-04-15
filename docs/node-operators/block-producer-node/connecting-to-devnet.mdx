@@ -107,15 +107,15 @@ export MINA_PRIVKEY_PASS="My_V3ry_S3cure_Password"
 export MINA_LIBP2P_PASS="My_V3ry_S3cure_Password"
 LOG_LEVEL=Info
 FILE_LOG_LEVEL=Debug
-EXTRA_FLAGS=" --block-producer-key /data/.mina-config/keys/my-wallet --libp2p-keypair /data/.mina-config/keys/libp2p-key"
+EXTRA_FLAGS=" --block-producer-key /root/.mina-config/keys/my-wallet --libp2p-keypair /root/.mina-config/keys/libp2p-key"
 PEER_LIST_URL=https://bootnodes.minaprotocol.com/networks/devnet.txt
 ```
 
-In the example above, `/data/.mina-config/keys/my-wallet` is the absolute path of your block producer private key mounted in the container.
+In the example above, `/root/.mina-config/keys/my-wallet` is the absolute path of your block producer private key mounted in the container.
 
 If you do not want to produce blocks, provide only the `PEER_LIST_URL` and the `--libp2p-keypair` flag.
 ```sh
-EXTRA_FLAGS="--libp2p-keypair /data/.mina-config/keys/libp2p-key"
+EXTRA_FLAGS="--libp2p-keypair /root/.mina-config/keys/libp2p-key"
 ```
 
 Now, run the image with your `.mina-config` and `.mina-env` and `keys` files mounted into the container:
@@ -124,7 +124,7 @@ Now, run the image with your `.mina-config` and `.mina-env` and `keys` files mou
 docker run --name mina -d \
        -p 8302:8302 \
        --restart=always \
-       -v $(pwd)/.mina-config:/data/.mina-config \
+       -v $(pwd)/.mina-config:/root/.mina-config \
        -v $(pwd)/.mina-env:/entrypoint.d/mina-env \
        gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet \
        daemon

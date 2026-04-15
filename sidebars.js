@@ -8,39 +8,52 @@ module.exports = {
     },
     {
       type: 'category',
-      label: 'Berkeley Upgrade',
+      label: 'Network Upgrades',
       link: {
         type: 'doc',
-        id: 'berkeley-upgrade/requirements',
+        id: 'network-upgrades/index',
       },
       items: [
         {
           type: 'category',
-          label: 'Archive Migration',
+          label: 'Berkeley Upgrade',
           link: {
             type: 'doc',
-            id: 'berkeley-upgrade/archive-migration/index',
+            id: 'network-upgrades/berkeley/requirements',
           },
           items: [
-            'berkeley-upgrade/archive-migration/understanding-archive-migration',
-            'berkeley-upgrade/archive-migration/archive-migration-prerequisites',
-            'berkeley-upgrade/archive-migration/archive-migration-installation',
-            'berkeley-upgrade/archive-migration/migrating-archive-database-to-berkeley',
-            'berkeley-upgrade/archive-migration/mainnet-database-maintenance',
-            'berkeley-upgrade/archive-migration/debian-example',
-            'berkeley-upgrade/archive-migration/docker-example',
-            'berkeley-upgrade/archive-migration/appendix',
+            {
+              type: 'category',
+              label: 'Archive Migration',
+              link: {
+                type: 'doc',
+                id: 'network-upgrades/berkeley/archive-migration/index',
+              },
+              items: [
+                'network-upgrades/berkeley/archive-migration/understanding-archive-migration',
+                'network-upgrades/berkeley/archive-migration/archive-migration-prerequisites',
+                'network-upgrades/berkeley/archive-migration/archive-migration-installation',
+                'network-upgrades/berkeley/archive-migration/migrating-archive-database-to-berkeley',
+                'network-upgrades/berkeley/archive-migration/mainnet-database-maintenance',
+                'network-upgrades/berkeley/archive-migration/debian-example',
+                'network-upgrades/berkeley/archive-migration/docker-example',
+                'network-upgrades/berkeley/archive-migration/appendix',
+              ],
+            },
+            'network-upgrades/berkeley/upgrade-steps',
+            'network-upgrades/berkeley/flags-configs',
+            'network-upgrades/berkeley/appendix',
           ],
         },
-        'berkeley-upgrade/upgrade-steps',
-        'berkeley-upgrade/flags-configs',
-        'berkeley-upgrade/appendix',
+        {
+          type: 'category',
+          label: 'Mesa Upgrade',
+          items: [
+            'network-upgrades/mesa/preflight-network',
+            'network-upgrades/mesa/archive-upgrade',
+          ],
+        },
       ],
-    },
-    {
-      type: 'category',
-      label: 'Mesa Upgrade',
-      items: ['mesa-upgrade/preflight-network', 'mesa-upgrade/archive-upgrade'],
     },
     {
       type: 'category',
@@ -1601,6 +1614,13 @@ module.exports = {
           ],
         },
         'exchange-operators/faq',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Developer Tools',
+      items: [
+        'mina-signer',
       ],
     },
     {

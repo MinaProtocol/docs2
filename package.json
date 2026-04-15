@@ -6,7 +6,7 @@
     "docusaurus": "docusaurus",
     "start": "docusaurus start",
     "dev": "ALGOLIA_APP_ID='.' ALGOLIA_SEARCH_API_KEY='.' docusaurus start",
-    "build": "docusaurus build",
+    "build": "node scripts/generate-llms-txt.mjs && docusaurus build",
     "swizzle": "docusaurus swizzle --typescript",
     "swizzle-list": "docusaurus swizzle --list",
     "deploy": "docusaurus deploy",
@@ -16,7 +16,9 @@
     "write-heading-ids": "docusaurus write-heading-ids",
     "typecheck": "tsc",
     "update-sidebar": "node scripts/update-sidebars-o1js-api.js && npx prettier --config .prettierrc --write sidebars.js",
-    "validate-docker-images": "node scripts/validate-docker-images.js"
+    "validate-docker-images": "node scripts/validate-docker-images.js",
+    "generate-llms-txt": "node scripts/generate-llms-txt.mjs",
+    "check-llms-txt": "node scripts/generate-llms-txt.mjs && git diff --exit-code static/llms-full.txt"
   },
   "dependencies": {
     "@docusaurus/core": "^3.8.0",

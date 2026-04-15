@@ -196,6 +196,66 @@ module.exports = {
             from: '/zkapps/snarkyjs-reference',
             to: '/zkapps/o1js-reference',
           },
+          {
+            from: '/berkeley-upgrade/requirements',
+            to: '/network-upgrades/berkeley/requirements',
+          },
+          {
+            from: '/berkeley-upgrade/upgrade-steps',
+            to: '/network-upgrades/berkeley/upgrade-steps',
+          },
+          {
+            from: '/berkeley-upgrade/flags-configs',
+            to: '/network-upgrades/berkeley/flags-configs',
+          },
+          {
+            from: '/berkeley-upgrade/appendix',
+            to: '/network-upgrades/berkeley/appendix',
+          },
+          {
+            from: '/berkeley-upgrade/archive-migration',
+            to: '/network-upgrades/berkeley/archive-migration',
+          },
+          {
+            from: '/berkeley-upgrade/archive-migration/understanding-archive-migration',
+            to: '/network-upgrades/berkeley/archive-migration/understanding-archive-migration',
+          },
+          {
+            from: '/berkeley-upgrade/archive-migration/archive-migration-prerequisites',
+            to: '/network-upgrades/berkeley/archive-migration/archive-migration-prerequisites',
+          },
+          {
+            from: '/berkeley-upgrade/archive-migration/archive-migration-installation',
+            to: '/network-upgrades/berkeley/archive-migration/archive-migration-installation',
+          },
+          {
+            from: '/berkeley-upgrade/archive-migration/migrating-archive-database-to-berkeley',
+            to: '/network-upgrades/berkeley/archive-migration/migrating-archive-database-to-berkeley',
+          },
+          {
+            from: '/berkeley-upgrade/archive-migration/mainnet-database-maintenance',
+            to: '/network-upgrades/berkeley/archive-migration/mainnet-database-maintenance',
+          },
+          {
+            from: '/berkeley-upgrade/archive-migration/debian-example',
+            to: '/network-upgrades/berkeley/archive-migration/debian-example',
+          },
+          {
+            from: '/berkeley-upgrade/archive-migration/docker-example',
+            to: '/network-upgrades/berkeley/archive-migration/docker-example',
+          },
+          {
+            from: '/berkeley-upgrade/archive-migration/appendix',
+            to: '/network-upgrades/berkeley/archive-migration/appendix',
+          },
+          {
+            from: '/mesa-upgrade/preflight-network',
+            to: '/network-upgrades/mesa/preflight-network',
+          },
+          {
+            from: '/mesa-upgrade/archive-upgrade',
+            to: '/network-upgrades/mesa/archive-upgrade',
+          },
         ],
       },
     ],

@@ -41,14 +41,14 @@ Below it's the description in detail of all the upgrade steps and what which nod
 1. Trustless migration:
   - Perform the initial archive node migration. Since Mainnet is a long-lived network, the initial migration process can take up to 48 hours, depending on your server specification and infrastructure.
   - If your Mina Daemon, archive node, or PostgreSQL database runs on different machines, the migration performance will be greatly impacted.
-  - For more information on the archive node migration process, please refer to the [Archive Migration](/berkeley-upgrade/archive-migration) section.
+  - For more information on the archive node migration process, please refer to the [Archive Migration](/network-upgrades/berkeley/archive-migration) section.
 2. Upgrade all nodes to the latest stable version [3.0.3](https://github.com/MinaProtocol/mina/releases/tag/3.0.3).
 3. Provision servers that meet the minimum hardware requirements, primarily the new 32GB RAM requirement.
 4. Upgrade their nodes to the version that includes built-in stop slots before the pre-defined _stop-transaction-slot_.
 
 ### Exchanges
 1. Make sure to test your system integration with Berkeley's new features. Pay special attention to:
-  - If you use the **o1labs/client-sdk** library to sign transactions, you should switch to **[mina-signer](https://www.npmjs.com/package/mina-signer)**. o1labs/client-sdk was **deprecated** some time ago and will be **unusable** once the network has been upgraded. Please review the migration instructions in [Appendix](/berkeley-upgrade/appendix).
+  - If you use the **o1labs/client-sdk** library to sign transactions, you should switch to **[mina-signer](https://www.npmjs.com/package/mina-signer)**. o1labs/client-sdk was **deprecated** some time ago and will be **unusable** once the network has been upgraded. Please review the migration instructions in [Appendix](/network-upgrades/berkeley/appendix).
   - If you rely on the archive node SQL database tables, please review the schema changes in Appendix 1 of this document.
 2. Upgrade all nodes to the latest stable version [3.0.3](https://github.com/MinaProtocol/mina/releases/tag/3.0.3).
 3. Provision servers that meet the minimum hardware requirements, particularly the new 32GB RAM requirement.
@@ -71,7 +71,7 @@ Below it's the description in detail of all the upgrade steps and what which nod
 If you are doing the trustless migration, then:
 1. Continue to execute the archive node to ensure finalized blocks are in the database and can be migrated.
 2. Continue to run incremental archive node migrations until after the network stops at the stop-network slot.
-3. For more information on the archive node migration process, please refer to the [Archive Migration](/berkeley-upgrade/archive-migration) section
+3. For more information on the archive node migration process, please refer to the [Archive Migration](/network-upgrades/berkeley/archive-migration) section
 
 ### Exchanges
 

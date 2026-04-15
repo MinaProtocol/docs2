@@ -21,11 +21,30 @@ Mina APIs are always improving. See `mina help` for the most up-to-date version.
 
 :::
 
-### Mina Accounts
+## mina
+```
+Mina
+
+  mina SUBCOMMAND
+
+=== subcommands ===
+
+  accounts                    Client commands concerning account management
+  daemon                      Mina daemon
+  client                      Lightweight client commands
+  advanced                    Advanced client commands
+  ledger                      Ledger commands
+  libp2p                      Libp2p commands
+  internal                    Internal commands
+  parallel-worker             internal use only
+  transaction-snark-profiler  transaction snark profiler
+  version                     print version information
+  help                        explain a given subcommand (perhaps recursively)
 
 ```
-$ mina accounts help
 
+## mina accounts
+```
 Client commands concerning account management
 
   mina accounts SUBCOMMAND
@@ -47,11 +66,159 @@ Client commands concerning account management
 
 ```
 
-### Mina Client
+### mina accounts list
+```
+List all owned accounts
+
+  mina accounts list 
+
+=== flags ===
+
+  [--config-directory DIR]            Configuration directory
+                                      (alias: -config-directory)
+  [--rest-server URI/LOCALHOST-PORT]  graphql rest server for daemon interaction
+                                      (examples: 3085 or
+                                      http://localhost:3085/graphql,
+                                      /dns4/peer1-rising-phoenix.o1test.net:3085/graphql)
+                                      (alias: -rest-server)
+  [-help]                             print this help text and exit
+                                      (alias: -?)
 
 ```
-$ mina client help
 
+### mina accounts create
+```
+Create new account
+
+  mina accounts create 
+
+=== flags ===
+
+  [--rest-server URI/LOCALHOST-PORT]  graphql rest server for daemon interaction
+                                      (examples: 3085 or
+                                      http://localhost:3085/graphql,
+                                      /dns4/peer1-rising-phoenix.o1test.net:3085/graphql)
+                                      (default: 3085 or
+                                      http://localhost:3085/graphql)
+                                      (alias: -rest-server)
+  [-help]                             print this help text and exit
+                                      (alias: -?)
+
+```
+
+### mina accounts import
+```
+Import a password protected private key to be tracked by the daemon.
+Set MINA_PRIVKEY_PASS environment variable to use non-interactively (key will be imported using the same password).
+
+  mina accounts import 
+
+=== flags ===
+
+  --privkey-path FILE                 File to read private key from
+                                      (alias: -privkey-path)
+  [--config-directory DIR]            Configuration directory
+                                      (alias: -config-directory)
+  [--rest-server URI/LOCALHOST-PORT]  graphql rest server for daemon interaction
+                                      (examples: 3085 or
+                                      http://localhost:3085/graphql,
+                                      /dns4/peer1-rising-phoenix.o1test.net:3085/graphql)
+                                      (alias: -rest-server)
+  [-help]                             print this help text and exit
+                                      (alias: -?)
+
+```
+
+### mina accounts export
+```
+Export a tracked account so that it can be saved or transferred between machines.
+ Set MINA_PRIVKEY_PASS environment variable to use non-interactively (key will be exported using the same password).
+
+  mina accounts export 
+
+=== flags ===
+
+  --privkey-path FILE                 File to write private key into (public key
+                                      will be FILE.pub)
+                                      (alias: -privkey-path)
+  --public-key PUBLICKEY              Public key of account to be exported
+                                      (alias: -public-key)
+  [--config-directory DIR]            Configuration directory
+                                      (alias: -config-directory)
+  [--rest-server URI/LOCALHOST-PORT]  graphql rest server for daemon interaction
+                                      (examples: 3085 or
+                                      http://localhost:3085/graphql,
+                                      /dns4/peer1-rising-phoenix.o1test.net:3085/graphql)
+                                      (default: 3085 or
+                                      http://localhost:3085/graphql)
+                                      (alias: -rest-server)
+  [-help]                             print this help text and exit
+                                      (alias: -?)
+
+```
+
+### mina accounts unlock
+```
+Unlock a tracked account
+
+  mina accounts unlock 
+
+=== flags ===
+
+  --public-key PUBLICKEY              Public key to be unlocked
+                                      (alias: -public-key)
+  [--rest-server URI/LOCALHOST-PORT]  graphql rest server for daemon interaction
+                                      (examples: 3085 or
+                                      http://localhost:3085/graphql,
+                                      /dns4/peer1-rising-phoenix.o1test.net:3085/graphql)
+                                      (default: 3085 or
+                                      http://localhost:3085/graphql)
+                                      (alias: -rest-server)
+  [-help]                             print this help text and exit
+                                      (alias: -?)
+
+```
+
+### mina accounts lock
+```
+Lock a tracked account
+
+  mina accounts lock 
+
+=== flags ===
+
+  --public-key PUBLICKEY              Public key of account to be locked
+                                      (alias: -public-key)
+  [--rest-server URI/LOCALHOST-PORT]  graphql rest server for daemon interaction
+                                      (examples: 3085 or
+                                      http://localhost:3085/graphql,
+                                      /dns4/peer1-rising-phoenix.o1test.net:3085/graphql)
+                                      (default: 3085 or
+                                      http://localhost:3085/graphql)
+                                      (alias: -rest-server)
+  [-help]                             print this help text and exit
+                                      (alias: -?)
+
+```
+
+### mina accounts help
+```
+explain a given subcommand (perhaps recursively)
+
+  mina accounts help [SUBCOMMAND]
+
+=== flags ===
+
+  [-expand-dots]  expand subcommands in recursive help
+  [-flags]        show flags as well in recursive help
+  [-recursive]    show subcommands of subcommands, etc.
+  [-help]         print this help text and exit
+                  (alias: -?)
+
+```
+
+## mina client
+```
 Lightweight client commands
 
   mina client SUBCOMMAND
@@ -76,22 +243,309 @@ Lightweight client commands
 
 ```
 
-### Mina Daemon
+### mina client get-balance
+```
+Get balance associated with a public key
+
+  mina client get-balance 
+
+=== flags ===
+
+  --public-key PUBLICKEY              Public key for which you want to check the
+                                      balance
+                                      (alias: -public-key)
+  [--rest-server URI/LOCALHOST-PORT]  graphql rest server for daemon interaction
+                                      (examples: 3085 or
+                                      http://localhost:3085/graphql,
+                                      /dns4/peer1-rising-phoenix.o1test.net:3085/graphql)
+                                      (default: 3085 or
+                                      http://localhost:3085/graphql)
+                                      (alias: -rest-server)
+  [--token TOKEN_ID]                  The token ID for the account
+                                      (alias: -token)
+  [-help]                             print this help text and exit
+                                      (alias: -?)
 
 ```
-$ mina daemon -help
 
+### mina client get-tokens
+```
+Get all token IDs that a public key has accounts for
+
+  mina client get-tokens 
+
+=== flags ===
+
+  --public-key PUBLICKEY              Public key for which you want to find
+                                      accounts
+                                      (alias: -public-key)
+  [--rest-server URI/LOCALHOST-PORT]  graphql rest server for daemon interaction
+                                      (examples: 3085 or
+                                      http://localhost:3085/graphql,
+                                      /dns4/peer1-rising-phoenix.o1test.net:3085/graphql)
+                                      (default: 3085 or
+                                      http://localhost:3085/graphql)
+                                      (alias: -rest-server)
+  [-help]                             print this help text and exit
+                                      (alias: -?)
+
+```
+
+### mina client send-payment
+```
+Send payment to an address
+
+  mina client send-payment 
+
+=== flags ===
+
+  --amount VALUE                      Payment amount you want to send
+                                      (alias: -amount)
+  --receiver PUBLICKEY                Public key to which you want to send money
+                                      (alias: -receiver)
+  --sender PUBLICKEY                  Public key from which you want to send the
+                                      transaction
+                                      (alias: -sender)
+  [--fee FEE]                         Amount you are willing to pay to process
+                                      the transaction (default: 0.25) (minimum:
+                                      0.001)
+                                      (alias: -fee)
+  [--memo STRING]                     Memo accompanying the transaction
+                                      (alias: -memo)
+  [--nonce NONCE]                     Nonce that you would like to set for your
+                                      transaction (default: nonce of your
+                                      account on the best ledger or the
+                                      successor of highest value nonce of your
+                                      sent transactions from the transaction
+                                      pool )
+                                      (alias: -nonce)
+  [--rest-server URI/LOCALHOST-PORT]  graphql rest server for daemon interaction
+                                      (examples: 3085 or
+                                      http://localhost:3085/graphql,
+                                      /dns4/peer1-rising-phoenix.o1test.net:3085/graphql)
+                                      (default: 3085 or
+                                      http://localhost:3085/graphql)
+                                      (alias: -rest-server)
+  [-help]                             print this help text and exit
+                                      (alias: -?)
+
+```
+
+### mina client delegate-stake
+```
+Delegate your stake to another public key
+
+  mina client delegate-stake 
+
+=== flags ===
+
+  --receiver PUBLICKEY                Public key to which you want to delegate
+                                      your stake
+                                      (alias: -receiver)
+  --sender PUBLICKEY                  Public key from which you want to send the
+                                      transaction
+                                      (alias: -sender)
+  [--fee FEE]                         Amount you are willing to pay to process
+                                      the transaction (default: 0.25) (minimum:
+                                      0.001)
+                                      (alias: -fee)
+  [--memo STRING]                     Memo accompanying the transaction
+                                      (alias: -memo)
+  [--nonce NONCE]                     Nonce that you would like to set for your
+                                      transaction (default: nonce of your
+                                      account on the best ledger or the
+                                      successor of highest value nonce of your
+                                      sent transactions from the transaction
+                                      pool )
+                                      (alias: -nonce)
+  [--rest-server URI/LOCALHOST-PORT]  graphql rest server for daemon interaction
+                                      (examples: 3085 or
+                                      http://localhost:3085/graphql,
+                                      /dns4/peer1-rising-phoenix.o1test.net:3085/graphql)
+                                      (default: 3085 or
+                                      http://localhost:3085/graphql)
+                                      (alias: -rest-server)
+  [-help]                             print this help text and exit
+                                      (alias: -?)
+
+```
+
+### mina client cancel-transaction
+```
+Cancel a transaction -- this submits a replacement transaction with a fee larger than the cancelled transaction.
+
+  mina client cancel-transaction 
+
+=== flags ===
+
+  --id ID                             Transaction ID to be cancelled
+                                      (alias: -id)
+  [--rest-server URI/LOCALHOST-PORT]  graphql rest server for daemon interaction
+                                      (examples: 3085 or
+                                      http://localhost:3085/graphql,
+                                      /dns4/peer1-rising-phoenix.o1test.net:3085/graphql)
+                                      (default: 3085 or
+                                      http://localhost:3085/graphql)
+                                      (alias: -rest-server)
+  [-help]                             print this help text and exit
+                                      (alias: -?)
+
+```
+
+### mina client set-snark-worker
+```
+Set key you wish to snark work with or disable snark working
+
+  mina client set-snark-worker 
+
+=== flags ===
+
+  [--address PUBLICKEY]               Public-key address you wish to start
+                                      snark-working on; null to stop doing any
+                                      snark work. Warning: If the key is from a
+                                      zkApp account, the account's receive
+                                      permission must be None.
+                                      (alias: -address)
+  [--rest-server URI/LOCALHOST-PORT]  graphql rest server for daemon interaction
+                                      (examples: 3085 or
+                                      http://localhost:3085/graphql,
+                                      /dns4/peer1-rising-phoenix.o1test.net:3085/graphql)
+                                      (default: 3085 or
+                                      http://localhost:3085/graphql)
+                                      (alias: -rest-server)
+  [-help]                             print this help text and exit
+                                      (alias: -?)
+
+```
+
+### mina client set-snark-work-fee
+```
+Set fee reward for doing transaction snark work
+
+  mina client set-snark-work-fee FEE
+
+=== flags ===
+
+  [--rest-server URI/LOCALHOST-PORT]  graphql rest server for daemon interaction
+                                      (examples: 3085 or
+                                      http://localhost:3085/graphql,
+                                      /dns4/peer1-rising-phoenix.o1test.net:3085/graphql)
+                                      (default: 3085 or
+                                      http://localhost:3085/graphql)
+                                      (alias: -rest-server)
+  [-help]                             print this help text and exit
+                                      (alias: -?)
+
+```
+
+### mina client export-logs
+```
+Export daemon logs to tar archive
+
+  mina client export-logs 
+
+=== flags ===
+
+  [--rest-server URI/LOCALHOST-PORT]  graphql rest server for daemon interaction
+                                      (examples: 3085 or
+                                      http://localhost:3085/graphql,
+                                      /dns4/peer1-rising-phoenix.o1test.net:3085/graphql)
+                                      (default: 3085 or
+                                      http://localhost:3085/graphql)
+                                      (alias: -rest-server)
+  [--tarfile STRING]                  Basename of the tar archive (default:
+                                      date_time)
+                                      (alias: -tarfile)
+  [-help]                             print this help text and exit
+                                      (alias: -?)
+
+```
+
+### mina client export-local-logs
+```
+Export local logs (no daemon) to tar archive
+
+  mina client export-local-logs 
+
+=== flags ===
+
+  [--config-directory DIR]  Configuration directory
+                            (alias: -config-directory)
+  [--tarfile STRING]        Basename of the tar archive (default: date_time)
+                            (alias: -tarfile)
+  [-help]                   print this help text and exit
+                            (alias: -?)
+
+```
+
+### mina client stop-daemon
+```
+Stop the daemon
+
+  mina client stop-daemon 
+
+=== flags ===
+
+  [--daemon-port HOST:PORT/LOCALHOST-PORT]  Client to local daemon
+                                            communication. If HOST is omitted,
+                                            then localhost is assumed to be
+                                            HOST. (examples: 8301,
+                                            154.97.53.97:8301) (default: 8301)
+                                            (alias: -daemon-port)
+  [-help]                                   print this help text and exit
+                                            (alias: -?)
+
+```
+
+### mina client status
+```
+Get running daemon status
+
+  mina client status 
+
+=== flags ===
+
+  [--daemon-port HOST:PORT/LOCALHOST-PORT]  Client to local daemon
+                                            communication. If HOST is omitted,
+                                            then localhost is assumed to be
+                                            HOST. (examples: 8301,
+                                            154.97.53.97:8301) (default: 8301)
+                                            (alias: -daemon-port)
+  [--json]                                  Use JSON output (default: plaintext)
+                                            (alias: -json)
+  [--performance]                           Include performance histograms in
+                                            status output (default: don't
+                                            include)
+                                            (alias: -performance)
+  [-help]                                   print this help text and exit
+                                            (alias: -?)
+
+```
+
+### mina client help
+```
+explain a given subcommand (perhaps recursively)
+
+  mina client help [SUBCOMMAND]
+
+=== flags ===
+
+  [-expand-dots]  expand subcommands in recursive help
+  [-flags]        show flags as well in recursive help
+  [-recursive]    show subcommands of subcommands, etc.
+  [-help]         print this help text and exit
+                  (alias: -?)
+
+```
+
+## mina daemon
+```
 Mina daemon
 
   mina daemon 
 
 === flags ===
 
-  --libp2p-keypair KEYFILE                             Keypair (generated from
-                                                       `mina libp2p
-                                                       generate-keypair`) to use
-                                                       with libp2p discovery
-                                                       (alias: -libp2p-keypair)
   [--all-peers-seen-metric true|false]                 whether to track the set
                                                        of all peers ever seen
                                                        for the all_peers metric
@@ -115,17 +569,26 @@ Mina daemon
                                                        to use for peer
                                                        connections
                                                        (alias: -bind-ip)
-  [--block-producer-key KEYFILE]                       Private key file for the
-                                                       block producer. You
-                                                       cannot provide both
+  [--block-producer-key DEPRECATED:]                   Use environment variable
+                                                       `MINA_BP_PRIVKEY`
+                                                       instead. Private key file
+                                                       for the block producer.
+                                                       Providing this flag or
+                                                       the environment variable
+                                                       will enable block
+                                                       production. You cannot
+                                                       provide both
                                                        `block-producer-key` and
                                                        `block-producer-pubkey`.
-                                                       (default: don't produce
-                                                       blocks). Warning: If the
-                                                       key is from a zkApp
-                                                       account, the account's
-                                                       receive permission must
-                                                       be None.
+                                                       (default: use environment
+                                                       variable
+                                                       `MINA_BP_PRIVKEY`, if
+                                                       provided, or else don't
+                                                       produce any blocks)
+                                                       Warning: If the key is
+                                                       from a zkApp account, the
+                                                       account's receive
+                                                       permission must be None.
                                                        (alias:
                                                        -block-producer-key)
   [--block-producer-password PASSWORD]                 Password associated with
@@ -147,10 +610,11 @@ Mina daemon
                                                        that is being tracked by
                                                        this daemon. You cannot
                                                        provide both
-                                                       `block-producer-key` and
+                                                       `block-producer-key` (or
+                                                       `MINA_BP_PRIVKEY`) and
                                                        `block-producer-pubkey`.
                                                        (default: don't produce
-                                                       blocks). Warning: If the
+                                                       blocks) Warning: If the
                                                        key is from a zkApp
                                                        account, the account's
                                                        receive permission must
@@ -257,6 +721,21 @@ Mina daemon
                                                        <config-dir>)
                                                        (alias:
                                                        -genesis-ledger-dir)
+  [--hardfork-handling keep-running|migrate-exit]      Internal flag,
+                                                       controlling how the
+                                                       daemon handles an
+                                                       upcoming hard fork.
+                                                       Exposed for testing
+                                                       purposes. Currently it
+                                                       only causes the daemon to
+                                                       maintain migrated
+                                                       versions of the root and
+                                                       epoch ledger databases
+                                                       alongside the stable
+                                                       databases. (default:
+                                                       keep-running).
+                                                       (alias:
+                                                       -hardfork-handling)
   [--insecure-rest-server]                             Have REST server listen
                                                        on all addresses, not
                                                        just localhost (this is
@@ -276,23 +755,11 @@ Mina daemon
                                                        configured through
                                                        GraphQL. (default: false)
                                                        (alias: -isolate-network)
-  [--itn-graphql-port PORT]                            GraphQL-server for
-                                                       incentivized testnet
-                                                       interaction
-                                                       (alias:
-                                                       -itn-graphql-port)
-  [--itn-keys PUBLICKEYS]                              A comma-delimited list of
-                                                       Ed25519 public keys that
-                                                       are permitted to send
-                                                       signed requests to the
-                                                       incentivized testnet
-                                                       GraphQL server
-                                                       (alias: -itn-keys)
-  [--itn-max-logs NN]                                  Maximum number of logs to
-                                                       store to be made
-                                                       available via GraphQL for
-                                                       incentivized testnet
-                                                       (alias: -itn-max-logs)
+  [--libp2p-keypair KEYFILE]                           Keypair (generated from
+                                                       `mina libp2p
+                                                       generate-keypair`) to use
+                                                       with libp2p discovery
+                                                       (alias: -libp2p-keypair)
   [--libp2p-metrics-port PORT]                         libp2p metrics server for
                                                        scraping via Prometheus
                                                        (default no
@@ -367,9 +834,6 @@ Mina daemon
                                                        be paid for)
                                                        (alias:
                                                        -minimum-block-reward)
-  [--no-super-catchup]                                 Don't use super-catchup
-                                                       (alias:
-                                                       -no-super-catchup)
   [--node-error-url URL]                               of the node error
                                                        collection service
                                                        (alias: -node-error-url)
@@ -444,6 +908,10 @@ Mina daemon
   [--seed]                                             Start the node as a seed
                                                        node
                                                        (alias: -seed)
+  [--simplified-node-stats whether]                    to report simplified node
+                                                       stats (default: true)
+                                                       (alias:
+                                                       -simplified-node-stats)
   [--snark-worker-fee FEE]                             Amount a worker wants to
                                                        get compensated for
                                                        generating a snark proof
@@ -458,6 +926,9 @@ Mina daemon
                                                        production.
                                                        (alias:
                                                        -snark-worker-parallelism)
+  [--start-filtered-logs LOG-FILTER] ...               Include filtered logs for
+                                                       the given filter. May be
+                                                       passed multiple times
   [--stop-time UPTIME]                                 in hours after which the
                                                        daemon stops itself (only
                                                        if there were no slots
@@ -465,6 +936,14 @@ Mina daemon
                                                        the stop time) (Default:
                                                        168)
                                                        (alias: -stop-time)
+  [--stop-time-interval UPTIME]                        An upper bound
+                                                       (inclusive) on the random
+                                                       number of hours added to
+                                                       the stop-time. Setting it
+                                                       to zero disables this
+                                                       randomness. (Default: 9)
+                                                       (alias:
+                                                       -stop-time-interval)
   [--tracing]                                          Trace into
                                                        $config-directory/trace/$pid.trace
                                                        (alias: -tracing)
@@ -533,10 +1012,10 @@ Mina daemon
                                                        (alias:
                                                        -work-reassignment-wait)
   [--work-selection seq|rand|roffset]                  Choose work sequentially
-                                                       (seq), randomly (rand) or
-                                                       sequentially with a random
-                                                       offset (roffset) (default:
-                                                       rand)
+                                                       (seq), randomly (rand),
+                                                       or sequentially with a
+                                                       random offset (roffset)
+                                                       (default: rand)
                                                        (alias: -work-selection)
   [--working-dir PATH]                                 path to chdir into before
                                                        starting (useful for
@@ -550,11 +1029,8 @@ Mina daemon
 
 ```
 
-### Mina Advanced
-
+## mina advanced
 ```
-$ mina advanced help
-
 Advanced client commands
 
   mina advanced SUBCOMMAND
@@ -570,7 +1046,6 @@ Advanced client commands
                               otherwise it will communicate through the daemon
                               over the rest-server
   batch-send-payments         Send multiple payments from a file
-  chain-id-inputs             Print the inputs that yield the current chain id
   client-trustlist            Client trustlist management
   compile-time-constants      Print a JSON map of the compile-time consensus
                               parameters
@@ -578,6 +1053,7 @@ Advanced client commands
                               previous hash and transaction ID
   constraint-system-digests   Print MD5 digest of each SNARK constraint
   dump-keypair                Print out a keypair from a private key file
+  generate-hardfork-config    Generate reference hardfork configuration
   generate-keypair            Generate a new public, private keypair
   get-nonce                   Get the current nonce for an account
   get-peers                   List the peers currently connected to the daemon
@@ -587,7 +1063,6 @@ Advanced client commands
                               trust system
   hash-transaction            Compute the hash of a transaction from its
                               transaction ID
-  itn-create-accounts         Fund new accounts for incentivized testnet
   node-status                 Get node statuses for a set of peers
   object-lifetime-statistics  Dump internal object lifetime statistics to JSON
   pending-snark-work          List of snark works in JSON format that are not
@@ -596,6 +1071,8 @@ Advanced client commands
                               inclusion
   pooled-zkapp-commands       Retrieve all the zkApp commands that are pending
                               inclusion
+  print-signature-kind        Print the signature kind that this binary is
+                              compiled with
   reset-trust-status          Reset the trust status associated with an IP
                               address
   runtime-config              Compute the runtime configuration used by a
@@ -614,6 +1091,7 @@ Advanced client commands
   status-clear-hist           Clear histograms reported in status
   stop-internal-tracing       Stop internal tracing
   stop-tracing                Stop async tracing
+  test                        Testing-only commands
   thread-graph                Return a Graphviz Dot graph representation of the
                               internal thread hierarchy
   time-offset                 Get the time offset in seconds used by the daemon
@@ -626,44 +1104,1058 @@ Advanced client commands
   vrf                         Commands for vrf evaluations
   wrap-key                    Wrap a private key into a private key file
   help                        explain a given subcommand (perhaps recursively)
+
 ```
 
-### Mina Generate Keypair
+### mina advanced add-peers
 ```
-$ mina-generate-keypair -help
+Add peers to the daemon
 
+Addresses take the format /ip4/IPADDR/tcp/PORT/p2p/PEERID
+
+  mina advanced add-peers PEER [PEER ...]
+
+=== flags ===
+
+  [--rest-server URI/LOCALHOST-PORT]  graphql rest server for daemon interaction
+                                      (examples: 3085 or
+                                      http://localhost:3085/graphql,
+                                      /dns4/peer1-rising-phoenix.o1test.net:3085/graphql)
+                                      (default: 3085 or
+                                      http://localhost:3085/graphql)
+                                      (alias: -rest-server)
+  [--seed true/false]                 Whether to add these peers as 'seed'
+                                      peers, which may perform peer exchange.
+                                      Default: true
+                                      (alias: -seed)
+  [-help]                             print this help text and exit
+                                      (alias: -?)
+
+```
+
+### mina advanced archive-blocks
+```
+Archive a block from a file.
+
+If an archive address is given, this process will communicate with the archive node directly; otherwise it will communicate through the daemon over the rest-server
+
+  mina advanced archive-blocks [FILES ...]
+
+=== flags ===
+
+  [--archive-address HOST:PORT/LOCALHOST-PORT]  Daemon to archive process
+                                                communication. If HOST is
+                                                omitted, then localhost is
+                                                assumed to be HOST. (examples:
+                                                3086, 154.97.53.97:3086)
+                                                (alias: -archive-address)
+  [--extensional]                               Blocks are in extensional JSON
+                                                format
+                                                (alias: -extensional)
+  [--failed-files PATH]                         Appends the list of files that
+                                                failed to be processed
+                                                (alias: -failed-files)
+  [--log-successful true/false]                 Whether to log messages for
+                                                files that were processed
+                                                successfully
+                                                (alias: -log-successful)
+  [--precomputed]                               Blocks are in precomputed JSON
+                                                format
+                                                (alias: -precomputed)
+  [--rest-server URI/LOCALHOST-PORT]            graphql rest server for daemon
+                                                interaction (examples: 3085 or
+                                                http://localhost:3085/graphql,
+                                                /dns4/peer1-rising-phoenix.o1test.net:3085/graphql)
+                                                (default: 3085 or
+                                                http://localhost:3085/graphql)
+                                                (alias: -rest-server)
+  [--successful-files PATH]                     Appends the list of files that
+                                                were processed successfully
+                                                (alias: -successful-files)
+  [-help]                                       print this help text and exit
+                                                (alias: -?)
+
+```
+
+### mina advanced batch-send-payments
+```
+Send multiple payments from a file
+
+  mina advanced batch-send-payments PAYMENTS-FILE
+
+=== flags ===
+
+  --privkey-path FILE                       File to read private key from
+                                            (alias: -privkey-path)
+  [--daemon-port HOST:PORT/LOCALHOST-PORT]  Client to local daemon
+                                            communication. If HOST is omitted,
+                                            then localhost is assumed to be
+                                            HOST. (examples: 8301,
+                                            154.97.53.97:8301) (default: 8301)
+                                            (alias: -daemon-port)
+  [-help]                                   print this help text and exit
+                                            (alias: -?)
+
+```
+
+### mina advanced client-trustlist
+```
+Client trustlist management
+
+  mina advanced client-trustlist SUBCOMMAND
+
+=== subcommands ===
+
+  add     Add an IP to the trustlist
+  list    List the CIDR masks in the trustlist
+  remove  Remove a CIDR mask from the trustlist
+  help    explain a given subcommand (perhaps recursively)
+
+```
+
+### mina advanced compile-time-constants
+```
+Print a JSON map of the compile-time consensus parameters
+
+  mina advanced compile-time-constants 
+
+=== flags ===
+
+  [-help]  print this help text and exit
+           (alias: -?)
+
+```
+
+### mina advanced compute-receipt-chain-hash
+```
+Compute the next receipt chain hash from the previous hash and transaction ID
+
+  mina advanced compute-receipt-chain-hash 
+
+=== flags ===
+
+  --previous-hash HASH                        Previous receipt chain hash,
+                                              Base58Check-encoded
+  --transaction-id TRANSACTION_ID             Transaction ID, Base64-encoded
+  [--index NN]                                For a zkApp, 0 for fee payer or
+                                              1-based index of account update
+  [--signature-kind mainnet|testnet|<other>]  Signature kind to use (default:
+                                              value compiled into this binary)
+  [-help]                                     print this help text and exit
+                                              (alias: -?)
+
+```
+
+### mina advanced constraint-system-digests
+```
+Print MD5 digest of each SNARK constraint
+
+  mina advanced constraint-system-digests 
+
+=== flags ===
+
+  [--signature-kind mainnet|testnet|<other>]  Signature kind to use (default:
+                                              value compiled into this binary)
+  [-help]                                     print this help text and exit
+                                              (alias: -?)
+
+```
+
+### mina advanced dump-keypair
+```
+Print out a keypair from a private key file
+
+  mina advanced dump-keypair 
+
+=== flags ===
+
+  --privkey-path FILE  File to read private key from
+                       (alias: -privkey-path)
+  [-help]              print this help text and exit
+                       (alias: -?)
+
+```
+
+### mina advanced generate-hardfork-config
+```
+Generate reference hardfork configuration
+
+  mina advanced generate-hardfork-config 
+
+=== flags ===
+
+  --hardfork-config-dir DIR                 Directory to generate hardfork
+                                            configuration, relative to the
+                                            daemon working directory
+  [--daemon-port HOST:PORT/LOCALHOST-PORT]  Client to local daemon
+                                            communication. If HOST is omitted,
+                                            then localhost is assumed to be
+                                            HOST. (examples: 8301,
+                                            154.97.53.97:8301) (default: 8301)
+                                            (alias: -daemon-port)
+  [--generate-fork-validation BOOL]         whether generating the fork
+                                            validation folder. Defaults to true
+  [-help]                                   print this help text and exit
+                                            (alias: -?)
+
+```
+
+### mina advanced generate-keypair
+```
 Generate a new public, private keypair
 
-  mina-generate-keypair 
+  mina advanced generate-keypair 
 
 === flags ===
 
   --privkey-path FILE  File to write private key into (public key will be
                        FILE.pub)
                        (alias: -privkey-path)
-  [-build-info]        print info about this build and exit
-  [-version]           print the version of this build and exit
   [-help]              print this help text and exit
                        (alias: -?)
 
 ```
 
-## MIna Validate Keypair
+### mina advanced get-nonce
 ```
-$ mina-validate-keypair -help
+Get the current nonce for an account
 
+  mina advanced get-nonce 
+
+=== flags ===
+
+  --address PUBLICKEY                       Public-key address you want the
+                                            nonce for
+                                            (alias: -address)
+  [--daemon-port HOST:PORT/LOCALHOST-PORT]  Client to local daemon
+                                            communication. If HOST is omitted,
+                                            then localhost is assumed to be
+                                            HOST. (examples: 8301,
+                                            154.97.53.97:8301) (default: 8301)
+                                            (alias: -daemon-port)
+  [--token TOKEN_ID]                        The token ID for the account
+                                            (alias: -token)
+  [-help]                                   print this help text and exit
+                                            (alias: -?)
+
+```
+
+### mina advanced get-peers
+```
+List the peers currently connected to the daemon
+
+  mina advanced get-peers 
+
+=== flags ===
+
+  [--rest-server URI/LOCALHOST-PORT]  graphql rest server for daemon interaction
+                                      (examples: 3085 or
+                                      http://localhost:3085/graphql,
+                                      /dns4/peer1-rising-phoenix.o1test.net:3085/graphql)
+                                      (default: 3085 or
+                                      http://localhost:3085/graphql)
+                                      (alias: -rest-server)
+  [-help]                             print this help text and exit
+                                      (alias: -?)
+
+```
+
+### mina advanced get-public-keys
+```
+Get public keys
+
+  mina advanced get-public-keys 
+
+=== flags ===
+
+  [--daemon-port HOST:PORT/LOCALHOST-PORT]  Client to local daemon
+                                            communication. If HOST is omitted,
+                                            then localhost is assumed to be
+                                            HOST. (examples: 8301,
+                                            154.97.53.97:8301) (default: 8301)
+                                            (alias: -daemon-port)
+  [--json]                                  Use JSON output (default: plaintext)
+                                            (alias: -json)
+  [--with-details]                          Show extra details (eg. balance,
+                                            nonce) in addition to public keys
+                                            (alias: -with-details)
+  [-help]                                   print this help text and exit
+                                            (alias: -?)
+
+```
+
+### mina advanced get-trust-status
+```
+Get the trust status associated with an IP address
+
+  mina advanced get-trust-status 
+
+=== flags ===
+
+  --ip-address IP                           An IPv4 or IPv6 address for which
+                                            you want to query the trust status
+                                            (alias: -ip-address)
+  [--daemon-port HOST:PORT/LOCALHOST-PORT]  Client to local daemon
+                                            communication. If HOST is omitted,
+                                            then localhost is assumed to be
+                                            HOST. (examples: 8301,
+                                            154.97.53.97:8301) (default: 8301)
+                                            (alias: -daemon-port)
+  [--json]                                  Use JSON output (default: plaintext)
+                                            (alias: -json)
+  [-help]                                   print this help text and exit
+                                            (alias: -?)
+
+```
+
+### mina advanced get-trust-status-all
+```
+Get trust statuses for all peers known to the trust system
+
+  mina advanced get-trust-status-all 
+
+=== flags ===
+
+  [--daemon-port HOST:PORT/LOCALHOST-PORT]  Client to local daemon
+                                            communication. If HOST is omitted,
+                                            then localhost is assumed to be
+                                            HOST. (examples: 8301,
+                                            154.97.53.97:8301) (default: 8301)
+                                            (alias: -daemon-port)
+  [--json]                                  Use JSON output (default: plaintext)
+                                            (alias: -json)
+  [--nonzero-only]                          Only show trust statuses whose trust
+                                            score is nonzero
+                                            (alias: -nonzero-only)
+  [-help]                                   print this help text and exit
+                                            (alias: -?)
+
+```
+
+### mina advanced hash-transaction
+```
+Compute the hash of a transaction from its transaction ID
+
+  mina advanced hash-transaction 
+
+=== flags ===
+
+  --transaction-id ID  ID of the transaction to hash
+  [-help]              print this help text and exit
+                       (alias: -?)
+
+```
+
+### mina advanced node-status
+```
+Get node statuses for a set of peers
+
+  mina advanced node-status 
+
+=== flags ===
+
+  [--daemon-peers]                          Get node statuses for peers known to
+                                            the daemon
+                                            (alias: -daemon-peers)
+  [--daemon-port HOST:PORT/LOCALHOST-PORT]  Client to local daemon
+                                            communication. If HOST is omitted,
+                                            then localhost is assumed to be
+                                            HOST. (examples: 8301,
+                                            154.97.53.97:8301) (default: 8301)
+                                            (alias: -daemon-port)
+  [--peers CSV-LIST]                        Peer multiaddrs for obtaining node
+                                            status
+                                            (alias: -peers)
+  [--show-errors]                           Include error responses in output
+                                            (alias: -show-errors)
+  [-help]                                   print this help text and exit
+                                            (alias: -?)
+
+```
+
+### mina advanced object-lifetime-statistics
+```
+Dump internal object lifetime statistics to JSON
+
+  mina advanced object-lifetime-statistics 
+
+=== flags ===
+
+  [--daemon-port HOST:PORT/LOCALHOST-PORT]  Client to local daemon
+                                            communication. If HOST is omitted,
+                                            then localhost is assumed to be
+                                            HOST. (examples: 8301,
+                                            154.97.53.97:8301) (default: 8301)
+                                            (alias: -daemon-port)
+  [-help]                                   print this help text and exit
+                                            (alias: -?)
+
+```
+
+### mina advanced pending-snark-work
+```
+List of snark works in JSON format that are not available in the pool yet
+
+  mina advanced pending-snark-work 
+
+=== flags ===
+
+  [--rest-server URI/LOCALHOST-PORT]  graphql rest server for daemon interaction
+                                      (examples: 3085 or
+                                      http://localhost:3085/graphql,
+                                      /dns4/peer1-rising-phoenix.o1test.net:3085/graphql)
+                                      (default: 3085 or
+                                      http://localhost:3085/graphql)
+                                      (alias: -rest-server)
+  [-help]                             print this help text and exit
+                                      (alias: -?)
+
+```
+
+### mina advanced pooled-user-commands
+```
+Retrieve all the user commands that are pending inclusion
+
+  mina advanced pooled-user-commands [PUBLIC-KEY]
+
+=== flags ===
+
+  [--rest-server URI/LOCALHOST-PORT]  graphql rest server for daemon interaction
+                                      (examples: 3085 or
+                                      http://localhost:3085/graphql,
+                                      /dns4/peer1-rising-phoenix.o1test.net:3085/graphql)
+                                      (default: 3085 or
+                                      http://localhost:3085/graphql)
+                                      (alias: -rest-server)
+  [-help]                             print this help text and exit
+                                      (alias: -?)
+
+```
+
+### mina advanced pooled-zkapp-commands
+```
+Retrieve all the zkApp commands that are pending inclusion
+
+  mina advanced pooled-zkapp-commands [PUBLIC-KEY]
+
+=== flags ===
+
+  [--rest-server URI/LOCALHOST-PORT]  graphql rest server for daemon interaction
+                                      (examples: 3085 or
+                                      http://localhost:3085/graphql,
+                                      /dns4/peer1-rising-phoenix.o1test.net:3085/graphql)
+                                      (default: 3085 or
+                                      http://localhost:3085/graphql)
+                                      (alias: -rest-server)
+  [-help]                             print this help text and exit
+                                      (alias: -?)
+
+```
+
+### mina advanced print-signature-kind
+```
+Print the signature kind that this binary is compiled with
+
+  mina advanced print-signature-kind 
+
+=== flags ===
+
+  [-help]  print this help text and exit
+           (alias: -?)
+
+```
+
+### mina advanced reset-trust-status
+```
+Reset the trust status associated with an IP address
+
+  mina advanced reset-trust-status 
+
+=== flags ===
+
+  --ip-address IP                           An IPv4 or IPv6 address for which
+                                            you want to reset the trust status
+                                            (alias: -ip-address)
+  [--daemon-port HOST:PORT/LOCALHOST-PORT]  Client to local daemon
+                                            communication. If HOST is omitted,
+                                            then localhost is assumed to be
+                                            HOST. (examples: 8301,
+                                            154.97.53.97:8301) (default: 8301)
+                                            (alias: -daemon-port)
+  [--json]                                  Use JSON output (default: plaintext)
+                                            (alias: -json)
+  [-help]                                   print this help text and exit
+                                            (alias: -?)
+
+```
+
+### mina advanced runtime-config
+```
+Compute the runtime configuration used by a running daemon
+
+  mina advanced runtime-config 
+
+=== flags ===
+
+  [--rest-server URI/LOCALHOST-PORT]  graphql rest server for daemon interaction
+                                      (examples: 3085 or
+                                      http://localhost:3085/graphql,
+                                      /dns4/peer1-rising-phoenix.o1test.net:3085/graphql)
+                                      (default: 3085 or
+                                      http://localhost:3085/graphql)
+                                      (alias: -rest-server)
+  [-help]                             print this help text and exit
+                                      (alias: -?)
+
+```
+
+### mina advanced send-rosetta-transactions
+```
+Dispatch one or more transactions, provided to stdin in rosetta format
+
+  mina advanced send-rosetta-transactions 
+
+=== flags ===
+
+  [--rest-server URI/LOCALHOST-PORT]  graphql rest server for daemon interaction
+                                      (examples: 3085 or
+                                      http://localhost:3085/graphql,
+                                      /dns4/peer1-rising-phoenix.o1test.net:3085/graphql)
+                                      (default: 3085 or
+                                      http://localhost:3085/graphql)
+                                      (alias: -rest-server)
+  [-help]                             print this help text and exit
+                                      (alias: -?)
+
+```
+
+### mina advanced set-coinbase-receiver
+```
+Set the coinbase receiver
+
+  mina advanced set-coinbase-receiver 
+
+=== flags ===
+
+  [--block-producer]                  Send coinbase rewards to the block
+                                      producer's public key
+                                      (alias: -block-producer)
+  [--public-key PUBLICKEY]            Public key of account to send coinbase
+                                      rewards to
+                                      (alias: -public-key)
+  [--rest-server URI/LOCALHOST-PORT]  graphql rest server for daemon interaction
+                                      (examples: 3085 or
+                                      http://localhost:3085/graphql,
+                                      /dns4/peer1-rising-phoenix.o1test.net:3085/graphql)
+                                      (default: 3085 or
+                                      http://localhost:3085/graphql)
+                                      (alias: -rest-server)
+  [-help]                             print this help text and exit
+                                      (alias: -?)
+
+```
+
+### mina advanced snark-job-list
+```
+List of snark jobs in JSON format that are yet to be included in the blocks
+
+  mina advanced snark-job-list 
+
+=== flags ===
+
+  [--daemon-port HOST:PORT/LOCALHOST-PORT]  Client to local daemon
+                                            communication. If HOST is omitted,
+                                            then localhost is assumed to be
+                                            HOST. (examples: 8301,
+                                            154.97.53.97:8301) (default: 8301)
+                                            (alias: -daemon-port)
+  [-help]                                   print this help text and exit
+                                            (alias: -?)
+
+```
+
+### mina advanced snark-pool-list
+```
+List of snark works in the snark pool in JSON format
+
+  mina advanced snark-pool-list 
+
+=== flags ===
+
+  [--rest-server URI/LOCALHOST-PORT]  graphql rest server for daemon interaction
+                                      (examples: 3085 or
+                                      http://localhost:3085/graphql,
+                                      /dns4/peer1-rising-phoenix.o1test.net:3085/graphql)
+                                      (default: 3085 or
+                                      http://localhost:3085/graphql)
+                                      (alias: -rest-server)
+  [-help]                             print this help text and exit
+                                      (alias: -?)
+
+```
+
+### mina advanced start-internal-tracing
+```
+Start internal tracing to $config-directory/internal-tracing/internal-trace.jsonl
+
+  mina advanced start-internal-tracing 
+
+=== flags ===
+
+  [--daemon-port HOST:PORT/LOCALHOST-PORT]  Client to local daemon
+                                            communication. If HOST is omitted,
+                                            then localhost is assumed to be
+                                            HOST. (examples: 8301,
+                                            154.97.53.97:8301) (default: 8301)
+                                            (alias: -daemon-port)
+  [-help]                                   print this help text and exit
+                                            (alias: -?)
+
+```
+
+### mina advanced start-tracing
+```
+Start async tracing to $config-directory/trace/$pid.trace
+
+  mina advanced start-tracing 
+
+=== flags ===
+
+  [--daemon-port HOST:PORT/LOCALHOST-PORT]  Client to local daemon
+                                            communication. If HOST is omitted,
+                                            then localhost is assumed to be
+                                            HOST. (examples: 8301,
+                                            154.97.53.97:8301) (default: 8301)
+                                            (alias: -daemon-port)
+  [-help]                                   print this help text and exit
+                                            (alias: -?)
+
+```
+
+### mina advanced status-clear-hist
+```
+Clear histograms reported in status
+
+  mina advanced status-clear-hist 
+
+=== flags ===
+
+  [--daemon-port HOST:PORT/LOCALHOST-PORT]  Client to local daemon
+                                            communication. If HOST is omitted,
+                                            then localhost is assumed to be
+                                            HOST. (examples: 8301,
+                                            154.97.53.97:8301) (default: 8301)
+                                            (alias: -daemon-port)
+  [--json]                                  Use JSON output (default: plaintext)
+                                            (alias: -json)
+  [--performance]                           Include performance histograms in
+                                            status output (default: don't
+                                            include)
+                                            (alias: -performance)
+  [-help]                                   print this help text and exit
+                                            (alias: -?)
+
+```
+
+### mina advanced stop-internal-tracing
+```
+Stop internal tracing
+
+  mina advanced stop-internal-tracing 
+
+=== flags ===
+
+  [--daemon-port HOST:PORT/LOCALHOST-PORT]  Client to local daemon
+                                            communication. If HOST is omitted,
+                                            then localhost is assumed to be
+                                            HOST. (examples: 8301,
+                                            154.97.53.97:8301) (default: 8301)
+                                            (alias: -daemon-port)
+  [-help]                                   print this help text and exit
+                                            (alias: -?)
+
+```
+
+### mina advanced stop-tracing
+```
+Stop async tracing
+
+  mina advanced stop-tracing 
+
+=== flags ===
+
+  [--daemon-port HOST:PORT/LOCALHOST-PORT]  Client to local daemon
+                                            communication. If HOST is omitted,
+                                            then localhost is assumed to be
+                                            HOST. (examples: 8301,
+                                            154.97.53.97:8301) (default: 8301)
+                                            (alias: -daemon-port)
+  [-help]                                   print this help text and exit
+                                            (alias: -?)
+
+```
+
+### mina advanced test
+```
+Testing-only commands
+
+  mina advanced test SUBCOMMAND
+
+=== subcommands ===
+
+  create-genesis     Test genesis creation
+  submit-to-archive  Generate blocks with zkApp transactions and payments.
+                     Optionally submit to archive node or save to file for
+                     analysis.
+  help               explain a given subcommand (perhaps recursively)
+
+```
+
+### mina advanced thread-graph
+```
+Return a Graphviz Dot graph representation of the internal thread hierarchy
+
+  mina advanced thread-graph 
+
+=== flags ===
+
+  [--rest-server URI/LOCALHOST-PORT]  graphql rest server for daemon interaction
+                                      (examples: 3085 or
+                                      http://localhost:3085/graphql,
+                                      /dns4/peer1-rising-phoenix.o1test.net:3085/graphql)
+                                      (default: 3085 or
+                                      http://localhost:3085/graphql)
+                                      (alias: -rest-server)
+  [-help]                             print this help text and exit
+                                      (alias: -?)
+
+```
+
+### mina advanced time-offset
+```
+Get the time offset in seconds used by the daemon to convert real time into blockchain time
+
+  mina advanced time-offset 
+
+=== flags ===
+
+  [--rest-server URI/LOCALHOST-PORT]  graphql rest server for daemon interaction
+                                      (examples: 3085 or
+                                      http://localhost:3085/graphql,
+                                      /dns4/peer1-rising-phoenix.o1test.net:3085/graphql)
+                                      (default: 3085 or
+                                      http://localhost:3085/graphql)
+                                      (alias: -rest-server)
+  [-help]                             print this help text and exit
+                                      (alias: -?)
+
+```
+
+### mina advanced validate-keypair
+```
 Validate a public, private keypair
 
-  mina-validate-keypair 
+  mina advanced validate-keypair 
+
+=== flags ===
+
+  --privkey-path FILE                         File to write private key into
+                                              (public key will be FILE.pub)
+                                              (alias: -privkey-path)
+  [--signature-kind mainnet|testnet|<other>]  Signature kind to use (default:
+                                              value compiled into this binary)
+  [-help]                                     print this help text and exit
+                                              (alias: -?)
+
+```
+
+### mina advanced validate-transaction
+```
+Validate the signature on one or more transactions, provided to stdin in rosetta format
+
+  mina advanced validate-transaction 
+
+=== flags ===
+
+  [--signature-kind mainnet|testnet|<other>]  Signature kind to use (default:
+                                              value compiled into this binary)
+  [-help]                                     print this help text and exit
+                                              (alias: -?)
+
+```
+
+### mina advanced verify-receipt
+```
+Verify a receipt of a sent payment
+
+  mina advanced verify-receipt 
+
+=== flags ===
+
+  --address PUBLICKEY                       Public-key address of sender
+                                            (alias: -address)
+  --payment-path PAYMENTPATH                File to read json version of
+                                            verifying payment
+                                            (alias: -payment-path)
+  --proof-path PROOFFILE                    File to read json version of payment
+                                            receipt
+                                            (alias: -proof-path)
+  [--daemon-port HOST:PORT/LOCALHOST-PORT]  Client to local daemon
+                                            communication. If HOST is omitted,
+                                            then localhost is assumed to be
+                                            HOST. (examples: 8301,
+                                            154.97.53.97:8301) (default: 8301)
+                                            (alias: -daemon-port)
+  [--legacy]                                Use legacy json format (zkapp
+                                            command with hashes)
+  [--token TOKEN_ID]                        The token ID for the account
+                                            (alias: -token)
+  [-help]                                   print this help text and exit
+                                            (alias: -?)
+
+```
+
+### mina advanced visualization
+```
+Visualize data structures special to Mina
+
+  mina advanced visualization SUBCOMMAND
+
+=== subcommands ===
+
+  registered-masks     Produce a visualization of the registered-masks
+  transition-frontier  Produce a visualization of the transition-frontier
+  help                 explain a given subcommand (perhaps recursively)
+
+```
+
+### mina advanced vrf
+```
+Commands for vrf evaluations
+
+  mina advanced vrf SUBCOMMAND
+
+=== subcommands ===
+
+  batch-check-witness     Check a batch of vrf evaluation witnesses read on
+                          stdin. Outputs the verified vrf evaluations (or no vrf
+                          output if the witness is invalid), and whether the vrf
+                          output satisfies the threshold values if given. The
+                          threshold should be included in the JSON for each vrf
+                          as the 'vrfThreshold' field, of format
+                          {delegatedStake: 1000, totalStake: 1000000000}. The
+                          threshold is not checked against a ledger; this should
+                          be done manually to confirm whether threshold_met in
+                          the output corresponds to an actual won block.
+  batch-generate-witness  Generate a batch of vrf evaluation witnesses from
+                          {"globalSlot": _, "epochSeed": _, "delegatorIndex": _}
+                          JSON message objects read on stdin
+  generate-witness        Generate a vrf evaluation witness. This may be used to
+                          calculate whether a given private key will win a given
+                          slot (by checking threshold_met = true in the JSON
+                          output), or to generate a witness that a 3rd
+                          account_update can use to verify a vrf evaluation.
+  help                    explain a given subcommand (perhaps recursively)
+
+```
+
+### mina advanced wrap-key
+```
+Wrap a private key into a private key file
+
+  mina advanced wrap-key 
 
 === flags ===
 
   --privkey-path FILE  File to write private key into (public key will be
                        FILE.pub)
                        (alias: -privkey-path)
-  [-build-info]        print info about this build and exit
-  [-version]           print the version of this build and exit
   [-help]              print this help text and exit
                        (alias: -?)
 
 ```
+
+### mina advanced help
+```
+explain a given subcommand (perhaps recursively)
+
+  mina advanced help [SUBCOMMAND]
+
+=== flags ===
+
+  [-expand-dots]  expand subcommands in recursive help
+  [-flags]        show flags as well in recursive help
+  [-recursive]    show subcommands of subcommands, etc.
+  [-help]         print this help text and exit
+                  (alias: -?)
+
+```
+
+## mina ledger
+```
+Ledger commands
+
+  mina ledger SUBCOMMAND
+
+=== subcommands ===
+
+  currency  Print the total currency for each token present in the ledger
+            contained in the specified file
+  export    Print the specified ledger (default: staged ledger at the best tip).
+            Note: Exporting snarked ledger is an expensive operation and can
+            take a few seconds
+  hash      Print the Merkle root of the ledger contained in the specified file
+  test      Testing-only commands
+  help      explain a given subcommand (perhaps recursively)
+
+```
+
+### mina ledger currency
+```
+Print the total currency for each token present in the ledger contained in the specified file
+
+  mina ledger currency 
+
+=== flags ===
+
+  --ledger-file LEDGER-FILE  File containing an exported ledger
+  [--plaintext]              Use plaintext input or output (default: JSON)
+                             (alias: -plaintext)
+  [-help]                    print this help text and exit
+                             (alias: -?)
+
+```
+
+### mina ledger export
+```
+Print the specified ledger (default: staged ledger at the best tip). Note: Exporting snarked ledger is an expensive operation and can take a few seconds
+
+  mina ledger export STAGED-LEDGER|SNARKED-LEDGER|STAKING-EPOCH-LEDGER|NEXT-EPOCH-LEDGER
+
+=== flags ===
+
+  [--daemon-port HOST:PORT/LOCALHOST-PORT]  Client to local daemon
+                                            communication. If HOST is omitted,
+                                            then localhost is assumed to be
+                                            HOST. (examples: 8301,
+                                            154.97.53.97:8301) (default: 8301)
+                                            (alias: -daemon-port)
+  [--plaintext]                             Use plaintext input or output
+                                            (default: JSON)
+                                            (alias: -plaintext)
+  [--state-hash STATE-HASH]                 State hash, if printing a staged
+                                            ledger or snarked ledger (default:
+                                            state hash for the best tip)
+                                            (alias: -state-hash)
+  [-help]                                   print this help text and exit
+                                            (alias: -?)
+
+```
+
+### mina ledger hash
+```
+Print the Merkle root of the ledger contained in the specified file
+
+  mina ledger hash 
+
+=== flags ===
+
+  --ledger-file LEDGER-FILE  File containing an exported ledger
+  [--plaintext]              Use plaintext input or output (default: JSON)
+                             (alias: -plaintext)
+  [-help]                    print this help text and exit
+                             (alias: -?)
+
+```
+
+### mina ledger test
+```
+Testing-only commands
+
+  mina ledger test SUBCOMMAND
+
+=== subcommands ===
+
+  apply              Test ledger application
+  generate-accounts  Generate a ledger for testing
+  help               explain a given subcommand (perhaps recursively)
+
+```
+
+### mina ledger help
+```
+explain a given subcommand (perhaps recursively)
+
+  mina ledger help [SUBCOMMAND]
+
+=== flags ===
+
+  [-expand-dots]  expand subcommands in recursive help
+  [-flags]        show flags as well in recursive help
+  [-recursive]    show subcommands of subcommands, etc.
+  [-help]         print this help text and exit
+                  (alias: -?)
+
+```
+
+## mina libp2p
+```
+Libp2p commands
+
+  mina libp2p SUBCOMMAND
+
+=== subcommands ===
+
+  dump-keypair      Print an existing libp2p keypair
+  generate-keypair  Generate a new libp2p keypair and print out the peer ID
+  help              explain a given subcommand (perhaps recursively)
+
+```
+
+### mina libp2p dump-keypair
+```
+Print an existing libp2p keypair
+
+  mina libp2p dump-keypair 
+
+=== flags ===
+
+  --privkey-path FILE  File to read private key from
+                       (alias: -privkey-path)
+  [-help]              print this help text and exit
+                       (alias: -?)
+
+```
+
+### mina libp2p generate-keypair
+```
+Generate a new libp2p keypair and print out the peer ID
+
+  mina libp2p generate-keypair 
+
+=== flags ===
+
+  --privkey-path FILE  File to write private key into (public key will be
+                       FILE.pub)
+                       (alias: -privkey-path)
+  [-help]              print this help text and exit
+                       (alias: -?)
+
+```
+
+### mina libp2p help
+```
+explain a given subcommand (perhaps recursively)
+
+  mina libp2p help [SUBCOMMAND]
+
+=== flags ===
+
+  [-expand-dots]  expand subcommands in recursive help
+  [-flags]        show flags as well in recursive help
+  [-recursive]    show subcommands of subcommands, etc.
+  [-help]         print this help text and exit
+                  (alias: -?)
+
+```
+

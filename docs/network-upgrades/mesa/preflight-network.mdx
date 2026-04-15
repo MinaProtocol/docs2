@@ -84,11 +84,11 @@ For production deployments, you'll want to mount configuration directories and a
 docker run --name mina-mesa-preflight -d \
   -p 8302:8302 \
   --restart=always \
-  -v $(pwd)/.mina-config:/data/.mina-config \
+  -v $(pwd)/.mina-config:/root/.mina-config \
   gcr.io/o1labs-192920/mina-daemon:4.0.0-preflight1-b649c79-bookworm-mesa \
   daemon \
   --peer-list-url https://storage.googleapis.com/o1labs-gitops-infrastructure/mina-mesa-network/mina-mesa-network-seeds.txt \
-  --libp2p-keypair /data/.mina-config/keys/libp2p-key
+  --libp2p-keypair /root/.mina-config/keys/libp2p-key
 ```
 
 ### Example: Running with Debian Package
