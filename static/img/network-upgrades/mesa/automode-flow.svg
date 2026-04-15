@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 920" font-family="system-ui, -apple-system, sans-serif">
+  <defs>
+    <filter id="shadow" x="-4%" y="-4%" width="108%" height="108%">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity="0.08"/>
+    </filter>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#94a3b8"/>
+    </marker>
+    <marker id="arrowDash" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="820" height="920" rx="8" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="410" y="36" text-anchor="middle" font-size="18" font-weight="600" fill="#1e293b">Automode Upgrade Flow</text>
+  <line x1="40" y1="50" x2="780" y2="50" stroke="#e2e8f0" stroke-width="1"/>
+
+  <!-- ==================== PHASE 1: PRE-UPGRADE ==================== -->
+  <rect x="40" y="64" width="740" height="110" rx="6" fill="white" filter="url(#shadow)" stroke="#cbd5e1" stroke-width="1"/>
+  <rect x="40" y="64" width="740" height="30" rx="6" fill="#334155"/>
+  <rect x="40" y="82" width="740" height="12" fill="#334155"/>
+  <text x="56" y="84" font-size="12" font-weight="600" fill="white" letter-spacing="0.05em">PRE-UPGRADE</text>
+  <text x="724" y="84" font-size="10" fill="#94a3b8" text-anchor="end">Weeks before the fork</text>
+
+  <rect x="60" y="106" width="340" height="52" rx="4" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="74" y="124" font-size="12" font-weight="500" fill="#1e293b">Install automode packages</text>
+  <text x="74" y="142" font-size="11" fill="#64748b">prefork-mesa + postfork-mesa</text>
+
+  <rect x="420" y="106" width="340" height="52" rx="4" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="434" y="124" font-size="12" font-weight="500" fill="#1e293b">Dispatcher routes to Berkeley binary</text>
+  <text x="434" y="142" font-size="11" fill="#64748b">Node runs normally, produces blocks</text>
+
+  <!-- Arrow -->
+  <line x1="410" y1="174" x2="410" y2="200" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- ==================== PHASE 2: STATE FINALIZATION ==================== -->
+  <rect x="40" y="208" width="740" height="110" rx="6" fill="white" filter="url(#shadow)" stroke="#cbd5e1" stroke-width="1"/>
+  <rect x="40" y="208" width="740" height="30" rx="6" fill="#475569"/>
+  <rect x="40" y="226" width="740" height="12" fill="#475569"/>
+  <text x="56" y="228" font-size="12" font-weight="600" fill="white" letter-spacing="0.05em">STATE FINALIZATION</text>
+  <text x="724" y="228" font-size="10" fill="#94a3b8" text-anchor="end">~5 hours (100 slots)</text>
+
+  <rect x="60" y="250" width="180" height="26" rx="13" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1"/>
+  <text x="150" y="268" text-anchor="middle" font-size="10" font-weight="600" fill="#475569">stop-transaction-slot</text>
+
+  <rect x="260" y="250" width="500" height="52" rx="4" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="274" y="268" font-size="12" font-weight="500" fill="#1e293b">Node keeps producing empty blocks</text>
+  <text x="274" y="286" font-size="11" fill="#64748b">No transactions, no coinbase. Still on Berkeley binary.</text>
+
+  <!-- Arrow -->
+  <line x1="410" y1="318" x2="410" y2="344" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- ==================== PHASE 3: FORK ==================== -->
+  <rect x="40" y="352" width="740" height="318" rx="6" fill="white" filter="url(#shadow)" stroke="#cbd5e1" stroke-width="1"/>
+  <rect x="40" y="352" width="740" height="30" rx="6" fill="#1e293b"/>
+  <rect x="40" y="370" width="740" height="12" fill="#1e293b"/>
+  <text x="56" y="372" font-size="12" font-weight="600" fill="white" letter-spacing="0.05em">UPGRADE (AUTOMATIC)</text>
+  <text x="724" y="372" font-size="10" fill="#64748b" text-anchor="end">Fork day</text>
+
+  <rect x="60" y="394" width="180" height="26" rx="13" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1"/>
+  <text x="150" y="412" text-anchor="middle" font-size="10" font-weight="600" fill="#475569">stop-network-slot</text>
+
+  <!-- Steps -->
+  <rect x="260" y="394" width="500" height="34" rx="4" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+  <rect x="272" y="402" width="18" height="18" rx="9" fill="#475569"/>
+  <text x="281" y="415" text-anchor="middle" font-size="9" font-weight="600" fill="white">1</text>
+  <text x="298" y="415" font-size="12" fill="#1e293b">Daemon detects stop-network-slot</text>
+
+  <rect x="260" y="436" width="500" height="34" rx="4" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+  <rect x="272" y="444" width="18" height="18" rx="9" fill="#475569"/>
+  <text x="281" y="457" text-anchor="middle" font-size="9" font-weight="600" fill="white">2</text>
+  <text x="298" y="457" font-size="12" fill="#1e293b">Generates Mesa config + genesis ledgers</text>
+
+  <rect x="260" y="478" width="500" height="34" rx="4" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+  <rect x="272" y="486" width="18" height="18" rx="9" fill="#475569"/>
+  <text x="281" y="499" text-anchor="middle" font-size="9" font-weight="600" fill="white">3</text>
+  <text x="298" y="499" font-size="12" fill="#1e293b">Writes <tspan font-family="monospace" font-size="11">activated</tspan> marker file to config directory</text>
+
+  <rect x="260" y="520" width="500" height="34" rx="4" fill="#1e293b" stroke="#0f172a" stroke-width="1"/>
+  <rect x="272" y="528" width="18" height="18" rx="9" fill="white"/>
+  <text x="281" y="541" text-anchor="middle" font-size="9" font-weight="600" fill="#1e293b">4</text>
+  <text x="298" y="541" font-size="12" font-weight="600" fill="white">Daemon shuts down (exit code 0)</text>
+
+  <!-- Restart bridge -->
+  <line x1="510" y1="554" x2="510" y2="580" stroke="#64748b" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrowDash)"/>
+  <rect x="370" y="584" width="280" height="38" rx="4" fill="#f1f5f9" stroke="#64748b" stroke-width="1" stroke-dasharray="4,2"/>
+  <text x="510" y="601" text-anchor="middle" font-size="11" font-weight="600" fill="#334155">Process manager restarts daemon</text>
+  <text x="510" y="616" text-anchor="middle" font-size="10" fill="#64748b">systemd / Docker / Kubernetes</text>
+
+  <!-- Dispatcher picks up -->
+  <line x1="510" y1="622" x2="510" y2="642" stroke="#64748b" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrowDash)"/>
+  <rect x="260" y="646" width="500" height="18" rx="4" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="510" y="659" text-anchor="middle" font-size="11" font-weight="500" fill="#334155">Dispatcher finds <tspan font-family="monospace" font-size="10">activated</tspan> -> routes to Mesa binary</text>
+
+  <!-- Arrow -->
+  <line x1="410" y1="670" x2="410" y2="696" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- ==================== PHASE 4: POST-UPGRADE ==================== -->
+  <rect x="40" y="704" width="740" height="110" rx="6" fill="white" filter="url(#shadow)" stroke="#cbd5e1" stroke-width="1"/>
+  <rect x="40" y="704" width="740" height="30" rx="6" fill="#334155"/>
+  <rect x="40" y="722" width="740" height="12" fill="#334155"/>
+  <text x="56" y="724" font-size="12" font-weight="600" fill="white" letter-spacing="0.05em">POST-UPGRADE</text>
+  <text x="724" y="724" font-size="10" fill="#94a3b8" text-anchor="end">~1 hour after release</text>
+
+  <rect x="60" y="746" width="180" height="26" rx="13" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1"/>
+  <text x="150" y="764" text-anchor="middle" font-size="10" font-weight="600" fill="#475569">Mesa genesis timestamp</text>
+
+  <rect x="260" y="746" width="500" height="52" rx="4" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="274" y="764" font-size="12" font-weight="500" fill="#1e293b">Block production resumes on Mesa</text>
+  <text x="274" y="782" font-size="11" fill="#64748b">Verify: <tspan font-family="monospace" font-size="10">auto-fork-mesa-*/activated</tspan> exists in config dir</text>
+
+  <!-- ==================== REQUIREMENTS ==================== -->
+  <line x1="40" y1="840" x2="780" y2="840" stroke="#e2e8f0" stroke-width="1"/>
+  <rect x="40" y="854" width="740" height="50" rx="6" fill="white" filter="url(#shadow)" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="56" y="876" font-size="10" font-weight="600" fill="#64748b" letter-spacing="0.05em">REQUIREMENTS</text>
+
+  <rect x="170" y="864" width="6" height="6" rx="3" fill="#475569"/>
+  <text x="184" y="876" font-size="11" fill="#475569">Persistent config directory (must survive restarts)</text>
+
+  <rect x="500" y="864" width="6" height="6" rx="3" fill="#475569"/>
+  <text x="514" y="876" font-size="11" fill="#475569">Restart policy (Restart=always or equivalent)</text>
+</svg>

@@ -1,0 +1,47 @@
+---
+title: State Finalization
+sidebar_label: State Finalization
+hide_title: true
+description: State finalization phase of the Mesa upgrade — stabilization period between stop-transaction-slot and stop-network-slot.
+keywords:
+  - Mesa
+  - upgrade
+  - state finalization
+  - stop-transaction-slot
+  - stop-network-slot
+---
+
+# State Finalization
+
+Between the predefined _stop-transaction-slot_ and _stop-network-slot_, a stabilization period of 100 slots will occur. During this phase, the network consensus will not accept new blocks with transactions on them, including coinbase transactions. This means all blocks produced during this period will be completely empty — no user commands, no coinbase rewards, and no fee transfers. The state finalization period ensures all nodes reach a consensus on the latest network state before the upgrade.
+
+During the state finalization slots, it is crucial to maintain a high block density. Therefore, block producers and SNARK workers shall continue running their nodes to support the network's stability and security.
+
+Archive nodes should also continue to execute to ensure finalized blocks are in the database and can be migrated, preserving the integrity and accessibility of the network's history.
+
+## Block Producers and SNARK Workers
+
+1. It is crucial for the network's successful upgrade that all block producers and SNARK workers maintain their block-producing nodes up and running throughout the state finalization phase.
+2. If you are running multiple daemons like is common with many operators, you can run one single node at this stage.
+3. If you are a Delegation Program operator, remember that your uptime data will continue to be tracked during the state finalization phase and will be considered for the delegation grant in the following epoch.
+
+:::info
+During this phase, both Automode and Manual mode operators simply keep their nodes running. No special action is needed regardless of your upgrade mode.
+:::
+
+## Archive Node Operators and Rosetta Operators
+
+**If you plan to do the _trustful_ upgrade, you can skip this step.**
+
+If you are doing the trustless upgrade, then:
+
+1. Continue to execute the archive node to ensure finalized blocks are in the database.
+2. Execute the archive node upgrade script, which is backward compatible.
+3. Continue to run archive node until after the network stops at the stop-network slot.
+4. For more information on the archive node upgrade process, please refer to the [Archive Upgrade](/network-upgrades/mesa/archive-upgrade) section.
+
+## Exchanges
+
+Exchanges shall disable MINA deposits and withdrawals during the state finalization period (the period between _stop-transaction-slot_ and _stop-network-slot_) since any transactions after the _stop-transaction-slot_ will not be part of the upgraded chain.
+
+Remember that although you might be able to submit transactions, the majority of the block producers will be running a node that discards any blocks with transactions.

@@ -1,0 +1,271 @@
+---
+title: Archive Replayer
+sidebar_label: Archive Replayer
+hide_title: true
+description: Using the mina-replayer tool to verify archive database integrity and produce hard fork ledger checkpoints.
+keywords:
+  - Mesa
+  - upgrade
+  - replayer
+  - archive
+  - verification
+  - hard fork
+  - ledger
+---
+
+# Archive Replayer
+
+The `mina-replayer` is a tool that replays all transactions from a Mina archive database, applying them sequentially to reconstruct the ledger state. It is an **ongoing verification tool** — not limited to upgrade time. You can run it at any point to confirm your archive database faithfully represents the canonical chain.
+
+During the Mesa hard fork, the replayer serves a critical role: it verifies that the archive database is consistent and produces the ledger checkpoint needed to bootstrap the new chain. After the upgrade, it continues to be useful for detecting data corruption, missing blocks, or schema issues in your archive.
+
+## What the Replayer Does
+
+The replayer reads transactions from the archive database in order (respecting global slot and sequence number) and applies them to a starting ledger. At each step, it verifies the computed Merkle root matches what the archive recorded. This catches any data corruption, missing transactions, or schema issues in your archive.
+
+For hard forks specifically, the replayer:
+
+1. Replays all transactions from genesis (or a checkpoint) up to the fork point
+2. Stops at the `slot_chain_end` (the stop-network-slot where the old chain halts)
+3. Exports the final ledger state as a JSON checkpoint — this is the genesis ledger for the Mesa chain
+4. The exported checkpoint can be compared against the official fork config to verify your archive matches the canonical state
+
+## Prerequisites
+
+- A PostgreSQL database with Mina archive data (Berkeley mainnet)
+- The `mina-replayer` binary (shipped with the Mina daemon package or built from source)
+- An input JSON file specifying the starting ledger
+- For hard fork replay: a stop-slot configuration file with the fork parameters
+
+### Building from Source
+
+```bash
+dune build src/app/replayer/replayer.exe --profile=dev
+# Binary output: _build/default/src/app/replayer/replayer.exe
+```
+
+## Basic Usage
+
+The replayer requires two arguments: an input file and a database connection.
+
+```bash
+mina-replayer \
+  --archive-uri postgres://<user>:<password>@<host>:<port>/<db> \
+  --input-file input.json
+```
+
+### Required Flags
+
+| Flag | Description |
+|---|---|
+| `--archive-uri` | PostgreSQL connection string for the archive database |
+| `--input-file` | JSON file specifying the starting ledger and target state |
+
+### Optional Flags
+
+| Flag | Description |
+|---|---|
+| `--output-file` | Write the final ledger state to this file |
+| `--continue-on-error` | Don't stop on transaction application errors |
+| `--checkpoint-interval` | Create intermediate checkpoint files every N blocks |
+| `--checkpoint-output-folder` | Directory for checkpoint files |
+| `--checkpoint-file-prefix` | Filename prefix for checkpoint files |
+| `--genesis-ledger-dir` | Directory containing the genesis ledger |
+| `--log-json` | Output logs in JSON format |
+| `--log-level` | Console log level (e.g., `info`, `debug`, `spam`) |
+| `--log-file` | Write logs to a file |
+
+## Hard Fork Replay (Mesa)
+
+To replay the archive through the Berkeley-to-Mesa hard fork, you need additional flags that tell the replayer where the fork happens and what format to export.
+
+### Hard Fork Flags
+
+| Flag | Description |
+|---|---|
+| `--hard-fork-target mesa` | Specifies the target fork (Mesa) |
+| `--stop-slot-config-file` | JSON file with the fork parameters (stop slots, epoch data) |
+| `--hard-fork-output-file` | Output file for the post-fork genesis ledger checkpoint |
+
+### Input File Format
+
+The input file tells the replayer where to start. For a full replay from genesis:
+
+```json
+{
+  "genesis_ledger": {
+    "add_genesis_winner": false,
+    "s3_data_hash": "<hash of genesis ledger tarball>",
+    "hash": "<genesis ledger Merkle root hash>"
+  }
+}
+```
+
+If resuming from a previous checkpoint, include `start_slot_since_genesis` and any prior epoch data.
+
+### Stop-Slot Configuration File
+
+The stop-slot config defines the fork parameters. This file uses the same format as the daemon runtime config:
+
+```json
+{
+  "genesis": {
+    "genesis_state_timestamp": "2026-02-24T19:30:00Z"
+  },
+  "ledger": {
+    "add_genesis_winner": false,
+    "s3_data_hash": "<hash>",
+    "hash": "<ledger hash>"
+  },
+  "daemon": {
+    "slot_tx_end": 1900,
+    "slot_chain_end": 1920,
+    "hard_fork_genesis_slot_delta": 40
+  },
+  "epoch_data": {
+    "staking": {
+      "seed": "<vrf seed>",
+      "s3_data_hash": "<hash>",
+      "hash": "<ledger hash>"
+    },
+    "next": {
+      "seed": "<vrf seed>",
+      "s3_data_hash": "<hash>",
+      "hash": "<ledger hash>"
+    }
+  }
+}
+```
+
+Key fields in `daemon`:
+- **`slot_tx_end`** — the stop-transaction-slot (no more transactions accepted after this slot)
+- **`slot_chain_end`** — the stop-network-slot (chain halts here, this is the fork point)
+- **`hard_fork_genesis_slot_delta`** — slot offset for the Mesa genesis relative to the fork point
+
+### Running the Hard Fork Replay
+
+```bash
+mina-replayer \
+  --archive-uri postgres://<user>:<password>@<host>:<port>/<db> \
+  --input-file input.json \
+  --hard-fork-target mesa \
+  --stop-slot-config-file stop-slot-config.json \
+  --hard-fork-output-file output.json \
+  --log-json \
+  --log-level info
+```
+
+The replayer will:
+1. Start from the genesis ledger (or checkpoint) specified in `input.json`
+2. Replay all transactions from the archive, applying user commands, internal commands, and zkApp transactions
+3. Stop at the `slot_chain_end` — blocks at or beyond this slot are excluded
+4. Apply the hard fork migration to produce the post-fork ledger
+5. Write the result to `output.json`
+
+### Output Format
+
+The output file contains the genesis configuration for the Mesa chain:
+
+```json
+{
+  "start_slot_since_genesis": 1960,
+  "genesis_ledger": {
+    "hash": "<post-fork ledger Merkle root>",
+    "s3_data_hash": "<hash of ledger tarball>",
+    "add_genesis_winner": false
+  }
+}
+```
+
+The `start_slot_since_genesis` is the Mesa genesis slot, computed from the fork point plus `hard_fork_genesis_slot_delta`.
+
+## Verifying Your Archive Against the Official Fork Config
+
+After producing the replayer output, compare it to the official fork configuration published with the Mesa release:
+
+```bash
+# Compare ledger hashes (ignoring s3_data_hash which may differ due to non-deterministic RocksDB metadata)
+diff \
+  <(jq -S 'del(.genesis_ledger.s3_data_hash)' output.json) \
+  <(jq -S 'del(.genesis_ledger.s3_data_hash)' official-mesa-fork-config.json)
+```
+
+If the diff is empty, your archive database correctly represents the canonical chain state at the fork point.
+
+:::tip Why ignore s3_data_hash?
+The `s3_data_hash` is a SHA3-256 hash of the gzipped RocksDB ledger directory. RocksDB includes non-deterministic metadata (timestamps, sequence numbers, compaction state) and gzip headers may also differ across runs. The logical ledger contents are identical even when this hash differs — the `hash` field (the Merkle root) is the authoritative check.
+:::
+
+## Replay Modes
+
+### Full Replay (Genesis to Fork)
+
+This is the most thorough verification. It replays every transaction from genesis through the fork point, catching any inconsistency in the entire archive history.
+
+```bash
+mina-replayer \
+  --archive-uri <uri> \
+  --input-file genesis-input.json \
+  --hard-fork-target mesa \
+  --stop-slot-config-file stop-slot-config.json \
+  --hard-fork-output-file output.json
+```
+
+**Use this mode when:** you want full confidence that your archive is correct, or you are an infrastructure operator responsible for publishing the fork config.
+
+### Replay from Checkpoint (Mesa Post-Fork)
+
+If you already have a checkpoint at or near the fork point, you can replay just the Mesa portion — starting from the hardfork checkpoint and replaying Mesa blocks.
+
+```bash
+mina-replayer \
+  --archive-uri <uri> \
+  --input-file mesa-checkpoint.json
+```
+
+**Use this mode when:** you want to verify that your archive is correctly capturing Mesa blocks after the fork, without re-replaying the entire Berkeley history.
+
+## Using Checkpoints for Long Replays
+
+For mainnet, a full replay from genesis can take a long time. Use checkpoints to break it into resumable segments:
+
+```bash
+mina-replayer \
+  --archive-uri <uri> \
+  --input-file input.json \
+  --checkpoint-interval 10000 \
+  --checkpoint-output-folder ./checkpoints \
+  --checkpoint-file-prefix mainnet-replay
+```
+
+This creates a checkpoint file every 10,000 blocks. If the replay is interrupted, restart from the latest checkpoint by using it as the `--input-file`.
+
+## Troubleshooting
+
+### Merkle root mismatch
+
+The replayer verifies the computed ledger Merkle root against the archive at each block. A mismatch means your archive has missing or incorrect data. Check for:
+- Missing blocks (`mina-missing-blocks-auditor`)
+- Database corruption
+- Incomplete schema upgrade
+
+### "No blocks found before slot_chain_end"
+
+The replayer could not find any blocks in the archive before the fork point. Verify:
+- Your archive database contains blocks up to the fork slot
+- The `slot_chain_end` in your stop-slot config is correct
+
+### Continue on error
+
+If you want to see all errors rather than stopping at the first one:
+```bash
+mina-replayer --continue-on-error --archive-uri <uri> --input-file input.json
+```
+
+## Further Reading
+
+- [Archive Upgrade](/network-upgrades/mesa/archive-upgrade) — schema upgrade and hardfork toolbox
+- [Post-Upgrade](/network-upgrades/mesa/upgrade-steps/post-upgrade#in-depth-validation) — post-upgrade verification procedures
+- [Replayer source code](https://github.com/MinaProtocol/mina/tree/compatible/src/app/replayer)
+- [Mesa hard fork replayer test (genesis to fork)](https://github.com/MinaProtocol/mina/pull/18613)
+- [Mesa hard fork replayer test (post-fork)](https://github.com/MinaProtocol/mina/pull/18614)

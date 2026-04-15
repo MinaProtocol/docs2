@@ -15,7 +15,7 @@ keywords:
 
 To successfully upgrade the archive database into the Mesa version of the Mina network, you must ensure that your environment meets the foundational requirements.
 
-## Migration host
+## Upgrade host
 
 - PostgreSQL database for database server
 - If you use Docker, then any of the supported OS by Mina (bullseye, focal, noble, bookworm or jammy) with at least 32 GB of RAM
@@ -105,54 +105,112 @@ Make sure to replace `<username>` and `<database>` with your actual PostgreSQL u
 After successfully running the upgrade script, you DO NOT need to restart your archive node or Rosetta API.
 Changes in upgrade script are backward compatible and will be picked up by the archive node and Rosetta API automatically.
 
-### Verification
-To verify that the upgrade was successful, you can check the version table in the PostgreSQL database.
+### Verification with the Archive Hardfork Toolbox
 
-You can do this by running the following command:
+The `mina-archive-hardfork-toolbox` is a dedicated CLI tool for verifying the integrity of archive database upgrades and fork transitions. It is shipped with the Mina archive package and available as a standalone binary.
+
+For full details, see the [toolbox README](https://github.com/MinaProtocol/mina/blob/compatible/src/app/archive_hardfork_toolbox/README.md).
+
+All commands below require a `--postgres-uri` flag in the format:
+```
+postgresql://<user>:<password>@<host>:<port>/<database>
+```
+
+#### Step 1: Pre-fork validation (before the fork)
+
+Verify the fork block candidate is valid before the network halts.
+
+**Check that the fork block is in the best chain:**
+```bash
+mina-archive-hardfork-toolbox fork-candidate is-in-best-chain \
+  --postgres-uri <uri> \
+  --fork-state-hash <hash> \
+  --fork-height <height> \
+  --fork-slot <slot>
+```
+
+**Verify the fork block has enough confirmations:**
+```bash
+mina-archive-hardfork-toolbox fork-candidate confirmations \
+  --postgres-uri <uri> \
+  --latest-state-hash <hash> \
+  --fork-slot <slot> \
+  --required-confirmations <n>
+```
+
+**Verify no commands were executed after the fork block** (ensures a clean fork point):
+```bash
+mina-archive-hardfork-toolbox fork-candidate no-commands-after \
+  --postgres-uri <uri> \
+  --fork-state-hash <hash> \
+  --fork-slot <slot>
+```
+
+**Find the last block with transactions** (useful for identifying the fork point):
+```bash
+mina-archive-hardfork-toolbox fork-candidate last-filled-block \
+  --postgres-uri <uri>
+```
+
+#### Step 2: Verify the schema upgrade
+
+After running `upgrade-to-mesa.sql`, verify the database schema was upgraded correctly:
+
+```bash
+mina-archive-hardfork-toolbox verify-upgrade \
+  --postgres-uri <uri> \
+  --protocol-version <version> \
+  --migration-version <version>
+```
+
+You can also verify manually by checking the version table:
 ```bash
 psql -U <username> -d <database> -c "SELECT * FROM version;"
 ```
-Make sure to replace `<username>` and `<database>` with your actual PostgreSQL username and database name.
 
-If the upgrade was successful, you should see the new version number in the output.
+If the upgrade was successful, the version table will contain an entry with the expected version number and a recent timestamp.
 
-We put a lot of effort into making the upgrade process as smooth as possible.
-However, if you encounter any issues or need assistance, please reach out to the Mina community on [Discord](https://discord.gg/minaprotocol) or [GitHub Discussions](https://github.com/MinaProtocol/mina/discussions).
+#### Step 3: Post-fork validation
 
-## Appendix: Database Schema Changes
+After the fork activates and the Mesa chain is running, validate the fork block and its ancestry:
 
-Below we present details of what was changed in the archive node database schema between Berkeley and Mesa versions.
-
-### Zkapp_state_nullable Additional Columns
-
-The `zkapp_state_nullable` table has been modified to include new columns `element8` through `element31` which are nullable and can store additional state information for zkApps.
-
-```sql
-, element8          int     REFERENCES zkapp_field(id)
-...
-, element31         int     REFERENCES zkapp_field(id)
-);
+```bash
+mina-archive-hardfork-toolbox validate-fork \
+  --postgres-uri <uri> \
+  --fork-state-hash <hash> \
+  --fork-slot <slot>
 ```
 
-This expansion allows zkApps to store up to 31 state elements instead of the previous 8, significantly increasing the state storage capacity for complex smart contracts.
+#### Step 4: Mark the canonical chain (if needed)
 
-### Version Table
+If you need to mark the chain leading to a specific block as canonical for the new protocol version:
 
-We also introduced a new table `version` to keep track of the database schema version.
-The purpose of this table is to help with future database migrations. The table tracks which migration scripts were applied and when.
-Ultimately it helps to determine the current version of the database schema and helps to avoid applying the same migration script multiple times.
-
-This table is created if it does not exist already. Rollback and upgrade scripts will insert a new row with the version number and timestamp when the script was applied.
-
-```sql
-CREATE TABLE IF NOT EXISTS version (
-    version_num INT PRIMARY KEY,
-    applied_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
+```bash
+mina-archive-hardfork-toolbox convert-chain-to-canonical \
+  --postgres-uri <uri> \
+  --target-block-hash <state-hash> \
+  --protocol-version <transaction>.<network>.<patch>
 ```
 
-The version table provides:
-- **Migration tracking**: Records which migrations have been applied
-- **Timestamp tracking**: Shows when each migration was executed
-- **Idempotency**: Prevents duplicate migration runs
-- **Version identification**: Easily identify the current database schema version
+Optionally use `--stop-at-slot <slot>` to limit how far back in history the marking goes.
+
+:::tip Typical workflow
+1. **Before the fork**: run `fork-candidate` commands to validate the fork block
+2. **After running the upgrade script**: run `verify-upgrade` to confirm the schema upgrade
+3. **After the fork activates**: run `validate-fork` to confirm data integrity
+4. **For full archive verification**: run the [Archive Replayer](/network-upgrades/mesa/replayer) to replay all transactions and compare the resulting ledger against the official fork config
+:::
+
+If you encounter any issues, reach out to the Mina community on [Discord](https://discord.gg/minaprotocol) or [GitHub Discussions](https://github.com/MinaProtocol/mina/discussions).
+
+## Full Archive Verification with the Replayer
+
+The toolbox commands above verify the schema and fork block integrity, but they do not verify every transaction in the archive. For complete end-to-end verification, use the **[Archive Replayer](/network-upgrades/mesa/replayer)** — a tool that replays all transactions from genesis (or a checkpoint) through the fork point, recomputing the ledger state and comparing it against the official fork config.
+
+The replayer is not limited to upgrade-time use. It is an **ongoing verification tool** that can be run at any time to confirm your archive database faithfully represents the canonical chain. After the Mesa upgrade, you can continue running it against Mesa blocks to detect any data corruption or missing blocks.
+
+See [Archive Replayer](/network-upgrades/mesa/replayer) for usage, flags, and examples.
+
+## Database Schema Changes
+
+For details on the database schema changes between Berkeley and Mesa, see the [Appendix](/network-upgrades/mesa/appendix).

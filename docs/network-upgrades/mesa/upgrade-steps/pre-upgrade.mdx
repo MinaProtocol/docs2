@@ -1,0 +1,237 @@
+---
+title: Pre-Upgrade
+sidebar_label: Pre-Upgrade
+hide_title: true
+description: Pre-upgrade preparation steps and readiness checklist for the Mesa hard fork, by operator type.
+keywords:
+  - Mesa
+  - upgrade
+  - pre-upgrade
+  - preparation
+  - checklist
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Pre-Upgrade
+
+During the Pre-Upgrade phase, node operators prepare their infrastructure for the Mesa hard fork. Select your role below and work through each item on the checklist.
+
+## Readiness Checklist
+
+<Tabs groupId="operator-type">
+<TabItem value="block-producer" label="Block Producer" default>
+
+#### Infrastructure
+
+<ul className="checklist">
+  <li>Server meets <a href="/network-upgrades/mesa/requirements">hardware requirements</a> — 32 GB RAM, 8-core CPU with AVX and BMI2</li>
+  <li>Port 8302 (or custom <code>--external-port</code>) is open and reachable from the internet</li>
+  <li>If behind NAT/firewall, <code>--external-ip</code> is set to your public IP</li>
+  <li>Node is configured for <a href="/node-operators/block-producer-node/connecting-to-the-network#start-a-mina-node-with-auto-restart-flows-using-systemd">auto-restart</a> (systemd or equivalent)</li>
+</ul>
+
+#### Keys and Credentials
+
+<ul className="checklist">
+  <li>Block producer key file is accessible and backed up</li>
+  <li>libp2p keypair is accessible (same key can be reused from before the upgrade)</li>
+  <li>If <code>mina-generate-keypair</code> is installed, remove it: <code>sudo apt remove mina-generate-keypair</code></li>
+</ul>
+
+#### Software Upgrade
+
+<ul className="checklist">
+  <li>Chosen an <a href="/network-upgrades/mesa/upgrade-modes">upgrade mode</a>: automode (recommended) or manual</li>
+  <li>Upgraded node to the current stable version</li>
+  <li>Installed stop-slot release <a href="https://github.com/MinaProtocol/mina/releases">3.x.x</a> <strong>before</strong> the <em>stop-transaction-slot</em></li>
+  <li>If using <strong>automode</strong>: installed both <code>mina-&#123;network&#125;-prefork-mesa</code> and <code>mina-&#123;network&#125;-postfork-mesa</code> packages (or the auto-hardfork Docker image)</li>
+  <li>If using <strong>manual mode</strong>: installed <code>mina-mainnet=3.x.x</code> (stop-slot release only)</li>
+</ul>
+
+#### Verification
+
+<ul className="checklist">
+  <li>Node is running and synced after the upgrade</li>
+  <li>Node status shows correct version: <code>mina client status</code></li>
+</ul>
+
+</TabItem>
+<TabItem value="snark-coordinator" label="SNARK Coordinator">
+
+#### Infrastructure
+
+<ul className="checklist">
+  <li>Server meets <a href="/network-upgrades/mesa/requirements">hardware requirements</a> — 32 GB RAM, 8-core CPU</li>
+  <li>Port 8302 (or custom <code>--external-port</code>) is open and reachable</li>
+  <li>Node is configured for <a href="/node-operators/block-producer-node/connecting-to-the-network#start-a-mina-node-with-auto-restart-flows-using-systemd">auto-restart</a></li>
+</ul>
+
+#### Keys
+
+<ul className="checklist">
+  <li>libp2p keypair is accessible</li>
+  <li>If <code>mina-generate-keypair</code> is installed, remove it: <code>sudo apt remove mina-generate-keypair</code></li>
+</ul>
+
+#### Software Upgrade
+
+<ul className="checklist">
+  <li>Chosen an <a href="/network-upgrades/mesa/upgrade-modes">upgrade mode</a>: automode (recommended) or manual</li>
+  <li>Upgraded node to the current stable version</li>
+  <li>Installed stop-slot release <a href="https://github.com/MinaProtocol/mina/releases">3.x.x</a> <strong>before</strong> the <em>stop-transaction-slot</em></li>
+  <li>If using <strong>automode</strong>: installed both prefork and postfork packages</li>
+  <li>If using <strong>manual mode</strong>: installed stop-slot release only</li>
+</ul>
+
+#### Verification
+
+<ul className="checklist">
+  <li>Node is running and synced</li>
+  <li>SNARK workers can connect to coordinator after upgrade</li>
+</ul>
+
+</TabItem>
+<TabItem value="snark-worker" label="SNARK Worker">
+
+#### Infrastructure
+
+<ul className="checklist">
+  <li>Server meets <a href="/network-upgrades/mesa/requirements">hardware requirements</a> — 32 GB RAM, 4 core/8 threads per worker, AVX + BMI2</li>
+</ul>
+
+#### Connectivity
+
+<ul className="checklist">
+  <li>Connected to a coordinator that is upgrading</li>
+  <li>No independent upgrade action needed — workers follow the coordinator</li>
+</ul>
+
+:::info
+SNARK workers do not need to install the stop-slot release independently. They connect to a SNARK coordinator, which handles the upgrade. Just ensure your coordinator is ready.
+:::
+
+</TabItem>
+<TabItem value="archive-node" label="Archive Node">
+
+#### Infrastructure
+
+<ul className="checklist">
+  <li>Server meets <a href="/network-upgrades/mesa/requirements">hardware requirements</a> — 32 GB RAM, 8-core CPU</li>
+  <li>Port 8302 (or custom <code>--external-port</code>) is open and reachable</li>
+  <li>Node is configured for <a href="/node-operators/block-producer-node/connecting-to-the-network#start-a-mina-node-with-auto-restart-flows-using-systemd">auto-restart</a></li>
+  <li>If <code>mina-generate-keypair</code> is installed, remove it: <code>sudo apt remove mina-generate-keypair</code></li>
+</ul>
+
+#### Database Upgrade
+
+<ul className="checklist">
+  <li>Chosen archive upgrade method: <em>trustless</em> or <em>trustful</em></li>
+</ul>
+
+**If trustless:**
+
+<ul className="checklist">
+  <li>Downloaded and reviewed the <a href="/network-upgrades/mesa/archive-upgrade">upgrade script</a></li>
+  <li>Created a database backup: <code>pg_dump -U &lt;user&gt; &lt;db&gt; &gt; berkeley-archive-backup.sql</code></li>
+  <li>Ran the upgrade script (completes in under 1 minute)</li>
+  <li>Verified upgrade: <code>psql -U &lt;user&gt; -d &lt;db&gt; -c "SELECT * FROM version;"</code></li>
+</ul>
+
+**If trustful:**
+
+<ul className="checklist">
+  <li>No action now — wait for o1Labs database export during the Upgrade phase</li>
+</ul>
+
+#### Software Upgrade
+
+<ul className="checklist">
+  <li>Upgraded node to the current stable version</li>
+  <li>Installed stop-slot release <a href="https://github.com/MinaProtocol/mina/releases">3.x.x</a> <strong>before</strong> the <em>stop-transaction-slot</em></li>
+  <li>Archive node is running and capturing blocks</li>
+</ul>
+
+</TabItem>
+<TabItem value="rosetta" label="Rosetta API">
+
+#### Prerequisites
+
+<ul className="checklist">
+  <li>Complete the entire <strong>Archive Node</strong> checklist first (Rosetta depends on archive)</li>
+</ul>
+
+#### Rosetta-Specific
+
+<ul className="checklist">
+  <li>Reviewed the Rosetta Docker image version in <a href="/network-upgrades/mesa/upgrade-steps/post-upgrade">Post-Upgrade flags</a></li>
+  <li>Verified current Rosetta API is functional against existing archive database</li>
+</ul>
+
+</TabItem>
+<TabItem value="exchange" label="Exchange">
+
+#### Infrastructure
+
+<ul className="checklist">
+  <li>Server meets <a href="/network-upgrades/mesa/requirements">hardware requirements</a> — 32 GB RAM, 8-core CPU</li>
+  <li>Node is configured for <a href="/node-operators/block-producer-node/connecting-to-the-network#start-a-mina-node-with-auto-restart-flows-using-systemd">auto-restart</a></li>
+  <li>If <code>mina-generate-keypair</code> is installed, remove it: <code>sudo apt remove mina-generate-keypair</code></li>
+</ul>
+
+#### Integration Testing
+
+<ul className="checklist">
+  <li>Tested system integration with Mesa features on the <a href="/network-upgrades/mesa/preflight-network">preflight network</a></li>
+  <li>Reviewed database schema changes in the <a href="/network-upgrades/mesa/appendix">Appendix</a> (if using archive database directly)</li>
+</ul>
+
+#### Software Upgrade
+
+<ul className="checklist">
+  <li>Upgraded node to the current stable version</li>
+  <li>Installed stop-slot release <a href="https://github.com/MinaProtocol/mina/releases">3.x.x</a> <strong>before</strong> the <em>stop-transaction-slot</em></li>
+</ul>
+
+#### Operations Plan
+
+<ul className="checklist">
+  <li>Plan in place to disable MINA deposits and withdrawals <strong>before</strong> <em>stop-transaction-slot</em></li>
+  <li>Customer communication prepared for the maintenance window</li>
+</ul>
+
+:::danger
+Any transactions submitted after the _stop-transaction-slot_ **will not exist on the Mesa chain**. Disable deposits and withdrawals before State Finalization begins.
+:::
+
+</TabItem>
+</Tabs>
+
+---
+
+## Detailed Steps
+
+### Block Producers and SNARK Workers
+
+1. Provision servers that meet the minimum [hardware requirements](/network-upgrades/mesa/requirements), including 32 GB RAM and support for _AVX_ and _BMI2_ CPU instructions.
+2. Upgrade nodes to the stop-slot release version [3.x.x](https://github.com/MinaProtocol/mina/releases), which has built-in stop slots.
+
+If you are using [Automode](/network-upgrades/mesa/upgrade-modes), no further action is needed until the [Post-Upgrade](/network-upgrades/mesa/upgrade-steps/post-upgrade) phase — your node will handle the transition automatically.
+
+### Archive Node Operators and Rosetta Operators
+
+Two upgrade processes are available: _trustless_ and _trustful_. If you want to perform the _trustless_ upgrade, follow the steps below; otherwise, proceed to the [Upgrade](/network-upgrades/mesa/upgrade-steps/upgrade) phase. The _trustful_ approach relies on o1Labs database exports and Docker images and doesn't require any actions at this stage.
+
+1. Trustless upgrade:
+   - Perform the archive node schema upgrade. Since Mainnet is a long-lived network, the upgrade process is a very fast operation and boils down to running the upgrade script against your archive. It should not take more than 1 minute, depending on your server specification and infrastructure.
+   - For more information on the archive node upgrade process, please refer to the [Archive Upgrade](/network-upgrades/mesa/archive-upgrade) section.
+2. Provision servers that meet the minimum hardware requirements, primarily 32 GB RAM.
+3. Upgrade all nodes to the stop-slot release [3.x.x](https://github.com/MinaProtocol/mina/releases) before the pre-defined _stop-transaction-slot_.
+
+### Exchanges
+
+1. Make sure to test your system integration with Mesa's new features. Pay special attention to:
+   - If you rely on the archive node SQL database tables, please review the schema changes in the [Appendix](/network-upgrades/mesa/appendix).
+2. Provision servers that meet the minimum hardware requirements, particularly 32 GB RAM.
+3. Upgrade all nodes to the stop-slot release [3.x.x](https://github.com/MinaProtocol/mina/releases) before the pre-defined _stop-transaction-slot_.

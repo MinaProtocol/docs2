@@ -1,0 +1,85 @@
+---
+title: Upgrade Modes
+sidebar_label: Upgrade Modes
+hide_title: true
+description: Automode and Manual upgrade paths for the Mesa hard fork. Automode handles the transition automatically for daemon nodes; Manual gives operators full control.
+keywords:
+  - Mesa
+  - upgrade
+  - automode
+  - manual
+  - daemon
+---
+
+# Upgrade Modes
+
+The Mesa upgrade supports two modes for daemon node operators: **Automode** and **Manual**. Both modes run in parallel during the upgrade process and reach the same end state — a node running on the Mesa network.
+
+## Automode (Recommended)
+
+Automode is the recommended upgrade path for daemon nodes (block producers, SNARK coordinators). In automode, the node handles the entire fork transition automatically.
+
+### How it works
+
+1. You install the stop-slot release ([3.x.x](https://github.com/MinaProtocol/mina/releases)) during the Pre-Upgrade phase.
+2. Your node participates normally in block production through the State Finalization phase.
+3. When the network reaches the _stop-network-slot_, the node automatically:
+   - Stops producing blocks on the old chain
+   - Transitions to the Mesa network configuration
+   - Begins producing blocks on the Mesa network once the genesis timestamp is reached
+4. No manual intervention is required during the fork.
+
+### Who should use Automode
+
+- Block producers who want a hands-off upgrade experience
+- SNARK coordinators running daemon nodes
+- Operators who want to minimize downtime and operational risk
+
+### Requirements
+
+- Install the stop-slot release ([3.x.x](https://github.com/MinaProtocol/mina/releases)) **before** the _stop-transaction-slot_
+- Ensure your node remains running through the State Finalization phase
+- Meet the [hardware requirements](/network-upgrades/mesa/requirements)
+
+:::info
+Automode applies only to the daemon process. Archive nodes and Rosetta API instances require separate upgrade steps — see [Archive Upgrade](/network-upgrades/mesa/archive-upgrade) and [Post-Upgrade](/network-upgrades/mesa/upgrade-steps/post-upgrade).
+:::
+
+## Manual Mode
+
+Manual mode gives operators full control over each step of the upgrade process.
+
+### How it works
+
+1. You install the stop-slot release ([3.x.x](https://github.com/MinaProtocol/mina/releases)) during the Pre-Upgrade phase.
+2. Your node participates normally through the State Finalization phase.
+3. When the network halts at the _stop-network-slot_, you:
+   - Stop your node
+   - Wait for the Mesa release to be published
+   - Install the Mesa release
+   - Restart your node with the [updated flags](/network-upgrades/mesa/upgrade-steps/post-upgrade)
+4. Your node begins participating in the Mesa network once the genesis timestamp is reached.
+
+### Who should use Manual mode
+
+- Operators who need full control over the upgrade process
+- Operators with custom deployment pipelines that require explicit upgrade steps
+- Operators who want to validate the Mesa build before restarting
+
+### Requirements
+
+- Install the stop-slot release ([3.x.x](https://github.com/MinaProtocol/mina/releases)) **before** the _stop-transaction-slot_
+- Be prepared to act promptly when the Mesa release is published to minimize downtime
+- Meet the [hardware requirements](/network-upgrades/mesa/requirements)
+
+## Comparison
+
+| Aspect | Automode | Manual |
+|---|---|---|
+| Operator intervention during fork | None | Stop, install, restart |
+| Downtime | Minimal (automatic transition) | Depends on operator response time |
+| Applies to | Daemon nodes only | All node types |
+| Control | Automated | Full manual control |
+| Risk | Lower (fewer manual steps) | Higher (depends on operator timing) |
+
+For in-depth technical details on how the upgrade mechanism works internally, see [Upgrade Modes - Details](/network-upgrades/mesa/upgrade-modes-details).
