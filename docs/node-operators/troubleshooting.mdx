@@ -35,8 +35,8 @@ If the node crashes quickly and repeatably, this is likely a configuration issue
 If you start the mina daemon in the foreground, once you detach from it, it will shut down (via a SIGINT signal). To run the process in the background so that you may detach, you have many options:
 
 - Start the daemon with the `-background` flag.
-- Run as a systemd service (see [the docs](/node-operators/validator-node/connecting-to-the-network#start-a-mina-node-with-auto-restart-flows)).
-- Run with Docker (see [the docs](/node-operators/validator-node/connecting-to-the-network#start-a-mina-node-with-auto-restart-flows)).
+- Run as a systemd service (see [the docs](/node-operators/validator-node/connecting-to-the-network#running-mina-node-as-a-service)).
+- Run with Docker (see [the docs](/node-operators/validator-node/connecting-to-the-network#running-mina-node-as-a-service)).
 - Run the daemon in a terminal multiplexer such as screen or [tmux](https://icohigh.gitbook.io/mina-node-testnet/english/setting-up-tmux) that you can detach from to keep the process running.
 
 Running as a service / via Docker is recommended as they have the advantage of automated restarts if your node crashes.
