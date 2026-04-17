@@ -1,0 +1,41 @@
+---
+title: Generating a libp2p Key Pair
+hide_title: true
+description: Generate a libp2p key pair for seed node identity on the Mina gossip network.
+keywords:
+  - libp2p
+  - libp2p keypair
+  - seed node
+  - gossip network
+  - mina libp2p generate-keypair
+---
+
+# Generating a libp2p Key Pair
+
+libp2p keypairs are gossip network identities. To ensure connectivity across the network, all seed nodes must start with a **stable** libp2p keypair so that other nodes can reliably connect.
+
+:::info
+libp2p keys are different from wallet keys. To generate a wallet key pair, see [Generating a Key Pair](/node-operators/validator-node/generating-a-keypair).
+:::
+
+## Generate the keypair
+
+Use the `mina libp2p generate-keypair` command:
+
+```sh
+mina libp2p generate-keypair --privkey-path ~/keys/my-libp2p
+```
+
+:::caution
+Do not store libp2p keys in the same file as your wallet keys.
+:::
+
+## Use the keypair
+
+Pass the generated key to the Mina daemon with the `--libp2p-keypair` flag:
+
+```sh
+mina daemon ... --libp2p-keypair ~/keys/my-libp2p ...
+```
+
+See [Seed Peers Getting Started](/node-operators/seed-peers/getting-started) for full seed node configuration.

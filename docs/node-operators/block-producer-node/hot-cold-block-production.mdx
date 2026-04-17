@@ -1,82 +1,77 @@
 ---
 title: Hot and Cold Block Production
 hide_title: true
-description: Using hot and cold wallets for Mina protocol.
+description: Secure your stake by producing blocks with a hot wallet while keeping funds in a cold wallet.
 keywords:
   - node operators
   - hot wallet
   - cold wallet
   - delegate stake
   - block production
+  - security
 ---
 
 # Hot and Cold Block Production
 
-Block production is a complex process and requires a node to connect to the internet. 
+Block production requires a node connected to the internet, which means the block producer's private key is exposed on an online machine. To mitigate this risk, Mina supports a hot/cold wallet pattern:
 
-- A wallet is "hot" if the private key is available on a machine that is connected to the internet. To mitigate risk in the case of hackers breaking into their systems, careful block producers avoid having hot wallets with substantial stake on them.
-- A wallet is "cold" if the private key is not, and never has been, available on the internet. Cold storage is preferred for wallets associated with meaningful stake as it is harder to hack into cold wallet systems if they never have been on the internet. This could be as easy as generating a key pair on a laptop with the internet turned off or using a hardware wallet, like a [Ledger](https://shop.ledger.com/) device.
+- A **[hot wallet](/glossary#hot-wallet)** has its private key on an internet-connected machine. It is used to run the block producer node but should hold minimal funds.
+- A **[cold wallet](/glossary#cold-wallet)** has its private key stored offline (e.g. generated on an air-gapped laptop or a hardware wallet like [Ledger](https://shop.ledger.com/)). It holds the majority of your stake.
 
-Mina protocol requires block producers to stake using a hot wallet. However, mechanisms are in place so that block producers can keep the vast majority of their stake in a cold wallet. Produced blocks, and all the earnings associated with the produced blocks, occur by using delegation from this cold wallet to a hot one.
+By delegating from your cold wallet to your hot wallet, you can produce blocks — and earn all associated rewards — while keeping the bulk of your funds in cold storage.
 
-You can produce blocks effectively with the majority of your stake starting on and remaining on a cold wallet.
+## Setup
 
-## Prerequisites
+You need at least two accounts: one cold wallet and one hot wallet. See [Generating a Key Pair](/node-operators/validator-node/generating-a-keypair) for key generation instructions.
 
-Before running your block producer, you'll need at least two accounts: one cold wallet and one hot wallet. See [Generating a Key Pair](../generating-a-keypair). 
+### 1. Create a hot wallet
 
-### Create a hot wallet account
-
-To create a hot wallet key pair, you cannot use the Ledger or any other hardware security module (HSM) hardware unit for this key pair.
+Generate a key pair on your block producer machine. Do **not** use a Ledger or other hardware security module (HSM) for this key — the private key must be accessible to the mina daemon.
 
 Take note of your hot wallet public key.
 
-### Fill your hot wallet with some dust
+### 2. Fund the hot wallet
 
-Your hot wallet must be present in the consensus ledger before it can be used for staking. 
+Your hot wallet must be present in the consensus ledger before it can be used for staking.
 
-- If your hot wallet address is present in the genesis ledger, then no further action is needed. 
-- If not, you must acquire at least enough MINA tokens to cover the account creation fee and send those tokens to your hot wallet address.
+- If your hot wallet address is present in the genesis ledger, no further action is needed.
+- Otherwise, send at least enough MINA to cover the account creation fee to your hot wallet address.
 
-### Create a cold wallet account
+### 3. Create a cold wallet
 
-To generate a cold wallet key pair, use the most secure mechanism for generating keys, preferably on a machine that is disconnected from the internet.
+Generate a key pair using the most secure method available — preferably on a machine disconnected from the internet, or on a hardware wallet.
 
-### Configure your cold wallet
+### 4. Fund the cold wallet
 
-Your cold wallet must be present in the consensus ledger before its stake can be counted when delegated to your hot wallet. 
+Your cold wallet must be present in the consensus ledger before its stake can be counted when delegated to your hot wallet.
 
-- If your cold wallet address is present in the genesis ledger, then no further action is needed. 
-- If not, you must acquire enough MINA tokens to meaningfully participate in consensus and send those tokens to this cold wallet address.
+- If your cold wallet address is present in the genesis ledger, no further action is needed.
+- Otherwise, send enough MINA to meaningfully participate in consensus to your cold wallet address.
 
-### Delegate your cold wallet to your hot wallet
+### 5. Delegate from cold to hot
 
-Next, ensure that you have delegated your cold wallet account to your hot wallet account. 
+Delegate your cold wallet's stake to your hot wallet:
 
-- If you've set up your account to delegate to the correct spot in the genesis ledger, then no further action is needed. 
-- If not, you can delegate by using the `mina client delegate-stake` command if your key was generated on a computer. Otherwise, follow the delegate instructions on the [Mina ledger README](https://github.com/jspada/ledger-app-mina/tree/v1.0.0-beta.2).
+```sh
+mina client delegate-stake \
+  --sender $COLD_PUBLIC_KEY \
+  --receiver $HOT_PUBLIC_KEY
+```
 
-## Block Production
+If your cold wallet is on a Ledger, follow the delegate instructions in the [Mina Ledger app README](https://github.com/jspada/ledger-app-mina/tree/v1.0.0-beta.2).
 
-Follow the start up a node instructions in [Connecting to the Network](connecting-to-the-network) using your hot wallet key.
+### 6. Start producing blocks
 
-## Protocol Details
+Follow the [Getting Started](/node-operators/block-producer-node/getting-started) guide using your hot wallet key as the `--block-producer-key`.
 
-You may be thinking: Why can't I create blocks directly from a secure enclave or other hardware security module (HSM) device in Mina's protocol?
+## Why can't I use an HSM directly?
 
-Two components of block production require using a private key in interesting ways: 
+You may wonder why Mina can't let you produce blocks directly from a secure enclave or HSM. Two components of block production require the private key in ways that make this impractical:
 
-- Finding eligible slots to produce blocks in
-- Creating the blockchain SNARK
+### Finding eligible slots
 
-Creating the SNARK within the secure hardware is extremely difficult and likely impossible to do quickly enough for the protocol with today's technology.
-
-### Finding eligible slots to produce blocks in (out of the SNARK)
-
-A block producer can determine if they've won a slot by evaluating a VRF (verifiable random function) using their private key. The VRF needs to be evaluated for your account and every account that delegates to you for all slots within an epoch. 
+A block producer determines slot eligibility by evaluating a VRF (verifiable random function) with their private key. The VRF must be evaluated for your account and every account that delegates to you, for all slots within an epoch.
 
 ### Creating the blockchain SNARK
 
-When a block producer wins a slot, in addition to just creating and broadcasting a block, a block producer must create a new SNARK proof that proves that the new block is a valid extension of the existing chain. 
-
-The SNARK proof uses the private key when it embeds the VRF information into the proof. This proof is in place of a simple signature that other protocols ask their validators to perform. Creating this SNARK proof is computationally expensive and relies on a lot of advanced cryptography. 
+When a block producer wins a slot, they must create a SNARK proof that the new block is a valid extension of the existing chain. This proof embeds VRF information using the private key — replacing the simple signature that other protocols use. Creating this proof is computationally expensive and relies on advanced cryptography that is extremely difficult, and likely impossible, to perform quickly enough inside today's secure hardware.

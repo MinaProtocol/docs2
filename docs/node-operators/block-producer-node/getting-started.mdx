@@ -2,132 +2,48 @@
 title: Block Producer Getting Started
 sidebar_label: Getting Started
 hide_title: true
-description: Get started running a Mina node, install the software and configure.
+description: Start producing blocks on the Mina network by running a daemon with your block producer key.
 keywords:
   - node operators
   - mina protocol
   - block producers
-  - validators
-  - installation
-  - hardware requirements
-  - ubuntu
-  - debian
-  - windows
-  - macOS
-  - docker
-  - port forwarding
-  - firewalls
-  - getting started with Mina
-  - set up a Mina node
-  - prerequisites
-  - software requirements
+  - block production
+  - staking
+  - coinbase receiver
 ---
 
 # Block Producer Getting Started
 
-Welcome to Mina!
+:::note
 
-Get started setting up a Mina node, learn how to [generate a key pair](/node-operators/generating-a-keypair) for use with the network, and install the `mina daemon`.
+Before following this guide, complete the Validator Node setup — from [Requirements](/node-operators/validator-node/requirements) through [Connect to Mainnet or Devnet](/node-operators/validator-node/connecting-to-the-network). You should have a synced node and a [key pair](/node-operators/validator-node/generating-a-keypair) before proceeding.
 
-This documentation is for the **Mainnet** release. You can find the releases and version-specific flags on the [Mina Protocol releases](https://github.com/MinaProtocol/mina/releases) page.
+:::
 
-## Block Producer Requirements
+## Start the daemon
 
-**Software**: Supported environments include macOS, Linux (Debian 10, 11 and Ubuntu 20.04 LTS), and any host machine with Docker.
+Run the daemon with the `--block-producer-key` flag pointing to your wallet key:
 
-**Processor**: Only x86-64 CPU architecture is supported.
-
-**Hardware**: Sending and receiving MINA does not require any special hardware.
-
-Running a block producer on the Mina network requires at least:
-
-- 8-core processor
-- 32 GB of RAM
-- 64 GB of free storage
-
-**Network**: At least 1 Mbps connection
-
-**VM Instances**:
-
-o1Labs has tested running nodes on several cloud providers. We recommend the following instances for basic node operator needs. Custom requirements and different cost constraints might require a different instance type.
-
-- AWS [c5.2xlarge](https://www.ec2instances.info/?filter=c5.2xl&region=us-west-2&cost_duration=daily&selected=c5.2xlarge)
-- GCP [c2-standard-8](https://cloud.google.com/compute/docs/machine-types)
-- Azure [Standard_F8s_v2](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/sizes-compute#fsv2-series-1)
-- Digital Ocean [c-8-16gib](https://cloud.digitalocean.com/droplets/new?size=c-8-16gib)
-
-## Installation
-
-To install the latest [Mainnet **Stable** Release 3.0.3](https://github.com/MinaProtocol/mina/releases/tag/3.0.3), use the installation steps for your environment. Supported environments include macOS, Linux (Debian 10, 11 and Ubuntu 20.04 LTS), and any host machine with Docker.
-
-The binary download is around 1 GB, so the installation might take a few minutes.
-
-To discover and install pre-release (Beta) builds, see the [Mina Releases](https://github.com/MinaProtocol/mina/releases) page on GitHub.
-
-### Ubuntu and Debian
-
-Set up the new Debian `stable` repository and install the latest binary version.
-
-Set up and update the rampup Debian Repository for your platform.
-
-```
-sudo rm /etc/apt/sources.list.d/mina*.list
-echo "deb [trusted=yes] http://packages.o1test.net $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/mina.list
-sudo apt-get update
+```sh
+mina daemon --peer-list-url https://bootnodes.minaprotocol.com/networks/mainnet.txt \
+            --block-producer-key ~/keys/my-wallet
 ```
 
-Now install the node package.
+To send block rewards to a different account (e.g. a cold wallet), add the `--coinbase-receiver` flag:
 
-```
-sudo apt-get install -y curl unzip mina-mainnet=3.3.0-8c0c2e6
-```
-
-
-To verify the mina daemon installation, run:
-
-- `mina version`
-
-The expected output is `Commit ae112d3a96fe71b4ccccf3c54e7b7494db4898a4`.
-
-### If you are using Ufw, allow these permissions
-
-``` text
-sudo ufw enable
-sudo ufw allow 22
-sudo ufw allow 8302
-sudo ufw allow 3089
+```sh
+mina daemon --peer-list-url https://bootnodes.minaprotocol.com/networks/mainnet.txt \
+            --block-producer-key ~/keys/my-wallet \
+            --coinbase-receiver $RECEIVER_PUBLICKEY
 ```
 
-### Windows
-Windows is not natively supported. Instead, use the [Docker instructions](getting-started#docker).
+## Verify block production
 
-If you are interested in receiving a grant to develop Mina for Windows, email grants@o1labs.org or reach out in the [Mina Protocol Discord server](https://discord.gg/minaprotocol).
+Run `mina client status` and check the `Block producers running` field:
 
-### macOS
+```text
+Block producers running:                       1 (B62q...)
+Coinbase receiver:                             Block producer
+Next block will be produced in:                in 7.077h for slot: ...
+```
 
-macOS is used by developers and is not officially supporting any pre-built packages.
-
-Instead, use the Docker instructions or build from source.
-
-### Docker
-
-Docker is a cross-platform tool. You can download and install Docker on multiple platforms.
-
-Use the Docker installation instructions for your platform on [Get Docker](https://docs.docker.com/get-docker/). After Docker is installed, follow the [Connect to the Mina Network](/node-operators/block-producer-node/connecting-to-the-network#docker) instructions.
-
-### Build from source
-
-On Linux or macOS operating systems, you can experiment with [Building Mina](https://github.com/MinaProtocol/mina/blob/master/README-dev.md#building-mina) from source code.
-
-Other operating systems haven't been tested thoroughly and might have issues. You can share logs and get troubleshooting help in the [Mina Protocol Discord server](https://discord.gg/minaprotocol).
-
-## Set up port forwarding and firewalls
-
-If you are running a firewall, you must allow traffic on TCP port 8302.
-
-Unless the `-external-ip YOUR_IP` flag is provided, the daemon uses HTTPS (443) and HTTP (80) to determine its own IP address.
-
-Enable port forwarding on your router to allow inbound traffic to the following ports through your **external** IP address:
-
-- TCP port `8302`
-- To use the GraphQL service, expose TCP port `3085`

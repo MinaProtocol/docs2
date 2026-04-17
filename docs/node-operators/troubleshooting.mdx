@@ -1,7 +1,7 @@
 ---
 title: Troubleshooting
 hide_title: true
-description: Answers to comon problems when setting  up a Mina daemon
+description: Answers to common problems when setting up a Mina daemon
 keywords:
   - syncing a node
   - networking
@@ -35,8 +35,8 @@ If the node crashes quickly and repeatably, this is likely a configuration issue
 If you start the mina daemon in the foreground, once you detach from it, it will shut down (via a SIGINT signal). To run the process in the background so that you may detach, you have many options:
 
 - Start the daemon with the `-background` flag.
-- Run as a systemd service (see [the docs](./block-producer-node/connecting-to-the-network#ubuntu-1804--debian-9-1)).
-- Run with Docker (see [the docs](./block-producer-node/connecting-to-the-network#docker)).
+- Run as a systemd service (see [the docs](/node-operators/validator-node/connecting-to-the-network#start-a-mina-node-with-auto-restart-flows)).
+- Run with Docker (see [the docs](/node-operators/validator-node/connecting-to-the-network#start-a-mina-node-with-auto-restart-flows)).
 - Run the daemon in a terminal multiplexer such as screen or [tmux](https://icohigh.gitbook.io/mina-node-testnet/english/setting-up-tmux) that you can detach from to keep the process running.
 
 Running as a service / via Docker is recommended as they have the advantage of automated restarts if your node crashes.
@@ -83,7 +83,7 @@ This is necessary because sometimes macOS doesn't resolve your hostname to your 
 
 ### What hardware do I need?
 
-See the requirements for the current network [here](./block-producer-node/getting-started). Some lower-tier VPS providers may have an issue producing blocks within the slot time. If you continue to experience missing blocks, you may wish to try on more powerful hardware.
+See the requirements for the current network [here](/node-operators/block-producer-node/getting-started). Some lower-tier VPS providers may have an issue producing blocks within the slot time. If you continue to experience missing blocks, you may wish to try on more powerful hardware.
 
 ### I would like the mina service to start on boot?
 
@@ -95,7 +95,7 @@ When you generated a keypair, you created a password. Use the password you creat
 
 ### I get an error about ~/.mina-config/daemon.json missing?
 
-This is an optional file to pass [configuration options](./mina-cli-reference#mina-daemon) to the daemon (rather than passing via the command line). The daemon looks for it by default, which results in an error if you do not include it. Just ignore this error (unless you are trying to include it) as it is not fatal, and the daemon will start as per normal.
+This is an optional file to pass [configuration options](/node-operators/reference/mina-cli-reference#mina-daemon) to the daemon (rather than passing via the command line). The daemon looks for it by default, which results in an error if you do not include it. Just ignore this error (unless you are trying to include it) as it is not fatal, and the daemon will start as per normal.
 
 ### I see messages about prover/verifier being killed periodically
 
@@ -150,7 +150,7 @@ We only need the last `k` (290) blocks of the blockchain to produce blocks. So o
 
 This status indicates that you have not received any messages from peers for the last ~24 minutes. Ensure that you use the `--peer-list` argument that points to `https://bootnodes.minaprotocol.com/networks/mainnet.txt`
 
-See [Connect to Mainnet](./block-producer-node/connecting-to-the-network).
+See [Connect to Mainnet](/node-operators/validator-node/connecting-to-the-network).
 
 
 ## Networking
@@ -193,7 +193,7 @@ The client port `8301` should **never** be exposed to the internet. There may be
 
 Ensure that you use the `--peer-list` argument that points to `https://bootnodes.minaprotocol.com/networks/mainnet.txt`
 
-See [Connect to Mainnet](./block-producer-node/connecting-to-the-network).
+See [Connect to Mainnet](/node-operators/validator-node/connecting-to-the-network).
 
 ### I get an error couldn't determine our IP from the internet?
 
@@ -239,7 +239,7 @@ On the current network, this is 128, which also includes the coinbase transactio
 
 ### Can I cancel a transaction?
 
-You can cancel pending transactions. See [Mina Client](./mina-cli-reference#mina-client) or wallet instructions.
+You can cancel pending transactions. See [Mina Client](/node-operators/reference/mina-cli-reference#mina-client) or wallet instructions.
 
 ### I sent a transaction, but it was never included in a block?
 
@@ -282,7 +282,7 @@ If you started the daemon passing the `block-producer-key` flag, then you still 
 
 ### How do I run a block producer?
 
-The methods to start a node [in the documentation](./block-producer-node/connecting-to-the-network) will run a block producer by default.
+The methods to start a node [in the documentation](/node-operators/validator-node/connecting-to-the-network) will run a block producer by default.
 
 ### How do I know if I am running a block producer
 
@@ -381,7 +381,7 @@ The logs are noisy and often contain "scary" looking messages such as failure to
 
 ### How many logs are kept / where are the logs located?
 
-The `~/.mina-config` directory contains the Mina logs, see [Logging](logging). This directory contains the following:
+The `~/.mina-config` directory contains the Mina logs, see [Logging](/node-operators/validator-node/logging). This directory contains the following:
 
 - `mina.log` - This file contains the latest logs of the daemon. Each log file is limited to 10 MiB in size and rotates through 50 log files. Rotated log files are named `mina.log.x` from `mina.log.0` to `mina.log.50`.
 - `mina-best-tip.log` - This is used to write the best tip logs to make it easier to collect the required logs from nodes to determine the state for a hard fork. Each file is limited to 5 MiB and rotates through a maximum of 5 files from` mina-best-tip.log.0` to `mina-best-tip.log.5`.

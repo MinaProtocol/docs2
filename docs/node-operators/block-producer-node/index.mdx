@@ -14,7 +14,7 @@ The role of a block producer in Mina is to achieve [consensus](https://minaproto
 
 In Mina, anyone can become a block producer. There is an unbounded number of participants with the chance of producing a block proportional to the funds staked. Funds are not locked and are not subject to slashing.
 
-In return for staking funds and generating the required blockchain proofs, blocks that are produced and included in the canonical chain are rewarded in the form of a coinbase and transaction fees, less any fees paid to purchase required [transaction SNARK work](./snark-workers).
+In return for staking funds and generating the required blockchain proofs, blocks that are produced and included in the canonical chain are rewarded in the form of a coinbase and transaction fees, less any fees paid to purchase required [transaction SNARK work](/node-operators/snark-workers).
 
 To successfully produce a block, a block producer must have the current state of the blockchain. A block producer must have enough available compute to produce a blockchain SNARK within the slot time and be connected to peers to broadcast the generated block within an acceptable delay as defined by the network consensus parameters.
 
@@ -23,6 +23,4 @@ To successfully produce a block, a block producer must have the current state of
 This section describes how to run a Block Producer on the Mina protocol.
 
 - [Getting Started](block-producer-node/getting-started) - How to install and get started running a block producer.
-- [Connecting to the Mina Mainnet](block-producer-node/connecting-to-the-network) - How to connect to the Mina Mainnet.
-- [Connecting to the Mina Devnet](block-producer-node/connecting-to-devnet) - How to connect to the Mina Devnet.
 - [Hot and Cold Block Production ](block-producer-node/hot-cold-block-production) - How to get started running a block producer.

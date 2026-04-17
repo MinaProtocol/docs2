@@ -1,0 +1,203 @@
+---
+title: Connect to Mainnet or Devnet
+hide_title: true
+description: Steps to install Mina and connect a validator node to Mainnet or Devnet.
+keywords:
+  - mina protocol
+  - mainnet
+  - devnet
+  - install mina
+  - start a mina node
+  - connectivity
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Connect to Mainnet or Devnet
+
+Use this guide to connect a node to either network and verify connectivity.
+
+If you're using Ubuntu or Debian, first follow the [installation guide](/node-operators/validator-node/installing-on-ubuntu-and-debian), then return to this page for node startup.
+
+## Standalone node
+
+### Start
+
+**Note:** A known issue exists with the Hetzner hosting provider. If you are using Hetzner, follow the [Networking troubleshooting](/node-operators/troubleshooting#my-hosting-provider-is-warning-me-abuse-message-netscan-detected) guidance before starting a node.
+
+<Tabs groupId="network">
+<TabItem value="mainnet" label="Mainnet">
+
+```sh
+mina daemon --peer-list-url https://bootnodes.minaprotocol.com/networks/mainnet.txt
+```
+
+</TabItem>
+<TabItem value="devnet" label="Devnet">
+
+Devnet is for testing and experimentation. MINA on Devnet has no real value.
+
+```sh
+mina daemon --peer-list-url https://bootnodes.minaprotocol.com/networks/devnet.txt
+```
+
+</TabItem>
+</Tabs>
+
+### Stop
+
+In a new terminal, run:
+
+```sh
+mina client stop-daemon
+```
+
+## Running mina node as a service
+
+Configure your node to keep running after logout and restart on reboot.
+
+### Start the service
+
+<Tabs groupId="install-method">
+<TabItem value="systemd" label="Systemd">
+
+Create `~/.mina-env` and set options as needed:
+
+```sh
+MINA_PRIVKEY_PASS="My_V3ry_S3cure_Password"
+LOG_LEVEL=Info
+FILE_LOG_LEVEL=Debug
+```
+
+Start and enable the service:
+
+```sh
+systemctl --user daemon-reload
+systemctl --user start mina
+systemctl --user enable mina
+sudo loginctl enable-linger
+```
+
+</TabItem>
+<TabItem value="docker" label="Docker">
+
+Prepare directories:
+
+```sh
+cd ~
+mkdir -p ~/.mina-config
+```
+
+Create `~/.mina-env`:
+
+<Tabs groupId="network">
+<TabItem value="mainnet" label="Mainnet">
+
+```sh
+export MINA_PRIVKEY_PASS="My_V3ry_S3cure_Password"
+LOG_LEVEL=Info
+FILE_LOG_LEVEL=Debug
+PEER_LIST_URL=https://bootnodes.minaprotocol.com/networks/mainnet.txt
+```
+
+</TabItem>
+<TabItem value="devnet" label="Devnet">
+
+```sh
+export MINA_PRIVKEY_PASS="My_V3ry_S3cure_Password"
+LOG_LEVEL=Info
+FILE_LOG_LEVEL=Debug
+PEER_LIST_URL=https://bootnodes.minaprotocol.com/networks/devnet.txt
+```
+
+</TabItem>
+</Tabs>
+
+Run the container:
+
+<Tabs groupId="network">
+<TabItem value="mainnet" label="Mainnet">
+
+```sh
+docker run --name mina-node -d \
+-p 8302:8302 \
+--restart=always \
+-v $(pwd)/.mina-env:/entrypoint.d/mina-env:ro \
+-v $(pwd)/keys:/keys:ro \
+-v $(pwd)/.mina-config:/root/.mina-config \
+minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet \
+daemon
+```
+
+</TabItem>
+<TabItem value="devnet" label="Devnet">
+
+```sh
+docker run --name mina-node -d \
+-p 8302:8302 \
+--restart=always \
+-v $(pwd)/.mina-env:/entrypoint.d/mina-env:ro \
+-v $(pwd)/keys:/keys:ro \
+-v $(pwd)/.mina-config:/root/.mina-config \
+gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet \
+daemon
+```
+
+</TabItem>
+</Tabs>
+
+</TabItem>
+</Tabs>
+
+### Stop the service
+
+<Tabs groupId="install-method">
+<TabItem value="systemd" label="Systemd">
+
+```sh
+systemctl --user stop mina
+```
+
+</TabItem>
+<TabItem value="docker" label="Docker">
+
+```sh
+docker stop mina-node
+```
+
+</TabItem>
+</Tabs>
+
+## Monitor the mina client status
+
+<Tabs groupId="install-runtime">
+<TabItem value="native" label="Native/Systemd">
+
+```sh
+mina client status
+```
+
+</TabItem>
+<TabItem value="docker" label="Docker">
+
+```sh
+docker exec -it mina-node mina client status
+```
+
+</TabItem>
+</Tabs>
+
+On first bootstrap, expect the following timeline:
+
+| Time after start | Expected status |
+|--|--|
+| 0 – ~5 min | `mina client status` may fail to connect while the daemon initializes |
+| ~5 – ~25 min | `Sync Status: Bootstrap` then `Sync Status: Catchup` |
+| ~30 min | `Sync Status: Synced` |
+
+Subsequent restarts sync faster when the on-disk cache in `~/.mina-config` is preserved. For Docker, ensure `/root/.mina-config` is mounted to a persistent host volume.
+
+## Step up your game
+
+Once synced, continue with [Sending a Payment](/mina-protocol/sending-a-payment) and [Staking and Snarking](/node-operators/validator-node/staking-and-snarking).

@@ -1,94 +1,33 @@
 ---
-title: Node Operators FAQ
+title: FAQ
 hide_title: true
-description: Troubleshooting tips and answers to frequently asked questions about node operators in the Mina network.
+description: Frequently asked questions about node operators in the Mina network.
 keywords:
-  - what is a node operator
-  - consensus
-  - compress data
-  - generate zk-SNARKs
-  - snarketplace
   - FAQ
-  - troubleshooting
-  - block producer
   - snark
+  - snarketplace
+  - block producer
   - mina protocol
+  - mina signer
 ---
 
-# Node Operators FAQ
+# FAQ
 
-#### What are node operators?
+## General
 
-Node operators are people who run mina nodes. Mina node operators participate in consensus to create new blocks and help compress data by generating zk-SNARKs.
-
-See [Node Operators](/node-operators).
-
-#### Where can I try out the Mainnet?
-
-See [Connect to Mainnet](./block-producer-node/connecting-to-the-network) to learn more and get started. 
-
-#### Where can I try out Devnet?
-
-See [Connect to Devnet](./block-producer-node/connecting-to-devnet) to learn more and get started. 
-
-#### What is Mina Signer?
+### What is Mina Signer?
 
 The [Mina Signer](https://github.com/o1-labs/o1js/blob/main/src/mina-signer/README.md) NodeJS SDK allows you to sign strings, payments, and delegations using Mina's key pairs for various specified networks.
 
 The Mina Signer supersedes the deprecated Client SDK.
 
-## Troubleshooting
-
-#### Where can I find my log files?
-
-See [Logging](./logging) to learn where the log files are located and how to export log files.  
-
-#### My daemon crashed. Where can I share the error log?
-
-First, check out existing [GitHub issues](https://github.com/minaprotocol/mina/issues) to see if this is a known issue. If the error you experienced is a new issue, file a GitHub issue with the appropriate tags (daemon, bug). Mina developers help triage the issue and fix it in a future sprint -- thanks for your help!  
-
-#### How can I report other issues and get in touch with the development team?
-
-It's better when we learn together. 
-
-- The Mina community live discussions take place in the [Mina Protocol Discord](https://discord.gg/minaprotocol) server.
-- You can also create GitHub issues: https://github.com/minaprotocol/mina/issues.
-- If you need to get in touch, you can submit a ticket by using the [Mina Support chat](https://support.minaprotocol.com/).
-
-#### How can I verify that I am indeed producing blocks?
-
-By using the Mina CLI:
-
-Run the `mina client status` command to output the Mina daemon status. 
-
-If your block producer is running, a block of text is returned which contains a line similar to this:
-```text
-Block producers running:            1 (B62qrPN5Y5yq8kGE3FbVK...)
-```
-
-If your block producer has won a slot, the expected output is something like this:
-
-```text
-Next block will be produced in:     in 1.273d for slot: ....
-```
-
-Using the logs:
-
-The following text appears each time the daemon produces a block:
-
-`Producing new block with parent $breadcrumb`
-
-#### I produced a block, why wasn't it selected for the _canonical chain_?
-
-Due to a property of the Ouroboros Samisika consensus protocol, it's entirely possible that more than one block is produced in a particular slot. The network resolves the short-lived forks and consolidates onto one block per slot by random selection.
-
 ## SNARKs and SNARK Workers
 
-#### If I run a SNARK worker, how do I get paid for SNARKs that I generate?
+### If I run a SNARK worker, how do I get paid for SNARKs that I generate?
 
 Block producers (the validators who add new blocks to the blockchain) are required to buy SNARKs from the network (called the snarketplace) and pay out some of their block reward as fees to the SNARK workers who generated SNARKs. This workflow creates a secondary incentive mechanism in the network to reward nodes that help compress transactions.
 
-#### Is generating SNARKs similar to Proof-of-Work (PoW) mining?
+### Is generating SNARKs similar to Proof-of-Work (PoW) mining?
 
 No, they are different in several ways:
 
@@ -97,19 +36,19 @@ No, they are different in several ways:
 - SNARK work is not directly involved in consensus. SNARK workers play no role in determining the next state of the blockchain. Their role is to simply generate SNARKs of transactions observed in the network
 - As a SNARK worker, there is no requirement for uptime. PoW miners need to run their rigs non-stop to ensure they don't miss out on a potential block. SNARK workers can come online and offline as they please — it is more like Uber, where there is always be work to be done, and nobody needs to say ahead of time when they want to work.
 
-#### Why have my SNARKs not been included? (A.K.A. How should I price my SNARKs?)
+### Why have my SNARKs not been included? (A.K.A. How should I price my SNARKs?)
 
 Even though your SNARK worker might be producing SNARKs at a breakneck pace, if someone else produces a cheaper proof for a particular job you have already completed, their SNARK is preferred due to its lower fee.
 
 Pricing your SNARKs is a delicate balance between the cost of compute, the market environment (demand for SNARKs), your SNARK throughput, and the speed at which each of your SNARK worker processes can produce SNARKs. Sometimes, it might even be economically prudent to turn off your SNARK worker altogether until the market improves.
 
-#### Will SNARK workers require more storage and computing power over time? What about compared to Mina full nodes?
+### Will SNARK workers require more storage and computing power over time? What about compared to Mina full nodes?
 
 SNARK workers will not need more storage or computing power over time. SNARK workers simply query the mempool for pending transactions requiring SNARK proofs, and then generate said proof -- this does not require syncing historical data. In addition, the underlying proving cost of SNARK work doesn't get more expensive with time.
 
 If we are comparing SNARK worker nodes with full nodes on Mina, then yes SNARK workers benefit from specialized hardware as generating SNARK proofs can be compute intensive. Again, however, with the explosion of SNARK research, this is likely to change and become more accessible to consumer hardware.
 
-#### What is the difference between a SNARK, a SNARK proof, and SNARK work?
+### What is the difference between a SNARK, a SNARK proof, and SNARK work?
 
 SNARKs are a very overloaded term. When you read **SNARK**, it could be referring to the concept of succinct non-interactive proof systems (for example, SNARKs vs Bulletproofs), the specific technical implementation of the proof system (for example, the construction, the circuit, or the prover), or the individual instance of the proof itself (for example, the blockchain SNARK).
 
@@ -120,15 +59,15 @@ The general terminology is:
 - SNARK proof: an individual proof that is generated by a SNARK prover
 - SNARK work: a Mina protocol data structure that is a wrapper around one or two SNARK proofs and a price to be paid to the SNARK worker that generated the proof or proofs 
 
-#### Is there any concern about a single large SNARK worker [dumping](<https://en.wikipedia.org/wiki/Dumping_(pricing_policy)>) work in the snarketplace, and then raising prices after monopolizing the market?
+### Is there any concern about a single large SNARK worker dumping work in the snarketplace, and then raising prices after monopolizing the market?
 
-In economics, there is a pricing strategy called predatory pricing (or dumping) where one supplier of a product seeks to exhaust competing suppliers in the market by undercutting the market price. The supplier prices their goods much cheaper than the market rate in order to drive out competitors, even if it means incurring short-term losses. After the market has been cleared, the dominant supplier then increases prices [above competitive market rates](https://en.wikipedia.org/wiki/Supracompetitive_pricing), as competition has been extinguished.
+In economics, there is a pricing strategy called [predatory pricing (or dumping)](<https://en.wikipedia.org/wiki/Dumping_(pricing_policy)>) where one supplier of a product seeks to exhaust competing suppliers in the market by undercutting the market price. The supplier prices their goods much cheaper than the market rate in order to drive out competitors, even if it means incurring short-term losses. After the market has been cleared, the dominant supplier then increases prices [above competitive market rates](https://en.wikipedia.org/wiki/Supracompetitive_pricing), as competition has been extinguished.
 
 However, this strategy is effective only in markets where there are high barriers to entry. Meaning, competitors who were crowded out in the predation stage are unable to rejoin the market.
 
 This is not the case for SNARK work because the barriers to entry are low. Anyone who has spare compute can join the snarketplace and produce as little as one SNARK work and profit on that unit of work. The only barrier to entry is the initial capital expense on hardware, but hardware requirements are low so that users with spare equipment can come online and participate. If any SNARK worker succeeds in driving out the market and increases prices, newcomers are anticipated to reappear and drive prices back down.
 
-#### Does speed of producing SNARKs matter? If my computer is slower, will I be at a disadvantage?
+### Does speed of producing SNARKs matter? If my computer is slower, will I be at a disadvantage?
 
 No, provided that the SNARK work produced is still required by block producers, it doesn't matter who produced it first — only the price matters to block producers. The caveat here is that earlier inclusion into the SNARK mempool is obviously beneficial, as block producers are likely to "see" the work earlier.
 
@@ -136,10 +75,10 @@ However, you can envision a scenario where a set of SNARK workers are favored be
 
 There is also a threshold at which time becomes a factor, but this scenario applies only to very underpowered devices. 
 
-#### Will a full node need to store all intermediate SNARK proofs? Will the storage requirements grow linearly with blocks?
+### Will a full node need to store all intermediate SNARK proofs? Will the storage requirements grow linearly with blocks?
 
 No, when a new block is generated, Mina computes the proof recursively over the prior proof and the new block. This is the advantage of recursive composition -- at any given time, nodes need to store only the most recent proof. Intermediate proofs are not needed. For historical clarity on how this architecture emerged, see the [Using zkSNARKs to create a blockless blockchain](https://www.youtube.com/watch?v=eWVGATxEB6M) talk.
 
-#### How do you control or limit the number of threads that SNARK workers use?
+### How do you control or limit the number of threads that SNARK workers use?
 
 When you start the mina daemon, use the `-snark-worker-parallelism` flag. This flag is equivalent to setting `OMP_NUM_THREADS`, but doesn't affect block production.

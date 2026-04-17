@@ -114,27 +114,27 @@ module.exports = {
           },
           {
             from: '/keypair',
-            to: '/node-operators/generating-a-keypair',
+            to: '/node-operators/validator-node/generating-a-keypair',
           },
           {
             from: '/connecting',
-            to: '/node-operators/block-producer-node/connecting-to-the-network',
+            to: '/node-operators/validator-node/connecting-to-the-network',
           },
           {
             from: '/staking',
-            to: '/node-operators/staking-and-snarking',
+            to: '/node-operators/validator-node/staking-and-snarking',
           },
           {
             from: '/cli-reference',
-            to: '/node-operators/mina-cli-reference',
+            to: '/node-operators/reference/mina-cli-reference',
           },
           {
             from: '/advanced/staking-service-guidelines',
-            to: '/node-operators/staking-service-guidelines',
+            to: '/node-operators/block-producer-node/staking-service-guidelines',
           },
           {
             from: '/advanced/using-mina/staking',
-            to: '/node-operators/staking-and-snarking',
+            to: '/node-operators/validator-node/staking-and-snarking',
           },
           {
             from: '/participate/reporting',
@@ -146,11 +146,39 @@ module.exports = {
           },
           {
             from: '/node-operators/operating-for-data',
-            to: '/node-operators/data-and-history/querying-data',
+            to: '/node-operators/validator-node/querying-data',
+          },
+          {
+            from: '/node-operators/getting-started/requirements',
+            to: '/node-operators/validator-node/requirements',
+          },
+          {
+            from: '/node-operators/getting-started/generating-a-keypair',
+            to: '/node-operators/validator-node/generating-a-keypair',
+          },
+          {
+            from: '/node-operators/getting-started',
+            to: '/node-operators/validator-node',
+          },
+          {
+            from: '/node-operators/data-and-history/querying-data',
+            to: '/node-operators/validator-node/querying-data',
+          },
+          {
+            from: '/node-operators/operating/staking-and-snarking',
+            to: '/node-operators/validator-node/staking-and-snarking',
+          },
+          {
+            from: '/node-operators/operating/logging',
+            to: '/node-operators/validator-node/logging',
+          },
+          {
+            from: '/node-operators/operating',
+            to: '/node-operators/validator-node',
           },
           {
             from: '/node-operators/cli-reference',
-            to: '/node-operators/mina-cli-reference',
+            to: '/node-operators/reference/mina-cli-reference',
           },
           {
             from: '/node-operators/uptime-system',
@@ -158,7 +186,11 @@ module.exports = {
           },
           {
             from: '/node-operators/connecting-devnet',
-            to: '/node-operators/block-producer-node/connecting-to-devnet',
+            to: '/node-operators/validator-node/connecting-to-the-network',
+          },
+          {
+            from: '/node-operators/block-producer-node/connecting-to-devnet',
+            to: '/node-operators/validator-node/connecting-to-the-network',
           },
           {
             from: '/node-operators/ledger-app-mina',
@@ -174,11 +206,11 @@ module.exports = {
           },
           {
             from: '/node-operators/keypair',
-            to: '/node-operators/generating-a-keypair',
+            to: '/node-operators/validator-node/generating-a-keypair',
           },
           {
             from: '/node-operators/connecting',
-            to: '/node-operators/block-producer-node/connecting-to-the-network',
+            to: '/node-operators/validator-node/connecting-to-the-network',
           },
           {
             from: '/node-operators/send-payment',
@@ -186,7 +218,7 @@ module.exports = {
           },
           {
             from: '/node-operators/staking',
-            to: '/node-operators/staking-and-snarking',
+            to: '/node-operators/validator-node/staking-and-snarking',
           },
           {
             from: '/exchange-operators/exchange-faq',
@@ -255,6 +287,46 @@ module.exports = {
           {
             from: '/mesa-upgrade/archive-upgrade',
             to: '/network-upgrades/mesa/archive-upgrade',
+          },
+          {
+            from: '/node-operators/requirements',
+            to: '/node-operators/validator-node/requirements',
+          },
+          {
+            from: '/node-operators/generating-a-keypair',
+            to: '/node-operators/validator-node/generating-a-keypair',
+          },
+          {
+            from: '/node-operators/staking-service-guidelines',
+            to: '/node-operators/block-producer-node/staking-service-guidelines',
+          },
+          {
+            from: '/node-operators/staking-and-snarking',
+            to: '/node-operators/validator-node/staking-and-snarking',
+          },
+          {
+            from: '/node-operators/logging',
+            to: '/node-operators/validator-node/logging',
+          },
+          {
+            from: '/node-operators/mina-cli-reference',
+            to: '/node-operators/reference/mina-cli-reference',
+          },
+          {
+            from: '/node-operators/mina-signer',
+            to: '/node-operators/reference/mina-signer',
+          },
+          {
+            from: '/node-operators/reference/troubleshooting',
+            to: '/node-operators/troubleshooting',
+          },
+          {
+            from: '/node-operators/reference/faq',
+            to: '/node-operators/faq',
+          },
+          {
+            from: '/node-operators/delegation-program/bp-sidecar',
+            to: '/node-operators/delegation-program/uptime-tracking-system',
           },
         ],
       },

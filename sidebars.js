@@ -1475,26 +1475,40 @@ module.exports = {
         id: 'node-operators/index',
       },
       items: [
-        'node-operators/requirements',
-        'node-operators/generating-a-keypair',
         {
           type: 'category',
-          label: 'Block Producing Node',
+          label: 'Validators',
+          link: {
+            type: 'doc',
+            id: 'node-operators/validator-node/index',
+          },
+          items: [
+            'node-operators/validator-node/requirements',
+            'node-operators/validator-node/installing-on-ubuntu-and-debian',
+            'node-operators/validator-node/generating-a-keypair',
+            'node-operators/validator-node/connecting-to-the-network',
+            'node-operators/validator-node/querying-data',
+            'node-operators/validator-node/staking-and-snarking',
+            'node-operators/validator-node/logging',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Block Producers',
           link: {
             type: 'doc',
             id: 'node-operators/block-producer-node/index',
           },
           items: [
             'node-operators/block-producer-node/getting-started',
-            'node-operators/block-producer-node/connecting-to-the-network',
-            'node-operators/block-producer-node/connecting-to-devnet',
             'node-operators/block-producer-node/hot-cold-block-production',
+            'node-operators/block-producer-node/staking-service-guidelines',
             'node-operators/block-producer-node/docker-compose',
           ],
         },
         {
           type: 'category',
-          label: 'SNARK Workers',
+          label: 'SNARK Coordinator & Workers',
           link: {
             type: 'doc',
             id: 'node-operators/snark-workers/index',
@@ -1519,13 +1533,14 @@ module.exports = {
         },
         {
           type: 'category',
-          label: 'Seed Peers',
+          label: 'Seed Node',
           link: {
             type: 'doc',
             id: 'node-operators/seed-peers/index',
           },
           items: [
             'node-operators/seed-peers/getting-started',
+            'node-operators/seed-peers/generating-a-libp2p-keypair',
             'node-operators/seed-peers/docker-compose',
           ],
         },
@@ -1537,7 +1552,6 @@ module.exports = {
             id: 'node-operators/data-and-history/index',
           },
           items: [
-            'node-operators/data-and-history/querying-data',
             'node-operators/data-and-history/rosetta',
           ],
         },
@@ -1553,11 +1567,18 @@ module.exports = {
             'node-operators/delegation-program/uptime-tracking-system',
           ],
         },
-        'node-operators/staking-and-snarking',
-        'node-operators/staking-service-guidelines',
-        'node-operators/mina-signer',
-        'node-operators/mina-cli-reference',
-        'node-operators/logging',
+        {
+          type: 'category',
+          label: 'Reference',
+          link: {
+            type: 'doc',
+            id: 'node-operators/reference/index',
+          },
+          items: [
+            'node-operators/reference/mina-cli-reference',
+            'node-operators/reference/mina-signer',
+          ],
+        },
         'node-operators/troubleshooting',
         'node-operators/faq',
       ],

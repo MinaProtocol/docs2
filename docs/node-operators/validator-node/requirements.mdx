@@ -1,0 +1,62 @@
+---
+title: Requirements
+sidebar_label: Requirements
+hide_title: true
+description: Berkeley upgrade is a major upgrade that requires all nodes in a network to upgrade to a newer version. It is not backward compatible.
+keywords:
+  - Berkeley
+  - upgrade
+  - hardware requirements
+---
+
+# Requirements
+
+## Hardware Requirements
+
+Please note the following are the hardware requirements for each node type after the upgrade:
+
+| Node Type | Memory | CPU | Storage | Network |
+|--|--|--|--|--|
+| Block Producer | 32 GB RAM | 8 core processor with BMI2 and AVX CPU instruction set are required | 64 GB | 1 Mbps Internet Connection |
+| SNARK Coordinator | 32 GB RAM | 8 core processor | 64 GB | 1 Mbps Internet Connection |
+| SNARK Worker | 32 GB RAM | 4 core/8 threads per worker with BMI2 and AVX CPU instruction set are required | 64 GB | 1 Mbps Internet Connection |
+| Archive Node | 32 GB RAM | 8 core processor | 64 GB | 1 Mbps Internet Connection |
+| Rosetta API standalone Docker image | 32 GB RAM | 8 core processor | 64 GB | 1 Mbps Internet Connection |
+| Mina Seed Node | 64 GB RAM | 8 core processor | 64 GB | 1 Mbps Internet Connection |
+
+## Software
+
+Supported environments include macOS, Linux (Debian 10, 11 and Ubuntu 20.04 LTS), and any host machine with Docker. Only x86-64 CPU architecture is supported.
+
+## Clock Synchronization
+
+Your server must run a clock synchronization protocol such as [NTP](https://en.wikipedia.org/wiki/Network_Time_Protocol) to participate in consensus. Most Linux distributions include NTP by default.
+
+## Recommended VM Instances
+
+o1Labs has tested running nodes on several cloud providers. We recommend the following instances for basic node operator needs. Custom requirements and different cost constraints might require a different instance type.
+
+- AWS [c5.2xlarge](https://www.ec2instances.info/?filter=c5.2xl&region=us-west-2&cost_duration=daily&selected=c5.2xlarge)
+- GCP [c2-standard-8](https://cloud.google.com/compute/docs/machine-types)
+- Azure [Standard_F8s_v2](https://docs.microsoft.com/en-us/azure/virtual-machines/windows/sizes-compute#fsv2-series-1)
+- Digital Ocean [c-8-16gib](https://cloud.digitalocean.com/droplets/new?size=c-8-16gib)
+
+## Networking
+
+**IP:** By default, the Mina daemon determines its public IP address automatically via HTTPS (443) and HTTP (80). If you are behind a NAT or firewall, set the `--external-ip` flag to specify your public IP address.
+
+**Port:** Nodes must expose a port to communicate with peers. The default is TCP port `8302`. You can change it with the `--external-port` flag.
+
+**Firewall and port forwarding:** Allow inbound traffic on the following ports through your external IP address:
+
+- TCP port `8302` (required for peer communication)
+- TCP port `3085` (optional, for the GraphQL API)
+
+If you are using UFW:
+
+```sh
+sudo ufw enable
+sudo ufw allow 22
+sudo ufw allow 8302
+sudo ufw allow 3085
+```

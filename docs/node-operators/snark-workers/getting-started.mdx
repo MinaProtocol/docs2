@@ -1,132 +1,90 @@
 ---
-title: SNARK workers Getting Started
+title: SNARK Workers Getting Started
 sidebar_label: Getting Started
 hide_title: true
-description: How to run a SNARK worker. SNARK workers are essential to keep the network producing transactions in blocks. 
+description: How to run a SNARK worker or SNARK coordinator on the Mina network.
 keywords:
-  - connect to network
+  - snark worker
+  - snark coordinator
   - running a snark worker
 ---
 
-# SNARK Workers Getting Started 
+# SNARK Workers Getting Started
 
-The Mina protocol is unique because nodes are not required to maintain the full history of the blockchain like other cryptocurrency protocols. By recursively using cryptographic proofs, the Mina protocol effectively compresses the blockchain to constant size. This compression reduces terabytes of data to a few kilobytes.
+:::note
 
-However, this isn't data encoding or compression in the traditional sense. Mina nodes _compress_ data in the network by generating cryptographic proofs. Node operators play a crucial role in this process by designating themselves as [SNARK workers](/glossary#snark-worker) that generate [zk-SNARKs](/glossary#zk-snark) for transactions that have been added to blocks. 
+Before following this guide, complete the Validator Node setup — from [Requirements](/node-operators/validator-node/requirements) through [Connect to Mainnet or Devnet](/node-operators/validator-node/connecting-to-the-network). You should have a synced node and a [key pair](/node-operators/validator-node/generating-a-keypair) before proceeding.
 
-You can connect a SNARK worker to the network or use a SNARK coordinator. [SNARK coordinators](/glossary#snark-coordinator) can be used to coordinate and distribute work to any [SNARK workers](/glossary#snark-worker) that you are running. If you are running a SNARK coordinator, connect the SNARK coordinator to the network, then connect SNARK workers to the SNARK coordinator.
+:::
 
+There are two modes for running SNARK work:
 
-## SNARK Coordinator Requirements
+- **Embedded worker** — the daemon runs a single SNARK worker internally. Simpler to set up, no external processes needed.
+- **Coordinator with external workers** — the daemon runs a SNARK coordinator that distributes work to one or more external SNARK worker processes. Use this to scale across multiple machines or cores.
 
-**Software**: Supported environments include macOS, Linux (Debian 10, 11, 12 and Ubuntu 20.04 LTS), and any host machine with Docker. 
+In both modes, the daemon also participates in the network as a normal validator.
 
-**Processor**: Only x86-64 CPU architecture is supported.
+## Embedded SNARK worker
 
-**Hardware**: Sending and receiving MINA does not require any special hardware. 
-
-Running a SNARK coordinator on the Mina network requires at least:
-
-- 8-core processor
-- 32 GB of RAM
-- 64 GB of free storage
-
-**Network**: At least 1 Mbps connection
-
-## SNARK Worker Requirements
-
-**Software**: Supported environments include macOS, Linux (Debian 10, 11, 12 and Ubuntu 20.04 LTS), and any host machine with Docker. 
-
-**Processor**: Only x86-64 CPU architecture is supported.
-
-**Hardware**: Sending and receiving MINA does not require any special hardware. 
-
-Running a SNARK worker on the Mina network requires at least:
-
-- 16-core processor with 32 threads
-- 32 GB of RAM
-- 64 GB of free storage
-
-**Network**: At least 1 Mbps connection
-
-## Running a SNARK coordinator
-
-To start a SNARK coordinator, run a mina daemon with these additional flags:
+Run the daemon with `--run-snark-worker` to produce SNARK proofs directly within the daemon process:
 
 ```sh
---run-snark-coordinator <PUBLICKEY>\ --snark-worker-fee <FEE> --work-selection seq
+mina daemon \
+    --peer-list-url https://bootnodes.minaprotocol.com/networks/mainnet.txt \
+    --run-snark-worker $SNARK_WORKER_PUBLICKEY \
+    --snark-worker-fee 0.001 \
+    --work-selection seq
 ```
 
-## Running a SNARK worker connected to a SNARK coordinator
+| Flag | Description |
+|--|--|
+| `--run-snark-worker` | Public key to receive SNARK work fees |
+| `--snark-worker-fee` | Fee (in MINA) to charge per SNARK proof |
+| `--work-selection` | Work selection method: `seq`, `rand`, or `roffset` |
+| `--snark-worker-parallelism` | Number of threads for SNARK work (does not affect block production) |
 
-To start a SNARK-worker connected to a SNARK-coordinator, run `mina` with these flags:
+## Coordinator with external workers
+
+### Start the coordinator
+
+Run the daemon with `--run-snark-coordinator`. The coordinator distributes work to external SNARK worker processes, propagates the generated proofs to the network, and sets the public key that receives SNARK work fees from those workers:
 
 ```sh
-internal snark-worker --proof-level full --shutdown-on-disconnect false --daemon-address <snark coordinator IP and port - IP:port>
+mina daemon \
+    --peer-list-url https://bootnodes.minaprotocol.com/networks/mainnet.txt \
+    --run-snark-coordinator $SNARK_WORKER_PUBLICKEY \
+    --snark-worker-fee 0.001 \
+    --work-selection seq
 ```
 
-## Running a SNARK-worker
+| Flag | Description |
+|--|--|
+| `--run-snark-coordinator` | Public key to receive SNARK work fees from external workers |
+| `--snark-worker-fee` | Fee (in MINA) to charge per SNARK proof |
+| `--work-selection` | Work selection method: `seq`, `rand`, or `roffset` |
 
-To start a SNARK-worker, run `mina daemon` with these flags:
+### Connect workers to the coordinator
+
+:::caution
+
+The protocol between the coordinator and workers is not secure. Only run workers on the same intranet as the coordinator — do not expose the coordinator port to the public internet.
+
+:::
+
+On each worker machine, run:
 
 ```sh
---run-snark-worker <PUBLICKEY>\ --snark-worker-fee <FEE> --work-selection <seq|rand|roffset>
+mina internal snark-worker \
+    --proof-level full \
+    --shutdown-on-disconnect false \
+    --daemon-address <COORDINATOR_IP:PORT>
 ```
 
-Use the `--snark-worker-parallelism` flag to set the number of threads used in snark working, this does not affect block production.
+The default coordinator port is `8301`. Use `--snark-worker-parallelism` on the worker to set the number of threads used for SNARK work.
 
-## Setting a Node to be a SNARK-worker 
+For a Docker Compose example that sets up a coordinator and worker together, see [Docker Compose Example](/node-operators/snark-workers/docker-compose).
 
-To make a node a SNARK-worker, run these commands:
+## Related
 
-```sh
-mina client set-snark-work-fee <FEE>
-mina client set-snark-worker --address $MINA_PUBLIC_KEY
-
-```
-
-If your daemon is already running, restart the daemon with these flags:
-
-```
-args={["-run-snark-worker $MINA_PUBLIC_KEY", "-snark-worker-fee <fee>"]}
-```
-
-As a SNARK-worker, you get to share some of the block rewards for each block that include your compressed transactions. The block producer is responsible for gathering compressed transactions before including them into a block and is incentivized by the protocol to reward SNARK-workers.
-
-SNARK-workers can be fairly compute intensive. If you need to limit their CPU usage, specify the number of threads that SNARK-workers use with the `-snark-worker-parallelism` flag. This can be especially useful if you're trying to run a block producer and SNARK-worker on the same machine and having issues producing blocks in time.
-
-The roles and responsibilities of a Mina node operator offer you incentives to participate in block production through staking or delegation. Mina is a permissionless peer-to-peer network, so everything is managed and run in a decentralized manner by nodes all over the world. 
-
-### Configure your mina daemon in daemon.json
-
-By creating a file at `~/.mina-config/daemon.json`, you can configure your mina daemon without providing options on the command line. This can be useful for running mina as a service and to avoiding repetitive typing.
-
-Most of the options that can be passed to `mina daemon` on the command line can also be provided as options in the config file. See `mina daemon -help` for more details. 
-
-The following example file includes usage of the configuration parameters:
-
-```json
-{
-  "daemon": {
-    "client-port": 1000,
-    "external-port": 1001,
-    "rest-port": 1002,
-    "block-producer-key": "/path/to/privkey-file",
-    "block-producer-password": "mypassword",
-    "block-producer-pubkey": "<MY PUBLICKEY>",
-    "coinbase-receiver": "<MY PUBLICKEY>",
-    "log-block-creation": false,
-    "log-received-blocks": false,
-    "log-snark-work-gossip": false,
-    "log-txn-pool-gossip": false,
-    "peers": ["seed-one.o1test.net", "seed-two.o1test.net"],
-    "run-snark-worker": "<MY PUBLICKEY>",
-    "snark-worker-fee": 10,
-    "snark-worker-parallelism": 1,
-    "work-reassignment-wait": 420000,
-    "work-selection": "seq"
-  }
-}
-```
-
-In the `~/.mina-config/daemon.json` file, include only the options you want to change.
+- [Mina CLI Reference](/node-operators/reference/mina-cli-reference) — Full `mina daemon` command reference
+- [FAQ: SNARKs and SNARK Workers](/node-operators/faq#snarks-and-snark-workers) — Common questions about SNARK pricing, fees, and performance

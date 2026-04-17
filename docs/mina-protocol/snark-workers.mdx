@@ -24,6 +24,14 @@ Read on to learn why SNARK workers are needed, how the economic incentives align
 Note: The theory of zk-SNARKs is not covered. Deep knowledge of SNARKs is not required to read this section, but it is helpful to understand in general how SNARKs work and what they are useful for. To learn more, check out this
  [What are zk-SNARKs?](https://minaprotocol.com/blog/what-are-zk-snarks) primer first.
 
+## How Mina Compresses the Blockchain
+
+The Mina protocol is unique because nodes are not required to maintain the full history of the blockchain like other cryptocurrency protocols. By recursively using cryptographic proofs, the Mina protocol effectively compresses the blockchain to constant size. This compression reduces terabytes of data to a few kilobytes.
+
+However, this isn't data encoding or compression in the traditional sense. Mina nodes _compress_ data in the network by generating cryptographic proofs. Node operators play a crucial role in this process by designating themselves as [SNARK workers](/glossary#snark-worker) that generate [zk-SNARKs](/glossary#zk-snark) for transactions that have been added to blocks.
+
+You can connect a SNARK worker to the network or use a SNARK coordinator. [SNARK coordinators](/glossary#snark-coordinator) can be used to coordinate and distribute work to any [SNARK workers](/glossary#snark-worker) that you are running. If you are running a SNARK coordinator, connect the SNARK coordinator to the network, then connect SNARK workers to the SNARK coordinator.
+
 ## Why SNARK Workers?
 
 Mina's unique property is the succinct blockchain. Each block producer, when they propose a new block to the network, must also include a zk-SNARK along with that block. This allows nodes to discard all historical data that's been finalized, and retain just the SNARK. If you are unfamiliar with the Mina protocol, [this video is a good start](https://www.youtube.com/watch?v=eWVGATxEB6M).
@@ -74,6 +82,8 @@ Note: To learn more about the details of how this SNARK work scheme evolved, it 
 The key dynamic to understand about SNARK work is:
 
 _Block producers use their block rewards to purchase SNARK work from SNARK workers._
+
+As a SNARK worker, you get to share some of the block rewards for each block that includes your compressed transactions. The block producer is responsible for gathering compressed transactions before including them into a block and is incentivized by the protocol to reward SNARK workers.
 
 There is no protocol involvement in pricing snarks, nor are there any protocol level rewards for SNARK workers to produce snarks. The incentives are purely peer-to-peer, and dynamically established in a public marketplace, aka the snarketplace.
 

@@ -23,7 +23,7 @@ A standardized API for blockchain integration — query historical data, build t
 [Rosetta API](https://www.rosetta-api.org/) (rebranded as [Mesh](https://docs.cdp.coinbase.com/mesh/docs/welcome/) by Coinbase) is an open-source specification and set of tools that make deploying and interacting with blockchains quick and easy. Mina implements a subset of the Rosetta specification — not all endpoints defined in the spec are available. Mina's Rosetta implementation is primarily used by exchanges to integrate MINA deposits, withdrawals, and balance queries.
 
 :::note
-The Rosetta API is auxiliary to Mina's existing [GraphQL API](/node-operators/mina-cli-reference) and [Archive Node](/node-operators/archive-node). While GraphQL provides access to current network state, historical and persistence data requires the Archive database. Rosetta bundles both data sources behind a standardized interface and exists primarily to satisfy exchange integration requirements.
+The Rosetta API is auxiliary to Mina's existing [GraphQL API](/node-operators/reference/mina-cli-reference) and [Archive Node](/node-operators/archive-node). While GraphQL provides access to current network state, historical and persistence data requires the Archive database. Rosetta bundles both data sources behind a standardized interface and exists primarily to satisfy exchange integration requirements.
 :::
 
 ## Architecture

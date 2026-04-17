@@ -1,0 +1,48 @@
+---
+title: Delegating MINA
+hide_title: true
+description: Earn block rewards by delegating your MINA stake to a block producer.
+keywords:
+  - staking
+  - delegation
+  - delegate
+  - block rewards
+  - mina protocol
+---
+
+# Delegating MINA
+
+Delegating assigns your stake to a block producer who shares earned rewards minus a fee. You don't need to run a node yourself. See [Staking Rewards on Mina](https://minaprotocol.com/blog/staking-rewards-on-mina) for reward details.
+
+If you want to produce blocks directly, see the [Block Producers](/node-operators/block-producer-node) section.
+
+- Your delegation takes effect after a latency period of 2-4 weeks.
+- You can re-delegate or un-delegate at any time with no penalty. Changes take effect after 1-2 epochs.
+- Your **full balance** is always delegated -- there is no partial delegation.
+
+## Delegate your stake
+
+First, unlock your account:
+
+```sh
+mina account unlock --public-key $DELEGATOR_PUBLICKEY
+```
+
+Then delegate:
+
+```sh
+mina client delegate-stake \
+    --receiver $DELEGATEE_PUBLICKEY \
+    --sender $DELEGATOR_PUBLICKEY \
+    --fee 0.1
+```
+
+| Flag | Description |
+|--|--|
+| `--receiver` | Public key of the delegatee (block producer) |
+| `--sender` | Public key of the account you are delegating from |
+| `--fee` | Transaction fee paid to the network |
+
+A stake delegation is a transaction on-chain, which is why it requires a fee.
+
+See also: [Mina Foundation Delegation Program](/node-operators/delegation-program/foundation-delegation-program).

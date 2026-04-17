@@ -10,6 +10,9 @@ keywords:
   - postgres
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Archive Nodes Getting Started
 
 Mina nodes are succinct by default, so they don't need to maintain historical information about the network, block, or transactions.
@@ -68,57 +71,67 @@ Running an archive node requires some knowledge of managing a PostgreSQL databas
 
 These steps might be different for your operating system, if you're connecting to a cloud instance of PostgreSQL, if your deployment uses Docker, or if you want to run these processes on different machines.
 
+:::caution
+
+Using the `--config` parameter ensures genesis accounts are inserted into the database, which is important to avoid gaps in account balances since the archive node stores only incremental changes.
+
+However, inserting genesis accounts can take significant time and resources. You can skip `--config` if you're connecting to devnet or mainnet and starting from an existing archive database dump rather than an empty archive.
+
+*Never* use it on long lived network such as mainnet or devnet
+
+:::
+
+<Tabs groupId="install-method">
+<TabItem value="native" label="Native">
+
 For production, run the archive database in the background, use your operating system service manager (like systemd) to run it for you, or use a postgres service hosted by a cloud provider.
 
-To run a local archive node to run it in the foreground for testing:
+To run a local archive node in the foreground for testing:
 
 1. Start a local postgres server and connect to port 5432:
 
-  ```sh
-  postgres -p 5432 -D /usr/local/var/postgres
-  ```
+   ```sh
+   postgres -p 5432 -D /usr/local/var/postgres
+   ```
 
-  For macOS:
+   For macOS:
 
-  ```sh
-  brew services start postgres
-  ```
+   ```sh
+   brew services start postgres
+   ```
 
 1. Create a local postgres database called `archive`:
 
-  ```sh
-  psql -p 5432 --h localhost -c "create database archive"
-  ```
+   ```sh
+   psql -p 5432 --h localhost -c "create database archive"
+   ```
 
 1. Load the mina archive schema into the archive database, (create_schema.sql and zkapp_tables.sql):
 
-  ```sh
-  psql -h localhost -p 5432 -d archive -f <(curl -Ls https://raw.githubusercontent.com/MinaProtocol/mina/release/3.0.2/src/app/archive/create_schema.sql)
-
-  ```
+   ```sh
+   psql -h localhost -p 5432 -d archive -f <(curl -Ls https://raw.githubusercontent.com/MinaProtocol/mina/release/3.0.2/src/app/archive/create_schema.sql)
+   ```
 
 1. Start the archive process on port 3086 and connect to the postgres database that runs on port 5432:
 
-  ```sh
-  mina-archive run \
-    --postgres-uri postgres://localhost:5432/archive \
-    --server-port 3086
-  ```
+   ```sh
+   mina-archive run \
+     --postgres-uri postgres://localhost:5432/archive \
+     --server-port 3086
+   ```
 
-4. Start the mina daemon and connect it to the archive process that you started on port 3086:
+1. Start the mina daemon and connect it to the archive process that you started on port 3086:
 
-  ```
-  mina daemon \
-      .....
-    --archive-address 3086
+   ```
+   mina daemon \
+       .....
+     --archive-address 3086
+   ```
 
-  ```
+   To connect to an archive process on another machine, specify a hostname with `<ipaddress:portnumber>` i.e. `154.97.53.97:3086`.
 
-  To connect to an archive process on another machine, specify a hostname with `<ipaddress:portnumber>` i.e. `154.97.53.97:3086`.
-
-## Set up the archive node using Docker
-
-To get started with installing and running the archive node using Docker, follow the steps below.
+</TabItem>
+<TabItem value="docker" label="Docker">
 
 1. Install Docker on your machine. For more information, see [Docker](https://docs.docker.com/get-docker/).
 
@@ -134,7 +147,7 @@ To get started with installing and running the archive node using Docker, follow
    docker pull postgres
    ```
 
-4. Start the postgres container and expose it's networking to other containers.
+4. Start the postgres container and expose its networking to other containers.
 
    ```sh
    docker run --name postgres -p 5432:5432 -e POSTGRES_PASSWORD=postgres -d postgres
@@ -152,7 +165,6 @@ To get started with installing and running the archive node using Docker, follow
    curl -Ls https://raw.githubusercontent.com/MinaProtocol/mina/1551e2faaa246c01636908aabe5f7981715a10f4/src/app/archive/create_schema.sql | docker exec -i postgres psql -U postgres -d archive
 
    curl -Ls https://raw.githubusercontent.com/MinaProtocol/mina/1551e2faaa246c01636908aabe5f7981715a10f4/src/app/archive/zkapp_tables.sql | docker exec -i postgres psql -U postgres -d archive
-
    ```
 
 7. Create a local directory to store the archive node data.
@@ -172,20 +184,7 @@ To get started with installing and running the archive node using Docker, follow
    mina-archive run \
    --postgres-uri postgres://postgres:postgres@postgres:5432/archive \
    --server-port 3086
-
    ```
-
-:::caution
-
-Please be careful when using `--config` argument at archive node bootstrap.
-
-It should be provided only when archive node is connected to
-short lived network created mainly for testing, local development or experimental networks.
-
-*Never* use it on long lived network such as mainnet or devnet
-
-
-:::
 
 9. Start the mina daemon and connect it to the archive process that you started on port 3086:
 
@@ -193,41 +192,32 @@ short lived network created mainly for testing, local development or experimenta
    mina daemon \
        .....
      --archive-address 3086
-
    ```
-  To connect to an archive process on another machine, specify a hostname with `<ipaddress:portnumber>` i.e. `154.97.53.97:3086`.
 
+   To connect to an archive process on another machine, specify a hostname with `<ipaddress:portnumber>` i.e. `154.97.53.97:3086`.
 
-## Set up the archive node using Docker Compose
+</TabItem>
+<TabItem value="docker-compose" label="Docker Compose">
 
 Docker Compose is a tool for defining and running multi-container Docker applications.
 With Compose, you use a YAML file to configure your application's services. Then, with a single command, you create and start all the services from your configuration.
 
-To run the archive node using Docker Compose:
+1. Install Docker and Docker Compose on your machine. For more information, see [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/).
 
-1. Install Docker on your machine. For more information, see [Docker](https://docs.docker.com/get-docker/).
-
-2. Install Docker Compose on your machine. For more information, see [Docker Compose](https://docs.docker.com/compose/install/).
-
-3. Pull the archive node image from Docker Hub.
+2. Pull the required images:
 
    ```sh
    docker pull minaprotocol/mina-archive:3.3.0-8c0c2e6-bullseye-mainnet
+   docker pull postgres
    ```
 
-4. Pull and install the postgres image from Docker Hub.
-
-   ```sh
-    docker pull postgres
-   ```
-
-5. Create a local directory to store the archive node data.
+3. Create a local directory to store the archive node data.
 
    ```sh
    mkdir -p /tmp/archive
    ```
 
-6. Create a `docker-compose.yml` file with the following contents:
+4. Create a `docker-compose.yml` file with the following contents:
 
    ```yml
    services:
@@ -252,22 +242,24 @@ To run the archive node using Docker Compose:
          - postgres
    ```
 
-7. Start the archive node.
+5. Start the archive node.
 
    ```sh
    docker compose up
    ```
 
-8. Start the mina daemon and connect it to the archive process that you started on port 3086:
+6. Start the mina daemon and connect it to the archive process that you started on port 3086:
 
    ```
    mina daemon \
        .....
      --archive-address 3086
-
    ```
 
-     To connect to an archive process on another machine, specify a hostname with `<ipaddress:portnumber>` i.e. `154.97.53.97:3086`.
+   To connect to an archive process on another machine, specify a hostname with `<ipaddress:portnumber>` i.e. `154.97.53.97:3086`.
+
+</TabItem>
+</Tabs>
 
 
 ## Using the Archive Node

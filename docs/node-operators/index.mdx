@@ -16,65 +16,51 @@ keywords:
 
 The [Mina Protocol](/mina-protocol) is a layer 1 blockchain that is secured by [proof of stake consensus](/mina-protocol/proof-of-stake).
 
-There are three public Mina Protocol networks:
+Node operators are people who run Mina nodes. Mina node operators participate in consensus to create new blocks and help compress data by generating zk-SNARKs.
 
-1. `mainnet`  - the production network
-2. `devnet`   - the test network based on the same software versions as the mainnet
-3. `izmir`    - a development network where new features are trialed
+## Mina Node Roles
 
-You check the identity of the network with this graphQL query:
+A node is a machine running the [Mina daemon](/glossary#daemon). Different nodes fulfill different roles within the Mina network:
 
-```
-query MyQuery {
-  networkID
-}
-```
+1. Validator - A plain Mina daemon node that participates in network consensus and can be used for operations such as sending and signing payments.
 
+2. [Block Producer](/glossary#block-producer) - A node that participates in a process to determine what blocks it is allowed to produce and then produces blocks containing transactions that can be broadcast to the network. People who run [block producer](https://docs.minaprotocol.com/mina-protocol/block-producers) nodes are also called block producers.
 
-## Node Operators
+3. [SNARK Coordinators](/glossary#snark-coordinator) - A role on a Mina node in the Mina network that distributes work to a series of SNARK workers in parallel to block production.
 
-Node operators are network participants who run mina nodes on a Mina network.
+4. [SNARK Workers](https://docs.minaprotocol.com/glossary#snark-worker) -  SNARK workers create [zk-SNARKs](https://minaprotocol.com/blog/what-are-zk-snarks) for each transaction. These zk-SNARKs are used to create recursive zk-SNARKs that prove the correctness of a block, and in turn, these zk-SNARKs are used to create recursive zk-SNARKs that prove the correctness of the network. These zk-SNARKs help provide the Mina Protocol with succinctness.
 
-This section describes operations on Mina and how node operators can run Mina nodes.
+5. [Archive Nodes](/node-operators/archive-node) - A regular mina daemon that is connected to a running `mina-archive` process. The daemon regularly sends blockchain data to the archive process that stores it in a [PostgreSQL](https://www.postgresql.org/) database.
 
-- [Staking and Snarking](/node-operators/staking-and-snarking) - How to stake your MINA
-- [Generating a Key Pair](/node-operators/generating-a-keypair) - How to generate key pairs
-- [Block Producing Node](/node-operators/block-producer-node) - Running a Block Producer
-- [SNARK Workers](/node-operators/snark-workers) - Running a SNARK worker
+6. [Seed Nodes](https://docs.minaprotocol.com/glossary#seed-nodes) - Keep a record of nodes in the network and enable nodes joining the network to connect to peer nodes.
+
+## Operating a Node
+
+Node operators are network participants who run Mina nodes on a Mina network.
+
+This section describes how to run each node role and where to find the operational references.
+
+### Validators
+- [Requirements](/node-operators/validator-node/requirements) - Hardware, software, and network requirements
+- [Generating a Key Pair](/node-operators/validator-node/generating-a-keypair) - How to generate key pairs
+- [Querying Data](/node-operators/validator-node/querying-data) - Query blockchain data via GraphQL
+- [Staking and Snarking](/node-operators/validator-node/staking-and-snarking) - How to stake your MINA
+- [Logging](/node-operators/validator-node/logging) - Log files, levels, and export
+
+### Specialized Node Types
+- [Block Producers](/node-operators/block-producer-node) - Running a Block Producer
+- [SNARK Coordinator & Workers](/node-operators/snark-workers) - Running SNARK coordinator and worker roles
 - [Archive Nodes](/node-operators/archive-node) - Running an Archive Node
-- [Seed Peers](/node-operators/seed-peers) - Running a Seed Peer
-- [Data and History](/node-operators/data-and-history) - A look at retrieving historic data.
-- [Delegation Program](/node-operators/delegation-program) - The Mina Foundation Delegation Prgram for Block Producers 
-- [Staking Service Guidelines](/node-operators/staking-service-guidelines)
-- [Mina Signer](/mina-signer)
-- [Mina CLI Reference](/node-operators/mina-cli-reference) - Guide to CLI interactions with Mina networks 
-- [Troubleshooting](/node-operators/troubleshooting)
-- [FAQ](/node-operators/faq)
+- [Seed Node](/node-operators/seed-peers) - Running a Seed Node
 
+### Data and Programs
+- [Data and History](/node-operators/data-and-history) - Rosetta API and blockchain integration
+- [Delegation Program](/node-operators/delegation-program) - The Mina Foundation Delegation Program for Block Producers
 
-## Mina Nodes
+### Reference
+- [Mina CLI Reference](/node-operators/reference/mina-cli-reference) - Guide to CLI interactions with Mina networks
+- [Mina Signer](/node-operators/reference/mina-signer) - NodeJS SDK for signing
 
-A node is a machine running the Mina daemon. Different nodes fulfill different roles within the Mina network:
-
-1. [Block Producer](https://docs.minaprotocol.com/glossary#block-producer) - A node that participates in a process to determine what blocks it is allowed to produce and then produces blocks containing transactions that can be broadcast to the network. People who run [block producer](https://docs.minaprotocol.com/mina-protocol/block-producers) nodes are also called block producers.
-
-2. [SNARK Coordinators](https://docs.minaprotocol.com/glossary#snark-coordinator) - A role on a Mina node in the Mina network that distributes work to a series of SNARK workers in parallel to block production.
-
-3. [SNARK Workers](https://docs.minaprotocol.com/glossary#snark-worker) -  SNARK workers create [zk-SNARKs](https://minaprotocol.com/blog/what-are-zk-snarks) for each transaction. These zk-SNARKs are used to create recursive zk-SNARKs that prove the correctness of a block, and in turn, these zk-SNARKs are used to create recursive zk-SNARKs that prove the correctness of the network. These zk-SNARKs help provide the Mina Protocol with succinctness. 
-
-4. [Archive Nodes](/node-operators/archive-node) - A regular mina daemon that is connected to a running `mina-archive` process. The daemon regularly sends blockchain data to the archive process that stores it in a [PostgreSQL](https://www.postgresql.org/) database.
-
-5. [Seed Nodes](https://docs.minaprotocol.com/glossary#seed-nodes) - Keep a record of nodes in the network and enable nodes joining the network to connect to peer nodes.
-
-
-## Mina Protocol
-
-[Mina Protocol](../mina-protocol) describes how the Mina Protocol works.
-
-## Node Developers
-
-[Node Developers](../node-developers) describes how developers can add to and improve Mina nodes.
-
-## Exchange Operators
-
-[Exchange Operators](../exchange-operators/faq) describes how to connect to Mina networks and provide access to the MINA token.
+### Support
+- [Troubleshooting](/node-operators/troubleshooting) - Solutions to common problems
+- [FAQ](/node-operators/faq) - Frequently asked questions

@@ -1,0 +1,115 @@
+---
+title: Wallet Key Pair
+hide_title: true
+description: Generate and validate a wallet key pair that consists of a public key and a private key.
+keywords:
+  - generate a key pair
+  - public/private key pair
+  - key pairs
+  - public keys
+  - private keys
+  - hot wallet
+  - cold wallet
+  - mina-generate-keypair
+  - keygen utility
+---
+
+# Wallet Key Pair
+
+To use Mina on Mainnet or to fully participate in a Mina test network, the first step is to generate a wallet key pair that consists of a public key and a private key. The public key identifies each block producer on the network.
+
+In some cases, you want to generate more than one wallet key pair. For example, to run a block producer most securely, it is advisable to have accounts on both hot and cold wallets. See [Hot and Cold Block Production](/node-operators/block-producer-node/hot-cold-block-production).
+
+Always give out your public keys. Mina will never ask you for your private keys. Be sure that your private keys are stored safely.
+
+:::caution
+
+Never give out your private key.
+
+:::
+
+If you lose your private key or if a malicious actor gains access to your private key, you will lose access to your account and lose your account funds.
+
+## Generate a wallet keypair
+
+The supported tools for generating wallet key pairs are:
+
+- [mina advanced generate-keypair](#using-mina-advanced-generate-keypair) command
+- [Ledger Hardware Wallet](#ledger-hardware-wallet)
+- [Mina Signer](#mina-signer)
+- [Mina command line wallet package](https://github.com/jspada/ledger-app-mina/blob/v1.0.0-beta.2/README.md#command-line-wallet) that interfaces with your Ledger device and Mina blockchain to generate addresses on the Ledger hardware wallet
+
+### Using mina advanced generate-keypair
+
+#### Preparations
+
+1. Create a folder on your system where you can store the key files. By convention, the `~/keys` folder:
+
+    ```sh
+    mkdir ~/keys
+    ```
+
+2. Ensure the permissions are set properly for this folder to prevent unwanted processes from accessing these files:
+
+    ```sh
+    chmod 700 ~/keys
+    ```
+
+:::caution
+Make sure to set a new and secure password for the commands below. Mina will never ask you for this password. Do not share this password with anyone.
+:::
+
+#### Using Docker
+
+If you don't have Mina installed locally, you can use Docker. Start an interactive shell with your keys directory mounted:
+
+```sh
+docker run -it --rm --entrypoint /bin/bash \
+       --volume "$YOUR_KEY_DIR":/root/keys \
+       minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet
+```
+
+All `mina` commands below can then be run directly inside the container.
+
+#### Generate your wallet keypair
+
+Run the `mina advanced generate-keypair` command:
+
+```sh
+mina advanced generate-keypair --privkey-path ~/keys/my-wallet
+```
+
+When prompted, type in the password you intend to use to secure this key. <em>Do NOT forget this password.</em> If already set, the tool uses the password from the `MINA_PRIVKEY_PASS` environment variable instead of prompting you.
+
+Two files are created for your public/private key pair:
+
+- `~/keys/my-wallet`: the encrypted private key
+- `~/keys/my-wallet.pub`: the public key in plain text
+
+Finally, ensure the permissions are set properly for the private key file to prevent unwanted processes from accessing it.
+
+```sh
+chmod 600 ~/keys/my-wallet
+```
+
+Be sure to store the private key file and password you used in a secure place, such as a password manager.
+
+### Ledger Hardware Wallet
+
+You can use your [Ledger Nano S](https://www.ledger.com/) hardware wallet to securely store your Mina private keys. To get started, install the Mina app on the [Ledger Hardware Wallet](/using-mina/ledger-hardware-wallet).
+
+### Mina Signer
+
+You can also use [Mina Signer](/node-operators/reference/mina-signer) to generate key pairs and sign transactions.
+
+## Validate your private key
+
+Now that you've created your key, validate that it works. Use the `mina advanced validate-keypair` command to verify that you can sign a transaction.
+
+```sh
+mina advanced validate-keypair --privkey-path ~/keys/my-wallet
+```
+
+## Next steps
+
+Now that you have created a public/private key pair, you are ready to [connect to the network](/node-operators/validator-node/connecting-to-the-network) or share your public key.

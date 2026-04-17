@@ -1,24 +1,29 @@
 ---
 title: Docker Compose Snark Workers
-sidebar_label: Docker Compose example
-description: Example of how to run a Mina Snark Coordinator and a Snark Worker using Docker Compose.
+sidebar_label: Docker Compose Example
+description: Run a Mina SNARK Coordinator and SNARK Worker using Docker Compose.
 keywords:
   - mina snark coordinator node
   - mina snark worker node
   - docker compose
 ---
 
-# Docker Compose Snark Workers
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
-This example demonstrates how to run a Mina Snark Coordinator and a Snark Worker using Docker Compose for the Devnet network. The Docker Compose setup includes a Mina Snark Coordinator node, a Snark Worker node, a script to generate a libp2p key, and another script to generate a wallet key.
+# Docker Compose SNARK Workers
 
-Copy and paste the provided configuration into a `docker-compose.yml` file. Then run `docker compose up -d` to start the services, and use `docker compose logs -f` to monitor the logs.
+This example runs a SNARK coordinator and a SNARK worker together using Docker Compose. It includes a one-time init container that generates a wallet key.
+
+Save the following as `docker-compose.yml`, then start with `docker compose up -d`. Monitor logs with `docker compose logs -f`.
+
+<Tabs groupId="network">
+<TabItem value="mainnet" label="Mainnet">
 
 ```yaml
 services:
   generate_wallet_key:
     image: 'minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet'
-    # image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet' # Use this image for Devnet
     environment:
       MINA_PRIVKEY_PASS: PssW0rD
     entrypoint: []
@@ -32,7 +37,6 @@ services:
       - './node/mina-config:/root/.mina-config'
   mina_snark_coordinator:
     image: 'minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet'
-    # image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet' # Use this image for Devnet
     restart: always
     environment:
       MINA_PRIVKEY_PASS: PssW0rD
@@ -51,7 +55,6 @@ services:
              --run-snark-coordinator $(cat /root/.mina-config/keys/wallet-key.pub) \
              --work-selection rand
       '
-    # use  --peer-list-url https://bootnodes.minaprotocol.com/networks/devnet.txt for Devnet
     volumes:
       - './node/mina-config:/root/.mina-config'
     ports:
@@ -61,7 +64,6 @@ services:
         condition: service_completed_successfully
   mina_snark_worker:
     image: 'minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet'
-    # image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet' # Use this image for Devnet
     restart: always
     entrypoint: []
     command: >
@@ -78,3 +80,72 @@ services:
       mina_snark_coordinator:
         condition: service_healthy
 ```
+
+</TabItem>
+<TabItem value="devnet" label="Devnet">
+
+```yaml
+services:
+  generate_wallet_key:
+    image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet'
+    environment:
+      MINA_PRIVKEY_PASS: PssW0rD
+    entrypoint: []
+    command: >
+      bash -c '
+        mina advanced generate-keypair --privkey-path /root/.mina-config/keys/wallet-key
+        chmod -R 0700 /root/.mina-config/keys
+        chmod -R 0600 /root/.mina-config/keys/wallet-key
+      '
+    volumes:
+      - './node/mina-config:/root/.mina-config'
+  mina_snark_coordinator:
+    image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet'
+    restart: always
+    environment:
+      MINA_PRIVKEY_PASS: PssW0rD
+      MINA_CLIENT_TRUSTLIST: "0.0.0.0/0"
+    healthcheck:
+      test: ["CMD-SHELL", "mina client status"]
+      interval: 60s
+      timeout: 10s
+      retries: 100
+    entrypoint: []
+    command: >
+      bash -c '
+        mina daemon \
+             --peer-list-url https://bootnodes.minaprotocol.com/networks/devnet.txt \
+             --snark-worker-fee 0.001 \
+             --run-snark-coordinator $(cat /root/.mina-config/keys/wallet-key.pub) \
+             --work-selection rand
+      '
+    volumes:
+      - './node/mina-config:/root/.mina-config'
+    ports:
+      - '8302:8302'
+    depends_on:
+      generate_wallet_key:
+        condition: service_completed_successfully
+  mina_snark_worker:
+    image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet'
+    restart: always
+    entrypoint: []
+    command: >
+      bash -c '
+        mina internal \
+             snark-worker \
+             --daemon-address \
+             mina_snark_coordinator:8301 \
+             --proof-level full
+      '
+    volumes:
+      - './node/mina-config:/root/.mina-config'
+    depends_on:
+      mina_snark_coordinator:
+        condition: service_healthy
+```
+
+</TabItem>
+</Tabs>
+
+To scale additional workers, duplicate the `mina_snark_worker` service with a different name (e.g. `mina_snark_worker_2`).
