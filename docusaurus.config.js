@@ -33,10 +33,6 @@ module.exports = {
             to: '/mina-protocol/scan-state',
           },
           {
-            from: '/node-operators/snark-workers',
-            to: '/mina-protocol/snark-workers',
-          },
-          {
             from: '/node-operators/time-locked-accounts',
             to: '/mina-protocol/time-locked-accounts',
           },
@@ -86,10 +82,6 @@ module.exports = {
           },
           {
             from: '/architecture',
-            to: '/node-operators/block-producer-node/getting-started',
-          },
-          {
-            from: '/node-operators',
             to: '/node-operators/block-producer-node/getting-started',
           },
           {
