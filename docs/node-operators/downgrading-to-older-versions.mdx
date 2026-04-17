@@ -16,6 +16,10 @@ keywords:
 
 If you are running a Mina node on a version above 3.3.0 and need to roll back to 3.3.0 or below, you can convert the on-disk state in place using `mina-storage-converter`. This avoids a full rebootstrap from a remote S3 ledger bucket, which can save significant time.
 
+## When is downgrading needed?
+
+Downgrading is typically necessary when a fork fails and there is a RocksDB version bump between the stop slot release and the pre-stop slot release. In such cases, the development team will notify node operators that a downgrade is required to continue operating on the correct chain.
+
 ## Debian/Ubuntu
 
 ### 1. Stop the Mina daemon
