@@ -21,7 +21,7 @@
     "check-llms-txt": "node scripts/generate-llms-txt.mjs && git diff --exit-code static/llms-full.txt"
   },
   "dependencies": {
-    "@docusaurus/core": "^3.8.0",
+    "@docusaurus/core": "^3.9.2",
     "@docusaurus/cssnano-preset": "^3.8.0",
     "@docusaurus/plugin-client-redirects": "^3.8.0",
     "@docusaurus/plugin-debug": "^3.8.0",
