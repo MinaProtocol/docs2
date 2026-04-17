@@ -161,7 +161,7 @@ There are 255 Fields in a private key and 256 Fields in a signature. If you are 
 
 ## Struct
 
-You can create your own compound data types with the special [Struct](../o1js-reference#struct) type.
+You can create your own compound data types with the special [Struct](../o1js-reference/functions/Struct) type.
 
 Define a Struct as one or more data types that o1js understands. For example, Field, higher-order types built into o1js based on Field, or other Struct types defined by you. You can also define methods on your Struct to act upon this data type.
 
@@ -208,10 +208,10 @@ points8 Fields: {"points":[{"x":"0","y":"0"},{"x":"1","y":"10"},{"x":"2","y":"20
 
 Two functions help do control flow in o1js:
 
-- [Provable.if](../o1js-reference/classes/Circuit#if)
+- Provable.if
   Similar to a ternary in JavaScript
 
-- [Provable.switch](../o1js-reference/classes/Circuit#switch)
+- Provable.switch
   Similar to a switch case statement in JavaScript
 
 You can write conditionals inside o1js with these functions.

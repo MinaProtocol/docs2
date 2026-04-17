@@ -13,7 +13,7 @@ keywords:
 
 # Glossary
 
-[A](#a) [B](#b) [C](#c) [D](#d) [E](#e) [F](#f) [G](#g) [H](#h) [I](#i) J [K](#k) [L](#l) [M](#m) [N](#n) [O](#o)
+[A](#a) [B](#b) [C](#c) [D](#d) [E](#e) [F](#f) G [H](#h) [I](#i) J [K](#k) [L](#l) [M](#m) [N](#n) [O](#o)
 [P](#p) Q [R](#r) [S](#s) [T](#t) [U](#u) [V](#v) W X Y [Z](#z)
 
 Are you looking for a zero knowledge, o1js, zkApp, or Mina term that isn't here yet? To let us know, please [create an issue](https://github.com/o1-labs/docs2/issues) or click **EDIT THIS PAGE** to submit a PR.
@@ -87,7 +87,7 @@ A node in the [transition frontier](#transition-frontier) that contains the exte
 
 ## C
 
-### catch up
+### catch up {#catchup}
 
 The final stage of the [syncing](#syncing) process where the node attempts to catch up to the current [best tip](#best-tip) by determining and then downloading all [transitions](#transition) between the transition frontier [root](#root-of-transition-frontier) and the current best tip. First, a node requests the missing transition hashes and a transaction chain proof. This proof proves the path provided is valid, for example, that the provided transition hashes lead from the root to the best tip. After the node has all transition hashes, it requests the full external transition for each transition hash from peers.
 
