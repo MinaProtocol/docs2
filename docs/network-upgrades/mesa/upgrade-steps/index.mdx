@@ -46,10 +46,10 @@ This is the simplest path. You install one update and your node handles the rest
 **Example — Docker (automode):**
 ```bash
 # Pre-Upgrade: switch to the auto-hardfork image
-docker pull minaprotocol/mina-daemon-auto-hardfork:3.x.x-bullseye-mainnet
+docker pull minaprotocol/mina-daemon-auto-hardfork:<version>-bullseye-mainnet
 
 docker run --name mina -d \
-  minaprotocol/mina-daemon-auto-hardfork:3.x.x-bullseye-mainnet \
+  minaprotocol/mina-daemon-auto-hardfork:<version>-bullseye-mainnet \
   daemon \
     --block-producer-key /keys/my-wallet \
     --config-directory /root/.mina-config \
@@ -99,11 +99,11 @@ You control every step, but you need to act fast when the Mesa release is publis
 **Example — Docker (manual):**
 ```bash
 # Pre-Upgrade: pull the stop-slot image and start your node
-docker pull minaprotocol/mina-daemon:3.x.x-bullseye-mainnet
+docker pull minaprotocol/mina-daemon:<version>-bullseye-mainnet
 
 docker run --name mina -d \
   -v mina-config:/root/.mina-config \
-  minaprotocol/mina-daemon:3.x.x-bullseye-mainnet \
+  minaprotocol/mina-daemon:<version>-bullseye-mainnet \
   daemon \
     --block-producer-key /keys/my-wallet \
     --config-directory /root/.mina-config \
@@ -119,11 +119,11 @@ docker run --name mina -d \
 # Upgrade phase: once the Mesa release is published
 docker stop mina && docker rm mina
 
-docker pull minaprotocol/mina-daemon:4.x.x-bullseye-mesa
+docker pull minaprotocol/mina-daemon:<mesa-version>-bullseye-mesa
 
 docker run --name mina -d \
   -v mina-config:/root/.mina-config \
-  minaprotocol/mina-daemon:4.x.x-bullseye-mesa \
+  minaprotocol/mina-daemon:<mesa-version>-bullseye-mesa \
   daemon \
     --block-producer-key /keys/my-wallet \
     --config-directory /root/.mina-config \

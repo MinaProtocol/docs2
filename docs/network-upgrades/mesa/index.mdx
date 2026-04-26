@@ -252,10 +252,10 @@ She's done. Her node is producing blocks on Mesa.
 **Weeks before the fork** — Carlos pulls the stop-slot Docker image and starts his node:
 
 ```bash
-docker pull minaprotocol/mina-daemon:3.x.x-bullseye-mainnet
+docker pull minaprotocol/mina-daemon:<version>-bullseye-mainnet
 
 docker run --name mina -d \
-  minaprotocol/mina-daemon:3.x.x-bullseye-mainnet \
+  minaprotocol/mina-daemon:<version>-bullseye-mainnet \
   daemon \
     --block-producer-key /keys/my-wallet \
     --config-directory /root/.mina-config \
@@ -277,10 +277,10 @@ docker run --name mina -d \
 ```bash
 docker stop mina && docker rm mina
 
-docker pull minaprotocol/mina-daemon:4.x.x-bullseye-mesa
+docker pull minaprotocol/mina-daemon:<mesa-version>-bullseye-mesa
 
 docker run --name mina -d \
-  minaprotocol/mina-daemon:4.x.x-bullseye-mesa \
+  minaprotocol/mina-daemon:<mesa-version>-bullseye-mesa \
   daemon \
     --block-producer-key /keys/my-wallet \
     --config-directory /root/.mina-config \
@@ -413,7 +413,7 @@ She also restarts Rosetta:
 docker run --name rosetta --rm -d \
   -p 3088:3088 \
   --entrypoint '' \
-  minaprotocol/mina-rosetta:4.x.x-bullseye-mainnet \
+  minaprotocol/mina-rosetta:<mesa-version>-bullseye-mainnet \
   /usr/local/bin/mina-rosetta \
     --archive-uri "postgres://<user>:<pass>@localhost:5432/archive_db" \
     --graphql-uri "http://localhost:3085/graphql" \

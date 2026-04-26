@@ -15,7 +15,7 @@ keywords:
 ```yaml
 services:
   mina_node:
-    image: 'minaprotocol/mina-daemon-auto-hardfork:3.x.x-noble-mainnet'
+    image: 'minaprotocol/mina-daemon-auto-hardfork:<version>-noble-mainnet'
     restart: always
     environment:
       MINA_CLIENT_TRUSTLIST: "0.0.0.0/0"
@@ -35,7 +35,7 @@ services:
       - '8302:8302'
 ```
 
-Replace `3.x.x` with the published stop-slot release from the [Mina releases page](https://github.com/MinaProtocol/mina/releases).
+Replace `<version>` with the published stop-slot release from the [Mina releases page](https://github.com/MinaProtocol/mina/releases).
 
 :::tip Docker image tag
 Use the stop-slot release image for your target network. For devnet, replace the image tag suffix `mainnet` with `devnet` and use the corresponding devnet release tag.
@@ -54,7 +54,7 @@ Add any extra configuration (e.g. `MINA_PRIVKEY_PASS`) under the `environment` s
 After your node has completed the Mesa transition and you want to move off `mina-daemon-auto-hardfork`, update your Compose config as follows:
 
 - Remove `--hardfork-handling migrate-exit`.
-- Set the Docker image to the post-fork artifact, for example `minaprotocol/mina-daemon:4.x.x-noble-mainnet`.
+- Set the Docker image to the post-fork artifact, for example `minaprotocol/mina-daemon:<mesa-version>-noble-mainnet`.
 
 ```bash
 docker compose up -d

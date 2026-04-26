@@ -5711,7 +5711,7 @@ url: /network-upgrades/mesa/docker-compose-quickstart
 ```yaml
 services:
   mina_node:
-    image: 'minaprotocol/mina-daemon-auto-hardfork:3.x.x-noble-mainnet'
+    image: 'minaprotocol/mina-daemon-auto-hardfork:<version>-noble-mainnet'
     restart: always
     environment:
       MINA_CLIENT_TRUSTLIST: "0.0.0.0/0"
@@ -5731,7 +5731,7 @@ services:
       - '8302:8302'
 ```
 
-Replace `3.x.x` with the published stop-slot release from the [Mina releases page](https://github.com/MinaProtocol/mina/releases).
+Replace `<version>` with the published stop-slot release from the [Mina releases page](https://github.com/MinaProtocol/mina/releases).
 
 :::tip Docker image tag
 Use the stop-slot release image for your target network. For devnet, replace the image tag suffix `mainnet` with `devnet` and use the corresponding devnet release tag.
@@ -5750,7 +5750,7 @@ Add any extra configuration (e.g. `MINA_PRIVKEY_PASS`) under the `environment` s
 After your node has completed the Mesa transition and you want to move off `mina-daemon-auto-hardfork`, update your Compose config as follows:
 
 - Remove `--hardfork-handling migrate-exit`.
-- Set the Docker image to the post-fork artifact, for example `minaprotocol/mina-daemon:4.x.x-noble-mainnet`.
+- Set the Docker image to the post-fork artifact, for example `minaprotocol/mina-daemon:<mesa-version>-noble-mainnet`.
 
 ```bash
 docker compose up -d
@@ -6117,10 +6117,10 @@ She's done. Her node is producing blocks on Mesa.
 **Weeks before the fork** — Carlos pulls the stop-slot Docker image and starts his node:
 
 ```bash
-docker pull minaprotocol/mina-daemon:3.x.x-bullseye-mainnet
+docker pull minaprotocol/mina-daemon:<version>-bullseye-mainnet
 
 docker run --name mina -d \
-  minaprotocol/mina-daemon:3.x.x-bullseye-mainnet \
+  minaprotocol/mina-daemon:<version>-bullseye-mainnet \
   daemon \
     --block-producer-key /keys/my-wallet \
     --config-directory /root/.mina-config \
@@ -6142,10 +6142,10 @@ docker run --name mina -d \
 ```bash
 docker stop mina && docker rm mina
 
-docker pull minaprotocol/mina-daemon:4.x.x-bullseye-mesa
+docker pull minaprotocol/mina-daemon:<mesa-version>-bullseye-mesa
 
 docker run --name mina -d \
-  minaprotocol/mina-daemon:4.x.x-bullseye-mesa \
+  minaprotocol/mina-daemon:<mesa-version>-bullseye-mesa \
   daemon \
     --block-producer-key /keys/my-wallet \
     --config-directory /root/.mina-config \
@@ -6278,7 +6278,7 @@ She also restarts Rosetta:
 docker run --name rosetta --rm -d \
   -p 3088:3088 \
   --entrypoint '' \
-  minaprotocol/mina-rosetta:4.x.x-bullseye-mainnet \
+  minaprotocol/mina-rosetta:<mesa-version>-bullseye-mainnet \
   /usr/local/bin/mina-rosetta \
     --archive-uri "postgres://<user>:<pass>@localhost:5432/archive_db" \
     --graphql-uri "http://localhost:3085/graphql" \
@@ -7427,10 +7427,10 @@ This is the simplest path. You install one update and your node handles the rest
 **Example — Docker (automode):**
 ```bash
 # Pre-Upgrade: switch to the auto-hardfork image
-docker pull minaprotocol/mina-daemon-auto-hardfork:3.x.x-bullseye-mainnet
+docker pull minaprotocol/mina-daemon-auto-hardfork:<version>-bullseye-mainnet
 
 docker run --name mina -d \
-  minaprotocol/mina-daemon-auto-hardfork:3.x.x-bullseye-mainnet \
+  minaprotocol/mina-daemon-auto-hardfork:<version>-bullseye-mainnet \
   daemon \
     --block-producer-key /keys/my-wallet \
     --config-directory /root/.mina-config \
@@ -7480,11 +7480,11 @@ You control every step, but you need to act fast when the Mesa release is publis
 **Example — Docker (manual):**
 ```bash
 # Pre-Upgrade: pull the stop-slot image and start your node
-docker pull minaprotocol/mina-daemon:3.x.x-bullseye-mainnet
+docker pull minaprotocol/mina-daemon:<version>-bullseye-mainnet
 
 docker run --name mina -d \
   -v mina-config:/root/.mina-config \
-  minaprotocol/mina-daemon:3.x.x-bullseye-mainnet \
+  minaprotocol/mina-daemon:<version>-bullseye-mainnet \
   daemon \
     --block-producer-key /keys/my-wallet \
     --config-directory /root/.mina-config \
@@ -7500,11 +7500,11 @@ docker run --name mina -d \
 # Upgrade phase: once the Mesa release is published
 docker stop mina && docker rm mina
 
-docker pull minaprotocol/mina-daemon:4.x.x-bullseye-mesa
+docker pull minaprotocol/mina-daemon:<mesa-version>-bullseye-mesa
 
 docker run --name mina -d \
   -v mina-config:/root/.mina-config \
-  minaprotocol/mina-daemon:4.x.x-bullseye-mesa \
+  minaprotocol/mina-daemon:<mesa-version>-bullseye-mesa \
   daemon \
     --block-producer-key /keys/my-wallet \
     --config-directory /root/.mina-config \
@@ -7974,7 +7974,7 @@ docker run \
   --name rosetta --rm \
   -p 3088:3088 \
   --entrypoint '' \
-  minaprotocol/mina-rosetta:4.x.x-bullseye-mainnet \
+  minaprotocol/mina-rosetta:<mesa-version>-bullseye-mainnet \
   /usr/local/bin/mina-rosetta \
     --archive-uri "${PG_CONNECTION_STRING}" \
     --graphql-uri "${GRAPHQL_URL}" \
