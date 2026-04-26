@@ -277,10 +277,10 @@ docker run --name mina -d \
 ```bash
 docker stop mina && docker rm mina
 
-docker pull minaprotocol/mina-daemon:4.0.0-bullseye-mesa
+docker pull minaprotocol/mina-daemon:4.x.x-bullseye-mesa
 
 docker run --name mina -d \
-  minaprotocol/mina-daemon:4.0.0-bullseye-mesa \
+  minaprotocol/mina-daemon:4.x.x-bullseye-mesa \
   daemon \
     --block-producer-key /keys/my-wallet \
     --config-directory /root/.mina-config \
@@ -413,7 +413,7 @@ She also restarts Rosetta:
 docker run --name rosetta --rm -d \
   -p 3088:3088 \
   --entrypoint '' \
-  minaprotocol/mina-rosetta:4.0.0-bullseye-mainnet \
+  minaprotocol/mina-rosetta:4.x.x-bullseye-mainnet \
   /usr/local/bin/mina-rosetta \
     --archive-uri "postgres://<user>:<pass>@localhost:5432/archive_db" \
     --graphql-uri "http://localhost:3085/graphql" \

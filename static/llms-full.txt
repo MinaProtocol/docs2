@@ -5750,7 +5750,7 @@ Add any extra configuration (e.g. `MINA_PRIVKEY_PASS`) under the `environment` s
 After your node has completed the Mesa transition and you want to move off `mina-daemon-auto-hardfork`, update your Compose config as follows:
 
 - Remove `--hardfork-handling migrate-exit`.
-- Set the Docker image to the post-fork artifact, for example `minaprotocol/mina-daemon:4.0.0-noble-mainnet`.
+- Set the Docker image to the post-fork artifact, for example `minaprotocol/mina-daemon:4.x.x-noble-mainnet`.
 
 ```bash
 docker compose up -d
@@ -6142,10 +6142,10 @@ docker run --name mina -d \
 ```bash
 docker stop mina && docker rm mina
 
-docker pull minaprotocol/mina-daemon:4.0.0-bullseye-mesa
+docker pull minaprotocol/mina-daemon:4.x.x-bullseye-mesa
 
 docker run --name mina -d \
-  minaprotocol/mina-daemon:4.0.0-bullseye-mesa \
+  minaprotocol/mina-daemon:4.x.x-bullseye-mesa \
   daemon \
     --block-producer-key /keys/my-wallet \
     --config-directory /root/.mina-config \
@@ -6278,7 +6278,7 @@ She also restarts Rosetta:
 docker run --name rosetta --rm -d \
   -p 3088:3088 \
   --entrypoint '' \
-  minaprotocol/mina-rosetta:4.0.0-bullseye-mainnet \
+  minaprotocol/mina-rosetta:4.x.x-bullseye-mainnet \
   /usr/local/bin/mina-rosetta \
     --archive-uri "postgres://<user>:<pass>@localhost:5432/archive_db" \
     --graphql-uri "http://localhost:3085/graphql" \
@@ -7500,11 +7500,11 @@ docker run --name mina -d \
 # Upgrade phase: once the Mesa release is published
 docker stop mina && docker rm mina
 
-docker pull minaprotocol/mina-daemon:4.0.0-bullseye-mesa
+docker pull minaprotocol/mina-daemon:4.x.x-bullseye-mesa
 
 docker run --name mina -d \
   -v mina-config:/root/.mina-config \
-  minaprotocol/mina-daemon:4.0.0-bullseye-mesa \
+  minaprotocol/mina-daemon:4.x.x-bullseye-mesa \
   daemon \
     --block-producer-key /keys/my-wallet \
     --config-directory /root/.mina-config \
@@ -7974,7 +7974,7 @@ docker run \
   --name rosetta --rm \
   -p 3088:3088 \
   --entrypoint '' \
-  minaprotocol/mina-rosetta:4.0.0-bullseye-mainnet \
+  minaprotocol/mina-rosetta:4.x.x-bullseye-mainnet \
   /usr/local/bin/mina-rosetta \
     --archive-uri "${PG_CONNECTION_STRING}" \
     --graphql-uri "${GRAPHQL_URL}" \

@@ -119,11 +119,11 @@ docker run --name mina -d \
 # Upgrade phase: once the Mesa release is published
 docker stop mina && docker rm mina
 
-docker pull minaprotocol/mina-daemon:4.0.0-bullseye-mesa
+docker pull minaprotocol/mina-daemon:4.x.x-bullseye-mesa
 
 docker run --name mina -d \
   -v mina-config:/root/.mina-config \
-  minaprotocol/mina-daemon:4.0.0-bullseye-mesa \
+  minaprotocol/mina-daemon:4.x.x-bullseye-mesa \
   daemon \
     --block-producer-key /keys/my-wallet \
     --config-directory /root/.mina-config \

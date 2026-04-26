@@ -54,7 +54,7 @@ Add any extra configuration (e.g. `MINA_PRIVKEY_PASS`) under the `environment` s
 After your node has completed the Mesa transition and you want to move off `mina-daemon-auto-hardfork`, update your Compose config as follows:
 
 - Remove `--hardfork-handling migrate-exit`.
-- Set the Docker image to the post-fork artifact, for example `minaprotocol/mina-daemon:4.0.0-noble-mainnet`.
+- Set the Docker image to the post-fork artifact, for example `minaprotocol/mina-daemon:4.x.x-noble-mainnet`.
 
 ```bash
 docker compose up -d
