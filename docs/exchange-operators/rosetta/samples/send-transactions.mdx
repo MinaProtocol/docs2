@@ -74,6 +74,132 @@ async function send(privateKey: string, to: string, valueNano: number, feeNano: 
 
 </TabItem>
 
+<TabItem value="bash" label="Bash (curl + signer CLI)">
+
+Required tools: `jq`, `curl`, and the `signer` alias pointing at
+`mina-ocaml-signer` (see the [Offline signer tool](using-signer) page).
+
+**Small helpers** — one shell function per Rosetta call, mirroring the Python
+helpers above:
+
+```bash
+ROSETTA_URL="${ROSETTA_URL:-http://localhost:3087}"
+NETWORK="${NETWORK:-mainnet}"
+
+nid_json()  { jq -nc --arg n "$NETWORK" '{blockchain:"mina",network:$n}'; }
+rosetta()   { curl -sf -X POST "$ROSETTA_URL$1" -H 'Content-Type: application/json' -d "$2"; }
+
+derive_address() { signer derive-public-key --private-key "$1" | sed -n '5p'; }
+derive_pub_hex() { signer derive-public-key --private-key "$1" | sed -n '4p'; }
+sign_tx()        { signer sign --private-key "$1" --unsigned-transaction "$2"; }
+
+payment_ops() {
+  # $1 sender, $2 receiver, $3 amount, $4 fee
+  jq -nc --arg s "$1" --arg r "$2" --arg a "$3" --arg f "$4" '
+    [ {operation_identifier:{index:0}, type:"fee_payment",
+       account:{address:$s, metadata:{token_id:"1"}},
+       amount:{value:("-"+$f), currency:{symbol:"MINA", decimals:9}}}
+    , {operation_identifier:{index:1}, type:"payment_source_dec",
+       account:{address:$s, metadata:{token_id:"1"}},
+       amount:{value:("-"+$a), currency:{symbol:"MINA", decimals:9}}}
+    , {operation_identifier:{index:2}, related_operations:[{index:1}],
+       type:"payment_receiver_inc",
+       account:{address:$r, metadata:{token_id:"1"}},
+       amount:{value:$a, currency:{symbol:"MINA", decimals:9}}} ]'
+}
+
+fetch_nonce() {
+  # $1 sender, $2 receiver
+  rosetta /construction/metadata "$(jq -nc --argjson nid "$(nid_json)" \
+    --arg s "$1" --arg r "$2" '
+    {network_identifier:$nid,
+     options:{sender:$s, token_id:"1", receiver:$r},
+     public_keys:[]}')" | jq -r '.metadata.nonce'
+}
+
+fetch_payloads() {
+  # $1 sender, $2 receiver, $3 nonce, $4 ops_json
+  rosetta /construction/payloads "$(jq -nc --argjson nid "$(nid_json)" \
+    --argjson ops "$4" --arg s "$1" --arg r "$2" --arg n "$3" '
+    {network_identifier:$nid,
+     operations:$ops,
+     metadata:{sender:$s, nonce:$n, token_id:"1", receiver:$r,
+               valid_until:"4294967295", memo:"hello"},
+     public_keys:[]}')"
+}
+
+combine_signed() {
+  # $1 unsigned, $2 signing_payload_hex, $3 sender, $4 sender_pub_hex, $5 sig
+  rosetta /construction/combine "$(jq -nc --argjson nid "$(nid_json)" \
+    --arg un "$1" --arg sp "$2" --arg addr "$3" --arg pub "$4" --arg sig "$5" '
+    {network_identifier:$nid,
+     unsigned_transaction:$un,
+     signatures:[{
+       signing_payload:{hex_bytes:$sp,
+                        account_identifier:{address:$addr},
+                        signature_type:"schnorr_poseidon"},
+       public_key:{hex_bytes:$pub, curve_type:"pallas"},
+       signature_type:"schnorr_poseidon",
+       hex_bytes:$sig}]}')" | jq -r '.signed_transaction'
+}
+
+submit_signed() {
+  # $1 signed_transaction blob
+  rosetta /construction/submit "$(jq -nc --argjson nid "$(nid_json)" \
+    --arg stx "$1" '{network_identifier:$nid, signed_transaction:$stx}')" \
+    | jq -r '.transaction_identifier.hash'
+}
+
+wait_for_confirmation() {
+  # $1 tx hash
+  local idx
+  idx=$(rosetta /network/status "$(jq -nc --argjson nid "$(nid_json)" \
+          '{network_identifier:$nid}')" | jq -r '.current_block_identifier.index')
+  while :; do
+    local blk
+    blk=$(rosetta /block "$(jq -nc --argjson nid "$(nid_json)" --argjson i "$idx" \
+            '{network_identifier:$nid, block_identifier:{index:$i}}')")
+    if echo "$blk" | jq -e --arg h "$1" \
+        '.block.transactions[]?.transaction_identifier.hash == $h' >/dev/null; then
+      echo "confirmed in block $idx"; return 0
+    fi
+    idx=$((idx + 1))
+    sleep 10
+  done
+}
+```
+
+**Main flow** — reads top-to-bottom, one Rosetta step per line:
+
+```bash
+withdraw() {
+  # $1 privkey (hex), $2 receiver, $3 amount (nanomina), $4 fee (nanomina)
+  local priv="$1" receiver="$2" amount="$3" fee="$4"
+
+  local sender        ; sender=$(derive_address "$priv")
+  local sender_pub    ; sender_pub=$(derive_pub_hex "$priv")
+
+  local nonce         ; nonce=$(fetch_nonce "$sender" "$receiver")
+  local ops           ; ops=$(payment_ops "$sender" "$receiver" "$amount" "$fee")
+  local payloads      ; payloads=$(fetch_payloads "$sender" "$receiver" "$nonce" "$ops")
+
+  local unsigned      ; unsigned=$(jq -r '.unsigned_transaction'    <<<"$payloads")
+  local signing_hex   ; signing_hex=$(jq -r '.payloads[0].hex_bytes' <<<"$payloads")
+
+  local signature     ; signature=$(sign_tx "$priv" "$unsigned")
+  local signed        ; signed=$(combine_signed "$unsigned" "$signing_hex" "$sender" "$sender_pub" "$signature")
+  local tx_hash       ; tx_hash=$(submit_signed "$signed")
+
+  echo "submitted tx=$tx_hash"
+  wait_for_confirmation "$tx_hash"
+}
+
+# Example:
+# withdraw "$PRIVKEY" "B62q..." 3000000000 20000000
+```
+
+</TabItem>
+
 <TabItem value="py" label="Python">
 
 ```python
