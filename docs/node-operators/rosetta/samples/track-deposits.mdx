@@ -1,0 +1,65 @@
+---
+title: Tracking Deposits
+description: Monitor an address for incoming MINA deposits using curl
+---
+
+# Tracking Deposits
+
+To track deposits, scan each block for `payment_receiver_inc` operations matching your deposit address.
+
+Fetch a block and filter for deposits to a specific address:
+
+```bash
+DEPOSIT_ADDRESS="B62qr..."
+BLOCK_INDEX=1000
+
+curl -s "$ROSETTA_URL/block" \
+  -H 'Content-Type: application/json' \
+  -d "{\"network_identifier\":$NETWORK,\"block_identifier\":{\"index\":$BLOCK_INDEX}}" \
+  | jq --arg addr "$DEPOSIT_ADDRESS" '
+    .block.transactions[]
+    | {
+        tx_hash: .transaction_identifier.hash,
+        deposits: [
+          .operations[]
+          | select(.account.address == $addr and .type == "payment_receiver_inc")
+          | { amount: .amount.value }
+        ]
+      }
+    | select(.deposits | length > 0)
+  '
+```
+
+A continuous deposit monitoring loop:
+
+```bash
+DEPOSIT_ADDRESS="B62qr..."
+
+HEIGHT=$(curl -s "$ROSETTA_URL/network/status" \
+  -H 'Content-Type: application/json' \
+  -d "{\"network_identifier\":$NETWORK}" | jq '.current_block_identifier.index')
+
+while true; do
+  BLOCK=$(curl -s "$ROSETTA_URL/block" \
+    -H 'Content-Type: application/json' \
+    -d "{\"network_identifier\":$NETWORK,\"block_identifier\":{\"index\":$HEIGHT}}")
+
+  if echo "$BLOCK" | jq -e '.block' > /dev/null 2>&1; then
+    echo "$BLOCK" | jq --arg addr "$DEPOSIT_ADDRESS" '
+      .block.transactions[]
+      | {
+          tx_hash: .transaction_identifier.hash,
+          deposits: [
+            .operations[]
+            | select(.account.address == $addr and .type == "payment_receiver_inc")
+            | { amount: .amount.value }
+          ]
+        }
+      | select(.deposits | length > 0)
+    '
+    HEIGHT=$((HEIGHT + 1))
+  else
+    sleep 10
+  fi
+done
+```

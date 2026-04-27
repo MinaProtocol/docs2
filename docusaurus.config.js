@@ -222,7 +222,67 @@ module.exports = {
           },
           {
             from: '/exchange-operators/exchange-faq',
-            to: '/exchange-operators/faq',
+            to: '/node-operators/faq',
+          },
+          {
+            from: '/exchange-operators/faq',
+            to: '/node-operators/faq',
+          },
+          {
+            from: '/exchange-operators',
+            to: '/node-operators/exchange-operators',
+          },
+          {
+            from: '/exchange-operators/rosetta/run-with-docker',
+            to: '/node-operators/rosetta/run-with-docker',
+          },
+          {
+            from: '/exchange-operators/rosetta/docker-compose',
+            to: '/node-operators/rosetta/docker-compose',
+          },
+          {
+            from: '/exchange-operators/rosetta/build-from-sources',
+            to: '/node-operators/rosetta/build-from-sources',
+          },
+          {
+            from: '/exchange-operators/rosetta/send-requests',
+            to: '/node-operators/rosetta/samples/requests',
+          },
+          {
+            from: '/node-operators/rosetta/send-requests',
+            to: '/node-operators/rosetta/samples/requests',
+          },
+          {
+            from: '/exchange-operators/rosetta/samples',
+            to: '/node-operators/rosetta/samples',
+          },
+          {
+            from: '/exchange-operators/rosetta/samples/requests',
+            to: '/node-operators/rosetta/samples/requests',
+          },
+          {
+            from: '/exchange-operators/rosetta/samples/using-signer',
+            to: '/node-operators/mina-signer',
+          },
+          {
+            from: '/node-operators/rosetta/samples/using-signer',
+            to: '/node-operators/mina-signer',
+          },
+          {
+            from: '/node-operators/reference/mina-signer',
+            to: '/node-operators/mina-signer',
+          },
+          {
+            from: '/exchange-operators/rosetta/samples/scan-blocks',
+            to: '/node-operators/rosetta/samples/scan-blocks',
+          },
+          {
+            from: '/exchange-operators/rosetta/samples/track-deposits',
+            to: '/node-operators/rosetta/samples/track-deposits',
+          },
+          {
+            from: '/exchange-operators/rosetta/samples/send-transactions',
+            to: '/node-operators/rosetta/samples/send-transactions',
           },
           {
             from: '/zkapps/snarkyjs-reference',
@@ -311,10 +371,6 @@ module.exports = {
           {
             from: '/node-operators/mina-cli-reference',
             to: '/node-operators/reference/mina-cli-reference',
-          },
-          {
-            from: '/node-operators/mina-signer',
-            to: '/node-operators/reference/mina-signer',
           },
           {
             from: '/node-operators/reference/troubleshooting',

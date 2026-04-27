@@ -1,0 +1,188 @@
+---
+title: Requests and Responses
+description: Mina-specific Rosetta request and response objects with curl examples
+---
+
+# Requests and Responses
+
+The Rosetta API specification defines high-level descriptions of request and response objects. Exact JSON layouts differ between blockchains. This page covers Mina-specific objects and shows how to query each endpoint with curl.
+
+All examples assume the shell variables from the [Code Samples](/node-operators/rosetta/samples) setup.
+
+## Network endpoints
+
+List available networks:
+
+```bash
+curl -s "$ROSETTA_URL/network/list" \
+  -H 'Content-Type: application/json' \
+  -d '{"metadata":{}}' | jq .
+```
+
+Sample response:
+
+```json
+{"network_identifiers":[{"blockchain":"mina","network":"mainnet"}]}
+```
+
+You must pass the `network_identifier` object as a parameter to all other endpoints. In Mina's Rosetta implementation, it exists only for the network you run Rosetta for, so this array always contains one object.
+
+Get network status (current block height, sync state, peers):
+
+```bash
+curl -s "$ROSETTA_URL/network/status" \
+  -H 'Content-Type: application/json' \
+  -d "{\"network_identifier\":$NETWORK}" | jq .
+```
+
+Get supported options and operation types:
+
+```bash
+curl -s "$ROSETTA_URL/network/options" \
+  -H 'Content-Type: application/json' \
+  -d "{\"network_identifier\":$NETWORK}" | jq .
+```
+
+## Block and transaction queries
+
+Fetch a block by index:
+
+```bash
+curl -s "$ROSETTA_URL/block" \
+  -H 'Content-Type: application/json' \
+  -d "{\"network_identifier\":$NETWORK,\"block_identifier\":{\"index\":1000}}" | jq .
+```
+
+Fetch a block by hash:
+
+```bash
+curl -s "$ROSETTA_URL/block" \
+  -H 'Content-Type: application/json' \
+  -d "{\"network_identifier\":$NETWORK,\"block_identifier\":{\"hash\":\"BLOCK_HASH\"}}" | jq .
+```
+
+List pending transactions in the mempool:
+
+```bash
+curl -s "$ROSETTA_URL/mempool" \
+  -H 'Content-Type: application/json' \
+  -d "{\"network_identifier\":$NETWORK}" | jq .
+```
+
+## Account queries
+
+Query an account balance:
+
+```bash
+curl -s "$ROSETTA_URL/account/balance" \
+  -H 'Content-Type: application/json' \
+  -d "{
+    \"network_identifier\":$NETWORK,
+    \"account_identifier\":{\"address\":\"B62qr...\",\"token_id\":\"wSHV2S4qX9jFsLjQo8r1BsMLH2ZRKsZx6EJd1sbozGPieEC4Jf\"}
+  }" | jq .
+```
+
+Search for transactions by address:
+
+```bash
+curl -s "$ROSETTA_URL/search/transactions" \
+  -H 'Content-Type: application/json' \
+  -d "{\"network_identifier\":$NETWORK,\"address\":\"B62qr...\"}" | jq .
+```
+
+Search for a specific transaction by hash:
+
+```bash
+curl -s "$ROSETTA_URL/search/transactions" \
+  -H 'Content-Type: application/json' \
+  -d "{\"network_identifier\":$NETWORK,\"transaction_identifier\":{\"hash\":\"CkpY...\"}}" | jq .
+```
+
+Derive an account address from a public key:
+
+```bash
+curl -s "$ROSETTA_URL/construction/derive" \
+  -H 'Content-Type: application/json' \
+  -d "{
+    \"network_identifier\":$NETWORK,
+    \"public_key\":{\"hex_bytes\":\"PUBLIC_KEY_HEX\",\"curve_type\":\"pallas\"}
+  }" | jq .
+```
+
+## Operation object
+
+In Rosetta terminology, each transaction consists of one or more operations. In Mina's implementation, each operation has:
+
+- `operation_identifier` and `related_operations`: a mandatory index, and optional array of related operations
+- `type`: the operation type
+- `account`: the account identifier the operation relates to
+- `amount`: an object with `value` — a signed number representing the balance change
+
+<details>
+<summary>Sample operation JSON</summary>
+
+```json
+{
+  "operation_identifier": { "index": 2 },
+  "related_operations": [{ "index": 1 }],
+  "type": "payment_receiver_inc",
+  "account": {
+    "address": "B62qqJ1AqK3YQmEEALdJeMw49438Sh6zuQ5cNWUYfCgRsPkduFE2uLU",
+    "metadata": { "token_id": "1" }
+  },
+  "amount": {
+    "value": "90486110",
+    "currency": { "symbol": "MINA", "decimals": 9 }
+  }
+}
+```
+
+</details>
+
+:::note
+All possible operation types are available from the `/network/options` endpoint. The most common types are `fee_payment`, `payment_source_dec`, and `payment_receiver_inc`.
+:::
+
+## Transfer transaction layout
+
+A MINA token transfer is represented by three operations (account updates):
+
+1. Decrease fee payer balance (fee payer = sender)
+2. Decrease sender balance by the transfer amount
+3. Increase receiver balance by the transfer amount
+
+<details>
+<summary>Sample transfer transaction JSON</summary>
+
+```json
+{
+  "transaction_identifier": {
+    "hash": "CkpYVELyYvzbyAwYcnMQryEeQ7Gd6Ws7mZNXpmF5kEAyvwoTiUfbX"
+  },
+  "operations": [
+    {
+      "operation_identifier": { "index": 0 },
+      "type": "fee_payment",
+      "account": { "address": "B62qpLST3UC1rpVT6SHfB7wqW2iQgiopFAGfrcovPgLjgfpDUN2LLeg", "metadata": { "token_id": "1" } },
+      "amount": { "value": "-37000000", "currency": { "symbol": "MINA", "decimals": 9 } }
+    },
+    {
+      "operation_identifier": { "index": 1 },
+      "type": "payment_source_dec",
+      "account": { "address": "B62qpLST3UC1rpVT6SHfB7wqW2iQgiopFAGfrcovPgLjgfpDUN2LLeg", "metadata": { "token_id": "1" } },
+      "amount": { "value": "-58486000", "currency": { "symbol": "MINA", "decimals": 9 } }
+    },
+    {
+      "operation_identifier": { "index": 2 },
+      "related_operations": [{ "index": 1 }],
+      "type": "payment_receiver_inc",
+      "account": { "address": "B62qkiF5CTjeiuV1HSx4SpEytjiCptApsvmjiHHqkb1xpAgVuZTtR14", "metadata": { "token_id": "1" } },
+      "amount": { "value": "58486000", "currency": { "symbol": "MINA", "decimals": 9 } }
+    }
+  ]
+}
+```
+
+</details>
+
+This operations array is what you pass to `/construction/preprocess` and `/construction/payloads` when building a transfer. See [Sending Transactions](send-transactions) for the full flow.

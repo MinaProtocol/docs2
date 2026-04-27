@@ -1,0 +1,71 @@
+---
+title: Mina Signer
+hide_title: true
+description: Key generation and transaction signing for node operators using mina-signer and the Rosetta offline signer CLI.
+keywords:
+  - mina signer
+  - sign
+  - signature
+  - rosetta
+  - offline signer
+  - key pair
+---
+
+# Mina Signer
+
+[Mina Signer](/mina-signer) is a NodeJS/Browser-compatible library for signing transactions and generating keys. The Rosetta stack also ships an offline signer CLI tool. Both can be used to sign transactions offline for later submission via the [Construction API](/node-operators/rosetta/samples/send-transactions).
+
+## Migration from o1labs/client-sdk
+
+The signing library `o1labs/client-sdk` is deprecated and will stop working after the Mina mainnet upgrade. All users should migrate to [mina-signer](https://www.npmjs.com/package/mina-signer).
+
+When migrating:
+
+1. Adjust the `nonce` to the correct nonce on the sender account
+2. Update the `url` variable with an existing Mina Node GraphQL endpoint
+
+See [Broadcasting a Signed Payment](/mina-signer#broadcasting-a-signed-payment) for a complete example.
+
+## Generating a key pair with mina-signer
+
+See [Generating Keys](/mina-signer#generating-keys) for full details. A quick example:
+
+```ts
+import { Client } from 'mina-signer'
+const mina = new Client({network: 'testnet'})
+const keypair = mina.genKeys()
+```
+
+## Generating a key pair with signer CLI
+
+In a native build, the signer is at `_build/default/src/app/rosetta/ocaml-signer/signer.exe`. In Docker, it's at `/rosetta/app/mina-ocaml-signer`. Examples below use `signer` as an alias.
+
+Generate a private key:
+
+```bash
+signer generate-private-key
+```
+
+Derive the public key and account address:
+
+```bash
+signer derive-public-key --private-key <private key>
+```
+
+## Signing a transaction with mina-signer
+
+```ts
+mina.signRosettaTransaction(payload, privateKey)
+```
+
+:::note
+We recommend using `mina.rosettaCombinePayload` to sign and prepare a payload for the `/construction/combine` request. See [Sending Transactions](/node-operators/rosetta/samples/send-transactions) for the full flow.
+:::
+
+## Signing a transaction with signer CLI
+
+```bash
+signer sign --private-key <private key> --unsigned-transaction <tx>
+```
+
+Replace `<tx>` with the unsigned transaction string from the `/construction/payloads` endpoint. See [Sending Transactions](/node-operators/rosetta/samples/send-transactions) for the full flow.

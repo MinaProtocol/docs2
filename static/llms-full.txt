@@ -1,1559 +1,4 @@
 ---
-url: /exchange-operators/faq
----
-
-# FAQ Listing Mina
-
-<Subhead>
-Frequently asked questions about listing Mina.
-</Subhead>
-
-## Basics
-
-### Where can I find third-party audit reports for Mina?
-
-The latest third-party audit reports are publicly available here:
-
-- [https://research.nccgroup.com/2020/05/13/public-report-coda-cryptographic-review](https://research.nccgroup.com/2020/05/13/public-report-coda-cryptographic-review/)
-- [https://leastauthority.com/blog/audit-of-mina-ledger-application-for-o1-labs](https://leastauthority.com/blog/audit-of-mina-ledger-application-for-o1-labs/)
-- [https://research.nccgroup.com/2022/02/22/public-report-o1-labs-mina-client-sdk-signature-library-and-base-components-cryptography-and-implementation-review](https://research.nccgroup.com/2022/02/22/public-report-o1-labs-mina-client-sdk-signature-library-and-base-components-cryptography-and-implementation-review)
-
-<br></br>
-
-:::note
-
-Any news and updates related to exchange listing shared by the Mina Foundation are on [www.minaprotocol.com](https://minaprotocol.com) or the official [Mina Protocol](https://x.com/MinaProtocol) X (Twitter). Mina Foundation cannot individually answer any listing questions.
-
-:::
-
-## Rosetta
-
-### Why do you recommend using Rosetta for integrating Mina to our exchange?
-
-Rosetta is an open-source specification that helps exchanges and developers integrate blockchains. Since Rosetta is actively maintained and specifically designed to enable simpler, faster, and more reliable blockchain integrations, we highly recommend using Rosetta to integrate Mina blockchain with your exchange.
-
-### What if I have a question about Rosetta?
-
-Ask in [Mina Protocol Discord](https://discord.gg/minaprotocol) or post to the Mina GitHub [Discussions](https://github.com/MinaProtocol/mina/discussions).
-
-## Accounts
-
-### Is there an account creation fee?
-
-Yes, Mina Protocol charges a fee of 1 MINA when you create a new account. This fee helps protect the network from denial of service-type attacks. Over time, this fee can change.
-
-## Transactions
-
-### What is the maximum size of the mempool? How do we work around this?
-
-The max mempool size is 3,000. After it hits that size, transactions with the lowest fees are discarded.
-
-Set your fee to an amount higher than 0.001 MINA, the current average fee for transactions in the pool.
-
-You can view the fees for pending transactions and adjust your fees accordingly: [https://minascan.io/mainnet/txs/pending-txs](https://minascan.io/mainnet/txs/pending-txs).
-
-### Why do some users appear to have lost their funds when sending to exchanges?
-
-:::tip
-
-While Mina and its SDKs do support the memo field when sending a transaction, the recommended best practice is <u>do NOT require a memo for deposits</u>.
-
-:::
-
-To associate the deposit with the user's account, some exchanges require their users to include a unique memo field when sending MINA deposits to the exchange's address.
-
-If the user does not include this unique memo when sending their deposit, the receiving exchange may not be able to associate the deposit properly with the user's exchange account.
-
-These funds are <u>NOT lost</u>. The exchanges have received the funds at the exchange's address, but the exchange may not be able to automatically associate the deposit with the user's exchange account without such a memo.
-
-To prevent this issue, we recommend that exchanges <u>do NOT require a memo</u> for deposits. At the same time, exchanges and wallet creators are recommended to <u>expose an optional memo field</u> during a Mina send transaction.
-
-### What is the maximum number of rollback blocks?
-
-The table in [Lifecycle of a Payment](/mina-protocol/lifecycle-of-a-payment) describes how many blocks you wait for a transaction to be confirmed.
-
-### How should I calculate transaction fees?
-
-To calculate your transaction fees, use [https://fees.mina.tools](https://fees.mina.tools/).
-
-## Running a node
-
-### My Mina node gets stuck sometimes. How can I detect this and fix it?
-
-This is a known issue for some earlier releases. Restart your mina node whenever this issue is detected.
-
-You can use the following script to run a cron job every 3 minutes (the slot length) or more frequently:
-
-```
-MINA_STATUS=$($MINA client status --json)
-HIGHESTBLOCK="$(echo $MINA_STATUS | jq .highest_block_length_received)"
-HIGHESTUNVALIDATEDBLOCK="$(echo $MINA_STATUS | jq .highest_unvalidated_block_length_received)"
-
-# Calculate difference between validated and unvalidated blocks.
-# If block height is more than 4 block behind, something is likely wrong.
-
-DELTAVALIDATED="$(($HIGHESTUNVALIDATEDBLOCK-$HIGHESTBLOCK))"
-if [[ "$DELTAVALIDATED" -gt 4 ]]; then
-  $MINA client stop
-fi
-```
-
-:::tip
-
-Be sure your Mina daemon is monitored by something such as systemd, so it can auto-restart.
-
-:::
-
-### My archive node is missing block information after a restart. How can I recover the data?
-
-Archive node operators often choose to run redundant archive nodes to store block data to one or more locations of their choice (for example, PostgreSQL, GCP, local files, or a logging service) and to backfill any missed block data if needed.
-
-For convenience, [mina_network_block_data](https://console.cloud.google.com/storage/browser/mina_network_block_data) from the archive node is available to help others in the community backfill any missing information.
-
-This bucket contains blocks from various Mina networks — for example, Mainnet and the most recent Devnet `devnet2`. Filter by filename for the network you want. Note that this bucket contains blocks for various other networks too, such as QAnet, which is not recommended for your testing. QAnet is used by o1Labs during targeted iterative development.
-
-Filenames contain the network name, block height, and state hash of the block. Blocks older than height 25,705 include only the network name and state hash in the filename.
-
-Example filenames:
-
-(Recent)
-
-```
-mainnet-30627-3NLfKanQ53X2MRKx5ZRvb9nVCEB9eJpcnssGCTpT3J1cojhB5M19.json
-```
-
-(Older)
-
-```
-mainnet-3NKUBmkc7UZ7ik5JyCM4WNzkN1HG5heMB5zNDUkf3Kgta1MFY6LY.json
-```
-
-You can download a specific block using curl:
-
-```
-curl https://mina_network_block_data.storage.googleapis.com/<filename.json>
-```
-
-You can import this file using the mina archive blocks tool. The command for it is:
-
-```
-mina-archive-blocks --precomputed --archive-uri <postgres uri> FILE.
-```
-
-### How do I query for the canonical block at a certain height from the archive node
-
-Use a recursive query. See [Query the database](/node-operators/archive-node/getting-started#query-the-database) examples in the Archive Node docs.
-
-### Why am I getting this error message: "Not able to connect to the network"?
-
-This error message usually occurs due to a chain ID mismatch from running a Devnet build on Mainnet, or vice versa.
-
-To check whether you are running a devnet or mainnet build, run `Mina client status`. Next, compare the output's chain ID of your node to the expected chain ID of the network you are trying to connect to. You can find required information for comparison within the [GitHub announcements](https://github.com/MinaProtocol/mina/discussions/categories/announcements) or [Discord](https://discord.com/channels/484437221055922177/601171209287368715) server.
-
-### Are there any official broadcast nodes that can be used?
-
-No, there are no official broadcast nodes at this time. However, you can  broadcast transactions using [https://minascan.io/mainnet/broadcast/payment](https://minascan.io/mainnet/broadcast/payment). Use this method as a backup, the recommended method is to broadcast transactions yourself.
-
-## Staking
-
-### Should I be staking my funds?
-
-Since Mina is a Proof of Stake (PoS) consensus network without lockup for staked tokens, it is recommended to stak these funds to support the quality of the Mina network. Additionally, by not staking, you are missing out on staking rewards that you can otherwise be receiving from the Mina blockchain.
-
-You can look into staking this wallet, either by running your own block production node or just by delegating your funds to a staking pool on the network. Delegating to a staking pool is simpler to set up.
-
-:::note
-
-Newly staked accounts incur a delay of 18 to 29 days before you start receiving rewards.
-
-:::
-
-### Why is there a delay for staking to take effect?
-
-For purposes of ensuring consensus, there is a delay between when delegations are sent on the blockchain and when they take effect with respect to staking on the network. The staking ledger always operates between 18 to 29 days behind the live ledger.
-
-### In that case, how long is the delay and when is the next staking snapshot?
-
-The timing of the next staking snapshot varies.
-
-Since the timing is based on a combination of consensus timing (epochs) and snarketplace throughput, it is difficult to determine exactly how long this delay can be.
-
-A conservative estimate is that delegations sent 3 days before the epoch transition can take effect in the upcoming epoch. This means that, for any given delegation, there is an average of 18 to 29 days delay before this delegation updates block production.
-
-You can use this Delegation Calculator tool built by Carbonara to see the next staking ledger cutoff:
-[https://epoch.mina.tools](https://epoch.mina.tools/).
-
-## Testing
-
-### What is the best way to test tooling and integration with Mina?
-
-Test tooling and integrations on Devnet before going live on Mainnet. The Devnet network is dedicated for developers building on top of the Mina protocol and is designed for testing and experimentation. Be sure to simulate expected Mainnet conditions, such as transaction volume and frequency, to help identify and solve potential issues ahead of time.
-
-See [Connect to Mainnet or Devnet](/node-operators/validator-node/connecting-to-the-network).
-
----
-url: /exchange-operators
----
-
-# Exchange Operators
-
-Exchange operators are network participants who run Mina nodes on a Mina network but usually don't produce blocks.
-
-Instead of running a Mina node and an archive node, use the Rosetta API that is designed specifically for exchange operators.
-
-It implements an [open-source blockchain-agnostic specification](https://docs.cloud.coinbase.com/rosetta/docs/welcome) designed by Coinbase.
-
-## Rosetta API
-
-This section describes how to install, run and use the Rosetta API instance connected to the Mina network.
-
-Use Rosetta API if you are:
-- Querying historical data from the Mina blockchain
-- Integrating the Mina blockchain with your exchange
-- Building blockchain applications, such as explorers and wallets
-
-Using Rosetta for building your application is preferable, as it's API is more appropriate for applications and far more stable than GraphQL.
-
-
-- [Running with Docker](/exchange-operators/rosetta/run-with-docker) - How to install Rosetta from Docker image
-- [Building from source](/exchange-operators/rosetta/build-from-sources) - How to build and run Rosetta from source code
-- [Sending requests](/exchange-operators/rosetta/send-requests) - How to send request to a Rosetta API
-- [Code Samples](/exchange-operators/rosetta/samples) - Sample code for Rosetta integration integration
-    - [Requests and Responses](/exchange-operators/rosetta/samples/requests) - Implementing basic requests
-    - [Offline Signer Tool](/exchange-operators/rosetta/samples/using-signer) - Generating keys and signing transactions offline
-    - [Scanning Blocks](/exchange-operators/rosetta/samples/scan-blocks) - Example implementation of block scanning
-    - [Tracking Deposits](/exchange-operators/rosetta/samples/track-deposits) - Example implementation of deposit tracking
-    - [Sending Transactions](/exchange-operators/rosetta/samples/send-transactions) - Example implementation of withdrawal flow
-
-
-## FAQ
-
-For answers to the most frequently asked questions about listing MINA, see [FAQ Listing MINA](/exchange-operators/faq).
-
-## Questions?
-
-Post any questions in Mina’s Github Discussions: https://github.com/MinaProtocol/mina/discussions
-
----
-url: /exchange-operators/rosetta/build-from-sources
----
-
-# Building and running Rosetta from source code
-
-In [Running with Docker](run-with-docker), you learned that the Docker container runs the mina daemon, mina-archive, and Rosetta API. 
-
-If you already have mina-archive up and running, you can also build and run the Rosetta API natively and wire it to the existing mina daemon and mina-archive.
-
-:::tip
-
-To run mina daemon and mina-archive natively, follow the [Archive Node page](/node-operators/archive-node/getting-started) instructions.
-
-:::
-
-The easiest way to build Rosetta natively is to use the Nix development environment.
-
-1. 
-    Clone the official [mina repository](https://github.com/MinaProtocol/mina.git) and switch to the `compatible` branch.
-
-1. 
-    If you don't already have Nix on your machine, install it following the steps in the [nix/README.md](https://github.com/MinaProtocol/mina/blob/develop/nix/README.md).
-
-1. 
-    Run the `./nix/pin.sh` script to enable submodules to be available to the build:
-
-    ```shell
-    ./nix/pin.sh
-    ```
-
-1. 
-    Launch the development shell:
-
-    ```shell
-    nix develop mina
-    ```
-
-1. 
-    Build Rosetta app:
-
-    ```shell
-    dune build --profile=mainnet src/app/rosetta
-    ```
-
-1. 
-    After a successful build, the Rosetta app is available here: `_build/default/src/app/rosetta/rosetta.exe` 
-
-    You can run it with following command:
-    ```shell
-    MINA_ROSETTA_MAX_DB_POOL_SIZE=64 \
-        _build/default/src/app/rosetta/rosetta.exe --port 3087 \
-        --graphql-uri <URL to Mina GraphQL instance> 
-        --archive-uri postgres://<username>:<password>@<host>:<port>/<db_name>
-    ```
-
----
-url: /exchange-operators/rosetta/docker-compose
----
-
-# Docker Compose Rosetta
-
-For production deployments, use Docker Compose to run each Rosetta component as a separate container. This gives you control over resource allocation, logging, and restarts.
-
-The full Docker Compose configuration — including `docker-compose.yml`, example environment files for mainnet and devnet, a `Makefile`, and a `README` — is maintained in the Mina repository:
-
-**[`mina/src/app/rosetta/docker-compose/`](https://github.com/MinaProtocol/mina/tree/compatible/src/app/rosetta/docker-compose)**
-
-## Quick start
-
-:::tip
-Before running the commands below, review the [Configuration](#configuration) section to see all available options — including image tags, network selection, ports, and database settings.
-:::
-
-```bash
-git clone https://github.com/MinaProtocol/mina.git
-cd mina/src/app/rosetta/docker-compose
-
-# For mainnet
-cp example.mainnet.env .env
-
-# For devnet
-cp example.devnet.env .env
-
-# Edit .env — set MINA_LIBP2P_PASS and review POSTGRES_PASSWORD
-vi .env
-
-# Start all services
-docker compose up -d
-
-# Or use make shortcuts
-make mainnet   # copies mainnet env and starts services
-make devnet    # copies devnet env and starts services
-```
-
-## Services overview
-
-The Docker Compose setup includes six services:
-
-| Service | Description | Default Port |
-|---------|-------------|--------------|
-| **postgres** | PostgreSQL 17 with health checks | 5432 (container), configurable host port |
-| **bootstrap_db** | One-shot: downloads and imports the latest daily archive dump | — |
-| **mina_archive** | Archive process, stores block data in PostgreSQL | 3086 |
-| **mina_node** | Mina daemon with GraphQL API | 3085 (GraphQL), 8302 (P2P) |
-| **mina_rosetta** | Rosetta API for exchange integration | 3087 |
-| **missing_blocks_guardian** | Monitors and recovers missing blocks between nightly dumps and chain tip | — |
-
-## Configuration
-
-All configuration is done through a single `.env` file. Key variables:
-
-### Docker images
-
-| Variable | Description |
-|----------|-------------|
-| `MINA_DAEMON_IMAGE` | Mina daemon Docker image |
-| `MINA_ARCHIVE_IMAGE` | Mina archive Docker image |
-| `MINA_ROSETTA_IMAGE` | Mina Rosetta Docker image |
-
-For mainnet, images are pulled from [Docker Hub](https://hub.docker.com/u/minaprotocol) (`minaprotocol/mina-*`).
-For devnet, images are pulled from the o1Labs GCR registry.
-
-### Network
-
-| Variable | Description |
-|----------|-------------|
-| `MINA_NETWORK` | `mainnet` or `devnet` |
-| `MINA_PEERLIST_URL` | Bootstrap peers URL |
-| `MINA_LIBP2P_PASS` | Passphrase for the libp2p key (required) |
-
-### Ports
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `POSTGRES_PORT` | `5433` | Host port mapped to PostgreSQL |
-| `MINA_REST_PORT` | `3085` | GraphQL API port |
-| `MINA_P2P_PORT` | `8302` | P2P networking port |
-| `MINA_ARCHIVE_PORT` | `3086` | Archive server port |
-| `MINA_ROSETTA_PORT` | `3087` | Rosetta API port |
-
-### Archive bootstrap
-
-| Variable | Description |
-|----------|-------------|
-| `ARCHIVE_DUMP_BASE_URL` | Base URL for daily archive dumps |
-| `ARCHIVE_DUMP_PREFIX` | Dump filename prefix (`mainnet-archive-dump` or `devnet-archive-dump`) |
-| `GUARDIAN_PRECOMPUTED_BLOCKS_URL` | S3 bucket URL for precomputed blocks used by the missing blocks guardian |
-
-## Data persistence
-
-Bind mounts preserve data across `docker compose down` / `up`:
-
-| Host path | Container path | Contents |
-|-----------|---------------|----------|
-| `./archive/postgresql/data` | `/var/lib/postgresql/data` | PostgreSQL data |
-| `./archive/data` | `/data` | Archive node data |
-| `./mina_node/.mina-config` | `/root/.mina-config` | Daemon config, keys, peers |
-| `./mina_rosetta/.mina-config` | `/root/.mina-config` | Rosetta config |
-
-## Make targets
-
-| Command | Description |
-|---------|-------------|
-| `make devnet` | Copy devnet env and start services |
-| `make mainnet` | Copy mainnet env and start services |
-| `make stop` | Stop all services |
-| `make clean` | Stop services, remove volumes and all persisted data |
-| `make logs` | Follow logs for all services |
-| `make status` | Show container status |
-| `make health` | Check health of Postgres, GraphQL, and Rosetta endpoints |
-
-## Verifying the deployment
-
-Once services are running and the node is synced:
-
-```bash
-# Check container status
-make status
-
-# Run health checks
-make health
-
-# Check sync status
-docker compose exec mina_node mina client status
-
-# Query Rosetta API
-curl -s http://localhost:3087/network/list \
-  -H 'Content-Type: application/json' -d '{}' | jq .
-
-# Connect to archive database
-psql postgres://postgres:postgres@localhost:5433/archive
-```
-
-## Clean start
-
-To wipe all data and start fresh:
-
-```bash
-make clean
-docker compose up -d
-```
-
----
-url: /exchange-operators/rosetta/run-with-docker
----
-
-# Running with Docker
-
-:::info
-
-There is a known issue that you can't use the docker image on the Apple silicon chip.
-To run Mina Rosetta on Apple silicon, you can use the steps in [Building and running Rosetta from source code](build-from-sources).
-
-:::
-
-1.  [Install Docker](https://www.docker.com/get-started) and check that your Docker configuration has at least 16 GB RAM (the recommended amount is 32 GB).
-
-1. Check the latest release for Mainnet on the official [Mina GitHub releases](https://github.com/MinaProtocol/mina/releases) page.
-
-1. Use the Mina Rosetta Docker image:
-
-
-:::note
-
-If you want to build your own docker image, you can find more details in [Mina's Rosetta repository](https://github.com/MinaProtocol/mina/blob/develop/src/app/rosetta/README.md). However, for most users, it's not necessary to build your own image in order to interact with the API.
-
-:::
-
-The container in `/rosetta` includes three entrypoints, which each run a different set of services connected to a particular network.
-
-- **docker-start.sh** (default) - connects the mina node to a network (defaults to Mainnet) and initializes the archive database from publicly-available nightly O(1) Labs backups. This script runs a mina node, mina-archive, a postgresql DB, and mina-rosetta. The script also periodically checks for blocks that may be missing between the nightly backup and the tip of the chain and will fill in those gaps by walking back the linked list of blocks in the canonical chain and importing them one at a time. The script is configurable through environment variables. Take a look at the source for more information about what and how you can configure.
-- **docker-standalone-start.sh** - starts only the mina-rosetta API endpoint and any flags passed into the script go to mina-rosetta. You may use this for the "offline" part of the Construction API or if you want a setup with each service in its own container.
-- **docker-demo-start.sh** launches a mina node with a very simple 1-address genesis ledger as a sandbox for developing and playing around in. This script starts the full suite of tools (a mina node, mina-archive, a postgresql DB, and mina-rosetta), but for a demo network with all operations occurring inside this container and no external network activity.
-
-Run the container with following command (replace the image tag with one from dockerhub that's compatible with the network you are trying to connect to, also replace `--entrypoint` and any environment variable if needed):
-
-```
-    docker run -it --rm --name rosetta \
-        --entrypoint=./docker-start.sh \
-        -p 10101:10101 -p 3085:3085 -p 3086:3086 -p 3087:3087 \
-        minaprotocol/mina-rosetta:3.3.0-8c0c2e6-bullseye-mainnet
-```
-
-You can also create a file with the environment variables and pass it to the docker run command with `--env-file` flag. For example, create a file named `mainnet.env` with the following content:
-
-```
-    MINA_NETWORK=mainnet
-    PEERS_LIST_URL=https://bootnodes.minaprotocol.com/networks/mainnet.txt
-    MINA_ARCHIVE_DUMP_URL=https://storage.googleapis.com/mina-archive-dumps
-    MINA_GENESIS_LEDGER_URL=https://storage.googleapis.com/o1labs-gitops-infrastructure/mainnet/mainnet.json
-    BLOCKS_BUCKET=https://storage.googleapis.com/mina_network_block_data
-```
-
-Then run the container with the following command:
-
-```
-    docker run -it --rm --name rosetta \
-        --entrypoint=./docker-start.sh \
-        -p 8302:8302 -p 3085:3085 -p 3086:3086 -p 3087:3087 \
-        --env-file mainnet.env \
-        minaprotocol/mina-rosetta:<tag>
-```
-
-Example environment files for public networks can be found in [this](https://github.com/MinaProtocol/mina/blob/develop/src/app/rosetta/scripts) directory of Mina's Rosetta repository.
-
-:::note
-
-- It can take 20 min to 1 hour for your node to sync
-- Port 8302 is the default P2P port and must be exposed to the open internet
-- The GraphQL API runs on port 3085 (accessible via localhost:3085/graphql)
-- PostgreSQL runs on port 3086
-- Rosetta runs on port 3087
-
-:::
-
----
-url: /exchange-operators/rosetta/samples
----
-
-The source code for all code samples is available on the official [Mina Documentation Github page](https://github.com/o1-labs/docs2/tree/main/examples/exchange-operators/) and should be used only for demonstration purposes.
-
-## Set up sample project
-
-Start with the required imports and define constants:
-
-<Tabs>
-<TabItem value="ts" label="TypeScript">
-
-```ts
-
-
-
-const TESTNET_NETWORK_IDENTIFIER = {
-  network_identifier: {
-    blockchain: "mina",
-    network: "testnet",
-  },
-}
-const MINA_TOKEN_ID = "wSHV2S4qX9jFsLjQo8r1BsMLH2ZRKsZx6EJd1sbozGPieEC4Jf"
-const MINA_DECIMALS = 9
-const MINA_SYMBOL = "MINA"
-const MINA_CURVE_TYPE = "pallas"
-
-const mina = new Client({ network: "testnet" })
-
-const request = axios.create({
-  baseURL: "https://rosetta-devnet.minaprotocol.network/",
-})
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
-```
-
-</TabItem>
-<TabItem value="py" label="Python">
-
-```python
-
-from subprocess import run, PIPE
-from time import sleep
-
-from requests import post
-
-BASE_URL = "http://localhost:3087"
-SIGNER_PATH = 'path/to/signer.exe'
-MAINNET_NETWORK_IDENTIFIER = {
-    "network_identifier": {
-        "blockchain": "mina",
-        "network": "mainnet"
-    }
-}
-MINA_TOKEN_ID = "1"
-MINA_DECIMALS = 9
-MINA_SYMBOL = "MINA"
-MINA_CURVE_TYPE = "pallas"
-MINA_SIGNATURE_TYPE = "schnorr_poseidon"
-```
-
-
-</TabItem>
-</Tabs>
-
----
-url: /exchange-operators/rosetta/samples/requests
----
-
-# About Mina-specific requests and responses
-
-The Rosetta API specification defines high-level description of how requests and response objects should look like.
-Exact json object layouts are different from blockchain to blockchain.
-
-In this article, you learn about Mina-specific Rosetta JSON objects and how to implement helper functions to construct and parse the JSON objects.
-
-### Network Identifier
-
-There is the `network_identifier` object, that should be passed as a parameter to all endpoints (except `/network/list` which returns possible identifiers).
-
-First, implement the generic `request` function to perform Rosetta API calls injecting that object under the hood:
-
-<Tabs>
-<TabItem value="ts" label="TypeScript">
-
-```ts
-async function makeRequest(endpoint: string, data?: any) {
-  if (data === undefined) {
-    data = {}
-  }
-  if (endpoint !== "/network/list") {
-    data = { ...TESTNET_NETWORK_IDENTIFIER, ...data }
-  }
-
-  const r = await request.post(endpoint, data)
-  return r.data
-}
-```
-
-</TabItem>
-
-<TabItem value="py" label="Python">
-
-```python
-def _request(path, data=None):
-    """
-    Generalized logic for sending a request to Rosetta API
-    """
-    data = data or {}
-    nw = {} if path == "/network/list" else MAINNET_NETWORK_IDENTIFIER
-    path = BASE_URL + path
-    data = json.dumps({**data, **nw})
-    r = post(path, data)
-    try:
-        r.raise_for_status()
-    except Exception as e:
-        # json.dumps(r.json())
-        raise e
-    return r.json()
-```
-
-</TabItem>
-</Tabs>
-
-### Block, Transaction, Account Identifiers and the Pubkey object
-
-According to Rosetta request and response models, each block, transaction and account are identified by an identifier object.
-A pubkey is also represented by special object.
-
-To implement helpers to construct the objects:
-
-<Tabs>
-<TabItem value="ts" label="TypeScript">
-
-```ts
-function makeBlockIdentifier(idOrHash: number | string) {
-  const identifierKey = (typeof idOrHash === "number") ? "index" : "hash"
-  return {
-    block_identifier: { [identifierKey]: idOrHash },
-  }
-}
-
-function makeTxIdentifier(hash: string) {
-  return { transaction_identifier: { hash: hash } }
-}
-
-function makeAccountIdentifier(address: string) {
-  return {
-    account_identifier: { address, token_id: MINA_TOKEN_ID },
-  }
-}
-
-function makePublicKey(publicKey: string) {
-  return {
-    hex_bytes: publicKey,
-    curve_type: MINA_CURVE_TYPE,
-  }
-}
-```
-
-</TabItem>
-
-<TabItem value="py" label="Python">
-
-```python
-def _make_block_identifier(index_or_hash):
-    key = "index" if type(index_or_hash) == int \
-        else "hash" if type(index_or_hash) == str \
-        else None
-    if not key:
-        raise ValueError("index_or_hash should have either int or str type")
-    return {"block_identifier": {key: index_or_hash}}
-
-def _make_tx_identifier(tx_hash):
-    return {"transaction_identifier": {'hash': tx_hash}}
-
-def _make_account_identifier(address):
-    return {
-        "account_identifier": {"address": address, "token_id": MINA_TOKEN_ID}
-    }
-
-def _make_pubkey(pubkey):
-    return {
-        "hex_bytes": pubkey,
-        "curve_type": MINA_CURVE_TYPE
-    }
-```
-
-</TabItem>
-</Tabs>
-
-### Operation object
-
-In Rosetta terminology, each transaction consist of one or more operations.
-In Mina implementation, each operation object has following fields:
-- `operation_identifier` and `related_operations`: a mandatory index of an operation, and optional array of related operations.
-- `type`: the type of an operation.
-- `account`: the account identifier which the operation relates to
-- `amount`: an object with `value` - a signed number representing of the accounts' balance
-
-<details>
-<summary>A sample JSON object that represents an operation</summary>
-
-```json
-{
-  "operation_identifier": {
-    "index": 2
-  },
-  "related_operations": [
-    {
-      "index": 1
-    }
-  ],
-  "type": "payment_receiver_inc",
-  "account": {
-    "address": "B62qqJ1AqK3YQmEEALdJeMw49438Sh6zuQ5cNWUYfCgRsPkduFE2uLU",
-    "metadata": {
-      "token_id": "1"
-    }
-  },
-  "amount": {
-    "value": "90486110",
-    "currency": {
-      "symbol": "MINA",
-      "decimals": 9
-    }
-  }
-}
-```
-
-</details>
-
-:::note
-All possible operation types are available on the `network/options` endpoint. The most common types are `fee_payment`, `payment_source_dec` and `payment_receiver_inc`
-:::
-
-
-### Layout of the transfer transaction
-
-In Mina, each operation represents an [Account Update](/zkapps/writing-a-zkapp/introduction-to-zkapps/interact-with-mina#account-updates). Therefore, a MINA token transfer transaction is represented by three Account Updates:
-- for decreasing fee payer account balance (the fee payer's account is the same as the sender's)
-- for decreasing sender account balance
-- for increasing receiver account balance
-
-<details>
-<summary>A sample object that represents a transfer transaction</summary>
-
-```json
-{
-  "transaction_identifier": {
-    "hash": "CkpYVELyYvzbyAwYcnMQryEeQ7Gd6Ws7mZNXpmF5kEAyvwoTiUfbX"
-  },
-  "operations": [
-    {
-      "operation_identifier": {
-        "index": 0
-      },
-      "type": "fee_payment",
-      "account": {
-        "address": "B62qpLST3UC1rpVT6SHfB7wqW2iQgiopFAGfrcovPgLjgfpDUN2LLeg",
-        "metadata": {
-          "token_id": "1"
-        }
-      },
-      "amount": {
-        "value": "-37000000",
-        "currency": {
-          "symbol": "MINA",
-          "decimals": 9
-        }
-      }
-    },
-    {
-      "operation_identifier": {
-        "index": 1
-      },
-      "type": "payment_source_dec",
-      "account": {
-        "address": "B62qpLST3UC1rpVT6SHfB7wqW2iQgiopFAGfrcovPgLjgfpDUN2LLeg",
-        "metadata": {
-          "token_id": "1"
-        }
-      },
-      "amount": {
-        "value": "-58486000",
-        "currency": {
-          "symbol": "MINA",
-          "decimals": 9
-        }
-      }
-    },
-    {
-      "operation_identifier": {
-        "index": 2
-      },
-      "related_operations": [
-        {
-          "index": 1
-        }
-      ],
-      "type": "payment_receiver_inc",
-      "account": {
-        "address": "B62qkiF5CTjeiuV1HSx4SpEytjiCptApsvmjiHHqkb1xpAgVuZTtR14",
-        "metadata": {
-          "token_id": "1"
-        }
-      },
-      "amount": {
-        "value": "58486000",
-        "currency": {
-          "symbol": "MINA",
-          "decimals": 9
-        }
-      }
-    }
-  ]
-}
-```
-
-</details>
-
-According to the Rosetta specification, the array of `operation` objects must be passed as a parameter in the `/construction/preprocess` and `/construction/payloads` endpoints.
-
-To implement a helper function to construct the operations array for a MINA token transfer:
-
-<Tabs>
-<TabItem value="ts" label="TypeScript">
-
-```ts
-function makeTransferPayload(from: string, to: string, feeNano: number, valueNano: number) {
-  function makeOperation(
-    idx: number,
-    relatedIdxs: number[],
-    opType: string,
-    addr: string,
-    value: number,
-    isPositive: boolean,
-  ) {
-    const relatedOps = (relatedIdxs.length == 0) ? {} : {
-      related_operations: relatedIdxs.map((i) => {
-        return { index: i }
-      }),
-    }
-
-    return {
-      operation_identifier: { index: idx },
-      ...relatedOps,
-      type: opType,
-      account: {
-        address: addr,
-        metadata: {
-          token_id: MINA_TOKEN_ID,
-        },
-      },
-      amount: {
-        value: (isPositive ? "" : "-") + value.toString(),
-        currency: {
-          symbol: MINA_SYMBOL,
-          decimals: MINA_DECIMALS,
-        },
-      },
-    }
-  }
-
-  return {
-    operations: [
-      makeOperation(
-        0,
-        [],
-        "fee_payment",
-        from,
-        feeNano,
-        false,
-      ),
-      makeOperation(
-        1,
-        [],
-        "payment_source_dec",
-        from,
-        valueNano,
-        false,
-      ),
-      makeOperation(
-        2,
-        [1],
-        "payment_receiver_inc",
-        to,
-        valueNano,
-        true,
-      ),
-    ],
-  }
-}
-```
-
-</TabItem>
-
-<TabItem value="py" label="Python">
-
-```python
-def _make_transfer_payload(address_from, address_to, fee_nano, value_nano):
-    """
-    Helper for generating "operations" object in a Rosetta format
-    This helper generates mina native token transfer payloads
-    The resulting object is an array of 3 so called account updates:
-        - for decreasing the sender's balance by the fee amount
-        - for decreasing the sender's balance by the transfer amount
-        - for increasing the receiver's balance by the transfer amount
-    """
-    def _make_operation(idx, related_idxs, op_type, addr, value, is_positive):
-        related_ops = {} if not related_idxs else {
-            "related_operations": [{"index": i} for i in related_idxs]
-        }
-        return {
-            "operation_identifier": {"index": idx},
-            **related_ops,
-            "type": op_type,
-            "account": {
-                "address": addr,
-                "metadata": {
-                    "token_id": MINA_TOKEN_ID
-                }
-            },
-            "amount": {
-                "value": ("" if is_positive else "-") + str(value),
-                "currency": {
-                    "symbol": MINA_SYMBOL,
-                    "decimals": MINA_DECIMALS
-                }
-            }
-        }
-    return {
-        "operations": [
-            _make_operation(
-                0, [], "fee_payment", address_from, fee_nano, False),
-            _make_operation(
-                1, [], "payment_source_dec", address_from, value_nano, False),
-            _make_operation(
-                2, [1], "payment_receiver_inc", address_to, value_nano, True)
-        ]
-    }
-```
-
-</TabItem>
-</Tabs>
-
-### Implementing client methods
-
-Now that you have all helpers in place, you can implement all of the Rosetta client methods according to the specification:
-
-<Tabs>
-<TabItem value="ts" label="TypeScript">
-
-```ts
-async function networkList() {
-  return await makeRequest("/network/list")
-}
-
-async function networkStatus() {
-  return await makeRequest("/network/status")
-}
-
-async function networkOptions() {
-  return await makeRequest("/network/options")
-}
-
-async function block(idOrHash: number | string) {
-  return await makeRequest("/block", makeBlockIdentifier(idOrHash))
-}
-
-async function mempool() {
-  return await makeRequest("/mempool")
-}
-
-async function mempoolTx(hash: string) {
-  return await makeRequest("/mempool/transaction", makeTxIdentifier(hash))
-}
-
-async function accountBalance(address: string) {
-  return await makeRequest("/account/balance", makeAccountIdentifier(address))
-}
-
-async function accountTransactions(address: string) {
-  return await makeRequest("/search/transactions", { address: address })
-}
-
-async function getTransaction(hash: string) {
-  return await makeRequest("/search/transactions", makeTxIdentifier(hash))
-}
-
-async function deriveAccountIdentifier(publicKey: string) {
-  return await makeRequest("/construction/derive", {
-    public_key: makePublicKey(publicKey),
-  })
-}
-
-async function txPreprocess(from: string, to: string, feeNano: number, valueNano: number) {
-  const payload = makeTransferPayload(from, to, feeNano, valueNano)
-  return await makeRequest("/construction/preprocess", payload)
-}
-
-async function txMetadata(
-  srcPublicKey: string,
-  srcAddress: string,
-  destAddress: string,
-  feeNano: number,
-  valueNano: number,
-) {
-  const options = await txPreprocess(srcAddress, destAddress, feeNano, valueNano)
-  return await makeRequest("/construction/metadata", {
-    ...options,
-    public_keys: [makePublicKey(srcPublicKey)],
-  })
-}
-
-async function txPayloads(
-  srcPublicKey: string,
-  srcAddress: string,
-  destAddress: string,
-  feeNano: number,
-  valueNano: number,
-) {
-  // If fee_nano is undefined, it will get suggested fee from /construction/metadata response
-  const meta = await txMetadata(
-    srcPublicKey,
-    srcAddress,
-    destAddress,
-    feeNano,
-    valueNano,
-  )
-
-  if (feeNano === 0) {
-    feeNano = meta.suggested_fee[0].value
-  }
-  console.log(feeNano)
-  const operations = makeTransferPayload(srcAddress, destAddress, feeNano, valueNano)
-  return makeRequest("/construction/payloads", { ...operations, ...meta })
-}
-
-async function txCombine(payloadsResponse: any, privateKey: string) {
-  // console.dir(payloadsResponse, {depth: null})
-  const combinePayload = mina.rosettaCombinePayload(payloadsResponse, privateKey)
-  const r = await makeRequest("/construction/combine", combinePayload)
-  return r
-}
-
-async function txParse(isSigned: boolean, blob: string) {
-  return makeRequest("/construction/parse", {
-    signed: isSigned,
-    transaction: blob,
-  })
-}
-
-async function txHash(blob: string) {
-  return await makeRequest("construction/hash", { signed_transaction: blob })
-}
-
-async function txSubmit(blob: string) {
-  return await makeRequest("construction/submit", { signed_transaction: blob })
-}
-```
-
-</TabItem>
-
-<TabItem value="py" label="Python">
-
-```python
-def network_list():
-    return _request("/network/list")
-
-def network_status():
-    return _request("/network/status")
-
-def network_options():
-    return _request("/network/options")
-
-def block(index_or_hash):
-    return _request("/block", _make_block_identifier(index_or_hash))
-
-def mempool():
-    return _request("/mempool")
-
-def mempool_tx(tx_hash):
-    return _request("/mempool/transaction", _make_tx_identifier(tx_hash))
-
-def account_balance(address):
-    return _request("/account/balance", _make_account_identifier(address))
-
-def derive_account_identifier(pubkey):
-    return _request("/construction/derive", {
-        "public_key": _make_pubkey(pubkey)
-    })
-
-def tx_preprocess(src, dest, fee_nano, value_nano):
-    return _request(
-        "/construction/preprocess", 
-        _make_transfer_payload(src, dest, fee_nano, value_nano))
-
-def tx_metadata(src_pubkey, src_address, dest_address, fee_nano, value_nano):
-    options = tx_preprocess(src_address, dest_address, fee_nano, value_nano)
-    return _request("/construction/metadata", {
-        **options, "public_keys": [_make_pubkey(src_pubkey)]
-    })
-
-def tx_payloads(src_pubkey, src_address, dest_address, fee_nano, value_nano):
-    """
-    If fee_nano is None, it will get suggested fee from /construction/metadata response
-    """
-    fee_nano = fee_nano or 0
-    meta = tx_metadata(
-        src_pubkey, src_address, dest_address, fee_nano, value_nano)
-
-    if not fee_nano:
-        fee_nano = meta["suggested_fee"][0]["value"]
-
-    operations = _make_transfer_payload(
-        src_address, dest_address, fee_nano, value_nano)
-    return _request("/construction/payloads", {**operations, **meta})
-
-def tx_combine(src_pubkey, tx_payloads_response, signature):
-    combine_payload = {
-        "unsigned_transaction": tx_payloads_response["unsigned_transaction"],
-        "signatures": [
-            {
-                "signing_payload": tx_payloads_response["payloads"][0],
-                "public_key": _make_pubkey(src_pubkey),
-                "signature_type": MINA_SIGNATURE_TYPE,
-                "hex_bytes": signature
-            }
-        ]
-    }
-    return _request("/construction/combine", combine_payload)
-
-def tx_parse(transaction_blob, is_signed):
-    return _request("/construction/parse", {
-        "signed": is_signed,
-        "transaction": transaction_blob
-    })
-
-def tx_hash(signed_transaction_blob):
-    return _request("/construction/hash", {
-        "signed_transaction": signed_transaction_blob
-    })
-
-def tx_submit(signed_transaction_blob):
-    return _request("/construction/submit", {
-        "signed_transaction": signed_transaction_blob
-    })
-```
-
-
-</TabItem>
-</Tabs>
-
----
-url: /exchange-operators/rosetta/samples/scan-blocks
----
-
-To implement a simple function to wait for a given block:
-
-<Tabs>
-<TabItem value="ts" label="TypeScript">
-
-```ts
-async function waitForBlock(blockHeight: number) {
-  let latestBlock = (await networkStatus()).current_block_identifier.index
-  while (true) {
-    if (blockHeight <= latestBlock) {
-      return await block(blockHeight)
-    }
-    await sleep(10000)
-    latestBlock = (await networkStatus()).current_block_identifier.index
-  }
-}
-```
-
-</TabItem>
-
-<TabItem value="py" label="Python">
-
-```python
-def wait_for_block(block_index):
-    """
-    Checks if block with given index exist
-    Once the /block response is succesful - returns the response
-    Otherwise, retries fetching it with 10 seconds delay
-    """
-
-    latest_block = network_status()["current_block_identifier"]["index"]
-    while True:
-        if block_index <= latest_block:
-            return block(block_index)
-        sleep(10)
-        latest_block = network_status()["current_block_identifier"]["index"]
-```
-
-</TabItem>
-</Tabs>
-
-It can be used to scan blocks like this:
-
-<Tabs>
-<TabItem value="ts" label="TypeScript">
-
-```ts
-let latestBlockHeight = (await network_status()).current_block_identifier.index
-while (true) {
-  const lastBlock = waitForBlock(latestBlockHeight)
-  // some processing according to business logic
-    
-  latestBlockHeight += 1
-}
-```
-
-</TabItem>
-
-<TabItem value="py" label="Python">
-
-```python
-latest_block = network_status()["current_block_identifier"]["index"]
-while True:
-    last_block = wait_for_block(latest_block)
-    
-    # some processing according to business logic
-    
-    latest_block += 1
-```
-
-</TabItem>
-</Tabs>
-
----
-url: /exchange-operators/rosetta/samples/send-transactions
----
-
-:::info
-This flow is also described in the [Construction API Overview](https://docs.cloud.coinbase.com/rosetta/docs/construction-api-overview) article in the official Rosetta documentation.
-:::
-
-The steps needed to send payment in MINA token are following:
-1. Given a key pair, derive the account indentifier using `/construction/derive` endpoint
-1. Call `/construction/preprocess` and `/construction/metadata` to construct parameters for `/construction/payloads` request
-1. Create an unsigned transaction blob using `construction/payloads` endpoint
-1. Call `construction/parse` (optional) to check if the unsigned transaction does what you expect
-1. Use detached signer to sign the transaction
-1. Call `construction/combine` to generate signed blob to be sent via `/construction/submit` endpoint
-1. Call `construction/parse` again (optional) to confirm correctness of the signed transaction
-1. Get a future transaction hash using `/construction/hash` enpoint
-1. Submit the signed transaction blob via `/construction/submit` endpoint
-
-For ease of readability, this sample implementation skips the sanity checks (steps 4 and 7) and combines steps 2 and 3 in a single `tx_payloads` function call.
-
-Before running this sample:
-- Make sure you followed [Offline signer tool](using-signer) article and generated a key pair
-- Send some test funds on the account you've generated.
-
-The implementation is as follows:
-
-<Tabs>
-<TabItem value="ts" label="TypeScript">
-
-```ts
-async function send(privateKey: string, to: string, valueNano: number, feeNano: number) {
-  const publicKey = mina.derivePublicKey(privateKey)
-  const publicKeyRaw = mina.publicKeyToRaw(publicKey)
-  // get transfer payload to sign
-  const payloadsResponse = await txPayloads(
-    publicKeyRaw,
-    publicKey,
-    to,
-    feeNano,
-    valueNano,
-  )
-
-  // sign and combine transfer payload
-  const combineResponse = await txCombine(payloadsResponse, privateKey)
-  const blob = combineResponse.signed_transaction
-
-  // // get future transaction hash
-  const txHashResponse = await txHash(blob)
-  const hash = txHashResponse.transaction_identifier.hash
-
-  // submit transaction. this call will fail if tx is not in mempool
-  await txSubmit(blob)
-  // wait for transaction confirmation:
-  // for that, track blocks until we meet our transaction in the last one
-  let latestBlock = (await networkStatus()).current_block_identifier.index
-  while (true) {
-    // check if our transaction exists in the latest block
-    const txs = (await waitForBlock(latestBlock)).block.transactions
-    const hashes = txs.map((tx: any) => tx.transaction_identifier.hash)
-    if (hashes.includes(hash)) {
-      break
-    }
-
-    latestBlock += 1
-  }
-  return hash
-}
-```
-
-</TabItem>
-
-<TabItem value="py" label="Python">
-
-```python
-def withdrawal_flow(vault_keypair, dest_address, value_nano, fee_nano=None):
-    """
-    Full withdrawal flow example (without sanity check)
-    If fee_nano is None - fee will be suggested by Rosetta API response
-    """
-
-    vault_pubkey = vault_keypair["public"]
-    vault_private_key = vault_keypair["private"]
-    
-    # derive vault address
-    derive_response = derive_account_identifier(vault_pubkey)
-    vault_address = derive_response["account_identifier"]["address"]
-    
-    # get transfer payload to sign
-    payloads_response = tx_payloads(
-        vault_pubkey, vault_address, dest_address, fee_nano, value_nano)
-    
-    # sign transfer payload
-    signature = sign_transaction(
-        SIGNER_PATH, 
-        vault_private_key,
-        payloads_response["unsigned_transaction"])
-
-    # get signed transaction blob
-    combine_response = tx_combine(vault_pubkey, payloads_response, signature)
-    signed_transaction_blob = combine_response['signed_transaction']
-
-    # sanity check may be performed here 
-    # for that - use tx_parse function output
-    # to doublecheck it corresponds what you want to do
-    # parsed_tx = tx_parse(signed_transaction_blob, True)
-
-    # get future transaction hash
-    tx_hash_response = tx_hash(signed_transaction_blob)
-    future_tx_hash = tx_hash_response['transaction_identifier']['hash']
-
-    # submit transaction. this call will fail if tx is not in mempool
-    tx_submit(signed_transaction_blob)
-    
-    # wait for transaction confirmation:
-    # for that, track blocks until we meet our transaction in the last one
-    latest_block = network_status()["current_block_identifier"]["index"]
-    while True:
-        # check if our transaction exists in the latest block
-        txs = wait_for_block(latest_block)['block']['transactions']
-        hashes = [tx['transaction_identifier']['hash'] for tx in txs]
-        if future_tx_hash in hashes:
-            break
-        latest_block += 1
-    
-    return future_tx_hash
-```
-
-</TabItem>
-</Tabs>
-
----
-url: /exchange-operators/rosetta/samples/track-deposits
----
-
-After everything is ready, you can implement deposit tracking.
-
-For that, iterate through all transactions in each block to search for `payment_receiver_inc` operation with an address matching the address in which you are interested:
-
-<Tabs>
-<TabItem value="ts" label="TypeScript">
-
-```ts
-async function trackDeposit(address: string) {
-  // some logic we want to execute on deposit
-  function onDeposit(deposit: any) {
-    console.log(deposit)
-  }
-  let latestBlock = (await networkStatus()).current_block_identifier.index
-  while (true) {
-    // check if transactions to the deposit address are present in the latest block
-    const txs = (await waitForBlock(latestBlock)).block.transactions
-    const deposits = []
-    for (let tx of txs) {
-      for (let op of tx.operations) {
-        if (op.account.address === address && op.type === "payment_receiver_inc") {
-          deposits.push({
-            tx_hash: tx.transaction_identifier.hash,
-            amount: op.amount.value,
-          })
-        }
-      }
-    }
-
-    // process deposits
-    for (let d of deposits) {
-      onDeposit(d)
-    }
-
-    latestBlock += 1
-  }
-}
-```
-
-</TabItem>
-
-<TabItem value="py" label="Python">
-
-```python
-def deposit_flow(deposit_address):
-    # some logic we want to execute on deposit
-    def on_deposit(deposit):
-        print(json.dumps(deposit, indent=2))
-    
-    latest_block = network_status()["current_block_identifier"]["index"]
-    while True:
-        # check if transactions to the deposit address are present in the latest block
-        txs = wait_for_block(latest_block)['block']['transactions']
-        deposits = []
-        for tx in txs:
-            for op in tx["operations"]:
-                if op["account"]["address"] == deposit_address \
-                        and op["type"] == "payment_receiver_inc":
-                    deposits.append({
-                        "tx_hash": tx["transaction_identifier"]["hash"],
-                        "amount": op["amount"]["value"]
-                    })
-        
-        # process deposits
-        for d in deposits:
-            on_deposit(d)
-
-        latest_block += 1
-```
-
-</TabItem>
-</Tabs>
-
----
-url: /exchange-operators/rosetta/samples/using-signer
----
-
-# Offline signer tool
-
-According to the Rosetta specification, you use an offline tool to sign transactions and use Rosetta to submit the signed transactions.
-The Mina Rosetta implementation comes with an offline signer CLI tool and a [`mina-signer`](/mina-signer) npm package. To generate a key pair, sign a transaction and verify a signature with it.
-
-In a native build, the path to the signer tool is `_build/default/src/app/rosetta/ocaml-signer/signer.exe`.
-
-In a Docker container, the path is `/rosetta/app/mina-ocaml-signer`.
-
-To simplify examples, it is referred to as the `signer` alias.
-
-## Generating a key pair with `mina-signer`
-
-See [Generating Keys](/mina-signer#generating-keys) in the Mina Signer documentation for full details. A quick example:
-
-```ts
-
-const mina = new Client({network: 'testnet'})
-const keypair = mina.genKeys()
-```
-
-## Generating a key pair with signer CLI
-
-To generate a private key, run:
-
-    signer generate-private-key
-
-To derive public key, run:
-
-    signer derive-public-key --private-key `<private key>`
-
-In the output you will also get a Mina account address associated with this key pair.
-
-## Signing a transaction with `mina-signer`
-
-A sample code to sign a transaction:
-
-```ts
-mina.signRosettaTransaction(payload, privateKey)
-```
-
-:::note 
-
-We advice to use `mina.rosettaCombinePayload` helper to sign and prepare a payload for `/construction/combine` request
-
-See [Sending Transactions](send-transactions) page to learn more.
-
-:::
-
-## Signing a transaction with CLI
-
-To sign a transaction, run:
-
-    signer sign --private-key `<private key>` --unsigned-transaction `<tx>`
-
-:::note 
-
-Replace `<tx>` with the unsigned transaction string, which you can construct using `construction/payloads` endpoint.
-See [Sending Transactions](send-transactions) page to learn more.
-
-:::
-
-
-To implement a helper function to sign a transaction (in Python):
-
-```python
-def sign_transaction(path_to_signer, private_key, unsigned_transaction):
-    cmd = "{signer} sign --private-key {pk} " \
-         "--unsigned-transaction {tx_blob}".format(
-            signer=path_to_signer, 
-            pk=private_key, 
-            tx_blob=unsigned_transaction)
-    r = run(cmd.split(), stdout=PIPE).stdout
-    return r.decode().strip()
-```
-
----
-url: /exchange-operators/rosetta/send-requests
----
-
-# Sending requests
-
-After the Rosetta app is running, you can send requests to it.
-To run a `/network/list` request:
-
-    curl -L -X POST 'http://localhost:3087/network/list' \
-        -H 'Content-Type: application/json' \
-        -H 'Accept: application/json' -d '{}'
-
-In the case of successful setups, you see a response similar to this one:
-
-
-```json
-{"network_identifiers":[{"blockchain":"mina","network":"mainnet"}]}
-```
-
-You must pass the `network_identifier` object as a parameter to all other endpoints. In Mina Rosetta implementation, it exists only for the network you run Rosetta for, so this array always contains one object.
-
-Learn how to use Rosetta API for different use cases. See in the [Code Samples](samples) section.
-
----
 url: /glossary
 ---
 
@@ -2262,9 +707,9 @@ This section describes how the Mina Protocol works.
 
 [Node Developers](../node-developers) describes how developers can add to and improve Mina nodes.
 
-## Exchange Operators
+## Exchange Integration
 
-[Exchange Operators](../exchange-operators/faq) describes how to connect to Mina networks and provide access to the MINA token.
+[Exchange Operators](/node-operators/exchange-operators) describes how exchanges can integrate with the Mina blockchain using Rosetta API, archive nodes, and validator nodes.
 
 ---
 url: /mina-protocol/lifecycle-of-a-payment
@@ -3546,7 +1991,7 @@ const signedGraphQLCommand =
   client.signedRosettaTransactionToSignedCommand(signedRosettaTx);
 ```
 
-For detailed Rosetta usage including the offline signer CLI tool and `signRosettaTransaction`, see the [Rosetta Offline Signer](/exchange-operators/rosetta/samples/using-signer) documentation.
+For detailed Rosetta usage including the offline signer CLI tool and `signRosettaTransaction`, see the [Mina Signer for Node Operators](/node-operators/mina-signer) documentation.
 
 ## o1js Integration
 
@@ -7773,7 +6218,7 @@ The all-in-one image supports the following environment variables for customizat
 
 For production deployments, use Docker Compose to run each component as a separate container. This gives you more control over resource allocation, logging, and restarts.
 
-For production deployments, a complete Docker Compose configuration with all four services (PostgreSQL, archive node, Mina daemon, and Rosetta API) is available in the [Rosetta Docker Compose guide](/exchange-operators/rosetta/docker-compose).
+For production deployments, a complete Docker Compose configuration with all four services (PostgreSQL, archive node, Mina daemon, and Rosetta API) is available in the [Rosetta Docker Compose guide](/node-operators/rosetta/docker-compose).
 
 ### Option 3: Debian Packages (Manual setup)
 
@@ -8175,6 +6620,46 @@ FILE_LOG_LEVEL=Debug
 #### Need any help? Post your questions in the [#Delegation-Program](https://discord.gg/ywDzwmGABT) channel on Discord.
 
 ---
+url: /node-operators/exchange-operators
+---
+
+# Exchange Operators
+
+
+
+<Subhead>
+Exchange operators are node operators who run additional infrastructure for blockchain integration.
+</Subhead>
+
+To list MINA on your exchange, you need to run a Mina node with archive and Rosetta API support. This page provides an overview of the components involved and links to the relevant setup guides.
+
+## Components
+
+### Validator Node
+
+A Mina daemon connected to the network. This is the base requirement for any node operator. See [Validator Node](/node-operators/validator-node) for setup instructions.
+
+### Archive Node
+
+An archive node stores the full history of the blockchain in a PostgreSQL database. Exchanges need this to query historical transactions and track deposits.
+
+- [Archive Node](/node-operators/archive-node) — set up and run an archive node
+
+### Rosetta API
+
+[Rosetta](https://www.rosetta-api.org/) is a standardized API for blockchain integration. It is the recommended way to integrate MINA deposits, withdrawals, and balance queries.
+
+- [Rosetta API Overview](/node-operators/data-and-history/rosetta) — architecture and available endpoints
+- [Run with Docker](/node-operators/rosetta/run-with-docker) — quickest way to get started
+- [Docker Compose](/node-operators/rosetta/docker-compose) — production setup with all services
+- [Build from Sources](/node-operators/rosetta/build-from-sources) — build and run from source
+- [Code Samples](/node-operators/rosetta/samples) — example integrations for deposits, withdrawals, and block scanning
+
+## FAQ
+
+See the [Exchange Integration FAQ](/node-operators/faq#exchange-integration) for answers to common questions about listing MINA, account creation fees, transaction memos, staking, and more.
+
+---
 url: /node-operators/faq
 ---
 
@@ -8250,6 +6735,171 @@ No, when a new block is generated, Mina computes the proof recursively over the 
 
 When you start the mina daemon, use the `-snark-worker-parallelism` flag. This flag is equivalent to setting `OMP_NUM_THREADS`, but doesn't affect block production.
 
+## Exchange Integration
+
+#### Where can I find third-party audit reports for Mina?
+
+The latest third-party audit reports are publicly available here:
+
+- [https://research.nccgroup.com/2020/05/13/public-report-coda-cryptographic-review](https://research.nccgroup.com/2020/05/13/public-report-coda-cryptographic-review/)
+- [https://leastauthority.com/blog/audit-of-mina-ledger-application-for-o1-labs](https://leastauthority.com/blog/audit-of-mina-ledger-application-for-o1-labs/)
+- [https://research.nccgroup.com/2022/02/22/public-report-o1-labs-mina-client-sdk-signature-library-and-base-components-cryptography-and-implementation-review](https://research.nccgroup.com/2022/02/22/public-report-o1-labs-mina-client-sdk-signature-library-and-base-components-cryptography-and-implementation-review)
+
+:::note
+
+Any news and updates related to exchange listing shared by the Mina Foundation are on [www.minaprotocol.com](https://minaprotocol.com) or the official [Mina Protocol](https://x.com/MinaProtocol) X (Twitter). Mina Foundation cannot individually answer any listing questions.
+
+:::
+
+#### Why do you recommend using Rosetta for integrating Mina to our exchange?
+
+Rosetta is an open-source specification that helps exchanges and developers integrate blockchains. Since Rosetta is actively maintained and specifically designed to enable simpler, faster, and more reliable blockchain integrations, we highly recommend using Rosetta to integrate Mina blockchain with your exchange.
+
+#### Is there an account creation fee?
+
+Yes, Mina Protocol charges a fee of 1 MINA when you create a new account. This fee helps protect the network from denial of service-type attacks. Over time, this fee can change.
+
+#### What is the maximum size of the mempool? How do we work around this?
+
+The max mempool size is 3,000. After it hits that size, transactions with the lowest fees are discarded.
+
+Set your fee to an amount higher than 0.001 MINA, the current average fee for transactions in the pool.
+
+You can view the fees for pending transactions and adjust your fees accordingly: [https://minascan.io/mainnet/txs/pending-txs](https://minascan.io/mainnet/txs/pending-txs).
+
+#### Why do some users appear to have lost their funds when sending to exchanges?
+
+:::tip
+
+While Mina and its SDKs do support the memo field when sending a transaction, the recommended best practice is <u>do NOT require a memo for deposits</u>.
+
+:::
+
+To associate the deposit with the user's account, some exchanges require their users to include a unique memo field when sending MINA deposits to the exchange's address.
+
+If the user does not include this unique memo when sending their deposit, the receiving exchange may not be able to associate the deposit properly with the user's exchange account.
+
+These funds are <u>NOT lost</u>. The exchanges have received the funds at the exchange's address, but the exchange may not be able to automatically associate the deposit with the user's exchange account without such a memo.
+
+To prevent this issue, we recommend that exchanges <u>do NOT require a memo</u> for deposits. At the same time, exchanges and wallet creators are recommended to <u>expose an optional memo field</u> during a Mina send transaction.
+
+#### What is the maximum number of rollback blocks?
+
+The table in [Lifecycle of a Payment](/mina-protocol/lifecycle-of-a-payment) describes how many blocks you wait for a transaction to be confirmed.
+
+#### How should I calculate transaction fees?
+
+To calculate your transaction fees, use [https://fees.mina.tools](https://fees.mina.tools/).
+
+#### My Mina node gets stuck sometimes. How can I detect this and fix it?
+
+This is a known issue for some earlier releases. Restart your mina node whenever this issue is detected.
+
+You can use the following script to run a cron job every 3 minutes (the slot length) or more frequently:
+
+```
+MINA_STATUS=$($MINA client status --json)
+HIGHESTBLOCK="$(echo $MINA_STATUS | jq .highest_block_length_received)"
+HIGHESTUNVALIDATEDBLOCK="$(echo $MINA_STATUS | jq .highest_unvalidated_block_length_received)"
+
+# Calculate difference between validated and unvalidated blocks.
+# If block height is more than 4 block behind, something is likely wrong.
+
+DELTAVALIDATED="$(($HIGHESTUNVALIDATEDBLOCK-$HIGHESTBLOCK))"
+if [[ "$DELTAVALIDATED" -gt 4 ]]; then
+  $MINA client stop
+fi
+```
+
+:::tip
+
+Be sure your Mina daemon is monitored by something such as systemd, so it can auto-restart.
+
+:::
+
+#### My archive node is missing block information after a restart. How can I recover the data?
+
+Archive node operators often choose to run redundant archive nodes to store block data to one or more locations of their choice (for example, PostgreSQL, GCP, local files, or a logging service) and to backfill any missed block data if needed.
+
+For convenience, [mina_network_block_data](https://console.cloud.google.com/storage/browser/mina_network_block_data) from the archive node is available to help others in the community backfill any missing information.
+
+This bucket contains blocks from various Mina networks — for example, Mainnet and the most recent Devnet `devnet2`. Filter by filename for the network you want. Note that this bucket contains blocks for various other networks too, such as QAnet, which is not recommended for your testing. QAnet is used by o1Labs during targeted iterative development.
+
+Filenames contain the network name, block height, and state hash of the block. Blocks older than height 25,705 include only the network name and state hash in the filename.
+
+Example filenames:
+
+(Recent)
+
+```
+mainnet-30627-3NLfKanQ53X2MRKx5ZRvb9nVCEB9eJpcnssGCTpT3J1cojhB5M19.json
+```
+
+(Older)
+
+```
+mainnet-3NKUBmkc7UZ7ik5JyCM4WNzkN1HG5heMB5zNDUkf3Kgta1MFY6LY.json
+```
+
+You can download a specific block using curl:
+
+```
+curl https://mina_network_block_data.storage.googleapis.com/<filename.json>
+```
+
+You can import this file using the mina archive blocks tool. The command for it is:
+
+```
+mina-archive-blocks --precomputed --archive-uri <postgres uri> FILE.
+```
+
+#### How do I query for the canonical block at a certain height from the archive node?
+
+Use a recursive query. See [Query the database](/node-operators/archive-node/getting-started#query-the-database) examples in the Archive Node docs.
+
+#### Why am I getting this error message: "Not able to connect to the network"?
+
+This error message usually occurs due to a chain ID mismatch from running a Devnet build on Mainnet, or vice versa.
+
+To check whether you are running a devnet or mainnet build, run `Mina client status`. Next, compare the output's chain ID of your node to the expected chain ID of the network you are trying to connect to. You can find required information for comparison within the [GitHub announcements](https://github.com/MinaProtocol/mina/discussions/categories/announcements) or [Discord](https://discord.com/channels/484437221055922177/601171209287368715) server.
+
+#### Are there any official broadcast nodes that can be used?
+
+No, there are no official broadcast nodes at this time. However, you can  broadcast transactions using [https://minascan.io/mainnet/broadcast/payment](https://minascan.io/mainnet/broadcast/payment). Use this method as a backup, the recommended method is to broadcast transactions yourself.
+
+#### Should I be staking my funds?
+
+Since Mina is a Proof of Stake (PoS) consensus network without lockup for staked tokens, it is recommended to stake these funds to support the quality of the Mina network. Additionally, by not staking, you are missing out on staking rewards that you can otherwise be receiving from the Mina blockchain.
+
+You can look into staking this wallet, either by running your own block production node or just by delegating your funds to a staking pool on the network. Delegating to a staking pool is simpler to set up.
+
+:::note
+
+Newly staked accounts incur a delay of 18 to 29 days before you start receiving rewards.
+
+:::
+
+#### Why is there a delay for staking to take effect?
+
+For purposes of ensuring consensus, there is a delay between when delegations are sent on the blockchain and when they take effect with respect to staking on the network. The staking ledger always operates between 18 to 29 days behind the live ledger.
+
+#### How long is the delay and when is the next staking snapshot?
+
+The timing of the next staking snapshot varies.
+
+Since the timing is based on a combination of consensus timing (epochs) and snarketplace throughput, it is difficult to determine exactly how long this delay can be.
+
+A conservative estimate is that delegations sent 3 days before the epoch transition can take effect in the upcoming epoch. This means that, for any given delegation, there is an average of 18 to 29 days delay before this delegation updates block production.
+
+You can use this Delegation Calculator tool built by Carbonara to see the next staking ledger cutoff:
+[https://epoch.mina.tools](https://epoch.mina.tools/).
+
+#### What is the best way to test tooling and integration with Mina?
+
+Test tooling and integrations on Devnet before going live on Mainnet. The Devnet network is dedicated for developers building on top of the Mina protocol and is designed for testing and experimentation. Be sure to simulate expected Mainnet conditions, such as transaction volume and frequency, to help identify and solve potential issues ahead of time.
+
+See [Connect to Devnet](/node-operators/validator-node/connecting-to-the-network).
+
 ---
 url: /node-operators
 ---
@@ -8301,11 +6951,78 @@ This section describes how to run each node role and where to find the operation
 
 ### Reference
 - [Mina CLI Reference](/node-operators/reference/mina-cli-reference) - Guide to CLI interactions with Mina networks
-- [Mina Signer](/node-operators/reference/mina-signer) - NodeJS SDK for signing
+- [Mina Signer](/node-operators/mina-signer) - Key generation and transaction signing
 
 ### Support
 - [Troubleshooting](/node-operators/troubleshooting) - Solutions to common problems
 - [FAQ](/node-operators/faq) - Frequently asked questions
+
+## Exchange Integration
+
+[Exchange Operators](/node-operators/exchange-operators) describes how exchanges can integrate with the Mina blockchain using Rosetta API, archive nodes, and validator nodes.
+
+---
+url: /node-operators/mina-signer
+---
+
+# Mina Signer
+
+[Mina Signer](/mina-signer) is a NodeJS/Browser-compatible library for signing transactions and generating keys. The Rosetta stack also ships an offline signer CLI tool. Both can be used to sign transactions offline for later submission via the [Construction API](/node-operators/rosetta/samples/send-transactions).
+
+## Migration from o1labs/client-sdk
+
+The signing library `o1labs/client-sdk` is deprecated and will stop working after the Mina mainnet upgrade. All users should migrate to [mina-signer](https://www.npmjs.com/package/mina-signer).
+
+When migrating:
+
+1. Adjust the `nonce` to the correct nonce on the sender account
+2. Update the `url` variable with an existing Mina Node GraphQL endpoint
+
+See [Broadcasting a Signed Payment](/mina-signer#broadcasting-a-signed-payment) for a complete example.
+
+## Generating a key pair with mina-signer
+
+See [Generating Keys](/mina-signer#generating-keys) for full details. A quick example:
+
+```ts
+
+const mina = new Client({network: 'testnet'})
+const keypair = mina.genKeys()
+```
+
+## Generating a key pair with signer CLI
+
+In a native build, the signer is at `_build/default/src/app/rosetta/ocaml-signer/signer.exe`. In Docker, it's at `/rosetta/app/mina-ocaml-signer`. Examples below use `signer` as an alias.
+
+Generate a private key:
+
+```bash
+signer generate-private-key
+```
+
+Derive the public key and account address:
+
+```bash
+signer derive-public-key --private-key <private key>
+```
+
+## Signing a transaction with mina-signer
+
+```ts
+mina.signRosettaTransaction(payload, privateKey)
+```
+
+:::note
+We recommend using `mina.rosettaCombinePayload` to sign and prepare a payload for the `/construction/combine` request. See [Sending Transactions](/node-operators/rosetta/samples/send-transactions) for the full flow.
+:::
+
+## Signing a transaction with signer CLI
+
+```bash
+signer sign --private-key <private key> --unsigned-transaction <tx>
+```
+
+Replace `<tx>` with the unsigned transaction string from the `/construction/payloads` endpoint. See [Sending Transactions](/node-operators/rosetta/samples/send-transactions) for the full flow.
 
 ---
 url: /node-operators/reference
@@ -8313,10 +7030,8 @@ url: /node-operators/reference
 
 # Reference
 
-Reference documentation and support resources for Mina node operators.
-
 - **[Mina CLI Reference](/node-operators/reference/mina-cli-reference)** -- Complete reference for the `mina` command line interface.
-- **[Mina Signer](/node-operators/reference/mina-signer)** -- NodeJS SDK for signing payments and delegations.
+- **[Mina Signer](/node-operators/mina-signer)** -- Key generation and transaction signing for node operators.
 - **[Troubleshooting](/node-operators/troubleshooting)** -- Solutions to common problems when running a Mina node.
 - **[FAQ](/node-operators/faq)** -- Frequently asked questions about node operations, SNARKs, and the Mina network.
 
@@ -10475,23 +9190,761 @@ explain a given subcommand (perhaps recursively)
 ```
 
 ---
-url: /node-operators/reference/mina-signer
+url: /node-operators/rosetta/build-from-sources
 ---
 
-# Mina Signer for Node Operators
+# Building and running Rosetta from source code
 
-[Mina Signer](/mina-signer) is a NodeJS SDK that allows you to sign strings, payments, and delegations using Mina's key pairs for various specified networks. See the full [Mina Signer documentation](/mina-signer) for installation, API details, and usage with o1js and Rosetta.
+In [Running with Docker](run-with-docker), you learned that the Docker container runs the mina daemon, mina-archive, and Rosetta API. 
 
-## Migration from o1labs/client-sdk to mina-signer
+If you already have mina-archive up and running, you can also build and run the Rosetta API natively and wire it to the existing mina daemon and mina-archive.
 
-The signing library `o1labs/client-sdk` was deprecated some time ago and will stop working after the Mina mainnet upgrade. All users should upgrade to use the [mina-signer](https://www.npmjs.com/package/mina-signer) library.
+:::tip
 
-Please keep in mind the following:
+To run mina daemon and mina-archive natively, follow the [Archive Node page](/node-operators/archive-node/getting-started) instructions.
 
-1. Make sure to adjust the `nonce` to the correct nonce on the account you want to use as "sender"
-1. Update the `url` variable with an existing Mina Node GraphQL endpoint
+:::
 
-See the [Broadcasting a Signed Payment](/mina-signer#broadcasting-a-signed-payment) section for a complete example of signing and broadcasting a payment via GraphQL.
+The easiest way to build Rosetta natively is to use the Nix development environment.
+
+1. 
+    Clone the official [mina repository](https://github.com/MinaProtocol/mina.git) and switch to the `compatible` branch.
+
+1. 
+    If you don't already have Nix on your machine, install it following the steps in the [nix/README.md](https://github.com/MinaProtocol/mina/blob/develop/nix/README.md).
+
+1. 
+    Run the `./nix/pin.sh` script to enable submodules to be available to the build:
+
+    ```shell
+    ./nix/pin.sh
+    ```
+
+1. 
+    Launch the development shell:
+
+    ```shell
+    nix develop mina
+    ```
+
+1. 
+    Build Rosetta app:
+
+    ```shell
+    dune build --profile=mainnet src/app/rosetta
+    ```
+
+1. 
+    After a successful build, the Rosetta app is available here: `_build/default/src/app/rosetta/rosetta.exe` 
+
+    You can run it with following command:
+    ```shell
+    MINA_ROSETTA_MAX_DB_POOL_SIZE=64 \
+        _build/default/src/app/rosetta/rosetta.exe --port 3087 \
+        --graphql-uri <URL to Mina GraphQL instance> 
+        --archive-uri postgres://<username>:<password>@<host>:<port>/<db_name>
+    ```
+
+---
+url: /node-operators/rosetta/docker-compose
+---
+
+# Docker Compose Rosetta
+
+For production deployments, use Docker Compose to run each Rosetta component as a separate container. This gives you control over resource allocation, logging, and restarts.
+
+The full Docker Compose configuration — including `docker-compose.yml`, example environment files for mainnet and devnet, a `Makefile`, and a `README` — is maintained in the Mina repository:
+
+**[`mina/src/app/rosetta/docker-compose/`](https://github.com/MinaProtocol/mina/tree/compatible/src/app/rosetta/docker-compose)**
+
+## Quick start
+
+:::tip
+Before running the commands below, review the [Configuration](#configuration) section to see all available options — including image tags, network selection, ports, and database settings.
+:::
+
+```bash
+git clone https://github.com/MinaProtocol/mina.git
+cd mina/src/app/rosetta/docker-compose
+
+# For mainnet
+cp example.mainnet.env .env
+
+# For devnet
+cp example.devnet.env .env
+
+# Edit .env — set MINA_LIBP2P_PASS and review POSTGRES_PASSWORD
+vi .env
+
+# Start all services
+docker compose up -d
+
+# Or use make shortcuts
+make mainnet   # copies mainnet env and starts services
+make devnet    # copies devnet env and starts services
+```
+
+## Services overview
+
+The Docker Compose setup includes six services:
+
+| Service | Description | Default Port |
+|---------|-------------|--------------|
+| **postgres** | PostgreSQL 17 with health checks | 5432 (container), configurable host port |
+| **bootstrap_db** | One-shot: downloads and imports the latest daily archive dump | — |
+| **mina_archive** | Archive process, stores block data in PostgreSQL | 3086 |
+| **mina_node** | Mina daemon with GraphQL API | 3085 (GraphQL), 8302 (P2P) |
+| **mina_rosetta** | Rosetta API for exchange integration | 3087 |
+| **missing_blocks_guardian** | Monitors and recovers missing blocks between nightly dumps and chain tip | — |
+
+## Configuration
+
+All configuration is done through a single `.env` file. Key variables:
+
+### Docker images
+
+| Variable | Description |
+|----------|-------------|
+| `MINA_DAEMON_IMAGE` | Mina daemon Docker image |
+| `MINA_ARCHIVE_IMAGE` | Mina archive Docker image |
+| `MINA_ROSETTA_IMAGE` | Mina Rosetta Docker image |
+
+For mainnet, images are pulled from [Docker Hub](https://hub.docker.com/u/minaprotocol) (`minaprotocol/mina-*`).
+For devnet, images are pulled from the o1Labs GCR registry.
+
+### Network
+
+| Variable | Description |
+|----------|-------------|
+| `MINA_NETWORK` | `mainnet` or `devnet` |
+| `MINA_PEERLIST_URL` | Bootstrap peers URL |
+| `MINA_LIBP2P_PASS` | Passphrase for the libp2p key (required) |
+
+### Ports
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `POSTGRES_PORT` | `5433` | Host port mapped to PostgreSQL |
+| `MINA_REST_PORT` | `3085` | GraphQL API port |
+| `MINA_P2P_PORT` | `8302` | P2P networking port |
+| `MINA_ARCHIVE_PORT` | `3086` | Archive server port |
+| `MINA_ROSETTA_PORT` | `3087` | Rosetta API port |
+
+### Archive bootstrap
+
+| Variable | Description |
+|----------|-------------|
+| `ARCHIVE_DUMP_BASE_URL` | Base URL for daily archive dumps |
+| `ARCHIVE_DUMP_PREFIX` | Dump filename prefix (`mainnet-archive-dump` or `devnet-archive-dump`) |
+| `GUARDIAN_PRECOMPUTED_BLOCKS_URL` | S3 bucket URL for precomputed blocks used by the missing blocks guardian |
+
+## Data persistence
+
+Bind mounts preserve data across `docker compose down` / `up`:
+
+| Host path | Container path | Contents |
+|-----------|---------------|----------|
+| `./archive/postgresql/data` | `/var/lib/postgresql/data` | PostgreSQL data |
+| `./archive/data` | `/data` | Archive node data |
+| `./mina_node/.mina-config` | `/root/.mina-config` | Daemon config, keys, peers |
+| `./mina_rosetta/.mina-config` | `/root/.mina-config` | Rosetta config |
+
+## Make targets
+
+| Command | Description |
+|---------|-------------|
+| `make devnet` | Copy devnet env and start services |
+| `make mainnet` | Copy mainnet env and start services |
+| `make stop` | Stop all services |
+| `make clean` | Stop services, remove volumes and all persisted data |
+| `make logs` | Follow logs for all services |
+| `make status` | Show container status |
+| `make health` | Check health of Postgres, GraphQL, and Rosetta endpoints |
+
+## Verifying the deployment
+
+Once services are running and the node is synced:
+
+```bash
+# Check container status
+make status
+
+# Run health checks
+make health
+
+# Check sync status
+docker compose exec mina_node mina client status
+
+# Query Rosetta API
+curl -s http://localhost:3087/network/list \
+  -H 'Content-Type: application/json' -d '{}' | jq .
+
+# Connect to archive database
+psql postgres://postgres:postgres@localhost:5433/archive
+```
+
+## Clean start
+
+To wipe all data and start fresh:
+
+```bash
+make clean
+docker compose up -d
+```
+
+---
+url: /node-operators/rosetta/run-with-docker
+---
+
+# Running with Docker
+
+:::info
+
+There is a known issue that you can't use the docker image on the Apple silicon chip.
+To run Mina Rosetta on Apple silicon, you can use the steps in [Building and running Rosetta from source code](build-from-sources).
+
+:::
+
+1.  [Install Docker](https://www.docker.com/get-started) and check that your Docker configuration has at least 16 GB RAM (the recommended amount is 32 GB).
+
+1. Check the latest release for Mainnet on the official [Mina GitHub releases](https://github.com/MinaProtocol/mina/releases) page.
+
+1. Use the Mina Rosetta Docker image:
+
+
+:::note
+
+If you want to build your own docker image, you can find more details in [Mina's Rosetta repository](https://github.com/MinaProtocol/mina/blob/develop/src/app/rosetta/README.md). However, for most users, it's not necessary to build your own image in order to interact with the API.
+
+:::
+
+The container in `/rosetta` includes three entrypoints, which each run a different set of services connected to a particular network.
+
+- **docker-start.sh** (default) - connects the mina node to a network (defaults to Mainnet) and initializes the archive database from publicly-available nightly O(1) Labs backups. This script runs a mina node, mina-archive, a postgresql DB, and mina-rosetta. The script also periodically checks for blocks that may be missing between the nightly backup and the tip of the chain and will fill in those gaps by walking back the linked list of blocks in the canonical chain and importing them one at a time. The script is configurable through environment variables. Take a look at the source for more information about what and how you can configure.
+- **docker-standalone-start.sh** - starts only the mina-rosetta API endpoint and any flags passed into the script go to mina-rosetta. You may use this for the "offline" part of the Construction API or if you want a setup with each service in its own container.
+- **docker-demo-start.sh** launches a mina node with a very simple 1-address genesis ledger as a sandbox for developing and playing around in. This script starts the full suite of tools (a mina node, mina-archive, a postgresql DB, and mina-rosetta), but for a demo network with all operations occurring inside this container and no external network activity.
+
+Run the container with following command (replace the image tag with one from dockerhub that's compatible with the network you are trying to connect to, also replace `--entrypoint` and any environment variable if needed):
+
+```
+    docker run -it --rm --name rosetta \
+        --entrypoint=./docker-start.sh \
+        -p 10101:10101 -p 3085:3085 -p 3086:3086 -p 3087:3087 \
+        minaprotocol/mina-rosetta:3.3.0-8c0c2e6-bullseye-mainnet
+```
+
+You can also create a file with the environment variables and pass it to the docker run command with `--env-file` flag. For example, create a file named `mainnet.env` with the following content:
+
+```
+    MINA_NETWORK=mainnet
+    PEERS_LIST_URL=https://bootnodes.minaprotocol.com/networks/mainnet.txt
+    MINA_ARCHIVE_DUMP_URL=https://storage.googleapis.com/mina-archive-dumps
+    MINA_GENESIS_LEDGER_URL=https://storage.googleapis.com/o1labs-gitops-infrastructure/mainnet/mainnet.json
+    BLOCKS_BUCKET=https://storage.googleapis.com/mina_network_block_data
+```
+
+Then run the container with the following command:
+
+```
+    docker run -it --rm --name rosetta \
+        --entrypoint=./docker-start.sh \
+        -p 8302:8302 -p 3085:3085 -p 3086:3086 -p 3087:3087 \
+        --env-file mainnet.env \
+        minaprotocol/mina-rosetta:<tag>
+```
+
+Example environment files for public networks can be found in [this](https://github.com/MinaProtocol/mina/blob/develop/src/app/rosetta/scripts) directory of Mina's Rosetta repository.
+
+:::note
+
+- It can take 20 min to 1 hour for your node to sync
+- Port 8302 is the default P2P port and must be exposed to the open internet
+- The GraphQL API runs on port 3085 (accessible via localhost:3085/graphql)
+- PostgreSQL runs on port 3086
+- Rosetta runs on port 3087
+
+:::
+
+---
+url: /node-operators/rosetta/samples
+---
+
+# Code Samples
+
+These samples use `curl` and [`jq`](https://jqlang.github.io/jq/) to interact with the Rosetta API. They assume a running Rosetta instance on `localhost:3087`.
+
+Set these shell variables before running the examples:
+
+```bash
+ROSETTA_URL="http://localhost:3087"
+NETWORK='{"blockchain":"mina","network":"mainnet"}'
+```
+
+All endpoints except `/network/list` require a `network_identifier` parameter. The samples include it in each request body.
+
+:::tip
+Replace `mainnet` with `devnet` if you are testing against a devnet instance.
+:::
+
+---
+url: /node-operators/rosetta/samples/requests
+---
+
+# Requests and Responses
+
+The Rosetta API specification defines high-level descriptions of request and response objects. Exact JSON layouts differ between blockchains. This page covers Mina-specific objects and shows how to query each endpoint with curl.
+
+All examples assume the shell variables from the [Code Samples](/node-operators/rosetta/samples) setup.
+
+## Network endpoints
+
+List available networks:
+
+```bash
+curl -s "$ROSETTA_URL/network/list" \
+  -H 'Content-Type: application/json' \
+  -d '{"metadata":{}}' | jq .
+```
+
+Sample response:
+
+```json
+{"network_identifiers":[{"blockchain":"mina","network":"mainnet"}]}
+```
+
+You must pass the `network_identifier` object as a parameter to all other endpoints. In Mina's Rosetta implementation, it exists only for the network you run Rosetta for, so this array always contains one object.
+
+Get network status (current block height, sync state, peers):
+
+```bash
+curl -s "$ROSETTA_URL/network/status" \
+  -H 'Content-Type: application/json' \
+  -d "{\"network_identifier\":$NETWORK}" | jq .
+```
+
+Get supported options and operation types:
+
+```bash
+curl -s "$ROSETTA_URL/network/options" \
+  -H 'Content-Type: application/json' \
+  -d "{\"network_identifier\":$NETWORK}" | jq .
+```
+
+## Block and transaction queries
+
+Fetch a block by index:
+
+```bash
+curl -s "$ROSETTA_URL/block" \
+  -H 'Content-Type: application/json' \
+  -d "{\"network_identifier\":$NETWORK,\"block_identifier\":{\"index\":1000}}" | jq .
+```
+
+Fetch a block by hash:
+
+```bash
+curl -s "$ROSETTA_URL/block" \
+  -H 'Content-Type: application/json' \
+  -d "{\"network_identifier\":$NETWORK,\"block_identifier\":{\"hash\":\"BLOCK_HASH\"}}" | jq .
+```
+
+List pending transactions in the mempool:
+
+```bash
+curl -s "$ROSETTA_URL/mempool" \
+  -H 'Content-Type: application/json' \
+  -d "{\"network_identifier\":$NETWORK}" | jq .
+```
+
+## Account queries
+
+Query an account balance:
+
+```bash
+curl -s "$ROSETTA_URL/account/balance" \
+  -H 'Content-Type: application/json' \
+  -d "{
+    \"network_identifier\":$NETWORK,
+    \"account_identifier\":{\"address\":\"B62qr...\",\"token_id\":\"wSHV2S4qX9jFsLjQo8r1BsMLH2ZRKsZx6EJd1sbozGPieEC4Jf\"}
+  }" | jq .
+```
+
+Search for transactions by address:
+
+```bash
+curl -s "$ROSETTA_URL/search/transactions" \
+  -H 'Content-Type: application/json' \
+  -d "{\"network_identifier\":$NETWORK,\"address\":\"B62qr...\"}" | jq .
+```
+
+Search for a specific transaction by hash:
+
+```bash
+curl -s "$ROSETTA_URL/search/transactions" \
+  -H 'Content-Type: application/json' \
+  -d "{\"network_identifier\":$NETWORK,\"transaction_identifier\":{\"hash\":\"CkpY...\"}}" | jq .
+```
+
+Derive an account address from a public key:
+
+```bash
+curl -s "$ROSETTA_URL/construction/derive" \
+  -H 'Content-Type: application/json' \
+  -d "{
+    \"network_identifier\":$NETWORK,
+    \"public_key\":{\"hex_bytes\":\"PUBLIC_KEY_HEX\",\"curve_type\":\"pallas\"}
+  }" | jq .
+```
+
+## Operation object
+
+In Rosetta terminology, each transaction consists of one or more operations. In Mina's implementation, each operation has:
+
+- `operation_identifier` and `related_operations`: a mandatory index, and optional array of related operations
+- `type`: the operation type
+- `account`: the account identifier the operation relates to
+- `amount`: an object with `value` — a signed number representing the balance change
+
+<details>
+<summary>Sample operation JSON</summary>
+
+```json
+{
+  "operation_identifier": { "index": 2 },
+  "related_operations": [{ "index": 1 }],
+  "type": "payment_receiver_inc",
+  "account": {
+    "address": "B62qqJ1AqK3YQmEEALdJeMw49438Sh6zuQ5cNWUYfCgRsPkduFE2uLU",
+    "metadata": { "token_id": "1" }
+  },
+  "amount": {
+    "value": "90486110",
+    "currency": { "symbol": "MINA", "decimals": 9 }
+  }
+}
+```
+
+</details>
+
+:::note
+All possible operation types are available from the `/network/options` endpoint. The most common types are `fee_payment`, `payment_source_dec`, and `payment_receiver_inc`.
+:::
+
+## Transfer transaction layout
+
+A MINA token transfer is represented by three operations (account updates):
+
+1. Decrease fee payer balance (fee payer = sender)
+2. Decrease sender balance by the transfer amount
+3. Increase receiver balance by the transfer amount
+
+<details>
+<summary>Sample transfer transaction JSON</summary>
+
+```json
+{
+  "transaction_identifier": {
+    "hash": "CkpYVELyYvzbyAwYcnMQryEeQ7Gd6Ws7mZNXpmF5kEAyvwoTiUfbX"
+  },
+  "operations": [
+    {
+      "operation_identifier": { "index": 0 },
+      "type": "fee_payment",
+      "account": { "address": "B62qpLST3UC1rpVT6SHfB7wqW2iQgiopFAGfrcovPgLjgfpDUN2LLeg", "metadata": { "token_id": "1" } },
+      "amount": { "value": "-37000000", "currency": { "symbol": "MINA", "decimals": 9 } }
+    },
+    {
+      "operation_identifier": { "index": 1 },
+      "type": "payment_source_dec",
+      "account": { "address": "B62qpLST3UC1rpVT6SHfB7wqW2iQgiopFAGfrcovPgLjgfpDUN2LLeg", "metadata": { "token_id": "1" } },
+      "amount": { "value": "-58486000", "currency": { "symbol": "MINA", "decimals": 9 } }
+    },
+    {
+      "operation_identifier": { "index": 2 },
+      "related_operations": [{ "index": 1 }],
+      "type": "payment_receiver_inc",
+      "account": { "address": "B62qkiF5CTjeiuV1HSx4SpEytjiCptApsvmjiHHqkb1xpAgVuZTtR14", "metadata": { "token_id": "1" } },
+      "amount": { "value": "58486000", "currency": { "symbol": "MINA", "decimals": 9 } }
+    }
+  ]
+}
+```
+
+</details>
+
+This operations array is what you pass to `/construction/preprocess` and `/construction/payloads` when building a transfer. See [Sending Transactions](send-transactions) for the full flow.
+
+---
+url: /node-operators/rosetta/samples/scan-blocks
+---
+
+# Scanning Blocks
+
+To poll for new blocks, query `/network/status` for the current block height, then fetch each block sequentially.
+
+Get the current block height:
+
+```bash
+curl -s "$ROSETTA_URL/network/status" \
+  -H 'Content-Type: application/json' \
+  -d "{\"network_identifier\":$NETWORK}" | jq '.current_block_identifier.index'
+```
+
+Fetch a specific block by index:
+
+```bash
+BLOCK_INDEX=1000
+
+curl -s "$ROSETTA_URL/block" \
+  -H 'Content-Type: application/json' \
+  -d "{\"network_identifier\":$NETWORK,\"block_identifier\":{\"index\":$BLOCK_INDEX}}" | jq .
+```
+
+A simple polling loop that waits for new blocks:
+
+```bash
+HEIGHT=$(curl -s "$ROSETTA_URL/network/status" \
+  -H 'Content-Type: application/json' \
+  -d "{\"network_identifier\":$NETWORK}" | jq '.current_block_identifier.index')
+
+while true; do
+  BLOCK=$(curl -s "$ROSETTA_URL/block" \
+    -H 'Content-Type: application/json' \
+    -d "{\"network_identifier\":$NETWORK,\"block_identifier\":{\"index\":$HEIGHT}}")
+
+  if echo "$BLOCK" | jq -e '.block' > /dev/null 2>&1; then
+    echo "Block $HEIGHT:"
+    echo "$BLOCK" | jq '.block.transactions[] | .transaction_identifier.hash'
+    HEIGHT=$((HEIGHT + 1))
+  else
+    sleep 10
+  fi
+done
+```
+
+---
+url: /node-operators/rosetta/samples/send-transactions
+---
+
+# Sending Transactions
+
+:::info
+This flow follows the [Construction API Overview](https://docs.cloud.coinbase.com/rosetta/docs/construction-api-overview) from the official Rosetta documentation.
+:::
+
+The steps to send a MINA payment:
+
+1. Derive the account address from a public key
+2. Build the unsigned transaction via preprocess → metadata → payloads
+3. Sign offline with the [signer tool](/node-operators/mina-signer)
+4. Combine the signature into a signed blob
+5. Submit the signed transaction
+
+## Prerequisites
+
+- A key pair generated with the [offline signer tool](/node-operators/mina-signer)
+- The account must have a balance (send test funds on devnet first)
+- Set the shell variables from the [Code Samples](/node-operators/rosetta/samples) setup
+
+Set your keys and transfer parameters:
+
+```bash
+PUBLIC_KEY="YOUR_PUBLIC_KEY_HEX"
+SENDER="B62q..."
+RECEIVER="B62q..."
+TOKEN_ID="wSHV2S4qX9jFsLjQo8r1BsMLH2ZRKsZx6EJd1sbozGPieEC4Jf"
+FEE=10000000        # 0.01 MINA in nanomina
+VALUE=1000000000    # 1 MINA in nanomina
+```
+
+## Step 1: Derive account address
+
+```bash
+curl -s "$ROSETTA_URL/construction/derive" \
+  -H 'Content-Type: application/json' \
+  -d "{
+    \"network_identifier\":$NETWORK,
+    \"public_key\":{\"hex_bytes\":\"$PUBLIC_KEY\",\"curve_type\":\"pallas\"}
+  }" | jq .
+```
+
+## Step 2: Build the operations payload
+
+Construct the three operations that represent a MINA transfer (see [Requests and Responses](requests#transfer-transaction-layout) for details on the structure):
+
+```bash
+OPERATIONS='[
+  {
+    "operation_identifier":{"index":0},
+    "type":"fee_payment",
+    "account":{"address":"'"$SENDER"'","metadata":{"token_id":"'"$TOKEN_ID"'"}},
+    "amount":{"value":"-'"$FEE"'","currency":{"symbol":"MINA","decimals":9}}
+  },
+  {
+    "operation_identifier":{"index":1},
+    "type":"payment_source_dec",
+    "account":{"address":"'"$SENDER"'","metadata":{"token_id":"'"$TOKEN_ID"'"}},
+    "amount":{"value":"-'"$VALUE"'","currency":{"symbol":"MINA","decimals":9}}
+  },
+  {
+    "operation_identifier":{"index":2},
+    "related_operations":[{"index":1}],
+    "type":"payment_receiver_inc",
+    "account":{"address":"'"$RECEIVER"'","metadata":{"token_id":"'"$TOKEN_ID"'"}},
+    "amount":{"value":"'"$VALUE"'","currency":{"symbol":"MINA","decimals":9}}
+  }
+]'
+```
+
+## Step 3: Preprocess
+
+```bash
+PREPROCESS=$(curl -s "$ROSETTA_URL/construction/preprocess" \
+  -H 'Content-Type: application/json' \
+  -d "{\"network_identifier\":$NETWORK,\"operations\":$OPERATIONS}")
+
+echo "$PREPROCESS" | jq .
+```
+
+## Step 4: Metadata
+
+```bash
+METADATA=$(curl -s "$ROSETTA_URL/construction/metadata" \
+  -H 'Content-Type: application/json' \
+  -d "$(echo "$PREPROCESS" | jq -c ". + {
+    \"network_identifier\":$NETWORK,
+    \"public_keys\":[{\"hex_bytes\":\"$PUBLIC_KEY\",\"curve_type\":\"pallas\"}]
+  }")")
+
+echo "$METADATA" | jq .
+```
+
+## Step 5: Payloads (unsigned transaction)
+
+```bash
+PAYLOADS=$(curl -s "$ROSETTA_URL/construction/payloads" \
+  -H 'Content-Type: application/json' \
+  -d "$(echo "$METADATA" | jq -c ". + {
+    \"network_identifier\":$NETWORK,
+    \"operations\":$OPERATIONS
+  }")")
+
+echo "$PAYLOADS" | jq .
+UNSIGNED_TX=$(echo "$PAYLOADS" | jq -r '.unsigned_transaction')
+```
+
+## Step 6: Sign offline
+
+Use the [signer CLI tool](/node-operators/mina-signer#signing-a-transaction-with-signer-cli):
+
+```bash
+SIGNATURE=$(signer sign --private-key "$PRIVATE_KEY" --unsigned-transaction "$UNSIGNED_TX")
+```
+
+## Step 7: Combine
+
+```bash
+SIGNING_PAYLOAD=$(echo "$PAYLOADS" | jq -c '.payloads[0]')
+
+COMBINE=$(curl -s "$ROSETTA_URL/construction/combine" \
+  -H 'Content-Type: application/json' \
+  -d "{
+    \"network_identifier\":$NETWORK,
+    \"unsigned_transaction\":\"$UNSIGNED_TX\",
+    \"signatures\":[{
+      \"signing_payload\":$SIGNING_PAYLOAD,
+      \"public_key\":{\"hex_bytes\":\"$PUBLIC_KEY\",\"curve_type\":\"pallas\"},
+      \"signature_type\":\"schnorr_poseidon\",
+      \"hex_bytes\":\"$SIGNATURE\"
+    }]
+  }")
+
+SIGNED_TX=$(echo "$COMBINE" | jq -r '.signed_transaction')
+echo "$COMBINE" | jq .
+```
+
+## Step 8: Get transaction hash
+
+```bash
+curl -s "$ROSETTA_URL/construction/hash" \
+  -H 'Content-Type: application/json' \
+  -d "{\"network_identifier\":$NETWORK,\"signed_transaction\":\"$SIGNED_TX\"}" | jq .
+```
+
+## Step 9: Submit
+
+```bash
+curl -s "$ROSETTA_URL/construction/submit" \
+  -H 'Content-Type: application/json' \
+  -d "{\"network_identifier\":$NETWORK,\"signed_transaction\":\"$SIGNED_TX\"}" | jq .
+```
+
+After submission, you can monitor for confirmation using the [block scanning](scan-blocks) approach — poll blocks until your transaction hash appears.
+
+---
+url: /node-operators/rosetta/samples/track-deposits
+---
+
+# Tracking Deposits
+
+To track deposits, scan each block for `payment_receiver_inc` operations matching your deposit address.
+
+Fetch a block and filter for deposits to a specific address:
+
+```bash
+DEPOSIT_ADDRESS="B62qr..."
+BLOCK_INDEX=1000
+
+curl -s "$ROSETTA_URL/block" \
+  -H 'Content-Type: application/json' \
+  -d "{\"network_identifier\":$NETWORK,\"block_identifier\":{\"index\":$BLOCK_INDEX}}" \
+  | jq --arg addr "$DEPOSIT_ADDRESS" '
+    .block.transactions[]
+    | {
+        tx_hash: .transaction_identifier.hash,
+        deposits: [
+          .operations[]
+          | select(.account.address == $addr and .type == "payment_receiver_inc")
+          | { amount: .amount.value }
+        ]
+      }
+    | select(.deposits | length > 0)
+  '
+```
+
+A continuous deposit monitoring loop:
+
+```bash
+DEPOSIT_ADDRESS="B62qr..."
+
+HEIGHT=$(curl -s "$ROSETTA_URL/network/status" \
+  -H 'Content-Type: application/json' \
+  -d "{\"network_identifier\":$NETWORK}" | jq '.current_block_identifier.index')
+
+while true; do
+  BLOCK=$(curl -s "$ROSETTA_URL/block" \
+    -H 'Content-Type: application/json' \
+    -d "{\"network_identifier\":$NETWORK,\"block_identifier\":{\"index\":$HEIGHT}}")
+
+  if echo "$BLOCK" | jq -e '.block' > /dev/null 2>&1; then
+    echo "$BLOCK" | jq --arg addr "$DEPOSIT_ADDRESS" '
+      .block.transactions[]
+      | {
+          tx_hash: .transaction_identifier.hash,
+          deposits: [
+            .operations[]
+            | select(.account.address == $addr and .type == "payment_receiver_inc")
+            | { amount: .amount.value }
+          ]
+        }
+      | select(.deposits | length > 0)
+    '
+    HEIGHT=$((HEIGHT + 1))
+  else
+    sleep 10
+  fi
+done
+```
 
 ---
 url: /node-operators/seed-peers/docker-compose
@@ -11635,7 +11088,7 @@ You can use your [Ledger Nano S](https://www.ledger.com/) hardware wallet to sec
 
 ### Mina Signer
 
-You can also use [Mina Signer](/node-operators/reference/mina-signer) to generate key pairs and sign transactions.
+You can also use [Mina Signer](/node-operators/mina-signer) to generate key pairs and sign transactions.
 
 ## Validate your private key
 

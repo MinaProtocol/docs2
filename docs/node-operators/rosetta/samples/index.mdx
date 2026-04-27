@@ -1,0 +1,21 @@
+---
+title: Code Samples
+description: Curl-based examples for common Rosetta API operations
+---
+
+# Code Samples
+
+These samples use `curl` and [`jq`](https://jqlang.github.io/jq/) to interact with the Rosetta API. They assume a running Rosetta instance on `localhost:3087`.
+
+Set these shell variables before running the examples:
+
+```bash
+ROSETTA_URL="http://localhost:3087"
+NETWORK='{"blockchain":"mina","network":"mainnet"}'
+```
+
+All endpoints except `/network/list` require a `network_identifier` parameter. The samples include it in each request body.
+
+:::tip
+Replace `mainnet` with `devnet` if you are testing against a devnet instance.
+:::
