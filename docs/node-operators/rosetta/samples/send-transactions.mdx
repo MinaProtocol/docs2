@@ -1,134 +1,159 @@
 ---
-title: Sending transactions
-description: Learn how to send transactions using a key pair
+title: Sending Transactions
+description: Build, sign, and submit a MINA transfer using the Rosetta Construction API
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+# Sending Transactions
 
 :::info
-This flow is also described in the [Construction API Overview](https://docs.cloud.coinbase.com/rosetta/docs/construction-api-overview) article in the official Rosetta documentation.
+This flow follows the [Construction API Overview](https://docs.cloud.coinbase.com/rosetta/docs/construction-api-overview) from the official Rosetta documentation.
 :::
 
-The steps needed to send payment in MINA token are following:
-1. Given a key pair, derive the account indentifier using `/construction/derive` endpoint
-1. Call `/construction/preprocess` and `/construction/metadata` to construct parameters for `/construction/payloads` request
-1. Create an unsigned transaction blob using `construction/payloads` endpoint
-1. Call `construction/parse` (optional) to check if the unsigned transaction does what you expect
-1. Use detached signer to sign the transaction
-1. Call `construction/combine` to generate signed blob to be sent via `/construction/submit` endpoint
-1. Call `construction/parse` again (optional) to confirm correctness of the signed transaction
-1. Get a future transaction hash using `/construction/hash` enpoint
-1. Submit the signed transaction blob via `/construction/submit` endpoint
+The steps to send a MINA payment:
 
-For ease of readability, this sample implementation skips the sanity checks (steps 4 and 7) and combines steps 2 and 3 in a single `tx_payloads` function call.
+1. Derive the account address from a public key
+2. Build the unsigned transaction via preprocess → metadata → payloads
+3. Sign offline with the [signer tool](/node-operators/mina-signer)
+4. Combine the signature into a signed blob
+5. Submit the signed transaction
 
-Before running this sample:
-- Make sure you followed [Offline signer tool](using-signer) article and generated a key pair
-- Send some test funds on the account you've generated.
+## Prerequisites
 
-The implementation is as follows:
+- A key pair generated with the [offline signer tool](/node-operators/mina-signer)
+- The account must have a balance (send test funds on devnet first)
+- Set the shell variables from the [Code Samples](/node-operators/rosetta/samples) setup
 
-<Tabs>
-<TabItem value="ts" label="TypeScript">
+Set your keys and transfer parameters:
 
-```ts
-async function send(privateKey: string, to: string, valueNano: number, feeNano: number) {
-  const publicKey = mina.derivePublicKey(privateKey)
-  const publicKeyRaw = mina.publicKeyToRaw(publicKey)
-  // get transfer payload to sign
-  const payloadsResponse = await txPayloads(
-    publicKeyRaw,
-    publicKey,
-    to,
-    feeNano,
-    valueNano,
-  )
+```bash
+PUBLIC_KEY="YOUR_PUBLIC_KEY_HEX"
+SENDER="B62q..."
+RECEIVER="B62q..."
+TOKEN_ID="wSHV2S4qX9jFsLjQo8r1BsMLH2ZRKsZx6EJd1sbozGPieEC4Jf"
+FEE=10000000        # 0.01 MINA in nanomina
+VALUE=1000000000    # 1 MINA in nanomina
+```
 
-  // sign and combine transfer payload
-  const combineResponse = await txCombine(payloadsResponse, privateKey)
-  const blob = combineResponse.signed_transaction
+## Step 1: Derive account address
 
-  // // get future transaction hash
-  const txHashResponse = await txHash(blob)
-  const hash = txHashResponse.transaction_identifier.hash
+```bash
+curl -s "$ROSETTA_URL/construction/derive" \
+  -H 'Content-Type: application/json' \
+  -d "{
+    \"network_identifier\":$NETWORK,
+    \"public_key\":{\"hex_bytes\":\"$PUBLIC_KEY\",\"curve_type\":\"pallas\"}
+  }" | jq .
+```
 
-  // submit transaction. this call will fail if tx is not in mempool
-  await txSubmit(blob)
-  // wait for transaction confirmation:
-  // for that, track blocks until we meet our transaction in the last one
-  let latestBlock = (await networkStatus()).current_block_identifier.index
-  while (true) {
-    // check if our transaction exists in the latest block
-    const txs = (await waitForBlock(latestBlock)).block.transactions
-    const hashes = txs.map((tx: any) => tx.transaction_identifier.hash)
-    if (hashes.includes(hash)) {
-      break
-    }
+## Step 2: Build the operations payload
 
-    latestBlock += 1
+Construct the three operations that represent a MINA transfer (see [Requests and Responses](requests#transfer-transaction-layout) for details on the structure):
+
+```bash
+OPERATIONS='[
+  {
+    "operation_identifier":{"index":0},
+    "type":"fee_payment",
+    "account":{"address":"'"$SENDER"'","metadata":{"token_id":"'"$TOKEN_ID"'"}},
+    "amount":{"value":"-'"$FEE"'","currency":{"symbol":"MINA","decimals":9}}
+  },
+  {
+    "operation_identifier":{"index":1},
+    "type":"payment_source_dec",
+    "account":{"address":"'"$SENDER"'","metadata":{"token_id":"'"$TOKEN_ID"'"}},
+    "amount":{"value":"-'"$VALUE"'","currency":{"symbol":"MINA","decimals":9}}
+  },
+  {
+    "operation_identifier":{"index":2},
+    "related_operations":[{"index":1}],
+    "type":"payment_receiver_inc",
+    "account":{"address":"'"$RECEIVER"'","metadata":{"token_id":"'"$TOKEN_ID"'"}},
+    "amount":{"value":"'"$VALUE"'","currency":{"symbol":"MINA","decimals":9}}
   }
-  return hash
-}
+]'
 ```
 
-</TabItem>
+## Step 3: Preprocess
 
-<TabItem value="py" label="Python">
+```bash
+PREPROCESS=$(curl -s "$ROSETTA_URL/construction/preprocess" \
+  -H 'Content-Type: application/json' \
+  -d "{\"network_identifier\":$NETWORK,\"operations\":$OPERATIONS}")
 
-```python
-def withdrawal_flow(vault_keypair, dest_address, value_nano, fee_nano=None):
-    """
-    Full withdrawal flow example (without sanity check)
-    If fee_nano is None - fee will be suggested by Rosetta API response
-    """
-
-    vault_pubkey = vault_keypair["public"]
-    vault_private_key = vault_keypair["private"]
-    
-    # derive vault address
-    derive_response = derive_account_identifier(vault_pubkey)
-    vault_address = derive_response["account_identifier"]["address"]
-    
-    # get transfer payload to sign
-    payloads_response = tx_payloads(
-        vault_pubkey, vault_address, dest_address, fee_nano, value_nano)
-    
-    # sign transfer payload
-    signature = sign_transaction(
-        SIGNER_PATH, 
-        vault_private_key,
-        payloads_response["unsigned_transaction"])
-
-    # get signed transaction blob
-    combine_response = tx_combine(vault_pubkey, payloads_response, signature)
-    signed_transaction_blob = combine_response['signed_transaction']
-
-    # sanity check may be performed here 
-    # for that - use tx_parse function output
-    # to doublecheck it corresponds what you want to do
-    # parsed_tx = tx_parse(signed_transaction_blob, True)
-
-    # get future transaction hash
-    tx_hash_response = tx_hash(signed_transaction_blob)
-    future_tx_hash = tx_hash_response['transaction_identifier']['hash']
-
-    # submit transaction. this call will fail if tx is not in mempool
-    tx_submit(signed_transaction_blob)
-    
-    # wait for transaction confirmation:
-    # for that, track blocks until we meet our transaction in the last one
-    latest_block = network_status()["current_block_identifier"]["index"]
-    while True:
-        # check if our transaction exists in the latest block
-        txs = wait_for_block(latest_block)['block']['transactions']
-        hashes = [tx['transaction_identifier']['hash'] for tx in txs]
-        if future_tx_hash in hashes:
-            break
-        latest_block += 1
-    
-    return future_tx_hash
+echo "$PREPROCESS" | jq .
 ```
 
-</TabItem>
-</Tabs>
+## Step 4: Metadata
+
+```bash
+METADATA=$(curl -s "$ROSETTA_URL/construction/metadata" \
+  -H 'Content-Type: application/json' \
+  -d "$(echo "$PREPROCESS" | jq -c ". + {
+    \"network_identifier\":$NETWORK,
+    \"public_keys\":[{\"hex_bytes\":\"$PUBLIC_KEY\",\"curve_type\":\"pallas\"}]
+  }")")
+
+echo "$METADATA" | jq .
+```
+
+## Step 5: Payloads (unsigned transaction)
+
+```bash
+PAYLOADS=$(curl -s "$ROSETTA_URL/construction/payloads" \
+  -H 'Content-Type: application/json' \
+  -d "$(echo "$METADATA" | jq -c ". + {
+    \"network_identifier\":$NETWORK,
+    \"operations\":$OPERATIONS
+  }")")
+
+echo "$PAYLOADS" | jq .
+UNSIGNED_TX=$(echo "$PAYLOADS" | jq -r '.unsigned_transaction')
+```
+
+## Step 6: Sign offline
+
+Use the [signer CLI tool](/node-operators/mina-signer#signing-a-transaction-with-signer-cli):
+
+```bash
+SIGNATURE=$(signer sign --private-key "$PRIVATE_KEY" --unsigned-transaction "$UNSIGNED_TX")
+```
+
+## Step 7: Combine
+
+```bash
+SIGNING_PAYLOAD=$(echo "$PAYLOADS" | jq -c '.payloads[0]')
+
+COMBINE=$(curl -s "$ROSETTA_URL/construction/combine" \
+  -H 'Content-Type: application/json' \
+  -d "{
+    \"network_identifier\":$NETWORK,
+    \"unsigned_transaction\":\"$UNSIGNED_TX\",
+    \"signatures\":[{
+      \"signing_payload\":$SIGNING_PAYLOAD,
+      \"public_key\":{\"hex_bytes\":\"$PUBLIC_KEY\",\"curve_type\":\"pallas\"},
+      \"signature_type\":\"schnorr_poseidon\",
+      \"hex_bytes\":\"$SIGNATURE\"
+    }]
+  }")
+
+SIGNED_TX=$(echo "$COMBINE" | jq -r '.signed_transaction')
+echo "$COMBINE" | jq .
+```
+
+## Step 8: Get transaction hash
+
+```bash
+curl -s "$ROSETTA_URL/construction/hash" \
+  -H 'Content-Type: application/json' \
+  -d "{\"network_identifier\":$NETWORK,\"signed_transaction\":\"$SIGNED_TX\"}" | jq .
+```
+
+## Step 9: Submit
+
+```bash
+curl -s "$ROSETTA_URL/construction/submit" \
+  -H 'Content-Type: application/json' \
+  -d "{\"network_identifier\":$NETWORK,\"signed_transaction\":\"$SIGNED_TX\"}" | jq .
+```
+
+After submission, you can monitor for confirmation using the [block scanning](scan-blocks) approach — poll blocks until your transaction hash appears.

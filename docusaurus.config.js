@@ -246,7 +246,11 @@ module.exports = {
           },
           {
             from: '/exchange-operators/rosetta/send-requests',
-            to: '/node-operators/rosetta/send-requests',
+            to: '/node-operators/rosetta/samples/requests',
+          },
+          {
+            from: '/node-operators/rosetta/send-requests',
+            to: '/node-operators/rosetta/samples/requests',
           },
           {
             from: '/exchange-operators/rosetta/samples',
@@ -258,7 +262,15 @@ module.exports = {
           },
           {
             from: '/exchange-operators/rosetta/samples/using-signer',
-            to: '/node-operators/rosetta/samples/using-signer',
+            to: '/node-operators/mina-signer',
+          },
+          {
+            from: '/node-operators/rosetta/samples/using-signer',
+            to: '/node-operators/mina-signer',
+          },
+          {
+            from: '/node-operators/reference/mina-signer',
+            to: '/node-operators/mina-signer',
           },
           {
             from: '/exchange-operators/rosetta/samples/scan-blocks',
@@ -359,10 +371,6 @@ module.exports = {
           {
             from: '/node-operators/mina-cli-reference',
             to: '/node-operators/reference/mina-cli-reference',
-          },
-          {
-            from: '/node-operators/mina-signer',
-            to: '/node-operators/reference/mina-signer',
           },
           {
             from: '/node-operators/reference/troubleshooting',

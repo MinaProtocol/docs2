@@ -1,168 +1,138 @@
 ---
 title: Requests and Responses
-description: Learn about Mina-specific Rosetta request and response objects
+description: Mina-specific Rosetta request and response objects with curl examples
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+# Requests and Responses
 
-# About Mina-specific requests and responses
+The Rosetta API specification defines high-level descriptions of request and response objects. Exact JSON layouts differ between blockchains. This page covers Mina-specific objects and shows how to query each endpoint with curl.
 
-The Rosetta API specification defines high-level description of how requests and response objects should look like.
-Exact json object layouts are different from blockchain to blockchain.
+All examples assume the shell variables from the [Code Samples](/node-operators/rosetta/samples) setup.
 
-In this article, you learn about Mina-specific Rosetta JSON objects and how to implement helper functions to construct and parse the JSON objects.
+## Network endpoints
 
-### Network Identifier
+List available networks:
 
-There is the `network_identifier` object, that should be passed as a parameter to all endpoints (except `/network/list` which returns possible identifiers).
-
-First, implement the generic `request` function to perform Rosetta API calls injecting that object under the hood:
-
-<Tabs>
-<TabItem value="ts" label="TypeScript">
-
-```ts
-async function makeRequest(endpoint: string, data?: any) {
-  if (data === undefined) {
-    data = {}
-  }
-  if (endpoint !== "/network/list") {
-    data = { ...TESTNET_NETWORK_IDENTIFIER, ...data }
-  }
-
-  const r = await request.post(endpoint, data)
-  return r.data
-}
+```bash
+curl -s "$ROSETTA_URL/network/list" \
+  -H 'Content-Type: application/json' \
+  -d '{"metadata":{}}' | jq .
 ```
 
-</TabItem>
+Sample response:
 
-<TabItem value="py" label="Python">
-
-```python
-def _request(path, data=None):
-    """
-    Generalized logic for sending a request to Rosetta API
-    """
-    data = data or {}
-    nw = {} if path == "/network/list" else MAINNET_NETWORK_IDENTIFIER
-    path = BASE_URL + path
-    data = json.dumps({**data, **nw})
-    r = post(path, data)
-    try:
-        r.raise_for_status()
-    except Exception as e:
-        # json.dumps(r.json())
-        raise e
-    return r.json()
+```json
+{"network_identifiers":[{"blockchain":"mina","network":"mainnet"}]}
 ```
 
-</TabItem>
-</Tabs>
+You must pass the `network_identifier` object as a parameter to all other endpoints. In Mina's Rosetta implementation, it exists only for the network you run Rosetta for, so this array always contains one object.
 
-### Block, Transaction, Account Identifiers and the Pubkey object
+Get network status (current block height, sync state, peers):
 
-According to Rosetta request and response models, each block, transaction and account are identified by an identifier object.
-A pubkey is also represented by special object.
-
-To implement helpers to construct the objects:
-
-<Tabs>
-<TabItem value="ts" label="TypeScript">
-
-```ts
-function makeBlockIdentifier(idOrHash: number | string) {
-  const identifierKey = (typeof idOrHash === "number") ? "index" : "hash"
-  return {
-    block_identifier: { [identifierKey]: idOrHash },
-  }
-}
-
-function makeTxIdentifier(hash: string) {
-  return { transaction_identifier: { hash: hash } }
-}
-
-function makeAccountIdentifier(address: string) {
-  return {
-    account_identifier: { address, token_id: MINA_TOKEN_ID },
-  }
-}
-
-function makePublicKey(publicKey: string) {
-  return {
-    hex_bytes: publicKey,
-    curve_type: MINA_CURVE_TYPE,
-  }
-}
+```bash
+curl -s "$ROSETTA_URL/network/status" \
+  -H 'Content-Type: application/json' \
+  -d "{\"network_identifier\":$NETWORK}" | jq .
 ```
 
-</TabItem>
+Get supported options and operation types:
 
-<TabItem value="py" label="Python">
-
-```python
-def _make_block_identifier(index_or_hash):
-    key = "index" if type(index_or_hash) == int \
-        else "hash" if type(index_or_hash) == str \
-        else None
-    if not key:
-        raise ValueError("index_or_hash should have either int or str type")
-    return {"block_identifier": {key: index_or_hash}}
-
-def _make_tx_identifier(tx_hash):
-    return {"transaction_identifier": {'hash': tx_hash}}
-
-def _make_account_identifier(address):
-    return {
-        "account_identifier": {"address": address, "token_id": MINA_TOKEN_ID}
-    }
-
-def _make_pubkey(pubkey):
-    return {
-        "hex_bytes": pubkey,
-        "curve_type": MINA_CURVE_TYPE
-    }
+```bash
+curl -s "$ROSETTA_URL/network/options" \
+  -H 'Content-Type: application/json' \
+  -d "{\"network_identifier\":$NETWORK}" | jq .
 ```
 
-</TabItem>
-</Tabs>
+## Block and transaction queries
 
-### Operation object
+Fetch a block by index:
 
-In Rosetta terminology, each transaction consist of one or more operations.
-In Mina implementation, each operation object has following fields:
-- `operation_identifier` and `related_operations`: a mandatory index of an operation, and optional array of related operations.
-- `type`: the type of an operation.
-- `account`: the account identifier which the operation relates to
-- `amount`: an object with `value` - a signed number representing of the accounts' balance
+```bash
+curl -s "$ROSETTA_URL/block" \
+  -H 'Content-Type: application/json' \
+  -d "{\"network_identifier\":$NETWORK,\"block_identifier\":{\"index\":1000}}" | jq .
+```
+
+Fetch a block by hash:
+
+```bash
+curl -s "$ROSETTA_URL/block" \
+  -H 'Content-Type: application/json' \
+  -d "{\"network_identifier\":$NETWORK,\"block_identifier\":{\"hash\":\"BLOCK_HASH\"}}" | jq .
+```
+
+List pending transactions in the mempool:
+
+```bash
+curl -s "$ROSETTA_URL/mempool" \
+  -H 'Content-Type: application/json' \
+  -d "{\"network_identifier\":$NETWORK}" | jq .
+```
+
+## Account queries
+
+Query an account balance:
+
+```bash
+curl -s "$ROSETTA_URL/account/balance" \
+  -H 'Content-Type: application/json' \
+  -d "{
+    \"network_identifier\":$NETWORK,
+    \"account_identifier\":{\"address\":\"B62qr...\",\"token_id\":\"wSHV2S4qX9jFsLjQo8r1BsMLH2ZRKsZx6EJd1sbozGPieEC4Jf\"}
+  }" | jq .
+```
+
+Search for transactions by address:
+
+```bash
+curl -s "$ROSETTA_URL/search/transactions" \
+  -H 'Content-Type: application/json' \
+  -d "{\"network_identifier\":$NETWORK,\"address\":\"B62qr...\"}" | jq .
+```
+
+Search for a specific transaction by hash:
+
+```bash
+curl -s "$ROSETTA_URL/search/transactions" \
+  -H 'Content-Type: application/json' \
+  -d "{\"network_identifier\":$NETWORK,\"transaction_identifier\":{\"hash\":\"CkpY...\"}}" | jq .
+```
+
+Derive an account address from a public key:
+
+```bash
+curl -s "$ROSETTA_URL/construction/derive" \
+  -H 'Content-Type: application/json' \
+  -d "{
+    \"network_identifier\":$NETWORK,
+    \"public_key\":{\"hex_bytes\":\"PUBLIC_KEY_HEX\",\"curve_type\":\"pallas\"}
+  }" | jq .
+```
+
+## Operation object
+
+In Rosetta terminology, each transaction consists of one or more operations. In Mina's implementation, each operation has:
+
+- `operation_identifier` and `related_operations`: a mandatory index, and optional array of related operations
+- `type`: the operation type
+- `account`: the account identifier the operation relates to
+- `amount`: an object with `value` — a signed number representing the balance change
 
 <details>
-<summary>A sample JSON object that represents an operation</summary>
+<summary>Sample operation JSON</summary>
 
 ```json
 {
-  "operation_identifier": {
-    "index": 2
-  },
-  "related_operations": [
-    {
-      "index": 1
-    }
-  ],
+  "operation_identifier": { "index": 2 },
+  "related_operations": [{ "index": 1 }],
   "type": "payment_receiver_inc",
   "account": {
     "address": "B62qqJ1AqK3YQmEEALdJeMw49438Sh6zuQ5cNWUYfCgRsPkduFE2uLU",
-    "metadata": {
-      "token_id": "1"
-    }
+    "metadata": { "token_id": "1" }
   },
   "amount": {
     "value": "90486110",
-    "currency": {
-      "symbol": "MINA",
-      "decimals": 9
-    }
+    "currency": { "symbol": "MINA", "decimals": 9 }
   }
 }
 ```
@@ -170,19 +140,19 @@ In Mina implementation, each operation object has following fields:
 </details>
 
 :::note
-All possible operation types are available on the `network/options` endpoint. The most common types are `fee_payment`, `payment_source_dec` and `payment_receiver_inc`
+All possible operation types are available from the `/network/options` endpoint. The most common types are `fee_payment`, `payment_source_dec`, and `payment_receiver_inc`.
 :::
 
+## Transfer transaction layout
 
-### Layout of the transfer transaction
+A MINA token transfer is represented by three operations (account updates):
 
-In Mina, each operation represents an [Account Update](/zkapps/writing-a-zkapp/introduction-to-zkapps/interact-with-mina#account-updates). Therefore, a MINA token transfer transaction is represented by three Account Updates:
-- for decreasing fee payer account balance (the fee payer's account is the same as the sender's)
-- for decreasing sender account balance
-- for increasing receiver account balance
+1. Decrease fee payer balance (fee payer = sender)
+2. Decrease sender balance by the transfer amount
+3. Increase receiver balance by the transfer amount
 
 <details>
-<summary>A sample object that represents a transfer transaction</summary>
+<summary>Sample transfer transaction JSON</summary>
 
 ```json
 {
@@ -191,66 +161,23 @@ In Mina, each operation represents an [Account Update](/zkapps/writing-a-zkapp/i
   },
   "operations": [
     {
-      "operation_identifier": {
-        "index": 0
-      },
+      "operation_identifier": { "index": 0 },
       "type": "fee_payment",
-      "account": {
-        "address": "B62qpLST3UC1rpVT6SHfB7wqW2iQgiopFAGfrcovPgLjgfpDUN2LLeg",
-        "metadata": {
-          "token_id": "1"
-        }
-      },
-      "amount": {
-        "value": "-37000000",
-        "currency": {
-          "symbol": "MINA",
-          "decimals": 9
-        }
-      }
+      "account": { "address": "B62qpLST3UC1rpVT6SHfB7wqW2iQgiopFAGfrcovPgLjgfpDUN2LLeg", "metadata": { "token_id": "1" } },
+      "amount": { "value": "-37000000", "currency": { "symbol": "MINA", "decimals": 9 } }
     },
     {
-      "operation_identifier": {
-        "index": 1
-      },
+      "operation_identifier": { "index": 1 },
       "type": "payment_source_dec",
-      "account": {
-        "address": "B62qpLST3UC1rpVT6SHfB7wqW2iQgiopFAGfrcovPgLjgfpDUN2LLeg",
-        "metadata": {
-          "token_id": "1"
-        }
-      },
-      "amount": {
-        "value": "-58486000",
-        "currency": {
-          "symbol": "MINA",
-          "decimals": 9
-        }
-      }
+      "account": { "address": "B62qpLST3UC1rpVT6SHfB7wqW2iQgiopFAGfrcovPgLjgfpDUN2LLeg", "metadata": { "token_id": "1" } },
+      "amount": { "value": "-58486000", "currency": { "symbol": "MINA", "decimals": 9 } }
     },
     {
-      "operation_identifier": {
-        "index": 2
-      },
-      "related_operations": [
-        {
-          "index": 1
-        }
-      ],
+      "operation_identifier": { "index": 2 },
+      "related_operations": [{ "index": 1 }],
       "type": "payment_receiver_inc",
-      "account": {
-        "address": "B62qkiF5CTjeiuV1HSx4SpEytjiCptApsvmjiHHqkb1xpAgVuZTtR14",
-        "metadata": {
-          "token_id": "1"
-        }
-      },
-      "amount": {
-        "value": "58486000",
-        "currency": {
-          "symbol": "MINA",
-          "decimals": 9
-        }
-      }
+      "account": { "address": "B62qkiF5CTjeiuV1HSx4SpEytjiCptApsvmjiHHqkb1xpAgVuZTtR14", "metadata": { "token_id": "1" } },
+      "amount": { "value": "58486000", "currency": { "symbol": "MINA", "decimals": 9 } }
     }
   ]
 }
@@ -258,335 +185,4 @@ In Mina, each operation represents an [Account Update](/zkapps/writing-a-zkapp/i
 
 </details>
 
-According to the Rosetta specification, the array of `operation` objects must be passed as a parameter in the `/construction/preprocess` and `/construction/payloads` endpoints.
-
-To implement a helper function to construct the operations array for a MINA token transfer:
-
-<Tabs>
-<TabItem value="ts" label="TypeScript">
-
-```ts
-function makeTransferPayload(from: string, to: string, feeNano: number, valueNano: number) {
-  function makeOperation(
-    idx: number,
-    relatedIdxs: number[],
-    opType: string,
-    addr: string,
-    value: number,
-    isPositive: boolean,
-  ) {
-    const relatedOps = (relatedIdxs.length == 0) ? {} : {
-      related_operations: relatedIdxs.map((i) => {
-        return { index: i }
-      }),
-    }
-
-    return {
-      operation_identifier: { index: idx },
-      ...relatedOps,
-      type: opType,
-      account: {
-        address: addr,
-        metadata: {
-          token_id: MINA_TOKEN_ID,
-        },
-      },
-      amount: {
-        value: (isPositive ? "" : "-") + value.toString(),
-        currency: {
-          symbol: MINA_SYMBOL,
-          decimals: MINA_DECIMALS,
-        },
-      },
-    }
-  }
-
-  return {
-    operations: [
-      makeOperation(
-        0,
-        [],
-        "fee_payment",
-        from,
-        feeNano,
-        false,
-      ),
-      makeOperation(
-        1,
-        [],
-        "payment_source_dec",
-        from,
-        valueNano,
-        false,
-      ),
-      makeOperation(
-        2,
-        [1],
-        "payment_receiver_inc",
-        to,
-        valueNano,
-        true,
-      ),
-    ],
-  }
-}
-```
-
-</TabItem>
-
-<TabItem value="py" label="Python">
-
-```python
-def _make_transfer_payload(address_from, address_to, fee_nano, value_nano):
-    """
-    Helper for generating "operations" object in a Rosetta format
-    This helper generates mina native token transfer payloads
-    The resulting object is an array of 3 so called account updates:
-        - for decreasing the sender's balance by the fee amount
-        - for decreasing the sender's balance by the transfer amount
-        - for increasing the receiver's balance by the transfer amount
-    """
-    def _make_operation(idx, related_idxs, op_type, addr, value, is_positive):
-        related_ops = {} if not related_idxs else {
-            "related_operations": [{"index": i} for i in related_idxs]
-        }
-        return {
-            "operation_identifier": {"index": idx},
-            **related_ops,
-            "type": op_type,
-            "account": {
-                "address": addr,
-                "metadata": {
-                    "token_id": MINA_TOKEN_ID
-                }
-            },
-            "amount": {
-                "value": ("" if is_positive else "-") + str(value),
-                "currency": {
-                    "symbol": MINA_SYMBOL,
-                    "decimals": MINA_DECIMALS
-                }
-            }
-        }
-    return {
-        "operations": [
-            _make_operation(
-                0, [], "fee_payment", address_from, fee_nano, False),
-            _make_operation(
-                1, [], "payment_source_dec", address_from, value_nano, False),
-            _make_operation(
-                2, [1], "payment_receiver_inc", address_to, value_nano, True)
-        ]
-    }
-```
-
-</TabItem>
-</Tabs>
-
-### Implementing client methods
-
-Now that you have all helpers in place, you can implement all of the Rosetta client methods according to the specification:
-
-<Tabs>
-<TabItem value="ts" label="TypeScript">
-
-```ts
-async function networkList() {
-  return await makeRequest("/network/list")
-}
-
-async function networkStatus() {
-  return await makeRequest("/network/status")
-}
-
-async function networkOptions() {
-  return await makeRequest("/network/options")
-}
-
-async function block(idOrHash: number | string) {
-  return await makeRequest("/block", makeBlockIdentifier(idOrHash))
-}
-
-async function mempool() {
-  return await makeRequest("/mempool")
-}
-
-async function mempoolTx(hash: string) {
-  return await makeRequest("/mempool/transaction", makeTxIdentifier(hash))
-}
-
-async function accountBalance(address: string) {
-  return await makeRequest("/account/balance", makeAccountIdentifier(address))
-}
-
-async function accountTransactions(address: string) {
-  return await makeRequest("/search/transactions", { address: address })
-}
-
-async function getTransaction(hash: string) {
-  return await makeRequest("/search/transactions", makeTxIdentifier(hash))
-}
-
-async function deriveAccountIdentifier(publicKey: string) {
-  return await makeRequest("/construction/derive", {
-    public_key: makePublicKey(publicKey),
-  })
-}
-
-async function txPreprocess(from: string, to: string, feeNano: number, valueNano: number) {
-  const payload = makeTransferPayload(from, to, feeNano, valueNano)
-  return await makeRequest("/construction/preprocess", payload)
-}
-
-async function txMetadata(
-  srcPublicKey: string,
-  srcAddress: string,
-  destAddress: string,
-  feeNano: number,
-  valueNano: number,
-) {
-  const options = await txPreprocess(srcAddress, destAddress, feeNano, valueNano)
-  return await makeRequest("/construction/metadata", {
-    ...options,
-    public_keys: [makePublicKey(srcPublicKey)],
-  })
-}
-
-async function txPayloads(
-  srcPublicKey: string,
-  srcAddress: string,
-  destAddress: string,
-  feeNano: number,
-  valueNano: number,
-) {
-  // If fee_nano is undefined, it will get suggested fee from /construction/metadata response
-  const meta = await txMetadata(
-    srcPublicKey,
-    srcAddress,
-    destAddress,
-    feeNano,
-    valueNano,
-  )
-
-  if (feeNano === 0) {
-    feeNano = meta.suggested_fee[0].value
-  }
-  console.log(feeNano)
-  const operations = makeTransferPayload(srcAddress, destAddress, feeNano, valueNano)
-  return makeRequest("/construction/payloads", { ...operations, ...meta })
-}
-
-async function txCombine(payloadsResponse: any, privateKey: string) {
-  // console.dir(payloadsResponse, {depth: null})
-  const combinePayload = mina.rosettaCombinePayload(payloadsResponse, privateKey)
-  const r = await makeRequest("/construction/combine", combinePayload)
-  return r
-}
-
-async function txParse(isSigned: boolean, blob: string) {
-  return makeRequest("/construction/parse", {
-    signed: isSigned,
-    transaction: blob,
-  })
-}
-
-async function txHash(blob: string) {
-  return await makeRequest("construction/hash", { signed_transaction: blob })
-}
-
-async function txSubmit(blob: string) {
-  return await makeRequest("construction/submit", { signed_transaction: blob })
-}
-```
-
-</TabItem>
-
-<TabItem value="py" label="Python">
-
-```python
-def network_list():
-    return _request("/network/list")
-
-def network_status():
-    return _request("/network/status")
-
-def network_options():
-    return _request("/network/options")
-
-def block(index_or_hash):
-    return _request("/block", _make_block_identifier(index_or_hash))
-
-def mempool():
-    return _request("/mempool")
-
-def mempool_tx(tx_hash):
-    return _request("/mempool/transaction", _make_tx_identifier(tx_hash))
-
-def account_balance(address):
-    return _request("/account/balance", _make_account_identifier(address))
-
-def derive_account_identifier(pubkey):
-    return _request("/construction/derive", {
-        "public_key": _make_pubkey(pubkey)
-    })
-
-def tx_preprocess(src, dest, fee_nano, value_nano):
-    return _request(
-        "/construction/preprocess", 
-        _make_transfer_payload(src, dest, fee_nano, value_nano))
-
-def tx_metadata(src_pubkey, src_address, dest_address, fee_nano, value_nano):
-    options = tx_preprocess(src_address, dest_address, fee_nano, value_nano)
-    return _request("/construction/metadata", {
-        **options, "public_keys": [_make_pubkey(src_pubkey)]
-    })
-
-def tx_payloads(src_pubkey, src_address, dest_address, fee_nano, value_nano):
-    """
-    If fee_nano is None, it will get suggested fee from /construction/metadata response
-    """
-    fee_nano = fee_nano or 0
-    meta = tx_metadata(
-        src_pubkey, src_address, dest_address, fee_nano, value_nano)
-
-    if not fee_nano:
-        fee_nano = meta["suggested_fee"][0]["value"]
-
-    operations = _make_transfer_payload(
-        src_address, dest_address, fee_nano, value_nano)
-    return _request("/construction/payloads", {**operations, **meta})
-
-def tx_combine(src_pubkey, tx_payloads_response, signature):
-    combine_payload = {
-        "unsigned_transaction": tx_payloads_response["unsigned_transaction"],
-        "signatures": [
-            {
-                "signing_payload": tx_payloads_response["payloads"][0],
-                "public_key": _make_pubkey(src_pubkey),
-                "signature_type": MINA_SIGNATURE_TYPE,
-                "hex_bytes": signature
-            }
-        ]
-    }
-    return _request("/construction/combine", combine_payload)
-
-def tx_parse(transaction_blob, is_signed):
-    return _request("/construction/parse", {
-        "signed": is_signed,
-        "transaction": transaction_blob
-    })
-
-def tx_hash(signed_transaction_blob):
-    return _request("/construction/hash", {
-        "signed_transaction": signed_transaction_blob
-    })
-
-def tx_submit(signed_transaction_blob):
-    return _request("/construction/submit", {
-        "signed_transaction": signed_transaction_blob
-    })
-```
-
-
-</TabItem>
-</Tabs>
+This operations array is what you pass to `/construction/preprocess` and `/construction/payloads` when building a transfer. See [Sending Transactions](send-transactions) for the full flow.

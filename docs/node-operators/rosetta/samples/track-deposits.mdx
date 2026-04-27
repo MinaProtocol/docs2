@@ -1,81 +1,65 @@
 ---
-title: Tracking deposits
-description: Learn how to track deposits on the given address
+title: Tracking Deposits
+description: Monitor an address for incoming MINA deposits using curl
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+# Tracking Deposits
 
-After everything is ready, you can implement deposit tracking.
+To track deposits, scan each block for `payment_receiver_inc` operations matching your deposit address.
 
-For that, iterate through all transactions in each block to search for `payment_receiver_inc` operation with an address matching the address in which you are interested:
+Fetch a block and filter for deposits to a specific address:
 
-<Tabs>
-<TabItem value="ts" label="TypeScript">
+```bash
+DEPOSIT_ADDRESS="B62qr..."
+BLOCK_INDEX=1000
 
-```ts
-async function trackDeposit(address: string) {
-  // some logic we want to execute on deposit
-  function onDeposit(deposit: any) {
-    console.log(deposit)
-  }
-  let latestBlock = (await networkStatus()).current_block_identifier.index
-  while (true) {
-    // check if transactions to the deposit address are present in the latest block
-    const txs = (await waitForBlock(latestBlock)).block.transactions
-    const deposits = []
-    for (let tx of txs) {
-      for (let op of tx.operations) {
-        if (op.account.address === address && op.type === "payment_receiver_inc") {
-          deposits.push({
-            tx_hash: tx.transaction_identifier.hash,
-            amount: op.amount.value,
-          })
-        }
+curl -s "$ROSETTA_URL/block" \
+  -H 'Content-Type: application/json' \
+  -d "{\"network_identifier\":$NETWORK,\"block_identifier\":{\"index\":$BLOCK_INDEX}}" \
+  | jq --arg addr "$DEPOSIT_ADDRESS" '
+    .block.transactions[]
+    | {
+        tx_hash: .transaction_identifier.hash,
+        deposits: [
+          .operations[]
+          | select(.account.address == $addr and .type == "payment_receiver_inc")
+          | { amount: .amount.value }
+        ]
       }
-    }
-
-    // process deposits
-    for (let d of deposits) {
-      onDeposit(d)
-    }
-
-    latestBlock += 1
-  }
-}
+    | select(.deposits | length > 0)
+  '
 ```
 
-</TabItem>
+A continuous deposit monitoring loop:
 
-<TabItem value="py" label="Python">
+```bash
+DEPOSIT_ADDRESS="B62qr..."
 
-```python
-def deposit_flow(deposit_address):
-    # some logic we want to execute on deposit
-    def on_deposit(deposit):
-        print(json.dumps(deposit, indent=2))
-    
-    latest_block = network_status()["current_block_identifier"]["index"]
-    while True:
-        # check if transactions to the deposit address are present in the latest block
-        txs = wait_for_block(latest_block)['block']['transactions']
-        deposits = []
-        for tx in txs:
-            for op in tx["operations"]:
-                if op["account"]["address"] == deposit_address \
-                        and op["type"] == "payment_receiver_inc":
-                    deposits.append({
-                        "tx_hash": tx["transaction_identifier"]["hash"],
-                        "amount": op["amount"]["value"]
-                    })
-        
-        # process deposits
-        for d in deposits:
-            on_deposit(d)
+HEIGHT=$(curl -s "$ROSETTA_URL/network/status" \
+  -H 'Content-Type: application/json' \
+  -d "{\"network_identifier\":$NETWORK}" | jq '.current_block_identifier.index')
 
-        latest_block += 1
+while true; do
+  BLOCK=$(curl -s "$ROSETTA_URL/block" \
+    -H 'Content-Type: application/json' \
+    -d "{\"network_identifier\":$NETWORK,\"block_identifier\":{\"index\":$HEIGHT}}")
+
+  if echo "$BLOCK" | jq -e '.block' > /dev/null 2>&1; then
+    echo "$BLOCK" | jq --arg addr "$DEPOSIT_ADDRESS" '
+      .block.transactions[]
+      | {
+          tx_hash: .transaction_identifier.hash,
+          deposits: [
+            .operations[]
+            | select(.account.address == $addr and .type == "payment_receiver_inc")
+            | { amount: .amount.value }
+          ]
+        }
+      | select(.deposits | length > 0)
+    '
+    HEIGHT=$((HEIGHT + 1))
+  else
+    sleep 10
+  fi
+done
 ```
-
-</TabItem>
-</Tabs>
-

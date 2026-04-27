@@ -1562,7 +1562,6 @@ module.exports = {
             'node-operators/rosetta/run-with-docker',
             'node-operators/rosetta/docker-compose',
             'node-operators/rosetta/build-from-sources',
-            'node-operators/rosetta/send-requests',
             {
               type: 'category',
               label: 'Code Samples',
@@ -1572,7 +1571,6 @@ module.exports = {
               },
               items: [
                 'node-operators/rosetta/samples/requests',
-                'node-operators/rosetta/samples/using-signer',
                 'node-operators/rosetta/samples/scan-blocks',
                 'node-operators/rosetta/samples/track-deposits',
                 'node-operators/rosetta/samples/send-transactions',
@@ -1592,18 +1590,8 @@ module.exports = {
             'node-operators/delegation-program/uptime-tracking-system',
           ],
         },
-        {
-          type: 'category',
-          label: 'Reference',
-          link: {
-            type: 'doc',
-            id: 'node-operators/reference/index',
-          },
-          items: [
-            'node-operators/reference/mina-cli-reference',
-            'node-operators/reference/mina-signer',
-          ],
-        },
+        'node-operators/mina-signer',
+        'node-operators/reference/mina-cli-reference',
         'node-operators/troubleshooting',
         'node-operators/faq',
       ],

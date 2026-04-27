@@ -1,80 +1,48 @@
 ---
 title: Scanning Blocks
-description: Learn how to scan blocks and inspect transactions
+description: Poll for new blocks and inspect transactions using curl
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+# Scanning Blocks
 
-To implement a simple function to wait for a given block:
+To poll for new blocks, query `/network/status` for the current block height, then fetch each block sequentially.
 
-<Tabs>
-<TabItem value="ts" label="TypeScript">
+Get the current block height:
 
-```ts
-async function waitForBlock(blockHeight: number) {
-  let latestBlock = (await networkStatus()).current_block_identifier.index
-  while (true) {
-    if (blockHeight <= latestBlock) {
-      return await block(blockHeight)
-    }
-    await sleep(10000)
-    latestBlock = (await networkStatus()).current_block_identifier.index
-  }
-}
+```bash
+curl -s "$ROSETTA_URL/network/status" \
+  -H 'Content-Type: application/json' \
+  -d "{\"network_identifier\":$NETWORK}" | jq '.current_block_identifier.index'
 ```
 
-</TabItem>
+Fetch a specific block by index:
 
-<TabItem value="py" label="Python">
+```bash
+BLOCK_INDEX=1000
 
-```python
-def wait_for_block(block_index):
-    """
-    Checks if block with given index exist
-    Once the /block response is succesful - returns the response
-    Otherwise, retries fetching it with 10 seconds delay
-    """
-
-    latest_block = network_status()["current_block_identifier"]["index"]
-    while True:
-        if block_index <= latest_block:
-            return block(block_index)
-        sleep(10)
-        latest_block = network_status()["current_block_identifier"]["index"]
+curl -s "$ROSETTA_URL/block" \
+  -H 'Content-Type: application/json' \
+  -d "{\"network_identifier\":$NETWORK,\"block_identifier\":{\"index\":$BLOCK_INDEX}}" | jq .
 ```
 
-</TabItem>
-</Tabs>
+A simple polling loop that waits for new blocks:
 
-It can be used to scan blocks like this:
+```bash
+HEIGHT=$(curl -s "$ROSETTA_URL/network/status" \
+  -H 'Content-Type: application/json' \
+  -d "{\"network_identifier\":$NETWORK}" | jq '.current_block_identifier.index')
 
-<Tabs>
-<TabItem value="ts" label="TypeScript">
+while true; do
+  BLOCK=$(curl -s "$ROSETTA_URL/block" \
+    -H 'Content-Type: application/json' \
+    -d "{\"network_identifier\":$NETWORK,\"block_identifier\":{\"index\":$HEIGHT}}")
 
-```ts
-let latestBlockHeight = (await network_status()).current_block_identifier.index
-while (true) {
-  const lastBlock = waitForBlock(latestBlockHeight)
-  // some processing according to business logic
-    
-  latestBlockHeight += 1
-}
+  if echo "$BLOCK" | jq -e '.block' > /dev/null 2>&1; then
+    echo "Block $HEIGHT:"
+    echo "$BLOCK" | jq '.block.transactions[] | .transaction_identifier.hash'
+    HEIGHT=$((HEIGHT + 1))
+  else
+    sleep 10
+  fi
+done
 ```
-
-</TabItem>
-
-<TabItem value="py" label="Python">
-
-```python
-latest_block = network_status()["current_block_identifier"]["index"]
-while True:
-    last_block = wait_for_block(latest_block)
-    
-    # some processing according to business logic
-    
-    latest_block += 1
-```
-
-</TabItem>
-</Tabs>
