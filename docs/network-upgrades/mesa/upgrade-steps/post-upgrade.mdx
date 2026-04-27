@@ -44,8 +44,22 @@ You should see:
 #### 2. Verify block production
 
 ```bash
-# Check your recent block production
-mina-mesa client status | grep "Block"
+# Check that your node is at the tip of the Mesa chain and is producing blocks
+mina-mesa client status | grep -E "^(Block height|Block producers running|Coinbase receiver):"
+```
+
+Expected output looks like:
+
+```text
+Block height:                                  1858
+Block producers running:                       1 (B62qjZ8yh17dCiEyu2WDCVWLreGCArYy3NTtJmNUdCxBmCMNjm5kxoE)
+Coinbase receiver:                             Block producer
+```
+
+If `mina-mesa` is not on `$PATH` (for example, when running from a Docker image without the automode wrapper), invoke `mina client status` instead, or call it directly inside the container:
+
+```bash
+docker exec <container-name> mina client status | grep -E "^(Block height|Block producers running|Coinbase receiver):"
 ```
 
 If you are a Delegation Program participant, your uptime will continue to be tracked on the Mesa chain.

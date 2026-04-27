@@ -5904,7 +5904,7 @@ This documentation uses terms like _automode_, _stop-slot_, _trustless upgrade_,
 
 ### Expanded zkApp State
 
-Mesa extends the on-chain state available to zkApps from 8 fields to 31 fields per account. This significantly increases the data capacity available to smart contracts, enabling more complex application logic without off-chain workarounds.
+Mesa extends the on-chain state available to zkApps from 8 fields (indexes `0–7`) to 32 fields (indexes `0–31`) per account. This significantly increases the data capacity available to smart contracts, enabling more complex application logic without off-chain workarounds.
 
 ### Automode Upgrades
 
@@ -5999,7 +5999,7 @@ At approximately **1 hour** after the Mesa release is published, at the predefin
 | **SNARK Workers** | Reconnect workers to the upgraded coordinator. Verify SNARK work is being produced. |
 | **Archive Nodes** | Verify the archive database is in sync. Run [validation checks](/network-upgrades/mesa/upgrade-steps/post-upgrade#in-depth-validation). Fix any missing blocks using archive tooling. |
 | **Exchanges** | **Re-enable MINA deposits and withdrawals** once block production is confirmed and your systems are verified. |
-| **zkApp Developers** | Deploy and test your upgraded zkApps on mainnet. Take advantage of the expanded 31-field on-chain state. |
+| **zkApp Developers** | Deploy and test your upgraded zkApps on mainnet. Take advantage of the expanded 32-field on-chain state. |
 
 ---
 
@@ -6151,7 +6151,9 @@ docker run --name mina -d \
 
 > For details on this phase, see [State Finalization](/network-upgrades/mesa/upgrade-steps/state-finalization).
 
-**Fork day (Upgrade)** — The network halts at the _stop-network-slot_. Carlos waits for the Mesa release announcement, then swaps to the new image:
+**Fork day (Upgrade)** — The network halts at the _stop-network-slot_. Carlos waits for the Mesa release announcement, then swaps to the new image.
+
+> Throughout these examples, `<mesa-version>` is a placeholder for the Mesa release tag announced for your target network. For the **preflight** network the current value is published on [Preflight Network](/network-upgrades/mesa/preflight-network); for **devnet/mainnet** the value will be published with the corresponding release announcement.
 
 ```bash
 docker stop mina && docker rm mina
@@ -6323,7 +6325,7 @@ She checks her explorer UI to confirm new Mesa blocks are appearing and the hist
 <details>
 <summary><b>Example: zkApp Developer</b></summary>
 
-**Frank** maintains a zkApp deployed on mainnet. His contract uses on-chain state and he wants to take advantage of Mesa's expanded 31-field state.
+**Frank** maintains a zkApp deployed on mainnet. His contract uses on-chain state and he wants to take advantage of Mesa's expanded 32-field state.
 
 **Weeks before the fork** — Frank updates his o1js dependency to the Mesa-compatible version and tests his zkApp on the [preflight network](/network-upgrades/mesa/preflight-network):
 
@@ -6334,13 +6336,13 @@ npm install o1js@latest
 He verifies that:
 - His existing zkApp (compiled for Berkeley) still works unchanged on the preflight Mesa network
 - Transactions deploy and execute correctly
-- If he plans to use the expanded state fields (9–31), his new contract version compiles and deploys on preflight
+- If he plans to use the expanded state fields (indexes `8–31`), his new contract version compiles and deploys on preflight
 
 > For details on testing with the preflight network, see [Preflight Network](/network-upgrades/mesa/preflight-network).
 
 **Hours before the fork (State Finalization)** — Frank does **nothing**. His deployed zkApp keeps running on the Berkeley chain. No transactions can be submitted during this phase anyway.
 
-**Fork day (Upgrade)** — Frank does **nothing**. His existing zkApp state carries over to the Mesa chain automatically. All account state (including zkApp state fields 1–8) is preserved exactly as-is.
+**Fork day (Upgrade)** — Frank does **nothing**. His existing zkApp state carries over to the Mesa chain automatically. All account state (including zkApp state fields at indexes `0–7`) is preserved exactly as-is.
 
 **After the fork (Post-Upgrade)** — Block production resumes on Mesa. Frank can now:
 
@@ -6994,15 +6996,6 @@ Please note the following are the hardware requirements for each node type after
 
 ## Mina Daemon Requirements
 
-### Installation
-
-:::caution
-
-If you have `mina-generate-keypair` installed, you will need to first `sudo apt remove mina-generate-keypair` before installing the stop-slot release package.
-The `mina-generate-keypair` binary is now installed as part of the mina-mainnet package.
-
-:::
-
 ### IP and Port configuration
 
 **IP:**
@@ -7629,8 +7622,22 @@ You should see:
 #### 2. Verify block production
 
 ```bash
-# Check your recent block production
-mina-mesa client status | grep "Block"
+# Check that your node is at the tip of the Mesa chain and is producing blocks
+mina-mesa client status | grep -E "^(Block height|Block producers running|Coinbase receiver):"
+```
+
+Expected output looks like:
+
+```text
+Block height:                                  1858
+Block producers running:                       1 (B62qjZ8yh17dCiEyu2WDCVWLreGCArYy3NTtJmNUdCxBmCMNjm5kxoE)
+Coinbase receiver:                             Block producer
+```
+
+If `mina-mesa` is not on `$PATH` (for example, when running from a Docker image without the automode wrapper), invoke `mina client status` instead, or call it directly inside the container:
+
+```bash
+docker exec <container-name> mina client status | grep -E "^(Block height|Block producers running|Coinbase receiver):"
 ```
 
 If you are a Delegation Program participant, your uptime will continue to be tracked on the Mesa chain.
@@ -8038,7 +8045,6 @@ During the Pre-Upgrade phase, node operators prepare their infrastructure for th
 <ul className="checklist">
   <li>Block producer key file is accessible and backed up</li>
   <li>libp2p keypair is accessible (same key can be reused from before the upgrade)</li>
-  <li>If <code>mina-generate-keypair</code> is installed, remove it: <code>sudo apt remove mina-generate-keypair</code></li>
 </ul>
 
 #### Software Upgrade
@@ -8073,7 +8079,6 @@ During the Pre-Upgrade phase, node operators prepare their infrastructure for th
 
 <ul className="checklist">
   <li>libp2p keypair is accessible</li>
-  <li>If <code>mina-generate-keypair</code> is installed, remove it: <code>sudo apt remove mina-generate-keypair</code></li>
 </ul>
 
 #### Software Upgrade
@@ -8122,7 +8127,6 @@ SNARK workers do not need to install the stop-slot release independently. They c
   <li>Server meets <a href="/network-upgrades/mesa/requirements">hardware requirements</a> — 32 GB RAM, 8-core CPU</li>
   <li>Port 8302 (or custom <code>--external-port</code>) is open and reachable</li>
   <li>Node is configured for <a href="/node-operators/block-producer-node/connecting-to-the-network#start-a-mina-node-with-auto-restart-flows-using-systemd">auto-restart</a></li>
-  <li>If <code>mina-generate-keypair</code> is installed, remove it: <code>sudo apt remove mina-generate-keypair</code></li>
 </ul>
 
 #### Database Upgrade
@@ -8178,7 +8182,6 @@ SNARK workers do not need to install the stop-slot release independently. They c
 <ul className="checklist">
   <li>Server meets <a href="/network-upgrades/mesa/requirements">hardware requirements</a> — 32 GB RAM, 8-core CPU</li>
   <li>Node is configured for <a href="/node-operators/block-producer-node/connecting-to-the-network#start-a-mina-node-with-auto-restart-flows-using-systemd">auto-restart</a></li>
-  <li>If <code>mina-generate-keypair</code> is installed, remove it: <code>sudo apt remove mina-generate-keypair</code></li>
 </ul>
 
 #### Integration Testing

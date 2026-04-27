@@ -25,7 +25,7 @@ This documentation uses terms like _automode_, _stop-slot_, _trustless upgrade_,
 
 ### Expanded zkApp State
 
-Mesa extends the on-chain state available to zkApps from 8 fields to 31 fields per account. This significantly increases the data capacity available to smart contracts, enabling more complex application logic without off-chain workarounds.
+Mesa extends the on-chain state available to zkApps from 8 fields (indexes `0–7`) to 32 fields (indexes `0–31`) per account. This significantly increases the data capacity available to smart contracts, enabling more complex application logic without off-chain workarounds.
 
 ### Automode Upgrades
 
@@ -120,7 +120,7 @@ At approximately **1 hour** after the Mesa release is published, at the predefin
 | **SNARK Workers** | Reconnect workers to the upgraded coordinator. Verify SNARK work is being produced. |
 | **Archive Nodes** | Verify the archive database is in sync. Run [validation checks](/network-upgrades/mesa/upgrade-steps/post-upgrade#in-depth-validation). Fix any missing blocks using archive tooling. |
 | **Exchanges** | **Re-enable MINA deposits and withdrawals** once block production is confirmed and your systems are verified. |
-| **zkApp Developers** | Deploy and test your upgraded zkApps on mainnet. Take advantage of the expanded 31-field on-chain state. |
+| **zkApp Developers** | Deploy and test your upgraded zkApps on mainnet. Take advantage of the expanded 32-field on-chain state. |
 
 ---
 
@@ -272,7 +272,9 @@ docker run --name mina -d \
 
 > For details on this phase, see [State Finalization](/network-upgrades/mesa/upgrade-steps/state-finalization).
 
-**Fork day (Upgrade)** — The network halts at the _stop-network-slot_. Carlos waits for the Mesa release announcement, then swaps to the new image:
+**Fork day (Upgrade)** — The network halts at the _stop-network-slot_. Carlos waits for the Mesa release announcement, then swaps to the new image.
+
+> Throughout these examples, `<mesa-version>` is a placeholder for the Mesa release tag announced for your target network. For the **preflight** network the current value is published on [Preflight Network](/network-upgrades/mesa/preflight-network); for **devnet/mainnet** the value will be published with the corresponding release announcement.
 
 ```bash
 docker stop mina && docker rm mina
@@ -444,7 +446,7 @@ She checks her explorer UI to confirm new Mesa blocks are appearing and the hist
 <details>
 <summary><b>Example: zkApp Developer</b></summary>
 
-**Frank** maintains a zkApp deployed on mainnet. His contract uses on-chain state and he wants to take advantage of Mesa's expanded 31-field state.
+**Frank** maintains a zkApp deployed on mainnet. His contract uses on-chain state and he wants to take advantage of Mesa's expanded 32-field state.
 
 **Weeks before the fork** — Frank updates his o1js dependency to the Mesa-compatible version and tests his zkApp on the [preflight network](/network-upgrades/mesa/preflight-network):
 
@@ -455,13 +457,13 @@ npm install o1js@latest
 He verifies that:
 - His existing zkApp (compiled for Berkeley) still works unchanged on the preflight Mesa network
 - Transactions deploy and execute correctly
-- If he plans to use the expanded state fields (9–31), his new contract version compiles and deploys on preflight
+- If he plans to use the expanded state fields (indexes `8–31`), his new contract version compiles and deploys on preflight
 
 > For details on testing with the preflight network, see [Preflight Network](/network-upgrades/mesa/preflight-network).
 
 **Hours before the fork (State Finalization)** — Frank does **nothing**. His deployed zkApp keeps running on the Berkeley chain. No transactions can be submitted during this phase anyway.
 
-**Fork day (Upgrade)** — Frank does **nothing**. His existing zkApp state carries over to the Mesa chain automatically. All account state (including zkApp state fields 1–8) is preserved exactly as-is.
+**Fork day (Upgrade)** — Frank does **nothing**. His existing zkApp state carries over to the Mesa chain automatically. All account state (including zkApp state fields at indexes `0–7`) is preserved exactly as-is.
 
 **After the fork (Post-Upgrade)** — Block production resumes on Mesa. Frank can now:
 
