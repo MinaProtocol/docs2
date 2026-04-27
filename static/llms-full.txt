@@ -5500,7 +5500,20 @@ url: /network-upgrades/mesa/archive-upgrade
 
 # Archive Upgrade
 
-To successfully upgrade the archive database into the Mesa version of the Mina network, you must ensure that your environment meets the foundational requirements.
+This guide describes the general procedure for upgrading a Mina archive database from Berkeley to Mesa. The same steps apply to every Mesa deployment (preflight, devnet, mainnet) — only the archive package version differs.
+
+:::info Choosing the Mesa archive version
+
+The commands below use `<MESA_VERSION>` as a placeholder for the archive build you want to install. Substitute the tag that matches your target network:
+
+- **Preflight network** — see [Preflight Network](./preflight-network) for the current pinned version (e.g. `4.0.0-preflight-stop-2967b39`).
+- **Devnet / mainnet** — use the Mesa release tag published for that network when it is announced.
+
+If you are following the preflight hard-fork timeline (**2026-04-27 14:00 UTC**), see [Preflight Network](./preflight-network) for the build versions and the hard-fork notice. A dedicated upgrade-steps walkthrough will be linked here once it ships.
+
+:::
+
+To successfully upgrade the archive database to Mesa, you must ensure that your environment meets the foundational requirements.
 
 ## Upgrade host
 
@@ -5535,14 +5548,15 @@ curl -O https://raw.githubusercontent.com/MinaProtocol/mina/refs/heads/mesa/src/
 We also ship the script in the Mina archive Docker image and Debian package.
 
 ```bash
-docker run --rm gcr.io/o1labs-192920/mina-archive:4.0.0-preflight1-b649c79-bookworm-mesa cat /etc/mina/archive/upgrade-to-mesa.sql > upgrade-to-mesa.sql
+docker run --rm gcr.io/o1labs-192920/mina-archive:<MESA_VERSION>-bookworm-mesa cat /etc/mina/archive/upgrade-to-mesa.sql > upgrade-to-mesa.sql
 ```
 
 ```bash
-# Setup the Mina repository and install the archive package
-# See preflight-network.mdx for detailed repository setup instructions
+# Setup the Mina repository and install the archive package.
+# Repository setup (apt sources, GPG key, channel) is network-specific —
+# see Preflight Network for the preflight pin, or your network's release notes.
 
-apt-get install mina-archive-mesa=4.0.0-preflight1-b649c79
+apt-get install mina-archive-mesa=<MESA_VERSION>
 
 # View the upgrade and downgrade scripts
 cat /etc/mina/archive/upgrade-to-mesa.sql
@@ -6416,6 +6430,16 @@ url: /network-upgrades/mesa/preflight-network
 
 The Mesa preflight network is a testing environment for validating the Mesa upgrade before deployment to devnet and mainnet. This network allows node operators and developers to test their infrastructure and applications with the new Mesa release.
 
+:::warning Network Hard Fork — 2026-04-27 14:00 UTC
+
+The Mesa preflight network will hard-fork on **2026-04-27 at 14:00 UTC**. A new stop-slot release, **`4.0.0-preflight-stop-2967b39`**, is now available and is **mandatory** for every operator running a Mesa node.
+
+Nodes still on the original preflight build (`4.0.0-preflight1-b649c79`) will fall off the network at the stop transaction slot (2026-04-27 10:00 UTC). Upgrade to `4.0.0-preflight-stop-2967b39` now — the same binary carries your node across the fork automatically.
+
+A dedicated **Upgrade Steps** page covering the full hard-fork timeline and per-role operator checklist will be linked from the Mesa Upgrade sidebar once it ships.
+
+:::
+
 :::caution Preflight Network Notice
 
 The preflight network is intended for testing purposes only. This network may experience instability, breaking changes, and unexpected behavior. Data on this network should not be considered persistent or reliable.
@@ -6426,17 +6450,19 @@ The preflight network is intended for testing purposes only. This network may ex
 
 The Mesa preflight network uses the following build versions:
 
-**Version:** `4.0.0-preflight1-b649c79`
+**Current version (install this):** `4.0.0-preflight-stop-2967b39` — stop-slot / hard-fork release.
+
+**Previous version (historical):** `4.0.0-preflight1-b649c79` — original preflight build. Kept here for reference only; do not install on new nodes.
 
 ### Docker Images
 
-Docker images are available for both `amd64` and `arm64` architectures:
+Docker images are available for both `amd64` and `arm64` architectures, on the `bookworm` and `noble` base distributions:
 
-- **Mina Daemon:** `gcr.io/o1labs-192920/mina-daemon:4.0.0-preflight1-b649c79-bookworm-mesa`
-- **Archive Node:** `gcr.io/o1labs-192920/mina-archive:4.0.0-preflight1-b649c79-bookworm-mesa`
-- **Rosetta:** `gcr.io/o1labs-192920/mina-rosetta:4.0.0-preflight1-b649c79-bookworm-mesa`
+- **Mina Daemon:** `gcr.io/o1labs-192920/mina-daemon:4.0.0-preflight-stop-2967b39-bookworm-mesa`
+- **Archive Node:** `gcr.io/o1labs-192920/mina-archive:4.0.0-preflight-stop-2967b39-bookworm-mesa`
+- **Rosetta:** `gcr.io/o1labs-192920/mina-rosetta:4.0.0-preflight-stop-2967b39-bookworm-mesa`
 
-Images are available for both **bookworm** and **noble** distributions.
+For `noble`, swap `bookworm` for `noble` in the tag (e.g. `mina-daemon:4.0.0-preflight-stop-2967b39-noble-mesa`).
 
 ### Debian Packages
 
@@ -6444,13 +6470,13 @@ Debian packages are available from the unstable repository:
 
 **Repository:** `unstable.apt.packages.minaprotocol.com`
 **Channel:** `preflight`
+**Codenames:** `bookworm`, `noble`
 
-Available packages:
-- `mina-mesa` (version `4.0.0-preflight1-b649c79`)
-- `mina-archive-mesa` (version `4.0.0-preflight1-b649c79`)
-- `mina-rosetta-mesa` (version `4.0.0-preflight1-b649c79`)
+Available packages (each at version `4.0.0-preflight-stop-2967b39`):
 
-Packages are available for **bookworm** and **noble** distributions.
+- `mina-mesa`
+- `mina-archive-mesa`
+- `mina-rosetta-mesa`
 
 For detailed information about the Debian repository structure and configuration, please refer to the [Debian Repository documentation](https://unstable.apt.packages.minaprotocol.com/).
 
@@ -6474,7 +6500,7 @@ To start a Mina daemon node using Docker:
 docker run --name mina-mesa-preflight -d \
   -p 8302:8302 \
   --restart=always \
-  gcr.io/o1labs-192920/mina-daemon:4.0.0-preflight1-b649c79-bookworm-mesa \
+  gcr.io/o1labs-192920/mina-daemon:4.0.0-preflight-stop-2967b39-bookworm-mesa \
   daemon \
   --peer-list-url https://storage.googleapis.com/o1labs-gitops-infrastructure/mina-mesa-network/mina-mesa-network-seeds.txt
 ```
@@ -6486,7 +6512,7 @@ docker run --name mina-mesa-preflight -d \
   -p 8302:8302 \
   --restart=always \
   -v $(pwd)/.mina-config:/data/.mina-config \
-  gcr.io/o1labs-192920/mina-daemon:4.0.0-preflight1-b649c79-bookworm-mesa \
+  gcr.io/o1labs-192920/mina-daemon:4.0.0-preflight-stop-2967b39-bookworm-mesa \
   daemon \
   --peer-list-url https://storage.googleapis.com/o1labs-gitops-infrastructure/mina-mesa-network/mina-mesa-network-seeds.txt \
   --libp2p-keypair /data/.mina-config/keys/libp2p-key
@@ -6510,7 +6536,7 @@ echo "deb https://unstable.apt.packages.minaprotocol.com $(lsb_release -cs) pref
 
 # Step 4: Update and install
 sudo apt-get update
-sudo apt-get install -y mina-mesa=4.0.0-preflight1-b649c79
+sudo apt-get install -y mina-mesa=4.0.0-preflight-stop-2967b39
 ```
 
 Then start the daemon:
@@ -6554,7 +6580,7 @@ echo "deb https://unstable.apt.packages.minaprotocol.com $(lsb_release -cs) pref
 
 # Step 4: Install mina-archive-mesa
 sudo apt-get update
-sudo apt-get install -y mina-archive-mesa=4.0.0-preflight1-b649c79
+sudo apt-get install -y mina-archive-mesa=4.0.0-preflight-stop-2967b39
 
 # Step 5: Create PostgreSQL database
 sudo -u postgres createdb archive
@@ -6575,7 +6601,7 @@ mina-archive run \
 docker run --name mina-archive-mesa -d \
   -p 3086:3086 \
   --restart=always \
-  gcr.io/o1labs-192920/mina-archive:4.0.0-preflight1-b649c79-bookworm-mesa \
+  gcr.io/o1labs-192920/mina-archive:4.0.0-preflight-stop-2967b39-bookworm-mesa \
   mina-archive run \
   --postgres-uri postgresql://archive_user:your-secure-password@postgres-host:5432/archive \
   --server-port 3086
@@ -6611,7 +6637,7 @@ echo "deb https://unstable.apt.packages.minaprotocol.com $(lsb_release -cs) pref
 
 # Step 4: Install mina-rosetta-mesa
 sudo apt-get update
-sudo apt-get install -y mina-rosetta-mesa=4.0.0-preflight1-b649c79
+sudo apt-get install -y mina-rosetta-mesa=4.0.0-preflight-stop-2967b39
 
 # Step 5: Start Rosetta
 # Rosetta connects to both the mina daemon and archive node
@@ -6627,7 +6653,7 @@ mina-rosetta \
 docker run --name mina-rosetta-mesa -d \
   -p 3087:3087 \
   --restart=always \
-  gcr.io/o1labs-192920/mina-rosetta:4.0.0-preflight1-b649c79-bookworm-mesa \
+  gcr.io/o1labs-192920/mina-rosetta:4.0.0-preflight-stop-2967b39-bookworm-mesa \
   --port 3087 \
   --archive-uri http://archive-host:3086/graphql \
   --graphql-uri http://mina-daemon-host:3085/graphql
