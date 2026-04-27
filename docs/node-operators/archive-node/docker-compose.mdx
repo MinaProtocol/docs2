@@ -10,9 +10,101 @@ keywords:
 
 # Docker Compose Archive
 
-This example demonstrates how to run a Mina archive node using Docker Compose for the Mainnet network. This Docker Compose setup includes a Postgres database, a bootstrap database with the latest SQL Dump available, an archive node, a Mina node and a Missing Blocks Guardian script to monitor and populate the gaps in the archive database
+Run a Mina archive node using Docker Compose. The setup includes a PostgreSQL database, a bootstrap service that imports the latest daily archive dump, the archive process, a Mina daemon, and a missing blocks guardian that monitors and recovers gaps in the archive database.
 
-Copy and paste the provided configuration into a `docker-compose.yml` file. Then run `docker compose up -d` to start the services, and use `docker compose logs -f` to monitor the logs.
+## Quick start
+
+:::tip
+Before running the commands below, review the [Configuration](#configuration) section to see all available options — including image tags, network selection, ports, and database settings.
+:::
+
+1. Create a project directory and save the files below:
+
+```bash
+mkdir -p mina-archive && cd mina-archive
+```
+
+2. Create the `.env` file (see [Configuration](#configuration) for all variables):
+
+```bash
+# .env
+MINA_DAEMON_IMAGE=minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet
+MINA_ARCHIVE_IMAGE=minaprotocol/mina-archive:3.3.0-8c0c2e6-bullseye-mainnet
+MINA_NETWORK=mainnet
+MINA_PEERLIST_URL=https://bootnodes.minaprotocol.com/networks/mainnet.txt
+MINA_LIBP2P_PASS=<your-libp2p-password>
+POSTGRES_PASSWORD=postgres
+POSTGRES_PORT=5432
+MINA_REST_PORT=3085
+MINA_P2P_PORT=8302
+MINA_ARCHIVE_PORT=3086
+ARCHIVE_DUMP_BASE_URL=https://storage.googleapis.com/mina-archive-dumps
+ARCHIVE_DUMP_PREFIX=mainnet-archive-dump
+GUARDIAN_PRECOMPUTED_BLOCKS_URL=https://673156464838-mina-precomputed-blocks.s3.us-west-2.amazonaws.com/mainnet
+```
+
+3. Create the `docker-compose.yml` (see [Docker Compose file](#docker-compose-file)).
+
+4. Start the services:
+
+```bash
+docker compose up -d
+
+# Follow logs
+docker compose logs -f
+```
+
+:::info
+The `bootstrap_db` service downloads and imports the latest daily archive dump. This may take a while depending on your connection speed. The archive node and Mina daemon will start after the import completes.
+:::
+
+## Configuration
+
+All configuration is done through a single `.env` file.
+
+### Docker images
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `MINA_DAEMON_IMAGE` | Mina daemon Docker image | `minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet` |
+| `MINA_ARCHIVE_IMAGE` | Mina archive Docker image | `minaprotocol/mina-archive:3.3.0-8c0c2e6-bullseye-mainnet` |
+
+For devnet, use the o1Labs GCR images:
+- Daemon: `gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet`
+- Archive: `gcr.io/o1labs-192920/mina-archive:3.3.0-alpha1-6929a7e-bullseye-devnet`
+
+### Network
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `MINA_NETWORK` | Network name | `mainnet` or `devnet` |
+| `MINA_PEERLIST_URL` | Bootstrap peers URL | `https://bootnodes.minaprotocol.com/networks/mainnet.txt` |
+| `MINA_LIBP2P_PASS` | Passphrase for the libp2p key (required) | — |
+
+### Ports
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `POSTGRES_PORT` | `5432` | Host port mapped to PostgreSQL |
+| `MINA_REST_PORT` | `3085` | GraphQL API port |
+| `MINA_P2P_PORT` | `8302` | P2P networking port |
+| `MINA_ARCHIVE_PORT` | `3086` | Archive server port |
+
+### Database
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `POSTGRES_PASSWORD` | `postgres` | PostgreSQL password |
+
+### Archive bootstrap
+
+| Variable | Description |
+|----------|-------------|
+| `ARCHIVE_DUMP_BASE_URL` | Base URL for daily archive dumps |
+| `ARCHIVE_DUMP_PREFIX` | Dump filename prefix (`mainnet-archive-dump` or `devnet-archive-dump`) |
+| `GUARDIAN_PRECOMPUTED_BLOCKS_URL` | S3 bucket URL for precomputed blocks used by the missing blocks guardian |
+
+## Docker Compose file
 
 ```yaml
 services:
@@ -20,7 +112,7 @@ services:
     image: postgres:17
     restart: always
     environment:
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
       POSTGRES_DB: archive
     healthcheck:
       test: ["CMD-SHELL", "psql -U postgres -d archive -tAc \"SELECT COUNT(*) FROM pg_database WHERE datname='archive';\" | grep -q '^1$'"]
@@ -30,77 +122,133 @@ services:
     volumes:
       - './archive/postgresql/data:/var/lib/postgresql/data'
     ports:
-      - '5432:5432'
+      - '${POSTGRES_PORT:-5432}:5432'
   bootstrap_db:
-    image: 'minaprotocol/mina-archive:3.3.0-8c0c2e6-bullseye-mainnet'
-    # image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet' # Use this image for Devnet
+    image: '${MINA_ARCHIVE_IMAGE}'
     command: >
       bash -c '
-      curl -O https://storage.googleapis.com/mina-archive-dumps/mainnet-archive-dump-$(date +%F_0000).sql.tar.gz;
-      tar -zxvf mainnet-archive-dump-$(date +%F_0000).sql.tar.gz;
-      psql postgres://postgres:postgres@postgres:5432/archive -c "
+      curl -O ${ARCHIVE_DUMP_BASE_URL}/${ARCHIVE_DUMP_PREFIX}-$$(date +%F_0000).sql.tar.gz;
+      tar -zxvf ${ARCHIVE_DUMP_PREFIX}-$$(date +%F_0000).sql.tar.gz;
+      psql postgres://postgres:${POSTGRES_PASSWORD:-postgres}@postgres:5432/archive -c "
       ALTER SYSTEM SET max_connections = 500;
       ALTER SYSTEM SET max_locks_per_transaction = 100;
       ALTER SYSTEM SET max_pred_locks_per_relation = 100;
       ALTER SYSTEM SET max_pred_locks_per_transaction = 5000;
       "
-      psql postgres://postgres:postgres@postgres:5432/archive -f mainnet-archive-dump-$(date +%F_0000).sql;
+      psql postgres://postgres:${POSTGRES_PASSWORD:-postgres}@postgres:5432/archive -f ${ARCHIVE_DUMP_PREFIX}-$$(date +%F_0000).sql;
       '
-    # For Devnet Network, replace "mainnet" references with "devnet" in the block above
     depends_on:
       postgres:
         condition: service_healthy
   missing_blocks_guardian:
-    image: 'minaprotocol/mina-archive:3.3.0-8c0c2e6-bullseye-mainnet'
-    # image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet' # Use this image for Devnet
+    image: '${MINA_ARCHIVE_IMAGE}'
     command: >
       bash -c '
       curl -O https://raw.githubusercontent.com/MinaFoundation/helm-charts/main/mina-archive/scripts/missing-blocks-guardian-command.sh;
-      export GUARDIAN_PRECOMPUTED_BLOCKS_URL=https://673156464838-mina-precomputed-blocks.s3.us-west-2.amazonaws.com/mainnet;
-      export MINA_NETWORK=mainnet;
-      export PG_CONN=postgres://postgres:postgres@postgres:5432/archive;
+      export GUARDIAN_PRECOMPUTED_BLOCKS_URL=${GUARDIAN_PRECOMPUTED_BLOCKS_URL};
+      export MINA_NETWORK=${MINA_NETWORK};
+      export PG_CONN=postgres://postgres:${POSTGRES_PASSWORD:-postgres}@postgres:5432/archive;
       while true; do bash missing-blocks-guardian-command.sh; sleep 600; done
       '
-    # For Devnet Network, replace "mainnet" references with "devnet" in the block above
     depends_on:
       bootstrap_db:
         condition: service_completed_successfully
   mina_archive:
-    image: 'minaprotocol/mina-archive:3.3.0-8c0c2e6-bullseye-mainnet'
+    image: '${MINA_ARCHIVE_IMAGE}'
     restart: always
     command:
       - mina-archive
       - run
       - --postgres-uri
-      - postgres://postgres:postgres@postgres:5432/archive
+      - postgres://postgres:${POSTGRES_PASSWORD:-postgres}@postgres:5432/archive
       - --server-port
-      - "3086"
+      - "${MINA_ARCHIVE_PORT:-3086}"
     volumes:
       - './archive/data:/data'
     depends_on:
       bootstrap_db:
         condition: service_completed_successfully
   mina_node:
-    image: 'minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet'
-    # image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet' # Use this image for Devnet
+    image: '${MINA_DAEMON_IMAGE}'
     restart: always
+    environment:
+      MINA_LIBP2P_PASS: ${MINA_LIBP2P_PASS}
+    healthcheck:
+      test: ["CMD-SHELL", "mina client status"]
+      interval: 60s
+      timeout: 10s
+      retries: 100
     entrypoint: []
     command: >
       bash -c '
-        mina daemon --archive-address mina_archive:3086 \
-             --peer-list-url https://bootnodes.minaprotocol.com/networks/mainnet.txt \
+        mina daemon \
+             --archive-address mina_archive:${MINA_ARCHIVE_PORT:-3086} \
+             --peer-list-url ${MINA_PEERLIST_URL} \
              --insecure-rest-server \
-             --rest-port 3085
+             --rest-port ${MINA_REST_PORT:-3085} \
+             --config-directory /root/.mina-config \
+             --file-log-rotations 500 \
+             --generate-genesis-proof true \
+             --log-json
       '
-    # use  --peer-list-url https://bootnodes.minaprotocol.com/networks/devnet.txt for Devnet
     ports:
-      - '3085:3085'
-      - '8302:8302'
+      - '${MINA_REST_PORT:-3085}:${MINA_REST_PORT:-3085}'
+      - '${MINA_P2P_PORT:-8302}:8302'
+    volumes:
+      - './mina_node/.mina-config:/root/.mina-config'
     depends_on:
       bootstrap_db:
         condition: service_completed_successfully
 ```
 
-Once the services are running, you can access the Mina node graphql endpoint at `http://localhost:3085/graphql` and the postgres database using  `psql postgres://postgres:postgres@localhost:5432/archive`.
+## Services overview
 
-To retrieve the status of the Mina Node, run `docker compose exec mina_node mina client status`
+| Service | Description | Default Port |
+|---------|-------------|--------------|
+| **postgres** | PostgreSQL 17 with health checks | 5432 |
+| **bootstrap_db** | One-shot: downloads and imports the latest daily archive dump | — |
+| **mina_archive** | Archive process, stores block data in PostgreSQL | 3086 |
+| **mina_node** | Mina daemon with GraphQL API | 3085 (GraphQL), 8302 (P2P) |
+| **missing_blocks_guardian** | Monitors and recovers missing blocks between nightly dumps and chain tip | — |
+
+## Data persistence
+
+Bind mounts preserve data across `docker compose down` / `up`:
+
+| Host path | Container path | Contents |
+|-----------|---------------|----------|
+| `./archive/postgresql/data` | `/var/lib/postgresql/data` | PostgreSQL data |
+| `./archive/data` | `/data` | Archive node data |
+| `./mina_node/.mina-config` | `/root/.mina-config` | Daemon config, keys, peers |
+
+## Verifying the deployment
+
+```bash
+# Check container status
+docker compose ps
+
+# Check sync status
+docker compose exec mina_node mina client status
+
+# Query GraphQL API
+curl -s http://localhost:${MINA_REST_PORT:-3085}/graphql \
+  -H 'Content-Type: application/json' \
+  -d '{"query": "{ syncStatus }"}' | jq .
+
+# Connect to archive database
+psql postgres://postgres:${POSTGRES_PASSWORD:-postgres}@localhost:${POSTGRES_PORT:-5432}/archive
+
+# Check archive block height
+psql postgres://postgres:${POSTGRES_PASSWORD:-postgres}@localhost:${POSTGRES_PORT:-5432}/archive \
+  -c "SELECT MAX(height) FROM blocks;"
+```
+
+## Clean start
+
+To wipe all data and start fresh:
+
+```bash
+docker compose down
+rm -rf archive/ mina_node/
+docker compose up -d
+```
