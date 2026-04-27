@@ -1557,6 +1557,31 @@ module.exports = {
         },
         {
           type: 'category',
+          label: 'Rosetta API',
+          items: [
+            'node-operators/rosetta/run-with-docker',
+            'node-operators/rosetta/docker-compose',
+            'node-operators/rosetta/build-from-sources',
+            'node-operators/rosetta/send-requests',
+            {
+              type: 'category',
+              label: 'Code Samples',
+              link: {
+                type: 'doc',
+                id: 'node-operators/rosetta/samples/index',
+              },
+              items: [
+                'node-operators/rosetta/samples/requests',
+                'node-operators/rosetta/samples/using-signer',
+                'node-operators/rosetta/samples/scan-blocks',
+                'node-operators/rosetta/samples/track-deposits',
+                'node-operators/rosetta/samples/send-transactions',
+              ],
+            },
+          ],
+        },
+        {
+          type: 'category',
           label: 'Delegation Program',
           link: {
             type: 'doc',
@@ -1584,6 +1609,11 @@ module.exports = {
       ],
     },
     {
+      type: 'doc',
+      label: 'Exchange Operators',
+      id: 'node-operators/exchange-operators',
+    },
+    {
       type: 'category',
       label: 'Node Developers',
       link: {
@@ -1599,42 +1629,6 @@ module.exports = {
         'node-developers/sandbox-node',
         'node-developers/graphql-api',
         'node-developers/contributing',
-      ],
-    },
-    {
-      type: 'category',
-      label: 'Exchange Operators',
-      link: {
-        type: 'doc',
-        id: 'exchange-operators/index',
-      },
-      items: [
-        {
-          type: 'category',
-          label: 'Rosetta API',
-          items: [
-            'exchange-operators/rosetta/run-with-docker',
-            'exchange-operators/rosetta/docker-compose',
-            'exchange-operators/rosetta/build-from-sources',
-            'exchange-operators/rosetta/send-requests',
-            {
-              type: 'category',
-              label: 'Code Samples',
-              link: {
-                type: 'doc',
-                id: 'exchange-operators/rosetta/samples/index',
-              },
-              items: [
-                'exchange-operators/rosetta/samples/requests',
-                'exchange-operators/rosetta/samples/using-signer',
-                'exchange-operators/rosetta/samples/scan-blocks',
-                'exchange-operators/rosetta/samples/track-deposits',
-                'exchange-operators/rosetta/samples/send-transactions',
-              ],
-            },
-          ],
-        },
-        'exchange-operators/faq',
       ],
     },
     {

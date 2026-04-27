@@ -1,7 +1,7 @@
 ---
 title: FAQ
 hide_title: true
-description: Frequently asked questions about node operators in the Mina network.
+description: Troubleshooting tips and answers to frequently asked questions about node operators and exchange integration in the Mina network.
 keywords:
   - FAQ
   - snark
@@ -9,6 +9,9 @@ keywords:
   - block producer
   - mina protocol
   - mina signer
+  - exchange
+  - listing mina
+  - rosetta
 ---
 
 # FAQ
@@ -82,3 +85,168 @@ No, when a new block is generated, Mina computes the proof recursively over the 
 ### How do you control or limit the number of threads that SNARK workers use?
 
 When you start the mina daemon, use the `-snark-worker-parallelism` flag. This flag is equivalent to setting `OMP_NUM_THREADS`, but doesn't affect block production.
+
+## Exchange Integration
+
+#### Where can I find third-party audit reports for Mina?
+
+The latest third-party audit reports are publicly available here:
+
+- [https://research.nccgroup.com/2020/05/13/public-report-coda-cryptographic-review](https://research.nccgroup.com/2020/05/13/public-report-coda-cryptographic-review/)
+- [https://leastauthority.com/blog/audit-of-mina-ledger-application-for-o1-labs](https://leastauthority.com/blog/audit-of-mina-ledger-application-for-o1-labs/)
+- [https://research.nccgroup.com/2022/02/22/public-report-o1-labs-mina-client-sdk-signature-library-and-base-components-cryptography-and-implementation-review](https://research.nccgroup.com/2022/02/22/public-report-o1-labs-mina-client-sdk-signature-library-and-base-components-cryptography-and-implementation-review)
+
+:::note
+
+Any news and updates related to exchange listing shared by the Mina Foundation are on [www.minaprotocol.com](https://minaprotocol.com) or the official [Mina Protocol](https://x.com/MinaProtocol) X (Twitter). Mina Foundation cannot individually answer any listing questions.
+
+:::
+
+#### Why do you recommend using Rosetta for integrating Mina to our exchange?
+
+Rosetta is an open-source specification that helps exchanges and developers integrate blockchains. Since Rosetta is actively maintained and specifically designed to enable simpler, faster, and more reliable blockchain integrations, we highly recommend using Rosetta to integrate Mina blockchain with your exchange.
+
+#### Is there an account creation fee?
+
+Yes, Mina Protocol charges a fee of 1 MINA when you create a new account. This fee helps protect the network from denial of service-type attacks. Over time, this fee can change.
+
+#### What is the maximum size of the mempool? How do we work around this?
+
+The max mempool size is 3,000. After it hits that size, transactions with the lowest fees are discarded.
+
+Set your fee to an amount higher than 0.001 MINA, the current average fee for transactions in the pool.
+
+You can view the fees for pending transactions and adjust your fees accordingly: [https://minascan.io/mainnet/txs/pending-txs](https://minascan.io/mainnet/txs/pending-txs).
+
+#### Why do some users appear to have lost their funds when sending to exchanges?
+
+:::tip
+
+While Mina and its SDKs do support the memo field when sending a transaction, the recommended best practice is <u>do NOT require a memo for deposits</u>.
+
+:::
+
+To associate the deposit with the user's account, some exchanges require their users to include a unique memo field when sending MINA deposits to the exchange's address.
+
+If the user does not include this unique memo when sending their deposit, the receiving exchange may not be able to associate the deposit properly with the user's exchange account.
+
+These funds are <u>NOT lost</u>. The exchanges have received the funds at the exchange's address, but the exchange may not be able to automatically associate the deposit with the user's exchange account without such a memo.
+
+To prevent this issue, we recommend that exchanges <u>do NOT require a memo</u> for deposits. At the same time, exchanges and wallet creators are recommended to <u>expose an optional memo field</u> during a Mina send transaction.
+
+#### What is the maximum number of rollback blocks?
+
+The table in [Lifecycle of a Payment](/mina-protocol/lifecycle-of-a-payment) describes how many blocks you wait for a transaction to be confirmed.
+
+#### How should I calculate transaction fees?
+
+To calculate your transaction fees, use [https://fees.mina.tools](https://fees.mina.tools/).
+
+#### My Mina node gets stuck sometimes. How can I detect this and fix it?
+
+This is a known issue for some earlier releases. Restart your mina node whenever this issue is detected.
+
+You can use the following script to run a cron job every 3 minutes (the slot length) or more frequently:
+
+```
+MINA_STATUS=$($MINA client status --json)
+HIGHESTBLOCK="$(echo $MINA_STATUS | jq .highest_block_length_received)"
+HIGHESTUNVALIDATEDBLOCK="$(echo $MINA_STATUS | jq .highest_unvalidated_block_length_received)"
+
+# Calculate difference between validated and unvalidated blocks.
+# If block height is more than 4 block behind, something is likely wrong.
+
+DELTAVALIDATED="$(($HIGHESTUNVALIDATEDBLOCK-$HIGHESTBLOCK))"
+if [[ "$DELTAVALIDATED" -gt 4 ]]; then
+  $MINA client stop
+fi
+```
+
+:::tip
+
+Be sure your Mina daemon is monitored by something such as systemd, so it can auto-restart.
+
+:::
+
+#### My archive node is missing block information after a restart. How can I recover the data?
+
+Archive node operators often choose to run redundant archive nodes to store block data to one or more locations of their choice (for example, PostgreSQL, GCP, local files, or a logging service) and to backfill any missed block data if needed.
+
+For convenience, [mina_network_block_data](https://console.cloud.google.com/storage/browser/mina_network_block_data) from the archive node is available to help others in the community backfill any missing information.
+
+This bucket contains blocks from various Mina networks — for example, Mainnet and the most recent Devnet `devnet2`. Filter by filename for the network you want. Note that this bucket contains blocks for various other networks too, such as QAnet, which is not recommended for your testing. QAnet is used by o1Labs during targeted iterative development.
+
+Filenames contain the network name, block height, and state hash of the block. Blocks older than height 25,705 include only the network name and state hash in the filename.
+
+Example filenames:
+
+(Recent)
+
+```
+mainnet-30627-3NLfKanQ53X2MRKx5ZRvb9nVCEB9eJpcnssGCTpT3J1cojhB5M19.json
+```
+
+(Older)
+
+```
+mainnet-3NKUBmkc7UZ7ik5JyCM4WNzkN1HG5heMB5zNDUkf3Kgta1MFY6LY.json
+```
+
+You can download a specific block using curl:
+
+```
+curl https://mina_network_block_data.storage.googleapis.com/<filename.json>
+```
+
+You can import this file using the mina archive blocks tool. The command for it is:
+
+```
+mina-archive-blocks --precomputed --archive-uri <postgres uri> FILE.
+```
+
+#### How do I query for the canonical block at a certain height from the archive node?
+
+Use a recursive query. See [Query the database](/node-operators/archive-node/getting-started#query-the-database) examples in the Archive Node docs.
+
+#### Why am I getting this error message: "Not able to connect to the network"?
+
+This error message usually occurs due to a chain ID mismatch from running a Devnet build on Mainnet, or vice versa.
+
+To check whether you are running a devnet or mainnet build, run `Mina client status`. Next, compare the output's chain ID of your node to the expected chain ID of the network you are trying to connect to. You can find required information for comparison within the [GitHub announcements](https://github.com/MinaProtocol/mina/discussions/categories/announcements) or [Discord](https://discord.com/channels/484437221055922177/601171209287368715) server.
+
+#### Are there any official broadcast nodes that can be used?
+
+No, there are no official broadcast nodes at this time. However, you can  broadcast transactions using [https://minascan.io/mainnet/broadcast/payment](https://minascan.io/mainnet/broadcast/payment). Use this method as a backup, the recommended method is to broadcast transactions yourself.
+
+#### Should I be staking my funds?
+
+Since Mina is a Proof of Stake (PoS) consensus network without lockup for staked tokens, it is recommended to stake these funds to support the quality of the Mina network. Additionally, by not staking, you are missing out on staking rewards that you can otherwise be receiving from the Mina blockchain.
+
+You can look into staking this wallet, either by running your own block production node or just by delegating your funds to a staking pool on the network. Delegating to a staking pool is simpler to set up.
+
+:::note
+
+Newly staked accounts incur a delay of 18 to 29 days before you start receiving rewards.
+
+:::
+
+#### Why is there a delay for staking to take effect?
+
+For purposes of ensuring consensus, there is a delay between when delegations are sent on the blockchain and when they take effect with respect to staking on the network. The staking ledger always operates between 18 to 29 days behind the live ledger.
+
+#### How long is the delay and when is the next staking snapshot?
+
+The timing of the next staking snapshot varies.
+
+Since the timing is based on a combination of consensus timing (epochs) and snarketplace throughput, it is difficult to determine exactly how long this delay can be.
+
+A conservative estimate is that delegations sent 3 days before the epoch transition can take effect in the upcoming epoch. This means that, for any given delegation, there is an average of 18 to 29 days delay before this delegation updates block production.
+
+You can use this Delegation Calculator tool built by Carbonara to see the next staking ledger cutoff:
+[https://epoch.mina.tools](https://epoch.mina.tools/).
+
+#### What is the best way to test tooling and integration with Mina?
+
+Test tooling and integrations on Devnet before going live on Mainnet. The Devnet network is dedicated for developers building on top of the Mina protocol and is designed for testing and experimentation. Be sure to simulate expected Mainnet conditions, such as transaction volume and frequency, to help identify and solve potential issues ahead of time.
+
+See [Connect to Devnet](/node-operators/block-producer-node/connecting-to-devnet).
