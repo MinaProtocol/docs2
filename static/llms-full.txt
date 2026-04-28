@@ -1559,7 +1559,7 @@ url: /glossary
 
 # Glossary
 
-[A](#a) [B](#b) [C](#c) [D](#d) [E](#e) [F](#f) [G](#g) [H](#h) [I](#i) J [K](#k) [L](#l) [M](#m) [N](#n) [O](#o)
+[A](#a) [B](#b) [C](#c) [D](#d) [E](#e) [F](#f) G [H](#h) [I](#i) J [K](#k) [L](#l) [M](#m) [N](#n) [O](#o)
 [P](#p) Q [R](#r) [S](#s) [T](#t) [U](#u) [V](#v) W X Y [Z](#z)
 
 Are you looking for a zero knowledge, o1js, zkApp, or Mina term that isn't here yet? To let us know, please [create an issue](https://github.com/o1-labs/docs2/issues) or click **EDIT THIS PAGE** to submit a PR.
@@ -1633,7 +1633,7 @@ A node in the [transition frontier](#transition-frontier) that contains the exte
 
 ## C
 
-### catch up
+### catch up {#catchup}
 
 The final stage of the [syncing](#syncing) process where the node attempts to catch up to the current [best tip](#best-tip) by determining and then downloading all [transitions](#transition) between the transition frontier [root](#root-of-transition-frontier) and the current best tip. First, a node requests the missing transition hashes and a transaction chain proof. This proof proves the path provided is valid, for example, that the provided transition hashes lead from the root to the best tip. After the node has all transition hashes, it requests the full external transition for each transition hash from peers.
 
@@ -2611,7 +2611,7 @@ If you want to send a transaction without running a node yourself, but by delega
 
 ### Using a Ledger device
 
-To generate a signed transaction offline if your private key is on a Ledger device, see [Ledger Offline Mode](/using-mina/ledger-hardware-wallet#offline-mode).
+To generate a signed transaction offline if your private key is on a Ledger device, see [Ledger Hardware Wallet](/using-mina/ledger-hardware-wallet).
 
 ### Using a keypair generated with the generate-keypair tool
 
@@ -5281,7 +5281,7 @@ You can use a different port by setting the `--external-port` flag.
 
 ### Node Auto-restart
 
-Ensure your nodes are set to restart automatically after a crash. For guidance, refer to the [auto-restart instructions](/node-operators/validator-node/connecting-to-the-network#start-a-mina-node-with-auto-restart-flows)
+Ensure your nodes are set to restart automatically after a crash. For guidance, refer to the [auto-restart instructions](/node-operators/validator-node/connecting-to-the-network#running-mina-node-as-a-service)
 
 ## Seed Peer Requirements
 
@@ -5431,10 +5431,22 @@ url: /network-upgrades
 
 Mina Protocol evolves through network upgrades (hard forks). Each upgrade introduces new protocol features, performance improvements, or governance changes. Hard forks are not backward compatible — all node operators must upgrade before the fork activates.
 
+:::tip Mesa preflight hard fork completed
+
+The Mesa preflight network hard-forked at **2026-04-27 13:00 UTC**. The post-fork chain is now running the Mesa release **`4.0.0-preflight-3f038cb`**, which raises the **transaction protocol version to 5.0.0**.
+
+Operators must run **`4.0.0-preflight-3f038cb`** to remain on the preflight network. Earlier builds — including the stop-slot release `4.0.0-preflight-stop-2967b39` — are no longer compatible with the post-fork chain.
+
+zkApp developers must update to **`o1js@3.0.0-mesa.698ca`**, which targets transaction protocol v5.0.0; earlier o1js releases will produce transactions that the post-fork network rejects.
+
+See [Preflight Network](/network-upgrades/mesa/preflight-network) for the full upgrade path.
+
+:::
+
 | Upgrade | Status | Date | Key Changes |
-|---|---|---|---|
-| [Berkeley](/network-upgrades/berkeley) | Completed | June 2024 | Transitioned mainnet to the Berkeley proof system. Introduced zkApp programmability, recursive proofs, and a new transaction model. |
-| [Mesa](/network-upgrades/mesa) | Upcoming | TBD | Expands zkApp state capacity, introduces automode upgrades, and adds protocol improvements. |
+|---------|--------|------|-------------|
+| [Berkeley](/network-upgrades/berkeley/requirements) | Completed | June 2024 | zkApp programmability, recursive proofs, new transaction model, archive database migration |
+| [Mesa](/network-upgrades/mesa/preflight-network) | Preflight hard fork completed | 2026-04-27 13:00 UTC (preflight) | Transaction protocol v5.0.0, automode upgrades, simplified archive migration |
 
 ---
 url: /network-upgrades/mesa/appendix
@@ -5502,14 +5514,20 @@ url: /network-upgrades/mesa/archive-upgrade
 
 This guide describes the general procedure for upgrading a Mina archive database from Berkeley to Mesa. The same steps apply to every Mesa deployment (preflight, devnet, mainnet) — only the archive package version differs.
 
+:::tip Mesa preflight hard fork completed
+
+The Mesa preflight network hard-forked at **2026-04-27 13:00 UTC**. The post-fork chain runs **`4.0.0-preflight-3f038cb`**, which raises the **transaction protocol version to 5.0.0**. Pre-fork builds — including the stop-slot release `4.0.0-preflight-stop-2967b39` — are no longer compatible.
+
+When upgrading a preflight archive database, install the matching `mina-archive-mesa=4.0.0-preflight-3f038cb` package so the archive node speaks the new transaction protocol.
+
+:::
+
 :::info Choosing the Mesa archive version
 
 The commands below use `<MESA_VERSION>` as a placeholder for the archive build you want to install. Substitute the tag that matches your target network:
 
-- **Preflight network** — see [Preflight Network](./preflight-network) for the current pinned version (e.g. `4.0.0-preflight-stop-2967b39`).
+- **Preflight network** — use `4.0.0-preflight-3f038cb` (post-hard-fork; transaction protocol v5.0.0). See [Preflight Network](./preflight-network) for the full release matrix.
 - **Devnet / mainnet** — use the Mesa release tag published for that network when it is announced.
-
-If you are following the preflight hard-fork timeline (**2026-04-27 14:00 UTC**), see [Preflight Network](./preflight-network) for the build versions and the hard-fork notice. A dedicated upgrade-steps walkthrough will be linked here once it ships.
 
 :::
 
@@ -6432,13 +6450,15 @@ url: /network-upgrades/mesa/preflight-network
 
 The Mesa preflight network is a testing environment for validating the Mesa upgrade before deployment to devnet and mainnet. This network allows node operators and developers to test their infrastructure and applications with the new Mesa release.
 
-:::warning Network Hard Fork — 2026-04-27 14:00 UTC
+:::tip Mesa preflight hard fork completed
 
-The Mesa preflight network will hard-fork on **2026-04-27 at 14:00 UTC**. A new stop-slot release, **`4.0.0-preflight-stop-2967b39`**, is now available and is **mandatory** for every operator running a Mesa node.
+The Mesa preflight network hard-forked at **2026-04-27 13:00 UTC**. The post-fork chain is now running the Mesa release **`4.0.0-preflight-3f038cb`**, which bumps the **transaction protocol version to 5.0.0**.
 
-Nodes still on the original preflight build (`4.0.0-preflight1-b649c79`) will fall off the network at the stop transaction slot (2026-04-27 10:00 UTC). Upgrade to `4.0.0-preflight-stop-2967b39` now — the same binary carries your node across the fork automatically.
+The transaction protocol bump is a breaking wire-format change: any node still running a pre-fork build (including the stop-slot release `4.0.0-preflight-stop-2967b39` and the original preflight build `4.0.0-preflight1-b649c79`) will reject the new transaction format and is no longer compatible with the network. Upgrade to **`4.0.0-preflight-3f038cb`** to resume participation.
 
-A dedicated **Upgrade Steps** page covering the full hard-fork timeline and per-role operator checklist will be linked from the Mesa Upgrade sidebar once it ships.
+zkApp developers must rebuild and redeploy against **`o1js@3.0.0-mesa.698ca`** — the first o1js release that targets transaction protocol v5.0.0. Transactions produced by earlier o1js versions will be rejected by post-fork nodes.
+
+A dedicated **Upgrade Steps** page covering the post-fork operator checklist will be linked from the Mesa Upgrade sidebar once it ships.
 
 :::
 
@@ -6452,19 +6472,24 @@ The preflight network is intended for testing purposes only. This network may ex
 
 The Mesa preflight network uses the following build versions:
 
-**Current version (install this):** `4.0.0-preflight-stop-2967b39` — stop-slot / hard-fork release.
+**Current version (install this):** `4.0.0-preflight-3f038cb` — post-hard-fork release. Implements transaction protocol version **5.0.0** and is the only build compatible with the post-fork chain.
 
-**Previous version (historical):** `4.0.0-preflight1-b649c79` — original preflight build. Kept here for reference only; do not install on new nodes.
+**Compatible o1js release:** `o1js@3.0.0-mesa.698ca` — the matching SDK for transaction protocol v5.0.0. Install with `npm install o1js@3.0.0-mesa.698ca` (or the equivalent for your package manager) when developing or redeploying zkApps against the post-fork preflight network.
+
+**Previous versions (historical, do not install on new nodes):**
+
+- `4.0.0-preflight-stop-2967b39` — stop-slot release used to carry nodes up to the fork. Pre-fork transaction protocol; incompatible with the post-fork chain.
+- `4.0.0-preflight1-b649c79` — original preflight build. Listed for reference only.
 
 ### Docker Images
 
 Docker images are available for both `amd64` and `arm64` architectures, on the `bookworm` and `noble` base distributions:
 
-- **Mina Daemon:** `gcr.io/o1labs-192920/mina-daemon:4.0.0-preflight-stop-2967b39-bookworm-mesa`
-- **Archive Node:** `gcr.io/o1labs-192920/mina-archive:4.0.0-preflight-stop-2967b39-bookworm-mesa`
-- **Rosetta:** `gcr.io/o1labs-192920/mina-rosetta:4.0.0-preflight-stop-2967b39-bookworm-mesa`
+- **Mina Daemon:** `gcr.io/o1labs-192920/mina-daemon:4.0.0-preflight-3f038cb-bookworm-mesa`
+- **Archive Node:** `gcr.io/o1labs-192920/mina-archive:4.0.0-preflight-3f038cb-bookworm-mesa`
+- **Rosetta:** `gcr.io/o1labs-192920/mina-rosetta:4.0.0-preflight-3f038cb-bookworm-mesa`
 
-For `noble`, swap `bookworm` for `noble` in the tag (e.g. `mina-daemon:4.0.0-preflight-stop-2967b39-noble-mesa`).
+For `noble`, swap `bookworm` for `noble` in the tag (e.g. `mina-daemon:4.0.0-preflight-3f038cb-noble-mesa`).
 
 ### Debian Packages
 
@@ -6474,7 +6499,7 @@ Debian packages are available from the unstable repository:
 **Channel:** `preflight`
 **Codenames:** `bookworm`, `noble`
 
-Available packages (each at version `4.0.0-preflight-stop-2967b39`):
+Available packages (each at version `4.0.0-preflight-3f038cb`):
 
 - `mina-mesa`
 - `mina-archive-mesa`
@@ -6502,7 +6527,7 @@ To start a Mina daemon node using Docker:
 docker run --name mina-mesa-preflight -d \
   -p 8302:8302 \
   --restart=always \
-  gcr.io/o1labs-192920/mina-daemon:4.0.0-preflight-stop-2967b39-bookworm-mesa \
+  gcr.io/o1labs-192920/mina-daemon:4.0.0-preflight-3f038cb-bookworm-mesa \
   daemon \
   --peer-list-url https://storage.googleapis.com/o1labs-gitops-infrastructure/mina-mesa-network/mina-mesa-network-seeds.txt
 ```
@@ -6513,8 +6538,8 @@ For production deployments, you'll want to mount configuration directories and a
 docker run --name mina-mesa-preflight -d \
   -p 8302:8302 \
   --restart=always \
-  -v $(pwd)/.mina-config:/data/.mina-config \
-  gcr.io/o1labs-192920/mina-daemon:4.0.0-preflight-stop-2967b39-bookworm-mesa \
+  -v $(pwd)/.mina-config:/root/.mina-config \
+  gcr.io/o1labs-192920/mina-daemon:4.0.0-preflight-3f038cb-bookworm-mesa \
   daemon \
   --peer-list-url https://storage.googleapis.com/o1labs-gitops-infrastructure/mina-mesa-network/mina-mesa-network-seeds.txt \
   --libp2p-keypair /data/.mina-config/keys/libp2p-key
@@ -6538,7 +6563,7 @@ echo "deb https://unstable.apt.packages.minaprotocol.com $(lsb_release -cs) pref
 
 # Step 4: Update and install
 sudo apt-get update
-sudo apt-get install -y mina-mesa=4.0.0-preflight-stop-2967b39
+sudo apt-get install -y mina-mesa=4.0.0-preflight-3f038cb
 ```
 
 Then start the daemon:
@@ -6582,7 +6607,7 @@ echo "deb https://unstable.apt.packages.minaprotocol.com $(lsb_release -cs) pref
 
 # Step 4: Install mina-archive-mesa
 sudo apt-get update
-sudo apt-get install -y mina-archive-mesa=4.0.0-preflight-stop-2967b39
+sudo apt-get install -y mina-archive-mesa=4.0.0-preflight-3f038cb
 
 # Step 5: Create PostgreSQL database
 sudo -u postgres createdb archive
@@ -6603,7 +6628,7 @@ mina-archive run \
 docker run --name mina-archive-mesa -d \
   -p 3086:3086 \
   --restart=always \
-  gcr.io/o1labs-192920/mina-archive:4.0.0-preflight-stop-2967b39-bookworm-mesa \
+  gcr.io/o1labs-192920/mina-archive:4.0.0-preflight-3f038cb-bookworm-mesa \
   mina-archive run \
   --postgres-uri postgresql://archive_user:your-secure-password@postgres-host:5432/archive \
   --server-port 3086
@@ -6639,7 +6664,7 @@ echo "deb https://unstable.apt.packages.minaprotocol.com $(lsb_release -cs) pref
 
 # Step 4: Install mina-rosetta-mesa
 sudo apt-get update
-sudo apt-get install -y mina-rosetta-mesa=4.0.0-preflight-stop-2967b39
+sudo apt-get install -y mina-rosetta-mesa=4.0.0-preflight-3f038cb
 
 # Step 5: Start Rosetta
 # Rosetta connects to both the mina daemon and archive node
@@ -6655,7 +6680,7 @@ mina-rosetta \
 docker run --name mina-rosetta-mesa -d \
   -p 3087:3087 \
   --restart=always \
-  gcr.io/o1labs-192920/mina-rosetta:4.0.0-preflight-stop-2967b39-bookworm-mesa \
+  gcr.io/o1labs-192920/mina-rosetta:4.0.0-preflight-3f038cb-bookworm-mesa \
   --port 3087 \
   --archive-uri http://archive-host:3086/graphql \
   --graphql-uri http://mina-daemon-host:3085/graphql
@@ -10107,7 +10132,7 @@ As an example for calculating staking service payouts, we recommend taking a loo
 
 ## Odds of Winning a Block
 
-Blocks in Mina are produced within distinct time intervals called "slots". Each account in the ledger has a chance of winning each slot on the network, which allows them to produce a block for that slot (or, in the case of delegation, allows the delegated account to produce a block on their behalf). An account computes a random number (via a [Verifiable Random Function, or VRF](/glossary#vrf)) for each slot, and compares that random number against a required threshold to determine if they have "won" that slot and can produce a block at that time. Their chance of winning a slot is thus determined by the threshold, which is a function of their relative stake in the network.
+Blocks in Mina are produced within distinct time intervals called "slots". Each account in the ledger has a chance of winning each slot on the network, which allows them to produce a block for that slot (or, in the case of delegation, allows the delegated account to produce a block on their behalf). An account computes a random number (via a [Verifiable Random Function, or VRF](/glossary#verifiable-random-function-vrf)) for each slot, and compares that random number against a required threshold to determine if they have "won" that slot and can produce a block at that time. Their chance of winning a slot is thus determined by the threshold, which is a function of their relative stake in the network.
 
 The stake distribution that is sampled when determining the VRF threshold are contained in a special ledger called the "staking ledger". Staking ledgers are fixed ledgers from past epochs in the network (epochs are fixed spans of slots; every epoch is 7140 slots long). Using past fixed ledgers prevents malicious stakers from increasing their chances of winning during an epoch by altering the distribution of stake on the main ledger (the "staged ledger"). Every epoch, the staking ledger changes. Due to this constraint, any account on the system can only check for "winning slots" within the next 2 epochs at any given time.
 
@@ -10633,6 +10658,126 @@ FILE_LOG_LEVEL=Debug
 
 
 #### Need any help? Post your questions in the [#Delegation-Program](https://discord.gg/ywDzwmGABT) channel on Discord.
+
+---
+url: /node-operators/downgrading-to-older-versions
+---
+
+# Downgrading to Older Versions
+
+If you are running a Mina node on a version above 3.3.0 and need to roll back to 3.3.0 or below, you can convert the on-disk state in place using `mina-storage-converter`. This avoids a full rebootstrap from a remote S3 ledger bucket, which can save significant time.
+
+## When is downgrading needed?
+
+Downgrading is typically necessary when a fork fails and there is a RocksDB version bump between the stop slot release and the pre-stop slot release. In such cases, the development team will notify node operators that a downgrade is required to continue operating on the correct chain.
+
+## Debian/Ubuntu
+
+### 1. Stop the Mina daemon
+
+Ensure your Mina node is fully shut down before proceeding:
+
+```sh
+mina client stop daemon
+```
+
+Or however you normally stop your node process. Verify it is no longer running before continuing.
+
+### 2. Install storage toolbox packages
+
+Install the required toolbox packages that provide `mina-storage-converter` and the RocksDB scanners:
+
+```sh
+sudo apt-get install -y mina-daemon-storage-toolbox mina-daemon-recovery-storage-toolbox
+```
+
+### 3. Convert on-disk state
+
+Run `mina-storage-converter` to convert the local database to the format expected by the older version.
+
+```sh
+mina-storage-converter \
+    --node-dir ${NODE_DIR} \
+    --current-scanner /usr/lib/mina/storage/*/${SOURCE_VERSION}/mina-rocksdb-scanner \
+    --stable-scanner /usr/lib/mina/storage/*/${TARGET_VERSION}/mina-rocksdb-scanner
+```
+
+Where:
+
+- `NODE_DIR` is the path to your node's config directory. This is usually `~/.mina-config` if you haven't set it explicitly.
+- `SOURCE_VERSION` is the version you are downgrading from.
+- `TARGET_VERSION` is the version you are downgrading to (e.g. `3.3.0`).
+
+The `*` wildcard lets bash resolve the RocksDB version directory automatically, so you don't need to know which RocksDB version is bundled with each Mina release.
+
+The tool will prompt for confirmation before making changes.
+
+### 4. Install the target version
+
+Install the older Mina package. For example, to install 3.3.0:
+
+```sh
+sudo apt-get install --allow-downgrades -y mina-mainnet=3.3.0
+```
+
+### 5. Start the Mina daemon
+
+Start your node as usual:
+
+```sh
+mina daemon ${YOUR_EXTRA_DAEMON_ARGS_HERE}
+```
+
+Your node should resume from the converted local state without needing to rebootstrap.
+
+## Docker
+
+On-disk state conversion is only possible if your `mina-config` directory is persisted as a volume outside the container (e.g. via `--mount "type=bind,source=$(pwd)/.mina-config,dst=/root/.mina-config"`).
+
+:::caution
+
+If your `mina-config` is not persisted outside of the container, there is no way to convert the on-disk state. You will need to rebootstrap from scratch after switching to the older image.
+
+:::
+
+Since the Docker image is a Debian/Ubuntu environment with the Mina Debian package installed, you can run the same conversion steps inside the container. The default `NODE_DIR` inside the container is `/root/.mina-config`.
+
+### 1. Stop the running container
+
+Assume your mina daemon container is running with name `mina-node`
+
+```sh
+docker stop mina-node
+```
+
+### 2. Install toolbox packages and run the converter
+
+Use the current (newer) image to install the toolbox packages and run the conversion against your mounted `mina-config` volume:
+
+```sh
+docker run -it --rm \
+    --entrypoint bash \
+    --mount "type=bind,source=$(pwd)/.mina-config,dst=/root/.mina-config" \
+    minaprotocol/mina-daemon:${SOURCE_VERSION}-bullseye-mainnet \
+    -c "apt-get update && apt-get install -y mina-daemon-storage-toolbox mina-daemon-recovery-storage-toolbox && mina-storage-converter --node-dir /root/.mina-config --current-scanner /usr/lib/mina/storage/*/${SOURCE_VERSION}/mina-rocksdb-scanner --stable-scanner /usr/lib/mina/storage/*/${TARGET_VERSION}/mina-rocksdb-scanner"
+```
+
+### 3. Start a new container with the target version
+
+Remove the old container and start with the target image:
+
+```sh
+docker rm mina-node
+
+docker run --name mina-node -d \
+    -p 8302:8302 \
+    --restart=always \
+    --mount "type=bind,source=$(pwd)/.mina-config,dst=/root/.mina-config" \
+    minaprotocol/mina-daemon:${TARGET_VERSION}-bullseye-mainnet \
+    daemon ${YOUR_EXTRA_DAEMON_ARGS_HERE}
+```
+
+Your node should resume from the converted local state without needing to rebootstrap.
 
 ---
 url: /node-operators/faq
@@ -13459,8 +13604,8 @@ If the node crashes quickly and repeatably, this is likely a configuration issue
 If you start the mina daemon in the foreground, once you detach from it, it will shut down (via a SIGINT signal). To run the process in the background so that you may detach, you have many options:
 
 - Start the daemon with the `-background` flag.
-- Run as a systemd service (see [the docs](/node-operators/validator-node/connecting-to-the-network#start-a-mina-node-with-auto-restart-flows)).
-- Run with Docker (see [the docs](/node-operators/validator-node/connecting-to-the-network#start-a-mina-node-with-auto-restart-flows)).
+- Run as a systemd service (see [the docs](/node-operators/validator-node/connecting-to-the-network#running-mina-node-as-a-service)).
+- Run with Docker (see [the docs](/node-operators/validator-node/connecting-to-the-network#running-mina-node-as-a-service)).
 - Run the daemon in a terminal multiplexer such as screen or [tmux](https://icohigh.gitbook.io/mina-node-testnet/english/setting-up-tmux) that you can detach from to keep the process running.
 
 Running as a service / via Docker is recommended as they have the advantage of automated restarts if your node crashes.
@@ -65010,7 +65155,7 @@ Since this code extends `SmartContract` that has its own initialization to perfo
 
 Then, `this.num.set(Field(3))` initializes the on-chain state `num` to a value of `3`.
 
-You can optionally specify permissions. See [setPermissions](/zkapps/o1js-reference/classes/SmartContract#setpermissions) in the o1js Reference documentation.
+You can optionally specify permissions. See [setPermissions](/zkapps/o1js-reference/classes/SmartContract) in the o1js Reference documentation.
 
 Finally, this code adds the `update()` function:
 
@@ -66699,7 +66844,7 @@ There are 255 Fields in a private key and 256 Fields in a signature. If you are 
 
 ## Struct
 
-You can create your own compound data types with the special [Struct](../o1js-reference#struct) type.
+You can create your own compound data types with the special [Struct](../o1js-reference/functions/Struct) type.
 
 Define a Struct as one or more data types that o1js understands. For example, Field, higher-order types built into o1js based on Field, or other Struct types defined by you. You can also define methods on your Struct to act upon this data type.
 
@@ -66746,10 +66891,10 @@ points8 Fields: {"points":[{"x":"0","y":"0"},{"x":"1","y":"10"},{"x":"2","y":"20
 
 Two functions help do control flow in o1js:
 
-- [Provable.if](../o1js-reference/classes/Circuit#if)
+- Provable.if
   Similar to a ternary in JavaScript
 
-- [Provable.switch](../o1js-reference/classes/Circuit#switch)
+- Provable.switch
   Similar to a switch case statement in JavaScript
 
 You can write conditionals inside o1js with these functions.
@@ -68671,7 +68816,7 @@ Each [AccountUpdate](/zkapps/o1js-reference/classes/AccountUpdate) class has the
 - `Preconditions`: Conditions that must be true for the account update to be applied. Corresponds to assertions in an o1js method.
 - `Updates`: Things changed by the account update, such as including the zkApp state, permissions, and verification key.
 - `BalanceChange`: Any changes to the balance
-- `Authorization`: How the zkApp is authorized; must be a proof (corresponding to the verification key on the account), a signature, or none. See [Authorizations](/zkapps/writing-a-zkapp/introduction-to-zkapps/interact-with-mina#authorizations).
+- `Authorization`: How the zkApp is authorized; must be a proof (corresponding to the verification key on the account), a signature, or none. See [Interacting With Mina](/zkapps/writing-a-zkapp/introduction-to-zkapps/interact-with-mina).
 
 Other `AccountUpdate` components are available to use, but are not covered in this tutorial:
 
@@ -70076,7 +70221,7 @@ url: /zkapps/writing-a-zkapp/feature-overview/fetch-events-and-actions
 
 # How to Fetch Events and Actions
 
-[Events](#events) and [Actions](#actions-and-reducer) are two distinct mechanisms for logging information alongside a transaction:
+Events and Actions are two distinct mechanisms for logging information alongside a transaction:
 
 - Events are not meant for use within proofs directly, as they can't be predicated on inside proofs. Events are used to signal to UIs. You can also use events for reconstructing Merkle trees.
 
@@ -70355,7 +70500,7 @@ url: /zkapps/writing-a-zkapp/feature-overview/on-chain-values
 
 # On-Chain Values
 
-In a zkApp, you can access the current [on-chain state](/zkapps/writing-a-zkapp/introduction-to-zkapps/how-to-write-a-zkapp#on-chain-state) and many other on-chain values of the account.
+In a zkApp, you can access the current [on-chain state](/zkapps/writing-a-zkapp/introduction-to-zkapps/how-to-write-a-zkapp) and many other on-chain values of the account.
 
 The zkApp account's on-chain state can be updated by account updates included in a transaction (see [Tutorial 10: Account Updates](/zkapps/tutorials/account-updates)). On the Mina blockchain, each zkApp account provides eight fields of ~32 bytes each of arbitrary storage for the on-chain state.
 
@@ -71364,8 +71509,8 @@ You can start writing zkApps with just a few steps. The focus of this Getting St
 1. [Create a project](#2-create-a-project)
 1. [Add testing code](#3-add-testing-code)
 1. [Add functionality](#4-add-functionality)
-1. [Create an integration test](#5-create-an-integration-test)
-1. [Test locally](#6-test-with-local-simulated-blockchain)
+1. [Create an integration test](#5-create-integration-test)
+1. [Test locally](#6-test-locally)
 1. [Test with Lightnet](#7-test-with-lightnet)
 1. [Test with a live network](#8-test-with-a-live-network)
 
@@ -71480,7 +71625,7 @@ Add the logic for your smart contract.
     zk deploy
     ```
 
-### 8. Test with a live network
+### 8. Test with a live network {#8-test-with-a-live-network}
 
 To deploy the smart contract to the Testnet, run the `zk` commands from the directory that contains your smart contract.
 
@@ -71560,7 +71705,7 @@ To deploy the smart contract to the Testnet, run the `zk` commands from the dire
     node build/src/interact.js
     ```
 
-1. Keep building and experimenting! After you add features to your contract, repeat [7. Test with a live network](#7-test-with-a-live-network) to test with a live network.
+1. Keep building and experimenting! After you add features to your contract, repeat [8. Test with a live network](#8-test-with-a-live-network) to test with a live network.
 
 ## Learn more
 
