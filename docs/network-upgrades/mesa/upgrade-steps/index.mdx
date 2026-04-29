@@ -45,7 +45,7 @@ This is the simplest path. You install one update and your node handles the rest
 
 **Example — Docker (automode):**
 ```bash
-# Pre-Upgrade: switch to the auto-hardfork image
+# Pre-Upgrade: switch to the automode image
 docker pull minaprotocol/mina-daemon-auto-hardfork:<version>-bullseye-mainnet
 
 docker run --name mina -d \
@@ -154,8 +154,15 @@ sudo apt-get install mina-mainnet-mesa=<mesa-version>
 
 # Restart with updated flags (see Post-Upgrade Flags page)
 sudo systemctl start mina
+```
 
-# After the fork, verify:
+:::note Why `-mesa` in the package name?
+The `-mesa` suffix distinguishes Mesa packages from the existing Berkeley packages (`mina-mainnet`), so both can be installed side-by-side during the transition. See [Mesa Package Naming Convention](/network-upgrades/mesa/glossary#mesa-package-naming-convention).
+:::
+
+After the fork, verify the chain:
+
+```bash
 mina client status    # should show Mesa chain
 ```
 

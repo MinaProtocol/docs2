@@ -54,7 +54,7 @@ The automode release ships with **two complete sets of Mina binaries** in a sing
 | **Post-fork binary** (`mina-{network}-postfork-mesa`) | `{RUNTIMES_BASE_PATH}/mesa/mina` | Runs the Mesa chain after the fork |
 | **Dispatcher** (`mina-dispatch`) | `/usr/local/bin/mina-dispatch` | Routes your commands to the correct binary |
 
-When you install the automode package (or use the auto-hardfork Docker image), all three components are installed together.
+When you install the automode package (or use the [automode Docker image](/network-upgrades/mesa/glossary#automode-image)), all three components are installed together.
 
 ### The Dispatcher
 
@@ -154,7 +154,7 @@ If your Helm chart or pod spec uses `emptyDir` for the config directory, the `ac
 
 ### Automode Docker Image
 
-If you run your node with Docker, use the **auto-hardfork** image:
+If you run your node with Docker, use the **automode** image (`mina-daemon-auto-hardfork`):
 
 ```
 minaprotocol/mina-daemon-auto-hardfork:{version}-{codename}-{network}

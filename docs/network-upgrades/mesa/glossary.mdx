@@ -68,9 +68,13 @@ The recommended upgrade path for daemon nodes (block producers, SNARK coordinato
 
 The traditional upgrade path where operators manually stop their node after the network halts, install the [Mesa release](#mesa-release), and restart. This gives full control over every step but requires prompt action when the release is published. See [Upgrade Modes](/network-upgrades/mesa/upgrade-modes).
 
+### Automode Image {#automode-image}
+
+The Docker image that bundles the [automode](#automode) runtime — both the [pre-fork](#pre-fork-binary) and [post-fork binary](#post-fork-binary), plus the [dispatcher](#dispatcher). Published as `minaprotocol/mina-daemon-auto-hardfork:{version}-{codename}-{network}`. Use this image when running automode in Docker. The companion image `minaprotocol/mina-daemon-hardfork` is the manual-mode equivalent (no dispatcher).
+
 ### Pre-Fork Binary {#pre-fork-binary}
 
-The binary that runs the current (Berkeley) chain up to the [stop-network-slot](#stop-network-slot). In [automode](#automode), this is packaged as `mina-{network}-prefork-mesa` and installed at `/usr/lib/mina/berkeley/mina`. In Docker, the automode image (`mina-daemon-auto-hardfork`) includes this binary.
+The binary that runs the current (Berkeley) chain up to the [stop-network-slot](#stop-network-slot). In [automode](#automode), this is packaged as `mina-{network}-prefork-mesa` and installed at `/usr/lib/mina/berkeley/mina`. In Docker, the [automode image](#automode-image) includes this binary.
 
 ### Post-Fork Binary {#post-fork-binary}
 
@@ -114,7 +118,11 @@ The official ledger checkpoint published with the [Mesa release](#mesa-release).
 
 ### Expanded zkApp State
 
-Mesa increases the on-chain state available to zkApps from 8 fields to 31 fields per account. This applies to both the `zkapp_states` and `zkapp_states_nullable` database tables. See the [Appendix](/network-upgrades/mesa/appendix) for schema details.
+Mesa increases the on-chain state available to zkApps from 8 fields (indexes `0–7`) to 32 fields (indexes `0–31`) per account. This applies to both the `zkapp_states` and `zkapp_states_nullable` database tables. See the [Appendix](/network-upgrades/mesa/appendix) for schema details.
+
+### Mesa Package Naming Convention
+
+Mesa Debian packages are published with a `-mesa` suffix (e.g., `mina-mainnet-mesa`, `mina-archive-mesa`) to distinguish them from the existing Berkeley packages (`mina-mainnet`, `mina-archive`). This allows operators to install both packages side-by-side during the transition window without one replacing the other. Docker images use a `-mesa` codename suffix for the same reason (e.g., `minaprotocol/mina-daemon:<version>-bullseye-mesa`).
 
 ### Node Status Service
 

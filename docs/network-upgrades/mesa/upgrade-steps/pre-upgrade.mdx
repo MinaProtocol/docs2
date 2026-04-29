@@ -45,7 +45,7 @@ During the Pre-Upgrade phase, node operators prepare their infrastructure for th
   <li>Chosen an <a href="/network-upgrades/mesa/upgrade-modes">upgrade mode</a>: automode (recommended) or manual</li>
   <li>Upgraded node to the current stable version</li>
   <li>Installed stop-slot release <a href="https://github.com/MinaProtocol/mina/releases">3.x.x</a> <strong>before</strong> the <em>stop-transaction-slot</em></li>
-  <li>If using <strong>automode</strong>: installed both <code>mina-&#123;network&#125;-prefork-mesa</code> and <code>mina-&#123;network&#125;-postfork-mesa</code> packages (or the auto-hardfork Docker image)</li>
+  <li>If using <strong>automode</strong>: installed both <code>mina-&#123;network&#125;-prefork-mesa</code> and <code>mina-&#123;network&#125;-postfork-mesa</code> packages (or the <a href="/network-upgrades/mesa/glossary#automode-image">automode Docker image</a>)</li>
   <li>If using <strong>manual mode</strong>: installed <code>mina-mainnet=3.x.x</code> (stop-slot release only)</li>
 </ul>
 
@@ -96,7 +96,7 @@ During the Pre-Upgrade phase, node operators prepare their infrastructure for th
 #### Infrastructure
 
 <ul className="checklist">
-  <li>Server meets <a href="/network-upgrades/mesa/requirements">hardware requirements</a> — 32 GB RAM, 4 core/8 threads per worker, AVX + BMI2</li>
+  <li>Server meets <a href="/network-upgrades/mesa/requirements">hardware requirements</a> — 32 GB RAM, 6 core/12 threads per worker, AVX + BMI2</li>
 </ul>
 
 #### Connectivity
