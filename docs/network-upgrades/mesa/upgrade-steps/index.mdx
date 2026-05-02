@@ -62,14 +62,14 @@ docker run --name mina -d \
 # That's it. Your node will automatically transition to Mesa at the fork.
 # After the fork, verify it switched:
 docker exec mina ls /root/.mina-config/auto-fork-mesa-mainnet/activated
-docker exec mina mina-mesa client status
+docker exec mina mina client status
 ```
 
 **Example — Debian (automode):**
 ```bash
-# Pre-Upgrade: install both automode packages
+# Pre-Upgrade: install both prefork and postfork packages
 sudo apt-get update
-sudo apt-get install mina-mainnet-prefork-mesa=3.x.x mina-mainnet-postfork-mesa=3.x.x
+sudo apt-get install mina-mainnet-prefork-mesa=3.x.x mina-mainnet-postfork-mesa=4.x.x
 
 # Start your node as usual — the dispatcher routes to the correct binary
 mina daemon \
@@ -81,9 +81,9 @@ mina daemon \
   --file-log-rotations 500 \
   --log-json
 
-# After the fork, verify:
+# After the network halts, verify:
 ls ~/.mina-config/auto-fork-mesa-mainnet/activated    # exists = Mesa is active
-mina-mesa client status                         # should show Mesa chain
+mina client status                              # should show Mesa chain
 ```
 
 ### Block Producer (Manual Mode)
@@ -119,11 +119,11 @@ docker run --name mina -d \
 # Upgrade phase: once the Mesa release is published
 docker stop mina && docker rm mina
 
-docker pull minaprotocol/mina-daemon:<mesa-version>-bullseye-mesa
+docker pull minaprotocol/mina-daemon:<mesa-version>-bullseye-mainnet
 
 docker run --name mina -d \
   -v mina-config:/root/.mina-config \
-  minaprotocol/mina-daemon:<mesa-version>-bullseye-mesa \
+  minaprotocol/mina-daemon:<mesa-version>-bullseye-mainnet \
   daemon \
     --block-producer-key /keys/my-wallet \
     --config-directory /root/.mina-config \
@@ -150,15 +150,11 @@ sudo apt-get install mina-mainnet=3.x.x
 sudo systemctl stop mina
 
 sudo apt-get update
-sudo apt-get install mina-mainnet-mesa=<mesa-version>
+sudo apt-get install mina-mainnet=4.x.x
 
 # Restart with updated flags (see Post-Upgrade Flags page)
 sudo systemctl start mina
 ```
-
-:::note Why `-mesa` in the package name?
-The `-mesa` suffix distinguishes Mesa packages from the existing Berkeley packages (`mina-mainnet`), so both can be installed side-by-side during the transition. See [Mesa Package Naming Convention](/network-upgrades/mesa/glossary#mesa-package-naming-convention).
-:::
 
 After the fork, verify the chain:
 
@@ -168,9 +164,9 @@ mina client status    # should show Mesa chain
 
 ### SNARK Worker / Coordinator
 
-SNARK coordinators follow the same path as block producers (automode or manual). SNARK workers connect to a coordinator and do not need independent upgrades — they just need the coordinator to be on Mesa.
+SNARK coordinators follow the same path as manual block producers. SNARK workers connect to a coordinator and do not need independent upgrades — they just need the coordinator to be on Mesa.
 
-The coordinator schedule is identical to the block producer schedule above — use [Automode](#block-producer-automode--recommended) or [Manual Mode](#block-producer-manual-mode) depending on your preference. After the coordinator transitions to Mesa, restart your SNARK workers and reconnect them to the coordinator.
+The coordinator schedule is identical to the block producer schedule above — use [Manual Mode](#block-producer-manual-mode) depending on your preference. After the coordinator transitions to Mesa, restart your SNARK workers and reconnect them to the coordinator.
 
 ### Archive Node Operator
 

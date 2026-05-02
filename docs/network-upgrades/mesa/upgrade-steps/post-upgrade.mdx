@@ -32,8 +32,8 @@ This page helps you **verify your node is healthy** and running on the Mesa chai
 # If using automode, check the activation file exists
 ls ~/.mina-config/auto-fork-mesa-mainnet/activated
 
-# Check node status (use mina-mesa if running automode packages)
-mina-mesa client status
+# Check node status
+mina client status
 ```
 
 You should see:
@@ -45,7 +45,7 @@ You should see:
 
 ```bash
 # Check that your node is at the tip of the Mesa chain and is producing blocks
-mina-mesa client status | grep -E "^(Block height|Block producers running|Coinbase receiver):"
+mina client status | grep -E "^(Block height|Block producers running|Coinbase receiver):"
 ```
 
 Expected output looks like:
@@ -55,8 +55,6 @@ Block height:                                  1858
 Block producers running:                       1 (B62qjZ8yh17dCiEyu2WDCVWLreGCArYy3NTtJmNUdCxBmCMNjm5kxoE)
 Coinbase receiver:                             Block producer
 ```
-
-If `mina-mesa` is not on `$PATH` (for example, when running from a Docker image without the automode wrapper), invoke `mina client status` instead, or call it directly inside the container:
 
 ```bash
 docker exec <container-name> mina client status | grep -E "^(Block height|Block producers running|Coinbase receiver):"
@@ -80,7 +78,7 @@ docker logs mina --since 1h 2>&1 | grep -i error
 #### 1. Confirm the coordinator is on Mesa
 
 ```bash
-mina-mesa client status
+mina client status
 ```
 
 Verify **Sync status** is `Synced` and the **Chain ID** matches Mesa.
@@ -89,7 +87,7 @@ Verify **Sync status** is `Synced` and the **Chain ID** matches Mesa.
 
 ```bash
 # Check that workers are producing proofs
-mina-mesa client status | grep -i snark
+mina client status | grep -i snark
 ```
 
 If workers were disconnected during the fork, restart them and reconnect to the coordinator:
@@ -101,13 +99,15 @@ mina internal snark-worker \
   --daemon-address <coordinator-ip>:<port>
 ```
 
+Note: above command does not work on mina automode dispatcher. You need to explicitly use mina-mesa binary
+
 </TabItem>
 <TabItem value="archive" label="Archive Node">
 
 #### 1. Confirm the daemon and archive process are running
 
 ```bash
-mina-mesa client status
+mina client status
 ```
 
 Verify **Sync status** is `Synced`.

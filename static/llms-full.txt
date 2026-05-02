@@ -5906,7 +5906,7 @@ Mesa increases the on-chain state available to zkApps from 8 fields (indexes `0�
 
 ### Mesa Package Naming Convention
 
-Mesa Debian packages are published with a `-mesa` suffix (e.g., `mina-mainnet-mesa`, `mina-archive-mesa`) to distinguish them from the existing Berkeley packages (`mina-mainnet`, `mina-archive`). This allows operators to install both packages side-by-side during the transition window without one replacing the other. Docker images use a `-mesa` codename suffix for the same reason (e.g., `minaprotocol/mina-daemon:<version>-bullseye-mesa`).
+The [automode](#automode) Debian packages are published with a `-mesa` suffix (`mina-{network}-prefork-mesa`, `mina-{network}-postfork-mesa`) to distinguish the dual-binary automode variants from the standard manual-mode `mina-{network}` package. This allows operators to install the automode packages side-by-side with the existing daemon without one replacing the other.
 
 ### Node Status Service
 
@@ -5969,7 +5969,7 @@ The upgrade moves through four phases — **Pre-Upgrade**, **State Finalization*
 | **SNARK Workers** | Follow the same path as block producers (automode or manual). |
 | **Archive Nodes** | Install stop-slot release. Choose upgrade method: _trustless_ (run upgrade script now) or _trustful_ (import o1Labs dump later). If trustless, run the [archive upgrade script](/network-upgrades/mesa/archive-upgrade) — it is backward compatible and can be applied early. |
 | **Exchanges** | Install stop-slot release. Update integrations (mina-signer, Rosetta API). Test on devnet. Plan deposit/withdrawal freeze window. |
-| **zkApp Developers** | Test your zkApp against the Mesa-compatible o1js version. Verify behavior before and after the upgrade on testnet. |
+| **zkApp Developers** | Update to the Mesa-compatible o1js version, recompile your contract, and verify it on the [preflight network](/network-upgrades/mesa/preflight-network). Plan to redeploy on Mesa after the fork — every zkApp must be redeployed because the protocol version bump changes the verification key. |
 
 :::tip Readiness checklist
 Use the detailed [Pre-Upgrade checklist](/network-upgrades/mesa/upgrade-steps/pre-upgrade) to verify every item before proceeding.
@@ -6021,11 +6021,11 @@ At approximately **1 hour** after the Mesa release is published, at the predefin
 
 | Actor | What to do |
 |---|---|
-| **Block Producers** | Verify your node is on the Mesa chain (`mina-mesa client status`). If automode, check that the `activated` file exists in your config directory (see [Troubleshooting](/network-upgrades/mesa/upgrade-modes-details#how-do-i-know-which-binary-my-node-is-using)). Monitor block production. |
+| **Block Producers** | Verify your node is on the Mesa chain (`mina client status`). If automode, check that the `activated` file exists in your config directory (see [Troubleshooting](/network-upgrades/mesa/upgrade-modes-details#how-do-i-know-which-binary-my-node-is-using)). Monitor block production. |
 | **SNARK Workers** | Reconnect workers to the upgraded coordinator. Verify SNARK work is being produced. |
 | **Archive Nodes** | Verify the archive database is in sync. Run [validation checks](/network-upgrades/mesa/upgrade-steps/post-upgrade#in-depth-validation). Fix any missing blocks using archive tooling. |
 | **Exchanges** | **Re-enable MINA deposits and withdrawals** once block production is confirmed and your systems are verified. |
-| **zkApp Developers** | Deploy and test your upgraded zkApps on mainnet. Take advantage of the expanded 32-field on-chain state. |
+| **zkApp Developers** | **Redeploy every zkApp** on Mesa — the protocol version bump invalidates Berkeley verification keys, so a redeploy is required before any zkApp can accept transactions. You can also take advantage of the expanded 32-field on-chain state at this point. |
 
 ---
 
@@ -6096,7 +6096,7 @@ This means two things are required:
 :::
 
 :::info Dispatcher limitation (current implementation)
-The automode dispatcher only supports the `daemon` subcommand. Other subcommands (e.g., `mina client status`, `mina accounts list`, `mina ledger export`) will fail with an error. This is because, for non-daemon commands, the dispatcher does not have access to the config directory location and therefore cannot determine whether the node is running Berkeley or Mesa. It is the user's responsibility to invoke the correct version-specific binary directly: `mina-berkeley` or `mina-mesa` (or the full paths `/usr/lib/mina/berkeley/mina` and `/usr/lib/mina/mesa/mina`). This limitation may be removed in a future release.
+The automode dispatcher only supports the `daemon` subcommand and `mina client status` command. Other subcommands (e.g. `mina accounts list`, `mina ledger export`) will fail with an error. This is because, for non-daemon commands, the dispatcher does not have access to the config directory location and therefore cannot determine whether the node is running Berkeley or Mesa. It is the user's responsibility to invoke the correct version-specific binary directly: `mina-berkeley` or `mina-mesa` (or the full paths `/usr/lib/mina/berkeley/mina` and `/usr/lib/mina/mesa/mina`). This limitation may be removed in a future release.
 :::
 
 ---
@@ -6114,7 +6114,7 @@ Imagine you are **Alice**, a block producer running on a Debian server. Here is 
 
 ```bash
 sudo apt-get update
-sudo apt-get install mina-mainnet-prefork-mesa=3.x.x mina-mainnet-postfork-mesa=3.x.x
+sudo apt-get install mina-mainnet-prefork-mesa=3.x.x mina-mainnet-postfork-mesa=4.x.x
 ```
 
 She starts her node normally. The automode dispatcher runs the pre-fork binary until the fork activates.
@@ -6136,11 +6136,11 @@ She starts her node normally. The automode dispatcher runs the pre-fork binary u
 ls ~/.mina-config/auto-fork-mesa-mainnet/activated
 
 # Confirm Mesa chain ID
-mina-mesa client status
+mina client status
 ```
 
 :::note Dispatcher and non-daemon commands
-The automode dispatcher only supports the `daemon` subcommand — it cannot determine the active runtime for other commands because they don't pass the config directory. For commands like `client status`, `accounts list`, or `ledger export`, use the correct version-specific binary directly: `mina-mesa` (after the fork) or `mina-berkeley` (before the fork). The full paths `/usr/lib/mina/mesa/mina` and `/usr/lib/mina/berkeley/mina` also work. This limitation may be removed in a future release.
+The automode dispatcher only supports the `daemon` subcommand and `client status` command — it cannot determine the active runtime for other commands because they don't pass the config directory. For commands like `accounts list`, or `ledger export`, use the correct version-specific binary directly: `mina-mesa` (after the fork) or `mina-berkeley` (before the fork). The full paths `/usr/lib/mina/mesa/mina` and `/usr/lib/mina/berkeley/mina` also work. This limitation may be removed in a future release.
 :::
 
 She's done. Her node is producing blocks on Mesa.
@@ -6184,10 +6184,10 @@ docker run --name mina -d \
 ```bash
 docker stop mina && docker rm mina
 
-docker pull minaprotocol/mina-daemon:<mesa-version>-bullseye-mesa
+docker pull minaprotocol/mina-daemon:<mesa-version>-bullseye-mainnet
 
 docker run --name mina -d \
-  minaprotocol/mina-daemon:<mesa-version>-bullseye-mesa \
+  minaprotocol/mina-daemon:<mesa-version>-bullseye-mainnet \
   daemon \
     --block-producer-key /keys/my-wallet \
     --config-directory /root/.mina-config \
@@ -6236,7 +6236,7 @@ She restarts her node via systemd and confirms it syncs.
 sudo systemctl stop mina
 
 sudo apt-get update
-sudo apt-get install mina-mainnet-mesa=<mesa-version>
+sudo apt-get install mina-mainnet=4.x.x
 
 # Restart with the same flags (libp2p key can be reused)
 sudo systemctl start mina
@@ -6295,7 +6295,7 @@ sudo systemctl stop mina-archive
 sudo systemctl stop mina
 
 sudo apt-get update
-sudo apt-get install mina-archive-mesa=<mesa-version> mina-mainnet-mesa=<mesa-version>
+sudo apt-get install mina-archive-mainnet=4.x.x mina-mainnet=4.x.x
 
 # Start archive process pointing to the upgraded DB
 mina-archive run \
@@ -6360,24 +6360,24 @@ npm install o1js@latest
 ```
 
 He verifies that:
-- His existing zkApp (compiled for Berkeley) still works unchanged on the preflight Mesa network
-- Transactions deploy and execute correctly
-- If he plans to use the expanded state fields (indexes `8–31`), his new contract version compiles and deploys on preflight
+- His contract recompiles cleanly against Mesa-compatible o1js and deploys on the preflight Mesa network
+- Transactions execute end-to-end against the redeployed contract
+- If he plans to use the expanded state fields (indexes `8–31`), his updated contract version compiles and deploys on preflight
 
 > For details on testing with the preflight network, see [Preflight Network](/network-upgrades/mesa/preflight-network).
 
 **Hours before the fork (State Finalization)** — Frank does **nothing**. His deployed zkApp keeps running on the Berkeley chain. No transactions can be submitted during this phase anyway.
 
-**Fork day (Upgrade)** — Frank does **nothing**. His existing zkApp state carries over to the Mesa chain automatically. All account state (including zkApp state fields at indexes `0–7`) is preserved exactly as-is.
+**Fork day (Upgrade)** — Frank does **nothing during the network halt**. His zkApp account and on-chain state values carry over to the Mesa chain automatically (including state fields at indexes `0–7`). However, the verification key generated for Berkeley is no longer valid under the Mesa protocol — the contract cannot process transactions on Mesa until it is redeployed.
 
-**After the fork (Post-Upgrade)** — Block production resumes on Mesa. Frank can now:
+**After the fork (Post-Upgrade)** — Block production resumes on Mesa. Frank **must redeploy his zkApp** before it can accept transactions, regardless of whether he uses the new state fields:
 
 ```bash
-# Deploy an updated version of his zkApp that uses the expanded state
+# Required for every zkApp — the Mesa protocol version bump invalidates the Berkeley verification key
 zkapp deploy --network mainnet
 ```
 
-If his zkApp does not need the new state fields, no redeployment is needed — it continues to work on Mesa without changes.
+If he is also adopting the expanded `8–31` state slots, this same deployment step ships the updated contract version that declares the new fields.
 
 > For post-upgrade details, see [Post-Upgrade](/network-upgrades/mesa/upgrade-steps/post-upgrade).
 
@@ -6407,7 +6407,7 @@ Any transactions submitted after the stop-transaction-slot **will not exist on t
 ```bash
 sudo systemctl stop mina
 sudo apt-get update
-sudo apt-get install mina-mainnet-mesa=<mesa-version>
+sudo apt-get install mina-mainnet=4.x.x
 sudo systemctl start mina
 ```
 
@@ -7495,14 +7495,14 @@ docker run --name mina -d \
 # That's it. Your node will automatically transition to Mesa at the fork.
 # After the fork, verify it switched:
 docker exec mina ls /root/.mina-config/auto-fork-mesa-mainnet/activated
-docker exec mina mina-mesa client status
+docker exec mina mina client status
 ```
 
 **Example — Debian (automode):**
 ```bash
-# Pre-Upgrade: install both automode packages
+# Pre-Upgrade: install both prefork and postfork packages
 sudo apt-get update
-sudo apt-get install mina-mainnet-prefork-mesa=3.x.x mina-mainnet-postfork-mesa=3.x.x
+sudo apt-get install mina-mainnet-prefork-mesa=3.x.x mina-mainnet-postfork-mesa=4.x.x
 
 # Start your node as usual — the dispatcher routes to the correct binary
 mina daemon \
@@ -7514,9 +7514,9 @@ mina daemon \
   --file-log-rotations 500 \
   --log-json
 
-# After the fork, verify:
+# After the network halts, verify:
 ls ~/.mina-config/auto-fork-mesa-mainnet/activated    # exists = Mesa is active
-mina-mesa client status                         # should show Mesa chain
+mina client status                              # should show Mesa chain
 ```
 
 ### Block Producer (Manual Mode)
@@ -7552,11 +7552,11 @@ docker run --name mina -d \
 # Upgrade phase: once the Mesa release is published
 docker stop mina && docker rm mina
 
-docker pull minaprotocol/mina-daemon:<mesa-version>-bullseye-mesa
+docker pull minaprotocol/mina-daemon:<mesa-version>-bullseye-mainnet
 
 docker run --name mina -d \
   -v mina-config:/root/.mina-config \
-  minaprotocol/mina-daemon:<mesa-version>-bullseye-mesa \
+  minaprotocol/mina-daemon:<mesa-version>-bullseye-mainnet \
   daemon \
     --block-producer-key /keys/my-wallet \
     --config-directory /root/.mina-config \
@@ -7583,15 +7583,11 @@ sudo apt-get install mina-mainnet=3.x.x
 sudo systemctl stop mina
 
 sudo apt-get update
-sudo apt-get install mina-mainnet-mesa=<mesa-version>
+sudo apt-get install mina-mainnet=4.x.x
 
 # Restart with updated flags (see Post-Upgrade Flags page)
 sudo systemctl start mina
 ```
-
-:::note Why `-mesa` in the package name?
-The `-mesa` suffix distinguishes Mesa packages from the existing Berkeley packages (`mina-mainnet`), so both can be installed side-by-side during the transition. See [Mesa Package Naming Convention](/network-upgrades/mesa/glossary#mesa-package-naming-convention).
-:::
 
 After the fork, verify the chain:
 
@@ -7601,9 +7597,9 @@ mina client status    # should show Mesa chain
 
 ### SNARK Worker / Coordinator
 
-SNARK coordinators follow the same path as block producers (automode or manual). SNARK workers connect to a coordinator and do not need independent upgrades — they just need the coordinator to be on Mesa.
+SNARK coordinators follow the same path as manual block producers. SNARK workers connect to a coordinator and do not need independent upgrades — they just need the coordinator to be on Mesa.
 
-The coordinator schedule is identical to the block producer schedule above — use [Automode](#block-producer-automode--recommended) or [Manual Mode](#block-producer-manual-mode) depending on your preference. After the coordinator transitions to Mesa, restart your SNARK workers and reconnect them to the coordinator.
+The coordinator schedule is identical to the block producer schedule above — use [Manual Mode](#block-producer-manual-mode) depending on your preference. After the coordinator transitions to Mesa, restart your SNARK workers and reconnect them to the coordinator.
 
 ### Archive Node Operator
 
@@ -7650,8 +7646,8 @@ This page helps you **verify your node is healthy** and running on the Mesa chai
 # If using automode, check the activation file exists
 ls ~/.mina-config/auto-fork-mesa-mainnet/activated
 
-# Check node status (use mina-mesa if running automode packages)
-mina-mesa client status
+# Check node status
+mina client status
 ```
 
 You should see:
@@ -7663,7 +7659,7 @@ You should see:
 
 ```bash
 # Check that your node is at the tip of the Mesa chain and is producing blocks
-mina-mesa client status | grep -E "^(Block height|Block producers running|Coinbase receiver):"
+mina client status | grep -E "^(Block height|Block producers running|Coinbase receiver):"
 ```
 
 Expected output looks like:
@@ -7673,8 +7669,6 @@ Block height:                                  1858
 Block producers running:                       1 (B62qjZ8yh17dCiEyu2WDCVWLreGCArYy3NTtJmNUdCxBmCMNjm5kxoE)
 Coinbase receiver:                             Block producer
 ```
-
-If `mina-mesa` is not on `$PATH` (for example, when running from a Docker image without the automode wrapper), invoke `mina client status` instead, or call it directly inside the container:
 
 ```bash
 docker exec <container-name> mina client status | grep -E "^(Block height|Block producers running|Coinbase receiver):"
@@ -7698,7 +7692,7 @@ docker logs mina --since 1h 2>&1 | grep -i error
 #### 1. Confirm the coordinator is on Mesa
 
 ```bash
-mina-mesa client status
+mina client status
 ```
 
 Verify **Sync status** is `Synced` and the **Chain ID** matches Mesa.
@@ -7707,7 +7701,7 @@ Verify **Sync status** is `Synced` and the **Chain ID** matches Mesa.
 
 ```bash
 # Check that workers are producing proofs
-mina-mesa client status | grep -i snark
+mina client status | grep -i snark
 ```
 
 If workers were disconnected during the fork, restart them and reconnect to the coordinator:
@@ -7719,13 +7713,15 @@ mina internal snark-worker \
   --daemon-address <coordinator-ip>:<port>
 ```
 
+Note: above command does not work on mina automode dispatcher. You need to explicitly use mina-mesa binary
+
 </TabItem>
 <TabItem value="archive" label="Archive Node">
 
 #### 1. Confirm the daemon and archive process are running
 
 ```bash
-mina-mesa client status
+mina client status
 ```
 
 Verify **Sync status** is `Synced`.
@@ -8074,7 +8070,7 @@ During the Pre-Upgrade phase, node operators prepare their infrastructure for th
 #### Infrastructure
 
 <ul className="checklist">
-  <li>Server meets <a href="/network-upgrades/mesa/requirements">hardware requirements</a> — 32 GB RAM, 8-core CPU with AVX and BMI2</li>
+  <li>Server meets <a href="/network-upgrades/mesa/requirements">hardware requirements</a> </li>
   <li>Port 8302 (or custom <code>--external-port</code>) is open and reachable from the internet</li>
   <li>If behind NAT/firewall, <code>--external-ip</code> is set to your public IP</li>
   <li>Node is configured for <a href="/node-operators/block-producer-node/connecting-to-the-network#start-a-mina-node-with-auto-restart-flows-using-systemd">auto-restart</a> (systemd or equivalent)</li>

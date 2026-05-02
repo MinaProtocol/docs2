@@ -122,7 +122,7 @@ Mesa increases the on-chain state available to zkApps from 8 fields (indexes `0â
 
 ### Mesa Package Naming Convention
 
-Mesa Debian packages are published with a `-mesa` suffix (e.g., `mina-mainnet-mesa`, `mina-archive-mesa`) to distinguish them from the existing Berkeley packages (`mina-mainnet`, `mina-archive`). This allows operators to install both packages side-by-side during the transition window without one replacing the other. Docker images use a `-mesa` codename suffix for the same reason (e.g., `minaprotocol/mina-daemon:<version>-bullseye-mesa`).
+The [automode](#automode) Debian packages are published with a `-mesa` suffix (`mina-{network}-prefork-mesa`, `mina-{network}-postfork-mesa`) to distinguish the dual-binary automode variants from the standard manual-mode `mina-{network}` package. This allows operators to install the automode packages side-by-side with the existing daemon without one replacing the other.
 
 ### Node Status Service
 
