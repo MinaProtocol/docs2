@@ -27,15 +27,25 @@ on:
           - code_generation
           - hallucination
       model:
-        description: "Anthropic model ID"
+        description: "Answer model ID (whose docs-grounded answers we measure)"
         required: false
-        default: "claude-sonnet-4-6-20250514"
+        default: "claude-sonnet-4-6"
+        type: string
+      judge_model:
+        description: "Judge model ID (grades open-ended answers)"
+        required: false
+        default: "claude-opus-4-7"
         type: string
 
 jobs:
   benchmark:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
+      # max-parallel: 1 keeps all three sources from sharing a per-minute API
+      # rate-limit window. With concurrent jobs the bursts collide and trigger
+      # 429s on Tier 1 accounts.
+      max-parallel: 1
       matrix:
         source: ${{ github.event_name == 'workflow_dispatch' && fromJSON(format('["{0}"]', inputs.source == 'all' && 'llms","full","none' || inputs.source)) || fromJSON('["llms","full","none"]') }}
 
@@ -55,7 +65,8 @@ jobs:
           node scripts/benchmark-llms-docs.mjs \
             --source ${{ matrix.source }} \
             ${{ github.event_name == 'workflow_dispatch' && inputs.category != '' && format('--category {0}', inputs.category) || '' }} \
-            --model ${{ github.event_name == 'workflow_dispatch' && inputs.model || 'claude-sonnet-4-6-20250514' }}
+            --model ${{ github.event_name == 'workflow_dispatch' && inputs.model || 'claude-sonnet-4-6' }} \
+            --judge-model ${{ github.event_name == 'workflow_dispatch' && inputs.judge_model || 'claude-opus-4-7' }}
 
       - name: Upload results
         if: always()
