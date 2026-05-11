@@ -5281,100 +5281,148 @@ url: /node-operators/archive-node/docker-compose
 
 # Docker Compose Archive
 
-This example demonstrates how to run a Mina archive node using Docker Compose for the Mainnet network. This Docker Compose setup includes a Postgres database, a bootstrap database with the latest SQL Dump available, an archive node, a Mina node and a Missing Blocks Guardian script to monitor and populate the gaps in the archive database
+Run a Mina archive node — a PostgreSQL database that ingests blocks from a connected daemon, plus a missing-blocks guardian that backfills gaps from the daily archive dumps. Use this if you need historical chain state beyond the daemon's transition frontier (the last `k` blocks).
 
-Copy and paste the provided configuration into a `docker-compose.yml` file. Then run `docker compose up -d` to start the services, and use `docker compose logs -f` to monitor the logs.
+The full Docker Compose configuration — including `docker-compose.yml`, example environment files for mainnet and devnet, a `Makefile`, and a `README` — is maintained in the Mina repository:
 
-```yaml
-services:
-  postgres:
-    image: postgres:17
-    restart: always
-    environment:
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: archive
-    healthcheck:
-      test: ["CMD-SHELL", "psql -U postgres -d archive -tAc \"SELECT COUNT(*) FROM pg_database WHERE datname='archive';\" | grep -q '^1$'"]
-      interval: 5s
-      timeout: 10s
-      retries: 10
-    volumes:
-      - './archive/postgresql/data:/var/lib/postgresql/data'
-    ports:
-      - '5432:5432'
-  bootstrap_db:
-    image: 'minaprotocol/mina-archive:3.3.0-8c0c2e6-bullseye-mainnet'
-    # image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet' # Use this image for Devnet
-    command: >
-      bash -c '
-      curl -O https://storage.googleapis.com/mina-archive-dumps/mainnet-archive-dump-$(date +%F_0000).sql.tar.gz;
-      tar -zxvf mainnet-archive-dump-$(date +%F_0000).sql.tar.gz;
-      psql postgres://postgres:postgres@postgres:5432/archive -c "
-      ALTER SYSTEM SET max_connections = 500;
-      ALTER SYSTEM SET max_locks_per_transaction = 100;
-      ALTER SYSTEM SET max_pred_locks_per_relation = 100;
-      ALTER SYSTEM SET max_pred_locks_per_transaction = 5000;
-      "
-      psql postgres://postgres:postgres@postgres:5432/archive -f mainnet-archive-dump-$(date +%F_0000).sql;
-      '
-    # For Devnet Network, replace "mainnet" references with "devnet" in the block above
-    depends_on:
-      postgres:
-        condition: service_healthy
-  missing_blocks_guardian:
-    image: 'minaprotocol/mina-archive:3.3.0-8c0c2e6-bullseye-mainnet'
-    # image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet' # Use this image for Devnet
-    command: >
-      bash -c '
-      curl -O https://raw.githubusercontent.com/MinaFoundation/helm-charts/main/mina-archive/scripts/missing-blocks-guardian-command.sh;
-      export GUARDIAN_PRECOMPUTED_BLOCKS_URL=https://673156464838-mina-precomputed-blocks.s3.us-west-2.amazonaws.com/mainnet;
-      export MINA_NETWORK=mainnet;
-      export PG_CONN=postgres://postgres:postgres@postgres:5432/archive;
-      while true; do bash missing-blocks-guardian-command.sh; sleep 600; done
-      '
-    # For Devnet Network, replace "mainnet" references with "devnet" in the block above
-    depends_on:
-      bootstrap_db:
-        condition: service_completed_successfully
-  mina_archive:
-    image: 'minaprotocol/mina-archive:3.3.0-8c0c2e6-bullseye-mainnet'
-    restart: always
-    command:
-      - mina-archive
-      - run
-      - --postgres-uri
-      - postgres://postgres:postgres@postgres:5432/archive
-      - --server-port
-      - "3086"
-    volumes:
-      - './archive/data:/data'
-    depends_on:
-      bootstrap_db:
-        condition: service_completed_successfully
-  mina_node:
-    image: 'minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet'
-    # image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet' # Use this image for Devnet
-    restart: always
-    entrypoint: []
-    command: >
-      bash -c '
-        mina daemon --archive-address mina_archive:3086 \
-             --peer-list-url https://bootnodes.minaprotocol.com/networks/mainnet.txt \
-             --insecure-rest-server \
-             --rest-port 3085
-      '
-    # use  --peer-list-url https://bootnodes.minaprotocol.com/networks/devnet.txt for Devnet
-    ports:
-      - '3085:3085'
-      - '8302:8302'
-    depends_on:
-      bootstrap_db:
-        condition: service_completed_successfully
+**[`mina/src/app/archive/docker-compose/`](https://github.com/MinaProtocol/mina/tree/develop/src/app/archive/docker-compose)**
+
+## Quick start
+
+:::tip
+Before running the commands below, review the [Configuration](#configuration) section to see all available options — including image tags, network selection, ports, and database settings.
+:::
+
+```bash
+git clone https://github.com/MinaProtocol/mina.git
+cd mina/src/app/archive/docker-compose
+
+# For mainnet
+cp example.mainnet.env .env
+
+# For devnet
+cp example.devnet.env .env
+
+# Edit .env — set MINA_LIBP2P_PASS and review POSTGRES_PASSWORD
+vi .env
+
+# Start services
+docker compose up -d
+
+# Or use make shortcuts
+make mainnet
+make devnet
 ```
 
-Once the services are running, you can access the Mina node graphql endpoint at `http://localhost:3085/graphql` and the postgres database using  `psql postgres://postgres:postgres@localhost:5432/archive`.
+:::info
+The `bootstrap_db` service downloads and imports the latest daily archive dump. This may take a while depending on your connection speed. The archive node and Mina daemon will start after the import completes.
+:::
 
-To retrieve the status of the Mina Node, run `docker compose exec mina_node mina client status`
+## Services overview
+
+| Service | Description | Default Port |
+|---------|-------------|--------------|
+| **postgres** | PostgreSQL 17 with health checks | 5432 (container), configurable host port |
+| **bootstrap_db** | One-shot: downloads and imports the latest daily archive dump | — |
+| **mina_archive** | Archive process, stores block data in PostgreSQL | 3086 |
+| **mina_node** | Mina daemon connected to the archive process via `--archive-address` | 3085 (GraphQL), 8302 (P2P) |
+| **missing_blocks_guardian** | Monitors and recovers missing blocks between nightly dumps and chain tip | — |
+
+## Configuration
+
+All configuration is done through a single `.env` file. Key variables:
+
+### Docker images
+
+| Variable | Description |
+|----------|-------------|
+| `MINA_DAEMON_IMAGE` | Mina daemon Docker image |
+| `MINA_ARCHIVE_IMAGE` | Mina archive Docker image |
+
+For mainnet, images are pulled from [Docker Hub](https://hub.docker.com/u/minaprotocol) (`minaprotocol/mina-*`).
+For devnet, images are pulled from the o1Labs GCR registry.
+
+### Network
+
+| Variable | Description |
+|----------|-------------|
+| `MINA_NETWORK` | `mainnet` or `devnet` |
+| `MINA_PEERLIST_URL` | Bootstrap peers URL |
+| `MINA_LIBP2P_PASS` | Passphrase for the libp2p key (required) |
+
+### Ports
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `POSTGRES_PORT` | `5433` | Host port mapped to PostgreSQL |
+| `MINA_REST_PORT` | `3085` | GraphQL API port |
+| `MINA_P2P_PORT` | `8302` | P2P networking port |
+| `MINA_ARCHIVE_PORT` | `3086` | Archive server port |
+
+### Archive bootstrap
+
+| Variable | Description |
+|----------|-------------|
+| `ARCHIVE_DUMP_BASE_URL` | Base URL for daily archive dumps |
+| `ARCHIVE_DUMP_PREFIX` | Dump filename prefix (`mainnet-archive-dump` or `devnet-archive-dump`) |
+| `GUARDIAN_PRECOMPUTED_BLOCKS_URL` | S3 bucket URL for precomputed blocks used by the missing blocks guardian |
+
+## Data persistence
+
+Bind mounts preserve data across `docker compose down` / `up`:
+
+| Host path | Container path | Contents |
+|-----------|---------------|----------|
+| `./archive/postgresql/data` | `/var/lib/postgresql/data` | PostgreSQL data |
+| `./archive/data` | `/data` | Archive node data |
+| `./mina_node/.mina-config` | `/root/.mina-config` | Daemon config, keys, peers |
+
+## Make targets
+
+| Command | Description |
+|---------|-------------|
+| `make devnet` | Copy devnet env and start services |
+| `make mainnet` | Copy mainnet env and start services |
+| `make stop` | Stop services |
+| `make clean` | Stop services, remove volumes and all archive data |
+| `make logs` | Follow logs |
+| `make status` | Show container status |
+| `make health` | Check Postgres, GraphQL endpoint, and container summary |
+
+## Verifying the deployment
+
+Once services are running and the node is synced:
+
+```bash
+make health
+
+docker compose exec mina_node mina client status
+
+# Mina node sync status
+curl -s http://localhost:3085/graphql -H 'Content-Type: application/json' \
+  -d '{"query":"{ syncStatus }"}' | jq .
+
+# Connect to archive database
+psql postgres://postgres:postgres@localhost:5433/archive
+
+# Latest block in archive
+psql postgres://postgres:postgres@localhost:5433/archive \
+  -tAc "SELECT max(height) FROM blocks"
+
+# Missing-blocks guardian progress
+docker compose logs --tail=50 missing_blocks_guardian
+```
+
+## Clean start
+
+```bash
+make clean
+docker compose up -d
+```
+
+:::warning
+`make clean` deletes the entire archive database and the daemon's `.mina-config` (including any keys). The next start will re-download the latest archive dump (~30+ GB on mainnet).
+:::
 
 ---
 url: /node-operators/archive-node/getting-started
@@ -5840,48 +5888,126 @@ url: /node-operators/block-producer-node/docker-compose
 
 # Docker Compose Block Producer
 
-This example demonstrates how to run a Mina Block Producer node using Docker Compose for the Mainnet network. The Docker Compose setup includes a Mina Block Producer node, and another script to generate a wallet key.
+Run a Mina block producer node as a separate container, with control over resource allocation, logging, and restarts.
 
-Copy and paste the provided configuration into a `docker-compose.yml` file. Then run `docker compose up -d` to start the services, and use `docker compose logs -f` to monitor the logs.
+The full Docker Compose configuration — including `docker-compose.yml`, example environment files for mainnet and devnet, a `Makefile`, and a `README` — is maintained in the Mina repository:
 
-```yaml
-services:
-  generate_wallet_key:
-    image: 'minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet'
-    # image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet' # Use this image for Devnet
-    environment:
-      MINA_PRIVKEY_PASS: PssW0rD
-    entrypoint: []
-    command: >
-      bash -c '
-        mina advanced generate-keypair --privkey-path /root/.mina-config/keys/wallet-key
-        chmod -R 0700 /root/.mina-config/keys
-        chmod -R 0600 /root/.mina-config/keys/wallet-key
-      '
-    volumes:
-      - './node/mina-config:/root/.mina-config'
-  mina_block_producer:
-    image: 'minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet'
-    # image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet' # Use this image for Devnet
-    restart: always
-    environment:
-      MINA_PRIVKEY_PASS: PssW0rD
-    entrypoint: []
-    command: >
-      bash -c '
-        mina daemon \
-             --peer-list-url https://bootnodes.minaprotocol.com/networks/mainnet.txt \
-             --block-producer-key /root/.mina-config/keys/wallet-key
-      '
-    # use  --peer-list-url https://bootnodes.minaprotocol.com/networks/devnet.txt for Devnet
-    volumes:
-      - './node/mina-config:/root/.mina-config'
-    ports:
-      - '8302:8302'
-    depends_on:
-      generate_wallet_key:
-        condition: service_completed_successfully
+**[`mina/src/app/cli/docker-compose/block-producer/`](https://github.com/MinaProtocol/mina/tree/develop/src/app/cli/docker-compose/block-producer)**
+
+## Quick start
+
+:::tip
+Before running the commands below, review the [Configuration](#configuration) section to see all available options — including image tags, network selection, and ports.
+:::
+
+```bash
+git clone https://github.com/MinaProtocol/mina.git
+cd mina/src/app/cli/docker-compose/block-producer
+
+# For mainnet
+cp example.mainnet.env .env
+
+# For devnet
+cp example.devnet.env .env
+
+# Edit .env — set MINA_PRIVKEY_PASS and MINA_LIBP2P_PASS (both required)
+vi .env
+
+# Start services
+docker compose up -d
+
+# Or use make shortcuts
+make mainnet   # copies mainnet env and starts services
+make devnet    # copies devnet env and starts services
 ```
+
+## Services overview
+
+| Service | Description | Default Port |
+|---------|-------------|--------------|
+| **generate_wallet_key** | One-shot: generates the block producer keypair (skipped if one already exists) | — |
+| **mina_block_producer** | Mina daemon running with `--block-producer-key` | 3085 (GraphQL), 8302 (P2P) |
+
+## Configuration
+
+All configuration is done through a single `.env` file. Key variables:
+
+### Docker image
+
+| Variable | Description |
+|----------|-------------|
+| `MINA_DAEMON_IMAGE` | Mina daemon Docker image |
+
+For mainnet, the image is pulled from [Docker Hub](https://hub.docker.com/u/minaprotocol) (`minaprotocol/mina-daemon`).
+For devnet, the image is pulled from the o1Labs GCR registry.
+
+### Network
+
+| Variable | Description |
+|----------|-------------|
+| `MINA_NETWORK` | `mainnet` or `devnet` |
+| `MINA_PEERLIST_URL` | Bootstrap peers URL |
+| `MINA_PRIVKEY_PASS` | Passphrase for the block producer key (required) |
+| `MINA_LIBP2P_PASS` | Passphrase for the libp2p key (required) |
+
+### Ports
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `MINA_REST_PORT` | `3085` | GraphQL API port |
+| `MINA_P2P_PORT` | `8302` | P2P networking port (must be reachable from the internet) |
+
+## Funding the block producer
+
+After the wallet key is generated, your block producer's public key is stored at `./mina_node/.mina-config/keys/wallet-key.pub` on the host. Block production only kicks in once that account holds (or is delegated) staking funds.
+
+```bash
+cat ./mina_node/.mina-config/keys/wallet-key.pub
+```
+
+## Data persistence
+
+Bind mounts preserve data across `docker compose down` / `up`:
+
+| Host path | Container path | Contents |
+|-----------|---------------|----------|
+| `./mina_node/.mina-config` | `/root/.mina-config` | Daemon config, block producer key, libp2p key, peers |
+
+## Make targets
+
+| Command | Description |
+|---------|-------------|
+| `make devnet` | Copy devnet env and start services |
+| `make mainnet` | Copy mainnet env and start services |
+| `make stop` | Stop services |
+| `make clean` | Stop services, remove volumes and `.mina-config` |
+| `make logs` | Follow logs |
+| `make status` | Show container status |
+| `make health` | Check GraphQL endpoint, sync status, and container summary |
+
+## Verifying the deployment
+
+Once services are running and the daemon is connected to peers:
+
+```bash
+make health
+
+docker compose exec mina_block_producer mina client status
+
+curl -s http://localhost:3085/graphql -H 'Content-Type: application/json' \
+  -d '{"query":"{ daemonStatus { syncStatus blockchainLength } }"}' | jq .
+```
+
+## Clean start
+
+```bash
+make clean
+docker compose up -d
+```
+
+:::warning
+`make clean` removes `./mina_node/.mina-config`, which contains your **block producer key**. Back up `./mina_node/.mina-config/keys/` before running it if you want to keep the key.
+:::
 
 ---
 url: /node-operators/block-producer-node/getting-started
@@ -10097,75 +10223,132 @@ url: /node-operators/seed-peers/docker-compose
 
 # Docker Compose Seed Peer
 
-This example demonstrates how to run a Mina Seed node using Docker Compose for the Mainnet network. This Docker Compose setup includes a Mina seed node, and a script to generate a libp2p key.
+Run a Mina seed node — a publicly reachable peer that bootstraps newcomers into the network.
 
-Copy and paste the provided configuration into a `docker-compose.yml` file. Then run `docker compose up -d` to start the services, and use `docker compose logs -f` to monitor the logs.
+The full Docker Compose configuration — including `docker-compose.yml`, example environment files for mainnet and devnet, a `Makefile`, and a `README` — is maintained in the Mina repository:
 
-```yaml
-services:
-  generate_libp2p_key:
-    image: 'minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet'
-    environment:
-      MINA_LIBP2P_PASS: PssW0rD
-    entrypoint: []
-    command: >
-      bash -c '
-        mina libp2p generate-keypair -privkey-path /root/.mina-config/keys/libp2p-key
-        chmod -R 0700 /root/.mina-config/keys
-        chmod -R 0600 /root/.mina-config/keys/libp2p-key
-      '
-    volumes:
-      - './node/mina-config:/root/.mina-config'
-  mina_node:
-    image: 'minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet'
-    # image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet' # Use this image for Devnet
-    restart: always
-    environment:
-      MINA_LIBP2P_PASS: PssW0rD
-    entrypoint: []
-    command: >
-      bash -c '
-        mina daemon \
-             --peer-list-url https://bootnodes.minaprotocol.com/networks/mainnet.txt \
-             --libp2p-keypair /root/.mina-config/keys/libp2p-key \
-             --seed
-      '
-    # use  --peer-list-url https://bootnodes.minaprotocol.com/networks/devnet.txt for Devnet
-    volumes:
-      - './node/mina-config:/root/.mina-config'
-    ports:
-      - '8302:8302'
-    depends_on:
-      generate_libp2p_key:
-        condition: service_completed_successfully
+**[`mina/src/app/cli/docker-compose/seed-peer/`](https://github.com/MinaProtocol/mina/tree/develop/src/app/cli/docker-compose/seed-peer)**
+
+## Quick start
+
+:::tip
+Before running the commands below, review the [Configuration](#configuration) section.
+:::
+
+```bash
+git clone https://github.com/MinaProtocol/mina.git
+cd mina/src/app/cli/docker-compose/seed-peer
+
+# For mainnet
+cp example.mainnet.env .env
+
+# For devnet
+cp example.devnet.env .env
+
+# Edit .env — set MINA_LIBP2P_PASS (required)
+vi .env
+
+# Start services
+docker compose up -d
+
+# Or use make shortcuts
+make mainnet
+make devnet
 ```
 
-To retrieve the status of the Mina Node, run `docker compose exec mina_node mina client status`
+## Services overview
 
-In the client status, you should also see the _Adresses and ports_ section.
+| Service | Description | Default Port |
+|---------|-------------|--------------|
+| **generate_libp2p_key** | One-shot: generates the libp2p keypair | — |
+| **mina_seed** | Mina daemon running with `--seed` and `--libp2p-keypair` | 3085 (GraphQL), 8302 (P2P) |
 
-```shell
-Addresses and ports:
-	External IP:    35.197.32.58
-	Bind IP:        0.0.0.0
-	Libp2p PeerID:  12D3KooW9wsoTH3RvWJntT8CnQAMKAYgd1DztxumTaeH3TikQ6b3
-	Libp2p port:    8302
-	Client port:    8301
+## Configuration
+
+### Docker image
+
+| Variable | Description |
+|----------|-------------|
+| `MINA_DAEMON_IMAGE` | Mina daemon Docker image |
+
+For mainnet, the image is pulled from [Docker Hub](https://hub.docker.com/u/minaprotocol).
+For devnet, the image is pulled from the o1Labs GCR registry.
+
+### Network
+
+| Variable | Description |
+|----------|-------------|
+| `MINA_NETWORK` | `mainnet` or `devnet` |
+| `MINA_PEERLIST_URL` | Bootstrap peers URL |
+| `MINA_LIBP2P_PASS` | Passphrase for the libp2p key (required) |
+
+### Ports
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `MINA_REST_PORT` | `3085` | GraphQL API port |
+| `MINA_P2P_PORT` | `8302` | P2P networking port (must be reachable from the internet) |
+
+## Building the relay-circuit address
+
+Once the seed has its libp2p peer ID, build a multiaddr that other nodes can use as a `--peer`:
+
+```bash
+make peer-id
 ```
 
-Base on the above output, you can build you "relay circuit" address as follows:
-
-```shell
-/ip4/35.197.32.58/tcp/8302/p2p/12D3KooW9wsoTH3RvWJntT8CnQAMKAYgd1DztxumTaeH3TikQ6b3
+```
+/ip4/<external-ip>/tcp/<libp2p-port>/p2p/<peer-id>
 ```
 
-If you prefer using a DNS instead of an IP address, you can use the following format:
+or with DNS:
 
-```shell
-/dns4/seed.example.com/tcp/8302/p2p/12D3KooW9wsoTH3RvWJntT8CnQAMKAYgd1DztxumTaeH3TikQ6b3
+```
+/dns4/seed.example.com/tcp/8302/p2p/12D3Koo...
 ```
 
-Finally, you can add the relay circuit address the official Mina Seed Peers list by submitting a pull request to the [MinaFoundation/seeds](https://github.com/MinaFoundation/seeds) repository
+You can submit a PR to [`MinaFoundation/seeds`](https://github.com/MinaFoundation/seeds) to be listed in the official seed peer list.
+
+## Data persistence
+
+| Host path | Container path | Contents |
+|-----------|---------------|----------|
+| `./mina_node/.mina-config` | `/root/.mina-config` | Daemon config, libp2p key, peers |
+
+## Make targets
+
+| Command | Description |
+|---------|-------------|
+| `make devnet` | Copy devnet env and start services |
+| `make mainnet` | Copy mainnet env and start services |
+| `make stop` | Stop services |
+| `make clean` | Stop services, remove volumes and `.mina-config` |
+| `make logs` | Follow logs |
+| `make status` | Show container status |
+| `make peer-id` | Print this seed's libp2p peer ID |
+| `make health` | Check GraphQL endpoint, peer ID, addresses, and container summary |
+
+## Verifying the deployment
+
+```bash
+make health
+
+docker compose exec mina_seed mina client status
+
+curl -s http://localhost:3085/graphql -H 'Content-Type: application/json' \
+  -d '{"query":"{ daemonStatus { peers { peerId } } }"}' | jq .
+```
+
+## Clean start
+
+```bash
+make clean
+docker compose up -d
+```
+
+:::warning
+`make clean` removes `./mina_node/.mina-config`, including your **libp2p key**. Your seed's multiaddr will change after a clean restart. Back up `./mina_node/.mina-config/keys/libp2p-key*` if you've published the multiaddr anywhere.
+:::
 
 ---
 url: /node-operators/seed-peers/generating-a-libp2p-keypair
@@ -10331,142 +10514,129 @@ url: /node-operators/snark-workers/docker-compose
 
 # Docker Compose SNARK Workers
 
-This example runs a SNARK coordinator and a SNARK worker together using Docker Compose. It includes a one-time init container that generates a wallet key.
+Run a Mina SNARK coordinator and SNARK worker as separate containers. The coordinator is a Mina daemon configured to advertise SNARK work and collect fees; the worker is an internal process that produces proofs and submits them to the coordinator.
 
-Save the following as `docker-compose.yml`, then start with `docker compose up -d`. Monitor logs with `docker compose logs -f`.
+The full Docker Compose configuration — including `docker-compose.yml`, example environment files for mainnet and devnet, a `Makefile`, and a `README` — is maintained in the Mina repository:
 
-<Tabs groupId="network">
-<TabItem value="mainnet" label="Mainnet">
+**[`mina/src/app/cli/docker-compose/snark-worker/`](https://github.com/MinaProtocol/mina/tree/develop/src/app/cli/docker-compose/snark-worker)**
 
-```yaml
-services:
-  generate_wallet_key:
-    image: 'minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet'
-    environment:
-      MINA_PRIVKEY_PASS: PssW0rD
-    entrypoint: []
-    command: >
-      bash -c '
-        mina advanced generate-keypair --privkey-path /root/.mina-config/keys/wallet-key
-        chmod -R 0700 /root/.mina-config/keys
-        chmod -R 0600 /root/.mina-config/keys/wallet-key
-      '
-    volumes:
-      - './node/mina-config:/root/.mina-config'
-  mina_snark_coordinator:
-    image: 'minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet'
-    restart: always
-    environment:
-      MINA_PRIVKEY_PASS: PssW0rD
-      MINA_CLIENT_TRUSTLIST: "0.0.0.0/0"
-    healthcheck:
-      test: ["CMD-SHELL", "mina client status"]
-      interval: 60s
-      timeout: 10s
-      retries: 100
-    entrypoint: []
-    command: >
-      bash -c '
-        mina daemon \
-             --peer-list-url https://bootnodes.minaprotocol.com/networks/mainnet.txt \
-             --snark-worker-fee 0.001 \
-             --run-snark-coordinator $(cat /root/.mina-config/keys/wallet-key.pub) \
-             --work-selection rand
-      '
-    volumes:
-      - './node/mina-config:/root/.mina-config'
-    ports:
-      - '8302:8302'
-    depends_on:
-      generate_wallet_key:
-        condition: service_completed_successfully
-  mina_snark_worker:
-    image: 'minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet'
-    restart: always
-    entrypoint: []
-    command: >
-      bash -c '
-        mina internal \
-             snark-worker \
-             --daemon-address \
-             mina_snark_coordinator:8301 \
-             --proof-level full
-      '
-    volumes:
-      - './node/mina-config:/root/.mina-config'
-    depends_on:
-      mina_snark_coordinator:
-        condition: service_healthy
+## Quick start
+
+:::tip
+Before running the commands below, review the [Configuration](#configuration) section — including SNARK fee, work selection, and proof level.
+:::
+
+```bash
+git clone https://github.com/MinaProtocol/mina.git
+cd mina/src/app/cli/docker-compose/snark-worker
+
+# For mainnet
+cp example.mainnet.env .env
+
+# For devnet
+cp example.devnet.env .env
+
+# Edit .env — set MINA_PRIVKEY_PASS, MINA_LIBP2P_PASS, review MINA_SNARK_FEE
+vi .env
+
+# Start services
+docker compose up -d
+
+# Or use make shortcuts
+make mainnet
+make devnet
 ```
 
-</TabItem>
-<TabItem value="devnet" label="Devnet">
+## Services overview
 
-```yaml
-services:
-  generate_wallet_key:
-    image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet'
-    environment:
-      MINA_PRIVKEY_PASS: PssW0rD
-    entrypoint: []
-    command: >
-      bash -c '
-        mina advanced generate-keypair --privkey-path /root/.mina-config/keys/wallet-key
-        chmod -R 0700 /root/.mina-config/keys
-        chmod -R 0600 /root/.mina-config/keys/wallet-key
-      '
-    volumes:
-      - './node/mina-config:/root/.mina-config'
-  mina_snark_coordinator:
-    image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet'
-    restart: always
-    environment:
-      MINA_PRIVKEY_PASS: PssW0rD
-      MINA_CLIENT_TRUSTLIST: "0.0.0.0/0"
-    healthcheck:
-      test: ["CMD-SHELL", "mina client status"]
-      interval: 60s
-      timeout: 10s
-      retries: 100
-    entrypoint: []
-    command: >
-      bash -c '
-        mina daemon \
-             --peer-list-url https://bootnodes.minaprotocol.com/networks/devnet.txt \
-             --snark-worker-fee 0.001 \
-             --run-snark-coordinator $(cat /root/.mina-config/keys/wallet-key.pub) \
-             --work-selection rand
-      '
-    volumes:
-      - './node/mina-config:/root/.mina-config'
-    ports:
-      - '8302:8302'
-    depends_on:
-      generate_wallet_key:
-        condition: service_completed_successfully
-  mina_snark_worker:
-    image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet'
-    restart: always
-    entrypoint: []
-    command: >
-      bash -c '
-        mina internal \
-             snark-worker \
-             --daemon-address \
-             mina_snark_coordinator:8301 \
-             --proof-level full
-      '
-    volumes:
-      - './node/mina-config:/root/.mina-config'
-    depends_on:
-      mina_snark_coordinator:
-        condition: service_healthy
+| Service | Description | Default Port |
+|---------|-------------|--------------|
+| **generate_wallet_key** | One-shot: generates the SNARK fee account keypair | — |
+| **mina_snark_coordinator** | Mina daemon with `--run-snark-coordinator` and `--snark-worker-fee` | 3085 (GraphQL), 8302 (P2P) |
+| **mina_snark_worker** | `mina internal snark-worker` connected to the coordinator on port 8301 | — |
+
+## Scaling workers
+
+To run multiple workers against the same coordinator, duplicate the `mina_snark_worker` service in `docker-compose.yml` with a different name (e.g. `mina_snark_worker_2`). See the [README](https://github.com/MinaProtocol/mina/tree/develop/src/app/cli/docker-compose/snark-worker) for the full snippet.
+
+## Configuration
+
+All configuration is done through a single `.env` file. Key variables:
+
+### Docker image
+
+| Variable | Description |
+|----------|-------------|
+| `MINA_DAEMON_IMAGE` | Mina daemon Docker image (used by both coordinator and worker) |
+
+For mainnet, images are pulled from [Docker Hub](https://hub.docker.com/u/minaprotocol).
+For devnet, images are pulled from the o1Labs GCR registry.
+
+### Network
+
+| Variable | Description |
+|----------|-------------|
+| `MINA_NETWORK` | `mainnet` or `devnet` |
+| `MINA_PEERLIST_URL` | Bootstrap peers URL |
+| `MINA_PRIVKEY_PASS` | Passphrase for the SNARK fee account key (required) |
+| `MINA_LIBP2P_PASS` | Passphrase for the libp2p key (required) |
+
+### Ports
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `MINA_REST_PORT` | `3085` | GraphQL API port (coordinator) |
+| `MINA_P2P_PORT` | `8302` | P2P networking port (coordinator) |
+| `MINA_DAEMON_CLIENT_PORT` | `8301` | Daemon client port that the worker connects to (internal Docker network only) |
+
+### SNARK tunables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `MINA_SNARK_FEE` | `0.001` | Per-proof fee in MINA. Lower = more competitive but smaller revenue. |
+| `MINA_WORK_SELECTION` | `rand` | `rand` (default) or `seq`. `rand` randomizes work selection across coordinators. |
+| `MINA_PROOF_LEVEL` | `full` | `full` for production. `check` / `none` are for testing only. |
+
+## Data persistence
+
+| Host path | Container path | Contents |
+|-----------|---------------|----------|
+| `./mina_node/.mina-config` | `/root/.mina-config` | Coordinator daemon config, fee account key, peers |
+
+## Make targets
+
+| Command | Description |
+|---------|-------------|
+| `make devnet` | Copy devnet env and start services |
+| `make mainnet` | Copy mainnet env and start services |
+| `make stop` | Stop services |
+| `make clean` | Stop services, remove volumes and `.mina-config` |
+| `make logs` | Follow logs |
+| `make status` | Show container status |
+| `make health` | Check GraphQL endpoint, coordinator client status, and container summary |
+
+## Verifying the deployment
+
+```bash
+make health
+
+docker compose exec mina_snark_coordinator mina client status
+
+# Pending SNARK work in the pool
+curl -s http://localhost:3085/graphql -H 'Content-Type: application/json' \
+  -d '{"query":"{ snarkPool { workIds fee } }"}' | jq .
 ```
 
-</TabItem>
-</Tabs>
+## Clean start
 
-To scale additional workers, duplicate the `mina_snark_worker` service with a different name (e.g. `mina_snark_worker_2`).
+```bash
+make clean
+docker compose up -d
+```
+
+:::warning
+`make clean` removes `./mina_node/.mina-config`, including your **SNARK fee account key**. Back up `./mina_node/.mina-config/keys/` before running it.
+:::
 
 ---
 url: /node-operators/snark-workers/getting-started

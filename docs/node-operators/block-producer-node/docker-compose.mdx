@@ -1,7 +1,7 @@
 ---
 title: Docker Compose Block Producer Node
 sidebar_label: Docker Compose example
-description: Example of how to run a Mina Block Producer node using Docker Compose.
+description: Run a Mina Block Producer node using Docker Compose.
 keywords:
   - mina node
   - docker compose
@@ -10,45 +10,123 @@ keywords:
 
 # Docker Compose Block Producer
 
-This example demonstrates how to run a Mina Block Producer node using Docker Compose for the Mainnet network. The Docker Compose setup includes a Mina Block Producer node, and another script to generate a wallet key.
+Run a Mina block producer node as a separate container, with control over resource allocation, logging, and restarts.
 
-Copy and paste the provided configuration into a `docker-compose.yml` file. Then run `docker compose up -d` to start the services, and use `docker compose logs -f` to monitor the logs.
+The full Docker Compose configuration — including `docker-compose.yml`, example environment files for mainnet and devnet, a `Makefile`, and a `README` — is maintained in the Mina repository:
 
-```yaml
-services:
-  generate_wallet_key:
-    image: 'minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet'
-    # image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet' # Use this image for Devnet
-    environment:
-      MINA_PRIVKEY_PASS: PssW0rD
-    entrypoint: []
-    command: >
-      bash -c '
-        mina advanced generate-keypair --privkey-path /root/.mina-config/keys/wallet-key
-        chmod -R 0700 /root/.mina-config/keys
-        chmod -R 0600 /root/.mina-config/keys/wallet-key
-      '
-    volumes:
-      - './node/mina-config:/root/.mina-config'
-  mina_block_producer:
-    image: 'minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet'
-    # image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet' # Use this image for Devnet
-    restart: always
-    environment:
-      MINA_PRIVKEY_PASS: PssW0rD
-    entrypoint: []
-    command: >
-      bash -c '
-        mina daemon \
-             --peer-list-url https://bootnodes.minaprotocol.com/networks/mainnet.txt \
-             --block-producer-key /root/.mina-config/keys/wallet-key
-      '
-    # use  --peer-list-url https://bootnodes.minaprotocol.com/networks/devnet.txt for Devnet
-    volumes:
-      - './node/mina-config:/root/.mina-config'
-    ports:
-      - '8302:8302'
-    depends_on:
-      generate_wallet_key:
-        condition: service_completed_successfully
+**[`mina/src/app/cli/docker-compose/block-producer/`](https://github.com/MinaProtocol/mina/tree/develop/src/app/cli/docker-compose/block-producer)**
+
+## Quick start
+
+:::tip
+Before running the commands below, review the [Configuration](#configuration) section to see all available options — including image tags, network selection, and ports.
+:::
+
+```bash
+git clone https://github.com/MinaProtocol/mina.git
+cd mina/src/app/cli/docker-compose/block-producer
+
+# For mainnet
+cp example.mainnet.env .env
+
+# For devnet
+cp example.devnet.env .env
+
+# Edit .env — set MINA_PRIVKEY_PASS and MINA_LIBP2P_PASS (both required)
+vi .env
+
+# Start services
+docker compose up -d
+
+# Or use make shortcuts
+make mainnet   # copies mainnet env and starts services
+make devnet    # copies devnet env and starts services
 ```
+
+## Services overview
+
+| Service | Description | Default Port |
+|---------|-------------|--------------|
+| **generate_wallet_key** | One-shot: generates the block producer keypair (skipped if one already exists) | — |
+| **mina_block_producer** | Mina daemon running with `--block-producer-key` | 3085 (GraphQL), 8302 (P2P) |
+
+## Configuration
+
+All configuration is done through a single `.env` file. Key variables:
+
+### Docker image
+
+| Variable | Description |
+|----------|-------------|
+| `MINA_DAEMON_IMAGE` | Mina daemon Docker image |
+
+For mainnet, the image is pulled from [Docker Hub](https://hub.docker.com/u/minaprotocol) (`minaprotocol/mina-daemon`).
+For devnet, the image is pulled from the o1Labs GCR registry.
+
+### Network
+
+| Variable | Description |
+|----------|-------------|
+| `MINA_NETWORK` | `mainnet` or `devnet` |
+| `MINA_PEERLIST_URL` | Bootstrap peers URL |
+| `MINA_PRIVKEY_PASS` | Passphrase for the block producer key (required) |
+| `MINA_LIBP2P_PASS` | Passphrase for the libp2p key (required) |
+
+### Ports
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `MINA_REST_PORT` | `3085` | GraphQL API port |
+| `MINA_P2P_PORT` | `8302` | P2P networking port (must be reachable from the internet) |
+
+## Funding the block producer
+
+After the wallet key is generated, your block producer's public key is stored at `./mina_node/.mina-config/keys/wallet-key.pub` on the host. Block production only kicks in once that account holds (or is delegated) staking funds.
+
+```bash
+cat ./mina_node/.mina-config/keys/wallet-key.pub
+```
+
+## Data persistence
+
+Bind mounts preserve data across `docker compose down` / `up`:
+
+| Host path | Container path | Contents |
+|-----------|---------------|----------|
+| `./mina_node/.mina-config` | `/root/.mina-config` | Daemon config, block producer key, libp2p key, peers |
+
+## Make targets
+
+| Command | Description |
+|---------|-------------|
+| `make devnet` | Copy devnet env and start services |
+| `make mainnet` | Copy mainnet env and start services |
+| `make stop` | Stop services |
+| `make clean` | Stop services, remove volumes and `.mina-config` |
+| `make logs` | Follow logs |
+| `make status` | Show container status |
+| `make health` | Check GraphQL endpoint, sync status, and container summary |
+
+## Verifying the deployment
+
+Once services are running and the daemon is connected to peers:
+
+```bash
+make health
+
+docker compose exec mina_block_producer mina client status
+
+curl -s http://localhost:3085/graphql -H 'Content-Type: application/json' \
+  -d '{"query":"{ daemonStatus { syncStatus blockchainLength } }"}' | jq .
+```
+
+## Clean start
+
+```bash
+make clean
+docker compose up -d
+```
+
+:::warning
+`make clean` removes `./mina_node/.mina-config`, which contains your **block producer key**. Back up `./mina_node/.mina-config/keys/` before running it if you want to keep the key.
+:::
