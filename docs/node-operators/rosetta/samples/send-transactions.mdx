@@ -49,7 +49,7 @@ See [`src/app/rosetta/examples/ts/offline-sign.ts`](https://github.com/MinaProto
 
 ## Mina-specific notes
 
-- **Three operations per transfer**: `fee_payment` (sender pays fee), `payment_source_dec` (sender decrement), `payment_receiver_inc` (receiver increment). Build them with the helper `buildTransferOperations()` in `commons.ts` or see the [transfer transaction layout](requests#transfer-transaction-layout).
+- **Three operations per transfer**: `fee_payment` (sender pays fee), `payment_source_dec` (sender decrement), `payment_receiver_inc` (receiver increment). Build them with the SDK's `buildTransferOperations()` helper or see the [transfer transaction layout](requests#transfer-transaction-layout).
 - **Curve type is `pallas`**, not `secp256k1` or `edwards25519` as in some other chains.
 - **Signature type is `schnorr_poseidon`**.
 - **Amounts are nanomina** strings: 1 MINA = 1,000,000,000 nanomina. Negative values represent debits (fee, source decrement).

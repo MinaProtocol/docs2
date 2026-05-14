@@ -9620,7 +9620,7 @@ This section covers the Mina-specific bits of integrating with Rosetta. For each
 
 ## Runnable examples
 
-Working TypeScript scripts live in the mina repo under [`src/app/rosetta/examples/ts`](https://github.com/MinaProtocol/mina/tree/develop/src/app/rosetta/examples/ts). They use [`axios`](https://axios-http.com/) for HTTP and [`mina-signer`](https://www.npmjs.com/package/mina-signer) for transaction signing — no Rosetta SDK dependency. The `commons.ts` file contains a thin endpoint wrapper you can drop into your own codebase.
+Working TypeScript scripts live in the mina repo under [`src/app/rosetta/examples/ts`](https://github.com/MinaProtocol/mina/tree/develop/src/app/rosetta/examples/ts). They use [`@o1-labs/mina-rosetta-sdk`](https://www.npmjs.com/package/@o1-labs/mina-rosetta-sdk) for the typed Rosetta HTTP surface and [`mina-signer`](https://www.npmjs.com/package/mina-signer) for transaction signing. The SDK is a light wrapper — typed endpoints Mina actually exposes plus the Mina-specific operation-builder helpers (`buildTransferOperations`, `buildDelegationOperations`).
 
 Quickstart:
 
@@ -9641,7 +9641,7 @@ npm run account-balance
 
 ## Why no TypeScript SDK?
 
-There is no maintained TypeScript Rosetta/Mesh SDK. The only one Coinbase officially blessed (`dfinity/rosetta-client`) was archived in August 2025. Major chains with TS-heavy Rosetta stories (Cardano, Stacks) ship hand-rolled axios wrappers instead — that is the same pattern Mina uses here. For Go integrators, [`coinbase/mesh-sdk-go`](https://github.com/coinbase/mesh-sdk-go) remains the canonical client.
+There is no upstream Coinbase-blessed TypeScript Rosetta/Mesh SDK — the only one they listed (`dfinity/rosetta-client`) was archived in August 2025. Mina ships its own at [`@o1-labs/mina-rosetta-sdk`](https://www.npmjs.com/package/@o1-labs/mina-rosetta-sdk), focused on the endpoints Mina's Rosetta server actually exposes plus the Mina-specific operation types. For Go integrators, [`coinbase/mesh-sdk-go`](https://github.com/coinbase/mesh-sdk-go) remains the canonical Mesh client.
 
 ## Network identifier
 
@@ -9651,7 +9651,7 @@ All endpoints except `/network/list` require a `network_identifier` parameter. F
 { "blockchain": "mina", "network": "mainnet" }
 ```
 
-Replace `mainnet` with `devnet` to point at devnet. The `RosettaClient` in `commons.ts` injects this automatically.
+Replace `mainnet` with `devnet` to point at devnet. The SDK's `RosettaClient` injects the network identifier into every request automatically.
 
 For the Mina-specific request and response objects (operation types, transfer transaction layout, currency, token IDs), see [Requests and Responses](requests).
 
@@ -9937,7 +9937,7 @@ See [`src/app/rosetta/examples/ts/offline-sign.ts`](https://github.com/MinaProto
 
 ## Mina-specific notes
 
-- **Three operations per transfer**: `fee_payment` (sender pays fee), `payment_source_dec` (sender decrement), `payment_receiver_inc` (receiver increment). Build them with the helper `buildTransferOperations()` in `commons.ts` or see the [transfer transaction layout](requests#transfer-transaction-layout).
+- **Three operations per transfer**: `fee_payment` (sender pays fee), `payment_source_dec` (sender decrement), `payment_receiver_inc` (receiver increment). Build them with the SDK's `buildTransferOperations()` helper or see the [transfer transaction layout](requests#transfer-transaction-layout).
 - **Curve type is `pallas`**, not `secp256k1` or `edwards25519` as in some other chains.
 - **Signature type is `schnorr_poseidon`**.
 - **Amounts are nanomina** strings: 1 MINA = 1,000,000,000 nanomina. Negative values represent debits (fee, source decrement).
