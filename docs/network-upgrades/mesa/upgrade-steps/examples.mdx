@@ -1,0 +1,296 @@
+---
+title: Examples
+sidebar_label: Examples
+hide_title: true
+description: End-to-end Mesa upgrade walkthroughs by role and deployment style — block producer (automode/manual), archive node, zkApp developer, and exchange.
+keywords:
+  - Mesa
+  - upgrade
+  - examples
+  - block producer
+  - archive node
+  - zkApp
+  - exchange
+---
+
+# Examples
+
+The walkthroughs below follow concrete operators through the four Mesa upgrade phases ([Pre-Upgrade](/network-upgrades/mesa/upgrade-steps/pre-upgrade), [State Finalization](/network-upgrades/mesa/upgrade-steps/state-finalization), [Upgrade](/network-upgrades/mesa/upgrade-steps/upgrade), [Post-Upgrade](/network-upgrades/mesa/upgrade-steps/post-upgrade)) for different roles and setups. Click to expand the example that matches your situation.
+
+<details>
+<summary><b>Example: Block Producer Upgrading with Automode (Debian)</b></summary>
+
+Imagine you are **Alice**, a block producer running on a Debian server. Here is what your upgrade looks like end to end.
+
+**Weeks before the fork** — Alice checks [hardware requirements](/network-upgrades/mesa/requirements) and installs the automode packages:
+
+```bash
+sudo apt-get update
+sudo apt-get install mina-mainnet-prefork-mesa=3.x.x mina-mainnet-postfork-mesa=4.x.x
+```
+
+She starts her node normally. The automode dispatcher runs the pre-fork binary until the fork activates.
+
+> For full pre-upgrade checklist, see [Pre-Upgrade](/network-upgrades/mesa/upgrade-steps/pre-upgrade).
+
+**Hours before the fork (State Finalization)** — The network reaches the _stop-transaction-slot_. Alice's node keeps producing blocks — she does **nothing**. Empty blocks are produced for 100 slots (exactly 5 hours) until all nodes agree on the final state.
+
+> For details on this phase, see [State Finalization](/network-upgrades/mesa/upgrade-steps/state-finalization).
+
+**Fork day (Upgrade)** — The network halts at the _stop-network-slot_. Alice's daemon generates the Mesa configuration, writes the `activated` marker file, and **shuts down cleanly** (exit code 0). Because Alice uses systemd with `Restart=always`, the daemon restarts automatically. On restart, the dispatcher detects the `activated` file and launches the Mesa binary. Alice does **nothing** — this all happens automatically.
+
+> For what happens if you chose manual mode instead, see [Upgrade](/network-upgrades/mesa/upgrade-steps/upgrade). For details on the restart mechanism, see [Upgrade Modes - Details](/network-upgrades/mesa/upgrade-modes-details#restart-and-filesystem-requirements).
+
+**After the fork (Post-Upgrade)** — Exactly 3 hours after the Mesa release is published, the first Mesa block is produced. Alice verifies:
+
+```bash
+# Check if the activated file exists (path depends on your config directory and network ID)
+ls ~/.mina-config/auto-fork-mesa-mainnet/activated
+
+# Confirm Mesa chain ID
+mina client status
+```
+
+:::note Dispatcher and non-daemon commands
+The automode dispatcher only supports the `daemon` subcommand and `client status` command — it cannot determine the active runtime for other commands because they don't pass the config directory. For commands like `accounts list`, or `ledger export`, use the correct version-specific binary directly: `mina-mesa` (after the fork) or `mina-berkeley` (before the fork). The full paths `/usr/lib/mina/mesa/mina` and `/usr/lib/mina/berkeley/mina` also work. This limitation may be removed in a future release.
+:::
+
+She's done. Her node is producing blocks on Mesa.
+
+> For post-upgrade flags and monitoring, see [Post-Upgrade](/network-upgrades/mesa/upgrade-steps/post-upgrade).
+
+</details>
+
+<details>
+<summary><b>Example: Block Producer — Manual Mode (Docker)</b></summary>
+
+**Carlos** runs a block producer using Docker and prefers manual control over the upgrade.
+
+**Weeks before the fork** — Carlos pulls the stop-slot Docker image and starts his node:
+
+```bash
+docker pull minaprotocol/mina-daemon:<version>-bullseye-mainnet
+
+docker run --name mina -d \
+  --restart=always \
+  -v mina-config:/root/.mina-config \
+  minaprotocol/mina-daemon:<version>-bullseye-mainnet \
+  daemon \
+    --block-producer-key /keys/my-wallet \
+    --config-directory /root/.mina-config \
+    --libp2p-keypair /keys/libp2p-key \
+    --peer-list-url https://bootnodes.minaprotocol.com/networks/mainnet.txt \
+    --file-log-rotations 500 \
+    --log-json
+```
+
+> For full pre-upgrade checklist, see [Pre-Upgrade](/network-upgrades/mesa/upgrade-steps/pre-upgrade).
+
+**Hours before the fork (State Finalization)** — Carlos keeps his node running. He does **nothing** during this phase.
+
+> For details on this phase, see [State Finalization](/network-upgrades/mesa/upgrade-steps/state-finalization).
+
+**Fork day (Upgrade)** — The network halts at the _stop-network-slot_. Carlos waits for the Mesa release announcement, then swaps to the new image.
+
+> Throughout these examples, `<mesa-version>` is a placeholder for the Mesa release tag announced for your target network. For the **preflight** network the current value is published on [Preflight Network](/network-upgrades/mesa/preflight-network); for **devnet/mainnet** the value will be published with the corresponding release announcement.
+
+```bash
+docker stop mina && docker rm mina
+
+docker pull minaprotocol/mina-daemon:<mesa-version>-bullseye-mainnet
+
+docker run --name mina -d \
+  --restart=always \
+  -v mina-config:/root/.mina-config \
+  minaprotocol/mina-daemon:<mesa-version>-bullseye-mainnet \
+  daemon \
+    --block-producer-key /keys/my-wallet \
+    --config-directory /root/.mina-config \
+    --libp2p-keypair /keys/libp2p-key \
+    --peer-list-url https://bootnodes.minaprotocol.com/networks/mainnet.txt \
+    --file-log-rotations 500 \
+    --log-json
+```
+
+> For detailed upgrade instructions, see [Upgrade](/network-upgrades/mesa/upgrade-steps/upgrade).
+
+**After the fork (Post-Upgrade)** — Exactly 3 hours after the Mesa release is published, block production starts. Carlos verifies:
+
+```bash
+docker exec mina mina client status   # confirms Mesa chain ID
+```
+
+> For post-upgrade flags and monitoring, see [Post-Upgrade](/network-upgrades/mesa/upgrade-steps/post-upgrade).
+
+</details>
+
+<details>
+<summary><b>Example: Archive Node / Explorer Operator</b></summary>
+
+**Eve** runs an archive node, a Rosetta API instance, and a block explorer. She needs to upgrade both the daemon and the database.
+
+**Weeks before the fork** — Eve installs the stop-slot release and decides on her upgrade method:
+
+```bash
+sudo apt-get update
+sudo apt-get install mina-mainnet=3.x.x
+```
+
+She chooses the **trustless** path — running the upgrade script early, while her archive is still online:
+
+```bash
+# Back up the database first
+pg_dump -U <user> archive_db > berkeley-archive-backup.sql
+
+# Download and run the upgrade script (completes in under 1 minute)
+curl -O https://raw.githubusercontent.com/MinaProtocol/mina/refs/heads/mesa/src/app/archive/upgrade_to_mesa.sql
+psql -U <user> -d archive_db -f upgrade_to_mesa.sql
+
+# Verify
+psql -U <user> -d archive_db -c "SELECT * FROM version;"
+```
+
+The script is backward-compatible — her existing Berkeley archive node keeps working normally after the upgrade.
+
+> For the full archive upgrade guide, see [Archive Upgrade](/network-upgrades/mesa/archive-upgrade).
+
+**Hours before the fork (State Finalization)** — Eve keeps her archive node running to capture all finalized blocks.
+
+> For details on this phase, see [State Finalization](/network-upgrades/mesa/upgrade-steps/state-finalization).
+
+**Fork day (Upgrade)** — The network halts. Eve installs the Mesa archive release and points it at her already-upgraded database:
+
+```bash
+sudo systemctl stop mina-archive
+sudo systemctl stop mina
+
+sudo apt-get update
+sudo apt-get install mina-archive-mainnet=4.x.x mina-mainnet=4.x.x
+
+# Start archive process pointing to the upgraded DB
+mina-archive run \
+  --postgres-uri postgres://<user>:<pass>@localhost:5432/archive_db \
+  --server-port 3086 \
+  --log-json --log-level DEBUG
+
+# Start the non-block-producing daemon connected to the archive
+mina daemon \
+  --archive-address localhost:3086 \
+  --config-directory ~/.mina-config \
+  --libp2p-keypair ~/keys/libp2p-key \
+  --peer-list-url https://bootnodes.minaprotocol.com/networks/mainnet.txt \
+  --file-log-rotations 500 \
+  --log-json
+```
+
+She also restarts Rosetta:
+
+```bash
+docker run --name rosetta --rm -d \
+  -p 3088:3088 \
+  --entrypoint '' \
+  minaprotocol/mina-rosetta:<mesa-version>-bullseye-mainnet \
+  /usr/local/bin/mina-rosetta \
+    --archive-uri "postgres://<user>:<pass>@localhost:5432/archive_db" \
+    --graphql-uri "http://localhost:3085/graphql" \
+    --log-json --port 3088
+```
+
+> For detailed upgrade instructions, see [Upgrade](/network-upgrades/mesa/upgrade-steps/upgrade).
+
+**After the fork (Post-Upgrade)** — Block production resumes. Eve verifies data integrity:
+
+```bash
+# Check the archive is in sync
+mina client status
+
+# Run the verification toolbox
+mina-archive-hardfork-toolbox verify-upgrade \
+  --postgres-uri postgres://<user>:<pass>@localhost:5432/archive_db \
+  --protocol-version <version> \
+  --migration-version <version>
+```
+
+She checks her explorer UI to confirm new Mesa blocks are appearing and the historical data is intact.
+
+> For the full validation workflow, see [Post-Upgrade](/network-upgrades/mesa/upgrade-steps/post-upgrade) and the [Archive Hardfork Toolbox](/network-upgrades/mesa/archive-upgrade#verification-with-the-archive-hardfork-toolbox).
+
+</details>
+
+<details>
+<summary><b>Example: zkApp Developer</b></summary>
+
+**Frank** maintains a zkApp deployed on mainnet. His contract uses on-chain state and he wants to take advantage of Mesa's expanded 32-field state.
+
+**Weeks before the fork** — Frank updates his o1js dependency to the Mesa-compatible version and tests his zkApp on the [preflight network](/network-upgrades/mesa/preflight-network):
+
+```bash
+npm install o1js@3.0.0-mesa.698ca
+```
+
+This is the first o1js release that targets the Mesa transaction protocol. `o1js@latest` currently resolves to a pre-Mesa version and will produce transactions the post-fork preflight network rejects. See [Preflight Network](/network-upgrades/mesa/preflight-network) for the matching daemon/archive/rosetta release.
+
+He verifies that:
+- His contract recompiles cleanly against Mesa-compatible o1js and deploys on the preflight Mesa network
+- Transactions execute end-to-end against the redeployed contract
+- If he plans to use the expanded state fields (indexes `8–31`), his updated contract version compiles and deploys on preflight
+
+> For details on testing with the preflight network, see [Preflight Network](/network-upgrades/mesa/preflight-network).
+
+**Hours before the fork (State Finalization)** — Frank does **nothing**. His deployed zkApp keeps running on the Berkeley chain. No transactions can be submitted during this phase anyway.
+
+**Fork day (Upgrade)** — Frank does **nothing during the network halt**. His zkApp account and on-chain state values carry over to the Mesa chain automatically (including state fields at indexes `0–7`). However, the verification key generated for Berkeley is no longer valid under the Mesa protocol — the contract cannot process transactions on Mesa until it is redeployed.
+
+**After the fork (Post-Upgrade)** — Block production resumes on Mesa. Frank **must redeploy his zkApp** before it can accept transactions, regardless of whether he uses the new state fields:
+
+```bash
+# Required for every zkApp — the Mesa protocol version bump invalidates the Berkeley verification key
+zkapp deploy --network mainnet
+```
+
+If he is also adopting the expanded `8–31` state slots, this same deployment step ships the updated contract version that declares the new fields.
+
+> For post-upgrade details, see [Post-Upgrade](/network-upgrades/mesa/upgrade-steps/post-upgrade).
+
+</details>
+
+<details>
+<summary><b>Example: Exchange Upgrading to Mesa</b></summary>
+
+**Bob** is an exchange operator. His main concern is avoiding lost deposits.
+
+**Weeks before the fork** — Bob tests his integration (Rosetta API, mina-signer) on the [preflight network](/network-upgrades/mesa/preflight-network). He reviews [schema changes](/network-upgrades/mesa/appendix) and installs the stop-slot release:
+
+```bash
+sudo apt-get install mina-mainnet=3.x.x
+```
+
+> For the full exchange pre-upgrade checklist, see [Pre-Upgrade](/network-upgrades/mesa/upgrade-steps/pre-upgrade).
+
+**Hours before the fork** — Before the _stop-transaction-slot_ arrives, Bob **disables MINA deposits and withdrawals** on his platform and notifies customers about the maintenance window.
+
+:::danger
+Any transactions submitted after the stop-transaction-slot **will not exist on the Mesa chain**. This is the most critical step for exchanges.
+:::
+
+**Fork day** — The network halts. Bob waits for the Mesa release announcement, then upgrades:
+
+```bash
+sudo systemctl stop mina
+sudo apt-get update
+sudo apt-get install mina-mainnet=4.x.x
+sudo systemctl start mina
+```
+
+> For detailed upgrade instructions, see [Upgrade](/network-upgrades/mesa/upgrade-steps/upgrade).
+
+**After the fork** — Block production resumes. Bob verifies his node is on the Mesa chain, confirms Rosetta API is working, then **re-enables MINA deposits and withdrawals**.
+
+```bash
+mina client status   # verify Mesa chain ID
+# test a small internal transfer before opening to customers
+```
+
+> For post-upgrade flags and configurations, see [Post-Upgrade](/network-upgrades/mesa/upgrade-steps/post-upgrade).
+
+</details>

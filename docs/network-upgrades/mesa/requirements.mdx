@@ -1,0 +1,49 @@
+---
+title: Requirements
+sidebar_label: Requirements
+hide_title: true
+description: Mesa upgrade is a major upgrade that requires all nodes in a network to upgrade to a newer version. It is not backward compatible.
+keywords:
+  - Mesa
+  - upgrade
+  - hardware requirements
+---
+
+# Requirements
+
+## Hardware Requirements
+
+Please note the following are the hardware requirements for each node type after the upgrade:
+
+| Node Type | Memory | CPU | Storage | Network |
+|--|--|--|--|--|
+| Mina Daemon Node | 32 GB RAM | 8 core processor with BMI2 and AVX CPU instruction set are required | 64 GB | 1 Mbps Internet Connection |
+| SNARK Coordinator | 32 GB RAM | 8 core processor | 64 GB | 1 Mbps Internet Connection |
+| SNARK Worker (per worker) | 8 GB RAM | 6 core/12 threads with BMI2 and AVX CPU instruction set are required | 1 GB | 1 Mbps Internet Connection |
+| Archive Node | 32 GB RAM | 8 core processor | 64 GB | 1 Mbps Internet Connection |
+| Rosetta API standalone Docker image | 8 GB RAM | 2 core processor | 16 GB | 1 Mbps Internet Connection |
+| Rosetta API + Archive Node | 32 GB RAM | 8 core processor | 64 GB | 1 Mbps Internet Connection |
+| Mina Seed Node | 64 GB RAM | 8 core processor | 64 GB | 1 Mbps Internet Connection |
+
+## Mina Daemon Requirements
+
+The Mesa daemon inherits the same networking and process-management requirements as the Berkeley daemon. Rather than restate them here, refer to the canonical sections in the Validator Node docs:
+
+- **IP and port configuration** — `--external-ip`, `--external-port`, default port `8302` (libp2p). See [Validator Node Requirements](/node-operators/validator-node/requirements).
+- **Auto-restart on crash** — systemd `Restart=always`, Docker `--restart=always`. See [Running mina node as a service](/node-operators/validator-node/connecting-to-the-network#running-mina-node-as-a-service).
+
+The hardware table above is Mesa-specific; everything else lives once in the Validator Node docs.
+
+## Seed Peer Requirements
+
+### Generation of libp2p keypair
+
+To ensure connectivity across the network, it is essential that all seed nodes start with the **same** `libp2p` keypair.
+This consistency allows other nodes in the network to reliably connect.
+Although the same libp2p keys can be reused from before the upgrade, if you need to manually generate new libp2p keys, use the following command:
+
+```
+mina libp2p generate-keypair --privkey-path <path-to-the-key-file>
+```
+
+Further information on [generating key pairs](/node-operators/validator-node/generating-a-keypair) on Mina Protocol.

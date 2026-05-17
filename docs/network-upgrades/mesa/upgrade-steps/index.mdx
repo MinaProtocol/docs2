@@ -1,0 +1,45 @@
+---
+title: Upgrade Steps
+sidebar_label: Upgrade Steps
+hide_title: true
+description: Step-by-step Mesa upgrade instructions with per-role timelines and examples for block producers, SNARK workers, archive nodes, and exchanges.
+keywords:
+  - Mesa
+  - upgrade
+  - steps
+  - phases
+  - block producer
+  - SNARK worker
+  - archive node
+  - exchange
+---
+
+# Upgrade Steps
+
+The Mesa upgrade proceeds through four sequential phases. Each phase has specific actions for different node operator types.
+
+| Phase | Description |
+|---|---|
+| [Pre-Upgrade](/network-upgrades/mesa/upgrade-steps/pre-upgrade) | Prepare infrastructure, upgrade to the stop-slot release, run archive upgrade scripts |
+| [State Finalization](/network-upgrades/mesa/upgrade-steps/state-finalization) | 100-slot stabilization period — no new transactions accepted, block production continues |
+| [Upgrade](/network-upgrades/mesa/upgrade-steps/upgrade) | Network halts, state is exported, Mesa build is published |
+| [Post-Upgrade](/network-upgrades/mesa/upgrade-steps/post-upgrade) | Block production resumes on Mesa, flags and configurations for the new network |
+
+**Please note:** A simplified Node Status service will be part of the upgrade tooling and enabled by default in the Pre-Upgrade release with stop-slots ([3.x.x](https://github.com/MinaProtocol/mina/releases)). This feature allows for a safe upgrade by monitoring the amount of upgraded active stake. Only non-sensitive data is reported.
+
+Before proceeding, make sure you have reviewed the [Requirements](/network-upgrades/mesa/requirements) and chosen your [Upgrade Mode](/network-upgrades/mesa/upgrade-modes).
+
+## Walkthroughs by role
+
+The per-phase pages above describe what every role does at each step. For end-to-end narrative walkthroughs with concrete commands by role and deployment style (block producer automode/manual, archive node, zkApp developer, exchange), see the [Examples](/network-upgrades/mesa/upgrade-steps/examples) page.
+
+Role-specific quick references:
+
+- **Block Producers & SNARK Coordinators** — pick a mode on [Upgrade Modes](/network-upgrades/mesa/upgrade-modes). Install commands for automode are in [Upgrade Modes — Installing automode](/network-upgrades/mesa/upgrade-modes#installing-automode).
+- **SNARK Workers** — coordinator-spawned workers inherit the coordinator's binary; standalone `mina internal snark-worker` deployments must be redeployed with the Mesa binary after the fork. See the SNARK Worker tab in [Pre-Upgrade](/network-upgrades/mesa/upgrade-steps/pre-upgrade).
+- **Archive Node Operators** — archive nodes do **not** support automode. See [Archive Upgrade](/network-upgrades/mesa/archive-upgrade) for the schema upgrade and trustless/trustful paths.
+- **Exchanges** — disable MINA deposits and withdrawals before the _stop-transaction-slot_ and keep them disabled until Mesa block production resumes. See [Exchanges](/network-upgrades/mesa/upgrade-steps/post-upgrade) on the Post-Upgrade page for the re-enable checklist.
+
+:::danger For exchanges
+Any transactions submitted after the _stop-transaction-slot_ **will not exist on the Mesa chain**. Disable deposits and withdrawals **before** [State Finalization](/network-upgrades/mesa/upgrade-steps/state-finalization) begins and keep them disabled until block production resumes on Mesa.
+:::

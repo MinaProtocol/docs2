@@ -1,0 +1,195 @@
+---
+title: Upgrade Modes
+sidebar_label: Upgrade Modes
+hide_title: true
+description: Automode and Manual upgrade paths for the Mesa hard fork. Automode handles the transition automatically for daemon nodes; Manual gives operators full control.
+keywords:
+  - Mesa
+  - upgrade
+  - automode
+  - manual
+  - daemon
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Upgrade Modes
+
+The Mesa upgrade supports two modes for daemon node operators: **Automode** (recommended — the daemon handles the fork transition automatically) and **Manual Mode** (the operator stops, installs the Mesa release, and restarts). Both modes reach the same end state — a node running on the Mesa network.
+
+**Archive node operators, Rosetta API operators, and standalone SNARK workers must use Manual mode** — Automode is not available for those node types.
+
+## Comparison
+
+| Aspect | Automode | Manual |
+|---|---|---|
+| Operator intervention during fork | None | Stop, install, restart |
+| Downtime | Minimal (automatic transition) | Depends on operator response time |
+| Applies to | Daemon nodes only (block producers, SNARK coordinators) | All node types (incl. archive, Rosetta, standalone SNARK workers) |
+| Control | Automated | Full manual control |
+| Risk | Lower (fewer manual steps) | Higher (depends on operator timing) |
+
+## Choose your upgrade mode
+
+Pick the tab that matches the mode you intend to run. If you are unsure, start with the Automode tab — it is the recommended path for daemon nodes.
+
+<Tabs groupId="upgrade-mode">
+<TabItem value="automode" label="Automode (Recommended)" default>
+
+Automode is the recommended upgrade path for the Mina daemon — the process that participates in consensus. This includes block producers and SNARK coordinators (a SNARK coordinator runs as a daemon). In automode, the node handles the entire fork transition automatically.
+
+### Requirements
+
+- Install the stop-slot release ([3.x.x](https://github.com/MinaProtocol/mina/releases)) **before** the _stop-transaction-slot_
+- Ensure your node remains running through the State Finalization phase
+- Meet the [hardware requirements](/network-upgrades/mesa/requirements)
+
+### Who should use Automode
+
+- Block producers who want a hands-off upgrade experience
+- SNARK coordinators (run as a Mina daemon)
+- Operators who want to minimize downtime and operational risk
+
+Automode is **not** available for the following — operators of these node types must switch to the Manual Mode tab:
+
+- **Archive nodes** — schema upgrade is a separate manual step (see [Archive Upgrade](/network-upgrades/mesa/archive-upgrade))
+- **Rosetta API nodes** — upgrade alongside the archive node they depend on
+- **Standalone SNARK workers** — `mina internal snark-worker` processes/containers run separately from any daemon; they must be stopped and redeployed with the Mesa binary after the fork. (Workers spawned by a coordinator inherit the coordinator's upgrade automatically.)
+
+### How automode works during the fork
+
+1. You install the stop-slot release ([3.x.x](https://github.com/MinaProtocol/mina/releases)) during the Pre-Upgrade phase.
+2. Your node participates normally in block production through the State Finalization phase.
+3. When the network reaches the _stop-network-slot_, the node automatically:
+   - Stops producing blocks on the old chain
+   - Transitions to the Mesa network configuration
+   - Begins producing blocks on the Mesa network once the genesis timestamp is reached
+4. No manual intervention is required during the fork.
+
+:::danger Automode requires a persistent config directory and an automatic restart policy
+At the fork, the daemon **exits cleanly** (exit code 0) after writing the Mesa configuration and an `activated` marker to the config directory. It does **not** restart itself. Your process manager must restart it, and the config directory must survive that restart for the dispatcher to find the `activated` marker.
+
+- **Persistent config directory**: `~/.mina-config` (host) or a named Docker volume / Kubernetes `PersistentVolumeClaim` mounted at `/root/.mina-config` (container). An ephemeral `emptyDir` will lose the `activated` file and break the transition.
+- **Automatic restart policy**: `Restart=always` on systemd (default in the Mina unit), `--restart=always` on Docker, `restartPolicy: Always` on Kubernetes.
+
+Failing to meet either requirement means your node will not join the Mesa network at genesis. See [Upgrade Modes — Details](/network-upgrades/mesa/upgrade-modes-details#restart-and-filesystem-requirements) for the underlying mechanism.
+:::
+
+### Installing automode
+
+Pick the install method that matches how you run your daemon today.
+
+<Tabs groupId="install-method">
+<TabItem value="debian" label="Debian (apt)" default>
+
+Install **both** the prefork and postfork packages — they ship together so the dispatcher can route to the correct binary before and after the fork:
+
+```bash
+sudo apt-get update
+sudo apt-get install mina-{network}-prefork-mesa mina-{network}-postfork-mesa
+```
+
+Both packages are required for automode to work. The `postfork-mesa` package also installs the dispatcher at `/usr/local/bin/mina-dispatch` and the configuration in `/etc/default/mina-dispatch`.
+
+Start your node as usual — the dispatcher routes to the correct binary based on fork state. See the Debian automode example on the [Examples](/network-upgrades/mesa/upgrade-steps/examples) page.
+
+</TabItem>
+<TabItem value="docker" label="Docker">
+
+Use the `mina-daemon-auto-hardfork` image (the regular `mina-daemon` image is manual-mode only):
+
+```
+minaprotocol/mina-daemon-auto-hardfork:{version}-{codename}-{network}
+```
+
+The image bundles both binaries and the dispatcher, and sets `MINA_APP=/usr/local/bin/mina-dispatch` so the entrypoint uses the dispatcher automatically. Start it with your normal flags **plus** `--restart=always` and a named volume mounted at `/root/.mina-config` — see the Docker automode example on the [Examples](/network-upgrades/mesa/upgrade-steps/examples) page.
+
+For docker-compose users, see the [docker-compose quickstart](/network-upgrades/mesa/docker-compose-quickstart) (under Appendix) for a ready-to-edit compose file.
+
+</TabItem>
+</Tabs>
+
+</TabItem>
+<TabItem value="manual" label="Manual Mode">
+
+Manual mode gives operators full control over each step of the upgrade process. **Archive node operators and Rosetta API operators must use manual mode** — Automode is not available for those node types.
+
+### Requirements
+
+- Install the stop-slot release ([3.x.x](https://github.com/MinaProtocol/mina/releases)) **before** the _stop-transaction-slot_
+- Be prepared to act promptly when the Mesa release is published to minimize downtime
+- Meet the [hardware requirements](/network-upgrades/mesa/requirements)
+
+### Who should use Manual mode
+
+- Operators who need full control over the upgrade process
+- Operators with custom deployment pipelines that require explicit upgrade steps
+- Operators who want to validate the Mesa build before restarting
+- **Archive node operators** (automode is not available — schema upgrade is a separate manual step)
+- **Rosetta API operators** (Rosetta upgrades alongside the archive node it depends on)
+
+### How manual mode works during the fork
+
+1. You install the stop-slot release ([3.x.x](https://github.com/MinaProtocol/mina/releases)) during the Pre-Upgrade phase.
+2. Your node participates normally through the State Finalization phase.
+3. When the network halts at the _stop-network-slot_, you:
+   - Stop your node
+   - Wait for the Mesa release to be published
+   - Install the Mesa release
+   - Restart your node with the [updated flags](/network-upgrades/mesa/upgrade-steps/post-upgrade)
+4. Your node begins participating in the Mesa network once the genesis timestamp is reached.
+
+### Installing manual mode
+
+<Tabs groupId="install-method">
+<TabItem value="debian" label="Debian (apt)" default>
+
+Install only the stop-slot release before the fork:
+
+```bash
+sudo apt-get update
+sudo apt-get install mina-mainnet=3.x.x
+```
+
+After the fork, when the Mesa release is published, stop your node and install the Mesa package:
+
+```bash
+sudo systemctl stop mina
+sudo apt-get install mina-mainnet=4.x.x
+sudo systemctl start mina
+```
+
+See the Debian manual example on the [Examples](/network-upgrades/mesa/upgrade-steps/examples) page.
+
+</TabItem>
+<TabItem value="docker" label="Docker">
+
+Use the regular `mina-daemon` image (not `mina-daemon-auto-hardfork`):
+
+```
+minaprotocol/mina-daemon:<version>-bullseye-mainnet
+```
+
+After the fork, stop the container and start a new one with the Mesa image:
+
+```bash
+docker stop mina && docker rm mina
+docker run --name mina -d \
+  --restart=always \
+  -v mina-config:/root/.mina-config \
+  minaprotocol/mina-daemon:<mesa-version>-bullseye-mainnet \
+  daemon ...
+```
+
+See the Docker manual example on the [Examples](/network-upgrades/mesa/upgrade-steps/examples) page.
+
+For docker-compose users, see the [docker-compose quickstart](/network-upgrades/mesa/docker-compose-quickstart) (under Appendix).
+
+</TabItem>
+</Tabs>
+
+</TabItem>
+</Tabs>
+
+For in-depth technical details on how the upgrade mechanism works internally — dispatcher routing, dual-binary architecture, fork-state file — see [Upgrade Modes - Details](/network-upgrades/mesa/upgrade-modes-details).

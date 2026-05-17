@@ -19,9 +19,10 @@ module.exports = {
           label: 'Berkeley Upgrade',
           link: {
             type: 'doc',
-            id: 'network-upgrades/berkeley/requirements',
+            id: 'network-upgrades/berkeley/index',
           },
           items: [
+            'network-upgrades/berkeley/requirements',
             {
               type: 'category',
               label: 'Archive Migration',
@@ -48,9 +49,42 @@ module.exports = {
         {
           type: 'category',
           label: 'Mesa Upgrade',
+          link: {
+            type: 'doc',
+            id: 'network-upgrades/mesa/index',
+          },
           items: [
-            'network-upgrades/mesa/preflight-network',
+            'network-upgrades/mesa/requirements',
+            'network-upgrades/mesa/upgrade-modes',
+            {
+              type: 'category',
+              label: 'Upgrade Steps',
+              link: {
+                type: 'doc',
+                id: 'network-upgrades/mesa/upgrade-steps/index',
+              },
+              items: [
+                'network-upgrades/mesa/upgrade-steps/pre-upgrade',
+                'network-upgrades/mesa/upgrade-steps/state-finalization',
+                'network-upgrades/mesa/upgrade-steps/upgrade',
+                'network-upgrades/mesa/upgrade-steps/post-upgrade',
+                'network-upgrades/mesa/upgrade-steps/examples',
+              ],
+            },
             'network-upgrades/mesa/archive-upgrade',
+            'network-upgrades/mesa/replayer',
+            'network-upgrades/mesa/preflight-network',
+            'network-upgrades/mesa/troubleshooting',
+            {
+              type: 'category',
+              label: 'Appendix',
+              items: [
+                'network-upgrades/mesa/appendix',
+                'network-upgrades/mesa/upgrade-modes-details',
+                'network-upgrades/mesa/docker-compose-quickstart',
+              ],
+            },
+            'network-upgrades/mesa/glossary',
           ],
         },
       ],

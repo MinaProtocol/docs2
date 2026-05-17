@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 820" font-family="system-ui, -apple-system, sans-serif">
+  <defs>
+    <filter id="mshadow" x="-4%" y="-4%" width="108%" height="108%">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity="0.08"/>
+    </filter>
+    <marker id="marrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="820" height="820" rx="8" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="410" y="36" text-anchor="middle" font-size="18" font-weight="600" fill="#1e293b">Manual Mode Upgrade Flow</text>
+  <line x1="40" y1="50" x2="780" y2="50" stroke="#e2e8f0" stroke-width="1"/>
+
+  <!-- ==================== PHASE 1: PRE-UPGRADE ==================== -->
+  <rect x="40" y="64" width="740" height="110" rx="6" fill="white" filter="url(#mshadow)" stroke="#cbd5e1" stroke-width="1"/>
+  <rect x="40" y="64" width="740" height="30" rx="6" fill="#334155"/>
+  <rect x="40" y="82" width="740" height="12" fill="#334155"/>
+  <text x="56" y="84" font-size="12" font-weight="600" fill="white" letter-spacing="0.05em">PRE-UPGRADE</text>
+  <text x="724" y="84" font-size="10" fill="#94a3b8" text-anchor="end">Weeks before the fork</text>
+
+  <rect x="60" y="106" width="340" height="52" rx="4" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="74" y="124" font-size="12" font-weight="500" fill="#1e293b">Install stop-slot release (4.0.0)</text>
+  <text x="74" y="142" font-size="11" fill="#64748b">Single binary (pre-fork only)</text>
+
+  <rect x="420" y="106" width="340" height="52" rx="4" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="434" y="124" font-size="12" font-weight="500" fill="#1e293b">Node runs normally</text>
+  <text x="434" y="142" font-size="11" fill="#64748b">Produces blocks, earns rewards</text>
+
+  <!-- Arrow -->
+  <line x1="410" y1="174" x2="410" y2="200" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#marrow)"/>
+
+  <!-- ==================== PHASE 2: STATE FINALIZATION ==================== -->
+  <rect x="40" y="208" width="740" height="110" rx="6" fill="white" filter="url(#mshadow)" stroke="#cbd5e1" stroke-width="1"/>
+  <rect x="40" y="208" width="740" height="30" rx="6" fill="#475569"/>
+  <rect x="40" y="226" width="740" height="12" fill="#475569"/>
+  <text x="56" y="228" font-size="12" font-weight="600" fill="white" letter-spacing="0.05em">STATE FINALIZATION</text>
+  <text x="724" y="228" font-size="10" fill="#94a3b8" text-anchor="end">~5 hours (100 slots)</text>
+
+  <rect x="60" y="250" width="180" height="26" rx="13" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1"/>
+  <text x="150" y="268" text-anchor="middle" font-size="10" font-weight="600" fill="#475569">stop-transaction-slot</text>
+
+  <rect x="260" y="250" width="500" height="52" rx="4" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="274" y="268" font-size="12" font-weight="500" fill="#1e293b">Keep your node running</text>
+  <text x="274" y="286" font-size="11" fill="#64748b">Empty blocks, no transactions. No action required.</text>
+
+  <!-- Arrow -->
+  <line x1="410" y1="318" x2="410" y2="344" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#marrow)"/>
+
+  <!-- ==================== PHASE 3: MANUAL UPGRADE ==================== -->
+  <rect x="40" y="352" width="740" height="260" rx="6" fill="white" filter="url(#mshadow)" stroke="#cbd5e1" stroke-width="1"/>
+  <rect x="40" y="352" width="740" height="30" rx="6" fill="#1e293b"/>
+  <rect x="40" y="370" width="740" height="12" fill="#1e293b"/>
+  <text x="56" y="372" font-size="12" font-weight="600" fill="white" letter-spacing="0.05em">UPGRADE (MANUAL)</text>
+  <text x="724" y="372" font-size="10" fill="#64748b" text-anchor="end">Fork day — operator action required</text>
+
+  <rect x="60" y="394" width="180" height="26" rx="13" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1"/>
+  <text x="150" y="412" text-anchor="middle" font-size="10" font-weight="600" fill="#475569">stop-network-slot</text>
+
+  <text x="260" y="411" font-size="12" fill="#475569">Network halts. No more blocks produced.</text>
+
+  <!-- 5 steps in a grid -->
+  <rect x="60" y="432" width="340" height="36" rx="4" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+  <rect x="72" y="441" width="18" height="18" rx="9" fill="#475569"/>
+  <text x="81" y="454" text-anchor="middle" font-size="9" font-weight="600" fill="white">1</text>
+  <text x="98" y="454" font-size="12" fill="#1e293b">Stop your node</text>
+
+  <rect x="420" y="432" width="340" height="36" rx="4" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+  <rect x="432" y="441" width="18" height="18" rx="9" fill="#475569"/>
+  <text x="441" y="454" text-anchor="middle" font-size="9" font-weight="600" fill="white">2</text>
+  <text x="458" y="454" font-size="12" fill="#1e293b">Wait for Mesa release announcement</text>
+
+  <rect x="60" y="478" width="340" height="48" rx="4" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+  <rect x="72" y="490" width="18" height="18" rx="9" fill="#475569"/>
+  <text x="81" y="503" text-anchor="middle" font-size="9" font-weight="600" fill="white">3</text>
+  <text x="98" y="499" font-size="12" fill="#1e293b">Install the Mesa release</text>
+  <text x="98" y="515" font-size="11" fill="#64748b">New binary + config + genesis ledgers</text>
+
+  <rect x="420" y="478" width="340" height="48" rx="4" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+  <rect x="432" y="490" width="18" height="18" rx="9" fill="#475569"/>
+  <text x="441" y="503" text-anchor="middle" font-size="9" font-weight="600" fill="white">4</text>
+  <text x="458" y="499" font-size="12" fill="#1e293b">Update startup flags</text>
+  <text x="458" y="515" font-size="11" fill="#64748b">See Post-Upgrade Flags page</text>
+
+  <rect x="60" y="538" width="700" height="36" rx="4" fill="#1e293b" stroke="#0f172a" stroke-width="1"/>
+  <rect x="72" y="547" width="18" height="18" rx="9" fill="white"/>
+  <text x="81" y="560" text-anchor="middle" font-size="9" font-weight="600" fill="#1e293b">5</text>
+  <text x="98" y="560" font-size="12" font-weight="600" fill="white">Start your node with the Mesa binary</text>
+
+  <!-- Time pressure note -->
+  <rect x="60" y="584" width="700" height="20" rx="4" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="410" y="598" text-anchor="middle" font-size="10" fill="#475569">Every minute between the Mesa genesis timestamp and your restart = missed blocks</text>
+
+  <!-- Arrow -->
+  <line x1="410" y1="612" x2="410" y2="638" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#marrow)"/>
+
+  <!-- ==================== PHASE 4: POST-UPGRADE ==================== -->
+  <rect x="40" y="646" width="740" height="110" rx="6" fill="white" filter="url(#mshadow)" stroke="#cbd5e1" stroke-width="1"/>
+  <rect x="40" y="646" width="740" height="30" rx="6" fill="#334155"/>
+  <rect x="40" y="664" width="740" height="12" fill="#334155"/>
+  <text x="56" y="666" font-size="12" font-weight="600" fill="white" letter-spacing="0.05em">POST-UPGRADE</text>
+  <text x="724" y="666" font-size="10" fill="#94a3b8" text-anchor="end">~1 hour after release</text>
+
+  <rect x="60" y="688" width="180" height="26" rx="13" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1"/>
+  <text x="150" y="706" text-anchor="middle" font-size="10" font-weight="600" fill="#475569">Mesa genesis timestamp</text>
+
+  <rect x="260" y="688" width="500" height="52" rx="4" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="274" y="706" font-size="12" font-weight="500" fill="#1e293b">Block production resumes on Mesa</text>
+  <text x="274" y="724" font-size="11" fill="#64748b">Verify: <tspan font-family="monospace" font-size="10">mina client status</tspan> shows Mesa chain ID</text>
+
+  <!-- ==================== COMPARISON ==================== -->
+  <line x1="40" y1="778" x2="780" y2="778" stroke="#e2e8f0" stroke-width="1"/>
+  <rect x="40" y="790" width="740" height="22" rx="4" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="410" y="806" text-anchor="middle" font-size="11" fill="#475569">With automode, steps 1–5 happen automatically with no downtime at the fork.</text>
+</svg>

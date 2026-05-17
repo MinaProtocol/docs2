@@ -1,0 +1,75 @@
+---
+title: Troubleshooting
+sidebar_label: Troubleshooting
+hide_title: true
+description: Troubleshooting the Mesa upgrade — checking which binary your node is running, dispatcher behavior, and debug mode for automode operators.
+keywords:
+  - Mesa
+  - upgrade
+  - troubleshooting
+  - automode
+  - dispatcher
+  - debug
+---
+
+# Troubleshooting
+
+This page collects common operator questions and debugging tips for the Mesa upgrade. For low-level architecture and dispatcher internals, see [Upgrade Modes — Details](/network-upgrades/mesa/upgrade-modes-details).
+
+## How do I know which binary my node is using?
+
+Check whether the activation state file exists. The file is located at:
+
+`{config-directory}/auto-fork-mesa-{network_id}/activated`
+
+Where:
+- `{config-directory}` is the path passed via `--config-directory` (defaults to `~/.mina-config` on the host, or `/root/.mina-config` in Docker)
+- `{network_id}` is the network name (e.g., `mainnet` or `devnet`)
+
+For example, on a typical mainnet setup:
+
+```bash
+ls ~/.mina-config/auto-fork-mesa-mainnet/activated
+```
+
+- **File does not exist**: your node is using the pre-fork (Berkeley) binary
+- **File exists**: your node has transitioned to the Mesa binary
+
+## Can I run non-daemon commands or use a specific binary version?
+
+As described in [Dispatcher Limitations](/network-upgrades/mesa/upgrade-modes-details#dispatcher-limitations), the dispatcher supports `daemon`, `client`, and `--version`. For any other command — including `accounts list`, `ledger export`, and other CLI operations — **you must use the version-specific binary directly**:
+
+| Binary | Description | Full path |
+|---|---|---|
+| `mina-berkeley` | Pre-fork binary (current chain) | `/usr/lib/mina/berkeley/mina` |
+| `mina-mesa` | Post-fork binary (Mesa chain) | `/usr/lib/mina/mesa/mina` |
+
+```bash
+# Use mina-mesa for all non-daemon commands after the fork
+mina-mesa client status
+mina-mesa accounts list
+mina-mesa ledger export
+
+# Use mina-berkeley for pre-fork queries
+mina-berkeley client status
+```
+
+These symlinks (`mina-berkeley`, `mina-mesa`) are installed globally by the automode packages and are always available. They bypass the dispatcher entirely and run the binary directly, so they work regardless of the activation state.
+
+:::caution Do not manipulate the activation state file
+While it is technically possible to force the dispatcher to use a specific runtime by creating or removing the `activated` file, **this is strongly discouraged**. Manually manipulating the state file while the network is live can put your node on the wrong chain. If you need to run a specific version, use `mina-berkeley` or `mina-mesa` directly instead.
+:::
+
+## Debug mode
+
+Set `MINA_DISPATCHER_DEBUG=1` in your environment to see which binary and arguments the dispatcher is using:
+
+```bash
+MINA_DISPATCHER_DEBUG=1 mina daemon ...
+```
+
+For a dry run (print the command without executing):
+
+```bash
+MINA_DISPATCHER_DRYRUN=1 mina daemon ...
+```

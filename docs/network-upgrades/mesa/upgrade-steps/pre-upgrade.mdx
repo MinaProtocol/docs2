@@ -1,0 +1,264 @@
+---
+title: Pre-Upgrade
+sidebar_label: Pre-Upgrade
+hide_title: true
+description: Pre-upgrade preparation steps and readiness checklist for the Mesa hard fork, by operator type.
+keywords:
+  - Mesa
+  - upgrade
+  - pre-upgrade
+  - preparation
+  - checklist
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Pre-Upgrade
+
+During the Pre-Upgrade phase, node operators prepare their infrastructure for the Mesa hard fork. Select your role below and work through each item on the checklist.
+
+Hardware specifications (RAM, CPU, storage) for every role live on the [Requirements](/network-upgrades/mesa/requirements) page — the checklist below links to it rather than repeating concrete numbers, so the requirements stay in one place.
+
+## Readiness Checklist
+
+<Tabs groupId="operator-type">
+<TabItem value="block-producer" label="Block Producer" default>
+
+#### Infrastructure
+
+<ul className="checklist">
+  <li>Server meets <a href="/network-upgrades/mesa/requirements">hardware requirements</a> </li>
+  <li>Port 8302 (or custom <code>--external-port</code>) is open and reachable from the internet</li>
+  <li>If behind NAT/firewall, <code>--external-ip</code> is set to your public IP</li>
+  <li>Node is configured for <a href="/node-operators/validator-node/connecting-to-the-network#running-mina-node-as-a-service">auto-restart</a> (systemd or equivalent)</li>
+</ul>
+
+#### Keys and Credentials
+
+<ul className="checklist">
+  <li>Block producer key file is accessible and backed up</li>
+  <li>libp2p keypair is accessible (same key can be reused from before the upgrade)</li>
+</ul>
+
+#### Software Upgrade
+
+<ul className="checklist">
+  <li>Chosen an <a href="/network-upgrades/mesa/upgrade-modes">upgrade mode</a>: automode (recommended) or manual</li>
+  <li>Upgraded node to the current stable version</li>
+  <li>Installed stop-slot release <a href="https://github.com/MinaProtocol/mina/releases">3.x.x</a> <strong>before</strong> the <em>stop-transaction-slot</em></li>
+  <li>If using <strong>automode</strong>: installed both <code>mina-&#123;network&#125;-prefork-mesa</code> and <code>mina-&#123;network&#125;-postfork-mesa</code> packages (or the <a href="/network-upgrades/mesa/glossary#automode-image">automode Docker image</a>)</li>
+  <li>If using <strong>manual mode</strong>: installed <code>mina-mainnet=3.x.x</code> (stop-slot release only)</li>
+</ul>
+
+#### Verification
+
+<ul className="checklist">
+  <li>Node is running and synced after the upgrade</li>
+  <li>Node status shows correct version: <code>mina client status</code></li>
+</ul>
+
+</TabItem>
+<TabItem value="snark-coordinator" label="SNARK Coordinator">
+
+#### Infrastructure
+
+<ul className="checklist">
+  <li>Server meets <a href="/network-upgrades/mesa/requirements">hardware requirements</a></li>
+  <li>Port 8302 (or custom <code>--external-port</code>) is open and reachable</li>
+  <li>Node is configured for <a href="/node-operators/validator-node/connecting-to-the-network#running-mina-node-as-a-service">auto-restart</a></li>
+</ul>
+
+#### Keys
+
+<ul className="checklist">
+  <li>libp2p keypair is accessible</li>
+</ul>
+
+#### Software Upgrade
+
+<ul className="checklist">
+  <li>Chosen an <a href="/network-upgrades/mesa/upgrade-modes">upgrade mode</a>: automode (recommended) or manual</li>
+  <li>Upgraded node to the current stable version</li>
+  <li>Installed stop-slot release <a href="https://github.com/MinaProtocol/mina/releases">3.x.x</a> <strong>before</strong> the <em>stop-transaction-slot</em></li>
+  <li>If using <strong>automode</strong>: installed both prefork and postfork packages</li>
+  <li>If using <strong>manual mode</strong>: installed stop-slot release only</li>
+</ul>
+
+#### Verification
+
+<ul className="checklist">
+  <li>Node is running and synced</li>
+  <li>SNARK workers can connect to coordinator after upgrade</li>
+</ul>
+
+</TabItem>
+<TabItem value="snark-worker" label="SNARK Worker">
+
+There are two SNARK worker deployment patterns and they prepare differently for the fork:
+
+**1. Worker spawned by a coordinator** (`--run-snark-worker` set on the coordinator)
+
+<ul className="checklist">
+  <li>Server meets <a href="/network-upgrades/mesa/requirements">hardware requirements</a> (per-worker specs apply for each SNARK worker)</li>
+  <li>No independent upgrade action needed — the spawned worker inherits the coordinator's binary</li>
+  <li>Ensure the coordinator is on the stop-slot release before the fork</li>
+</ul>
+
+**2. Standalone worker** (`mina internal snark-worker …` run as a separate process or container)
+
+<ul className="checklist">
+  <li>Server meets <a href="/network-upgrades/mesa/requirements">hardware requirements</a> (per-worker specs apply for each SNARK worker)</li>
+  <li>Install the stop-slot release on the worker host as well — the worker must speak the same protocol as the coordinator</li>
+  <li>Plan a post-fork redeployment: the worker must be stopped and restarted with the Mesa binary after the coordinator transitions, otherwise it cannot submit work to the upgraded coordinator</li>
+</ul>
+
+:::info
+The "no independent upgrade" advice only applies to workers the coordinator spawns. Standalone `mina internal snark-worker` deployments need to be upgraded just like any other binary.
+:::
+
+</TabItem>
+<TabItem value="archive-node" label="Archive Node">
+
+#### Infrastructure
+
+<ul className="checklist">
+  <li>Server meets <a href="/network-upgrades/mesa/requirements">hardware requirements</a></li>
+  <li>Port 8302 (or custom <code>--external-port</code>) is open and reachable</li>
+  <li>Node is configured for <a href="/node-operators/validator-node/connecting-to-the-network#running-mina-node-as-a-service">auto-restart</a></li>
+</ul>
+
+#### Database Upgrade
+
+<ul className="checklist">
+  <li>Chosen archive upgrade method: <em>trustless</em> or <em>trustful</em></li>
+</ul>
+
+**If trustless:**
+
+<ul className="checklist">
+  <li>Downloaded and reviewed the <a href="/network-upgrades/mesa/archive-upgrade">upgrade script</a></li>
+  <li>Created a database backup: <code>pg_dump -U &lt;user&gt; &lt;db&gt; &gt; berkeley-archive-backup.sql</code></li>
+  <li>Ran the upgrade script (completes in under 1 minute)</li>
+  <li>Verified upgrade: <code>psql -U &lt;user&gt; -d &lt;db&gt; -c "SELECT * FROM version;"</code></li>
+</ul>
+
+**If trustful:**
+
+<ul className="checklist">
+  <li>No action now — wait for o1Labs database export during the Upgrade phase</li>
+</ul>
+
+#### Software Upgrade
+
+<ul className="checklist">
+  <li>Upgraded node to the current stable version</li>
+  <li>Installed stop-slot release <a href="https://github.com/MinaProtocol/mina/releases">3.x.x</a> <strong>before</strong> the <em>stop-transaction-slot</em></li>
+  <li>Archive node is running and capturing blocks</li>
+</ul>
+
+</TabItem>
+<TabItem value="rosetta" label="Rosetta API">
+
+#### Prerequisites
+
+<ul className="checklist">
+  <li>Complete the entire <strong>Archive Node</strong> checklist first (Rosetta depends on archive)</li>
+</ul>
+
+#### Rosetta-Specific
+
+<ul className="checklist">
+  <li>Reviewed the Rosetta Docker image version in <a href="/network-upgrades/mesa/upgrade-steps/post-upgrade">Post-Upgrade flags</a></li>
+  <li>Verified current Rosetta API is functional against existing archive database</li>
+</ul>
+
+</TabItem>
+<TabItem value="exchange" label="Exchange">
+
+#### Infrastructure
+
+<ul className="checklist">
+  <li>Server meets <a href="/network-upgrades/mesa/requirements">hardware requirements</a></li>
+  <li>Node is configured for <a href="/node-operators/validator-node/connecting-to-the-network#running-mina-node-as-a-service">auto-restart</a></li>
+</ul>
+
+#### Integration Testing
+
+<ul className="checklist">
+  <li>Tested system integration with Mesa features on the <a href="/network-upgrades/mesa/preflight-network">preflight network</a></li>
+  <li>Reviewed database schema changes in the <a href="/network-upgrades/mesa/appendix">Appendix</a> (if using archive database directly)</li>
+</ul>
+
+#### Software Upgrade
+
+<ul className="checklist">
+  <li>Upgraded node to the current stable version</li>
+  <li>Installed stop-slot release <a href="https://github.com/MinaProtocol/mina/releases">3.x.x</a> <strong>before</strong> the <em>stop-transaction-slot</em></li>
+</ul>
+
+#### Operations Plan
+
+<ul className="checklist">
+  <li>Plan in place to disable MINA deposits and withdrawals <strong>before</strong> <em>stop-transaction-slot</em></li>
+  <li>Customer communication prepared for the maintenance window</li>
+</ul>
+
+:::danger
+Any transactions submitted after the _stop-transaction-slot_ **will not exist on the Mesa chain**. Disable deposits and withdrawals before State Finalization begins.
+:::
+
+</TabItem>
+</Tabs>
+
+---
+
+## Detailed Steps
+
+Pick the same tab as in the Readiness Checklist above to see the narrative steps for your role.
+
+<Tabs groupId="operator-type">
+<TabItem value="block-producer" label="Block Producer" default>
+
+1. Provision servers that meet the [hardware requirements](/network-upgrades/mesa/requirements).
+2. Upgrade nodes to the stop-slot release [3.x.x](https://github.com/MinaProtocol/mina/releases), which has built-in stop slots.
+
+If you are using [Automode](/network-upgrades/mesa/upgrade-modes), no further action is needed until the [Post-Upgrade](/network-upgrades/mesa/upgrade-steps/post-upgrade) phase — your node will handle the transition automatically.
+
+</TabItem>
+<TabItem value="snark-coordinator" label="SNARK Coordinator">
+
+1. Provision servers that meet the [hardware requirements](/network-upgrades/mesa/requirements).
+2. Upgrade the coordinator to the stop-slot release [3.x.x](https://github.com/MinaProtocol/mina/releases) before the _stop-transaction-slot_.
+
+Coordinators cannot use Automode for the SNARK-worker role they spawn — Automode applies to the daemon process the coordinator itself runs. Standalone workers (next tab) need their own upgrade.
+
+</TabItem>
+<TabItem value="snark-worker" label="SNARK Worker">
+
+- **Worker spawned by a coordinator**: no independent action — the worker inherits the coordinator's binary.
+- **Standalone worker** (`mina internal snark-worker …`): install the stop-slot release on the worker host so the worker speaks the same protocol as the coordinator. After the fork, redeploy the worker with the Mesa binary.
+
+See the [Requirements](/network-upgrades/mesa/requirements) page for per-worker hardware specs.
+
+</TabItem>
+<TabItem value="archive-node" label="Archive Node / Rosetta">
+
+Two upgrade processes are available: _trustless_ and _trustful_. If you want to perform the _trustless_ upgrade, follow the steps below; otherwise, proceed to the [Upgrade](/network-upgrades/mesa/upgrade-steps/upgrade) phase. The _trustful_ approach relies on o1Labs database exports and Docker images and doesn't require any actions at this stage.
+
+1. Trustless upgrade:
+   - Perform the archive node schema upgrade. Since Mainnet is a long-lived network, the upgrade process is a very fast operation and boils down to running the upgrade script against your archive. It should not take more than 1 minute, depending on your server specification and infrastructure.
+   - For more information on the archive node upgrade process, please refer to the [Archive Upgrade](/network-upgrades/mesa/archive-upgrade) section.
+2. Provision servers that meet the [hardware requirements](/network-upgrades/mesa/requirements).
+3. Upgrade all nodes to the stop-slot release [3.x.x](https://github.com/MinaProtocol/mina/releases) before the pre-defined _stop-transaction-slot_.
+
+</TabItem>
+<TabItem value="exchange" label="Exchange">
+
+1. Make sure to test your system integration with Mesa's new features. Pay special attention to:
+   - If you rely on the archive node SQL database tables, review [Archive Node Schema Changes](/network-upgrades/mesa/appendix).
+2. Provision servers that meet the [hardware requirements](/network-upgrades/mesa/requirements).
+3. Upgrade all nodes to the stop-slot release [3.x.x](https://github.com/MinaProtocol/mina/releases) before the pre-defined _stop-transaction-slot_.
+
+</TabItem>
+</Tabs>
