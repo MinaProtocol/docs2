@@ -112,6 +112,17 @@ module.exports = {
         id: 'zkapps/zkapp-development-frameworks',
       },
       items: [
+  {
+          type: 'category',
+          label: 'protokit',
+          link: {
+            type: 'doc',
+            id: 'zkapps/protokit',
+          },
+          items: [
+            'zkapps/protokit',
+],
+        },
         {
           type: 'category',
           label: 'o1js',
