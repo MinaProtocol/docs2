@@ -11937,20 +11937,44 @@ url: /node-operators/rosetta/samples
 
 # Code Samples
 
-These samples use `curl` and [`jq`](https://jqlang.github.io/jq/) to interact with the Rosetta API. They assume a running Rosetta instance on `localhost:3087`.
+This section covers the Mina-specific bits of integrating with Rosetta. For each common task there is a short narrative page on what the pattern does and which Mina-specific objects are involved, plus a link to a runnable script in the mina repo that you can copy into your own integration.
 
-Set these shell variables before running the examples:
+## Runnable examples
+
+Working TypeScript scripts live in the mina repo under [`src/app/rosetta/examples/ts`](https://github.com/MinaProtocol/mina/tree/develop/src/app/rosetta/examples/ts). They use [`@o1-labs/mina-rosetta-sdk`](https://www.npmjs.com/package/@o1-labs/mina-rosetta-sdk) for the typed Rosetta HTTP surface and [`mina-signer`](https://www.npmjs.com/package/mina-signer) for transaction signing. The SDK is a light wrapper — typed endpoints Mina actually exposes plus the Mina-specific operation-builder helpers (`buildTransferOperations`, `buildDelegationOperations`).
+
+Quickstart:
 
 ```bash
-ROSETTA_URL="http://localhost:3087"
-NETWORK='{"blockchain":"mina","network":"mainnet"}'
+git clone https://github.com/MinaProtocol/mina.git
+cd mina/src/app/rosetta/examples/ts
+npm install
+cp env.example .env  # fill in ROSETTA_URL, NETWORK, addresses
+npm run account-balance
 ```
 
-All endpoints except `/network/list` require a `network_identifier` parameter. The samples include it in each request body.
+| Script | Page |
+| --- | --- |
+| `account-balance.ts` | smoke test for `/account/balance` |
+| `scan-blocks.ts` | [Scanning Blocks](scan-blocks) |
+| `track-deposits.ts` | [Tracking Deposits](track-deposits) |
+| `send-transaction.ts`, `offline-sign.ts` | [Sending Transactions](send-transactions) |
 
-:::tip
-Replace `mainnet` with `devnet` if you are testing against a devnet instance.
-:::
+## Why no TypeScript SDK?
+
+There is no upstream Coinbase-blessed TypeScript Rosetta/Mesh SDK — the only one they listed (`dfinity/rosetta-client`) was archived in August 2025. Mina ships its own at [`@o1-labs/mina-rosetta-sdk`](https://www.npmjs.com/package/@o1-labs/mina-rosetta-sdk), focused on the endpoints Mina's Rosetta server actually exposes plus the Mina-specific operation types. For Go integrators, [`coinbase/mesh-sdk-go`](https://github.com/coinbase/mesh-sdk-go) remains the canonical Mesh client.
+
+## Network identifier
+
+All endpoints except `/network/list` require a `network_identifier` parameter. For Mina:
+
+```json
+{ "blockchain": "mina", "network": "mainnet" }
+```
+
+Replace `mainnet` with `devnet` to point at devnet. The SDK's `RosettaClient` injects the network identifier into every request automatically.
+
+For the Mina-specific request and response objects (operation types, transfer transaction layout, currency, token IDs), see [Requests and Responses](requests).
 
 ---
 url: /node-operators/rosetta/samples/requests
@@ -11958,9 +11982,16 @@ url: /node-operators/rosetta/samples/requests
 
 # Requests and Responses
 
-The Rosetta API specification defines high-level descriptions of request and response objects. Exact JSON layouts differ between blockchains. This page covers Mina-specific objects and shows how to query each endpoint with curl.
+The Rosetta API specification defines high-level descriptions of request and response objects. Exact JSON layouts differ between blockchains. This page covers Mina-specific objects.
 
-All examples assume the shell variables from the [Code Samples](/node-operators/rosetta/samples) setup.
+For the runnable examples that exercise these endpoints, see the [TypeScript scripts](/node-operators/rosetta/samples) in the mina repo. The curl snippets below are illustrative — copy them for quick exploration, but adapt the runnable scripts for production code.
+
+Set these shell variables to follow along:
+
+```bash
+ROSETTA_URL="http://localhost:3087"
+NETWORK='{"blockchain":"mina","network":"mainnet"}'
+```
 
 ## Network endpoints
 
@@ -12146,47 +12177,36 @@ url: /node-operators/rosetta/samples/scan-blocks
 
 # Scanning Blocks
 
-To poll for new blocks, query `/network/status` for the current block height, then fetch each block sequentially.
+The pattern: query `/network/status` for the current chain tip, then fetch each block by index sequentially. When `/block` returns `{ block: null }` the height is not yet produced — wait and retry.
 
-Get the current block height:
+This is the foundation of every other read-side integration (deposit tracking, search, custodial reconciliation). The full runnable version is at [`src/app/rosetta/examples/ts/scan-blocks.ts`](https://github.com/MinaProtocol/mina/blob/develop/src/app/rosetta/examples/ts/scan-blocks.ts). The core loop:
 
-```bash
-curl -s "$ROSETTA_URL/network/status" \
-  -H 'Content-Type: application/json' \
-  -d "{\"network_identifier\":$NETWORK}" | jq '.current_block_identifier.index'
+```ts
+let height = (await client.networkStatus()).current_block_identifier.index;
+
+while (true) {
+  const { block } = await client.block({ index: height });
+  if (!block) {
+    await sleep(POLL_INTERVAL_MS);
+    continue;
+  }
+  for (const tx of block.transactions) {
+    console.log(tx.transaction_identifier.hash);
+  }
+  height += 1;
+}
 ```
 
-Fetch a specific block by index:
+## Mina-specific notes
 
-```bash
-BLOCK_INDEX=1000
+- **Block index vs hash**: `/block` accepts either `{ index: number }` or `{ hash: string }`. Index is simpler for sequential scanning; hash is useful when reconciling against an external source.
+- **Reorgs**: Mina has a finite reorg window. If you build state from blocks before final confirmation, persist the parent hash and detect divergence — when the new block at height `N` doesn't reference the hash you saw at height `N-1`, walk back and reapply.
+- **Confirmations**: see [Lifecycle of a Payment](/mina-protocol/lifecycle-of-a-payment) for how many slots to wait before treating a transaction as final.
+- **Skipped slots**: Mina has empty slots (no block produced). If you only see a `null` response, you may need to skip the slot or wait for the next block, depending on whether you index by block height or slot.
 
-curl -s "$ROSETTA_URL/block" \
-  -H 'Content-Type: application/json' \
-  -d "{\"network_identifier\":$NETWORK,\"block_identifier\":{\"index\":$BLOCK_INDEX}}" | jq .
-```
+## Want it in shell?
 
-A simple polling loop that waits for new blocks:
-
-```bash
-HEIGHT=$(curl -s "$ROSETTA_URL/network/status" \
-  -H 'Content-Type: application/json' \
-  -d "{\"network_identifier\":$NETWORK}" | jq '.current_block_identifier.index')
-
-while true; do
-  BLOCK=$(curl -s "$ROSETTA_URL/block" \
-    -H 'Content-Type: application/json' \
-    -d "{\"network_identifier\":$NETWORK,\"block_identifier\":{\"index\":$HEIGHT}}")
-
-  if echo "$BLOCK" | jq -e '.block' > /dev/null 2>&1; then
-    echo "Block $HEIGHT:"
-    echo "$BLOCK" | jq '.block.transactions[] | .transaction_identifier.hash'
-    HEIGHT=$((HEIGHT + 1))
-  else
-    sleep 10
-  fi
-done
-```
+A curl-based loop is in the mina repo at [`src/app/rosetta/test-curl/`](https://github.com/MinaProtocol/mina/tree/develop/src/app/rosetta/test-curl). Useful for exploration; not intended as production code.
 
 ---
 url: /node-operators/rosetta/samples/send-transactions
@@ -12195,157 +12215,56 @@ url: /node-operators/rosetta/samples/send-transactions
 # Sending Transactions
 
 :::info
-This flow follows the [Construction API Overview](https://docs.cloud.coinbase.com/rosetta/docs/construction-api-overview) from the official Rosetta documentation.
+This page covers the Mina-specific bits. For generic Construction API behavior see the [Mesh Construction API overview](https://docs.cdp.coinbase.com/mesh/docs/construction-api-overview).
 :::
 
-The steps to send a MINA payment:
+The full Construction API flow:
 
-1. Derive the account address from a public key
-2. Build the unsigned transaction via preprocess → metadata → payloads
-3. Sign offline with the [signer tool](/node-operators/mina-signer)
-4. Combine the signature into a signed blob
-5. Submit the signed transaction
+1. **preprocess** — given the operations, return options the metadata call needs
+2. **metadata** — given those options, return suggested fee, nonce, etc.
+3. **payloads** — given operations + metadata, return an unsigned transaction and the bytes to sign
+4. **sign** — sign the bytes offline (Pallas curve)
+5. **combine** — package the unsigned transaction with signatures into a signed transaction blob
+6. **submit** — broadcast the signed transaction
 
-## Prerequisites
+For Mina, [`mina-signer`](https://www.npmjs.com/package/mina-signer) handles step 4 plus the formatting of step 5's input. The `rosettaCombinePayload(payloadsResponse, privateKey)` helper takes the result of `/construction/payloads` and produces the body for `/construction/combine` directly.
 
-- A key pair generated with the [offline signer tool](/node-operators/mina-signer)
-- The account must have a balance (send test funds on devnet first)
-- Set the shell variables from the [Code Samples](/node-operators/rosetta/samples) setup
+The full runnable version is at [`src/app/rosetta/examples/ts/send-transaction.ts`](https://github.com/MinaProtocol/mina/blob/develop/src/app/rosetta/examples/ts/send-transaction.ts). Core flow:
 
-Set your keys and transfer parameters:
+```ts
+const operations = buildTransferOperations({ sender, receiver, amountNanomina, feeNanomina });
 
-```bash
-PUBLIC_KEY="YOUR_PUBLIC_KEY_HEX"
-SENDER="B62q..."
-RECEIVER="B62q..."
-TOKEN_ID="wSHV2S4qX9jFsLjQo8r1BsMLH2ZRKsZx6EJd1sbozGPieEC4Jf"
-FEE=10000000        # 0.01 MINA in nanomina
-VALUE=1000000000    # 1 MINA in nanomina
+const { options } = await rosetta.constructionPreprocess(operations);
+const { metadata } = await rosetta.constructionMetadata(options, publicKeys);
+const payloadsResponse = await rosetta.constructionPayloads(operations, metadata, publicKeys);
+
+const combine = signer.rosettaCombinePayload(payloadsResponse, privateKey);
+const { signed_transaction } = await rosetta.constructionCombine(
+  combine.unsigned_transaction,
+  combine.signatures,
+);
+const result = await rosetta.constructionSubmit(signed_transaction);
 ```
 
-## Step 1: Derive account address
+## Cold-signing setup
 
-```bash
-curl -s "$ROSETTA_URL/construction/derive" \
-  -H 'Content-Type: application/json' \
-  -d "{
-    \"network_identifier\":$NETWORK,
-    \"public_key\":{\"hex_bytes\":\"$PUBLIC_KEY\",\"curve_type\":\"pallas\"}
-  }" | jq .
-```
+For exchanges that keep signing keys on an air-gapped machine, the Construction API splits naturally across the network boundary:
 
-## Step 2: Build the operations payload
+- **Online host** runs preprocess → metadata → payloads, persists the response
+- **Offline host** reads the persisted payload, signs it with `mina-signer`, persists the result
+- **Online host** reads the signed result, calls combine → submit
 
-Construct the three operations that represent a MINA transfer (see [Requests and Responses](requests#transfer-transaction-layout) for details on the structure):
+See [`src/app/rosetta/examples/ts/offline-sign.ts`](https://github.com/MinaProtocol/mina/blob/develop/src/app/rosetta/examples/ts/offline-sign.ts) for the same flow split across the boundary, with on-disk handoff files standing in for the network gap.
 
-```bash
-OPERATIONS='[
-  {
-    "operation_identifier":{"index":0},
-    "type":"fee_payment",
-    "account":{"address":"'"$SENDER"'","metadata":{"token_id":"'"$TOKEN_ID"'"}},
-    "amount":{"value":"-'"$FEE"'","currency":{"symbol":"MINA","decimals":9}}
-  },
-  {
-    "operation_identifier":{"index":1},
-    "type":"payment_source_dec",
-    "account":{"address":"'"$SENDER"'","metadata":{"token_id":"'"$TOKEN_ID"'"}},
-    "amount":{"value":"-'"$VALUE"'","currency":{"symbol":"MINA","decimals":9}}
-  },
-  {
-    "operation_identifier":{"index":2},
-    "related_operations":[{"index":1}],
-    "type":"payment_receiver_inc",
-    "account":{"address":"'"$RECEIVER"'","metadata":{"token_id":"'"$TOKEN_ID"'"}},
-    "amount":{"value":"'"$VALUE"'","currency":{"symbol":"MINA","decimals":9}}
-  }
-]'
-```
+## Mina-specific notes
 
-## Step 3: Preprocess
-
-```bash
-PREPROCESS=$(curl -s "$ROSETTA_URL/construction/preprocess" \
-  -H 'Content-Type: application/json' \
-  -d "{\"network_identifier\":$NETWORK,\"operations\":$OPERATIONS}")
-
-echo "$PREPROCESS" | jq .
-```
-
-## Step 4: Metadata
-
-```bash
-METADATA=$(curl -s "$ROSETTA_URL/construction/metadata" \
-  -H 'Content-Type: application/json' \
-  -d "$(echo "$PREPROCESS" | jq -c ". + {
-    \"network_identifier\":$NETWORK,
-    \"public_keys\":[{\"hex_bytes\":\"$PUBLIC_KEY\",\"curve_type\":\"pallas\"}]
-  }")")
-
-echo "$METADATA" | jq .
-```
-
-## Step 5: Payloads (unsigned transaction)
-
-```bash
-PAYLOADS=$(curl -s "$ROSETTA_URL/construction/payloads" \
-  -H 'Content-Type: application/json' \
-  -d "$(echo "$METADATA" | jq -c ". + {
-    \"network_identifier\":$NETWORK,
-    \"operations\":$OPERATIONS
-  }")")
-
-echo "$PAYLOADS" | jq .
-UNSIGNED_TX=$(echo "$PAYLOADS" | jq -r '.unsigned_transaction')
-```
-
-## Step 6: Sign offline
-
-Use the [signer CLI tool](/node-operators/mina-signer#signing-a-transaction-with-signer-cli):
-
-```bash
-SIGNATURE=$(signer sign --private-key "$PRIVATE_KEY" --unsigned-transaction "$UNSIGNED_TX")
-```
-
-## Step 7: Combine
-
-```bash
-SIGNING_PAYLOAD=$(echo "$PAYLOADS" | jq -c '.payloads[0]')
-
-COMBINE=$(curl -s "$ROSETTA_URL/construction/combine" \
-  -H 'Content-Type: application/json' \
-  -d "{
-    \"network_identifier\":$NETWORK,
-    \"unsigned_transaction\":\"$UNSIGNED_TX\",
-    \"signatures\":[{
-      \"signing_payload\":$SIGNING_PAYLOAD,
-      \"public_key\":{\"hex_bytes\":\"$PUBLIC_KEY\",\"curve_type\":\"pallas\"},
-      \"signature_type\":\"schnorr_poseidon\",
-      \"hex_bytes\":\"$SIGNATURE\"
-    }]
-  }")
-
-SIGNED_TX=$(echo "$COMBINE" | jq -r '.signed_transaction')
-echo "$COMBINE" | jq .
-```
-
-## Step 8: Get transaction hash
-
-```bash
-curl -s "$ROSETTA_URL/construction/hash" \
-  -H 'Content-Type: application/json' \
-  -d "{\"network_identifier\":$NETWORK,\"signed_transaction\":\"$SIGNED_TX\"}" | jq .
-```
-
-## Step 9: Submit
-
-```bash
-curl -s "$ROSETTA_URL/construction/submit" \
-  -H 'Content-Type: application/json' \
-  -d "{\"network_identifier\":$NETWORK,\"signed_transaction\":\"$SIGNED_TX\"}" | jq .
-```
-
-After submission, you can monitor for confirmation using the [block scanning](scan-blocks) approach — poll blocks until your transaction hash appears.
+- **Three operations per transfer**: `fee_payment` (sender pays fee), `payment_source_dec` (sender decrement), `payment_receiver_inc` (receiver increment). Build them with the SDK's `buildTransferOperations()` helper or see the [transfer transaction layout](requests#transfer-transaction-layout).
+- **Curve type is `pallas`**, not `secp256k1` or `edwards25519` as in some other chains.
+- **Signature type is `schnorr_poseidon`**.
+- **Amounts are nanomina** strings: 1 MINA = 1,000,000,000 nanomina. Negative values represent debits (fee, source decrement).
+- **Token ID defaults to `wSHV2S4qX9jFsLjQo8r1BsMLH2ZRKsZx6EJd1sbozGPieEC4Jf`** for MINA. Set this on every operation's `account.metadata.token_id`.
+- **Account creation fee**: if the receiver address has never been used, a 1 MINA account creation fee is charged automatically. Surface this in your UI.
+- **Confirmations**: monitor by [scanning blocks](scan-blocks) for the returned `transaction_identifier.hash`. See [Lifecycle of a Payment](/mina-protocol/lifecycle-of-a-payment) for how many slots to wait.
 
 ---
 url: /node-operators/rosetta/samples/track-deposits
@@ -12353,64 +12272,35 @@ url: /node-operators/rosetta/samples/track-deposits
 
 # Tracking Deposits
 
-To track deposits, scan each block for `payment_receiver_inc` operations matching your deposit address.
+The pattern: scan blocks (see [Scanning Blocks](scan-blocks)) and within each block, filter operations by:
 
-Fetch a block and filter for deposits to a specific address:
+1. `type === "payment_receiver_inc"` — operation that credits an account
+2. `account.address === <your deposit address>`
+3. `status !== "Failed"` — exclude operations from rolled-back transactions
 
-```bash
-DEPOSIT_ADDRESS="B62qr..."
-BLOCK_INDEX=1000
+Each matching operation represents one credit to the address. Sum or record them per transaction depending on how your accounting works.
 
-curl -s "$ROSETTA_URL/block" \
-  -H 'Content-Type: application/json' \
-  -d "{\"network_identifier\":$NETWORK,\"block_identifier\":{\"index\":$BLOCK_INDEX}}" \
-  | jq --arg addr "$DEPOSIT_ADDRESS" '
-    .block.transactions[]
-    | {
-        tx_hash: .transaction_identifier.hash,
-        deposits: [
-          .operations[]
-          | select(.account.address == $addr and .type == "payment_receiver_inc")
-          | { amount: .amount.value }
-        ]
-      }
-    | select(.deposits | length > 0)
-  '
+The full runnable version is at [`src/app/rosetta/examples/ts/track-deposits.ts`](https://github.com/MinaProtocol/mina/blob/develop/src/app/rosetta/examples/ts/track-deposits.ts). The filter:
+
+```ts
+function isDeposit(op: Operation, address: string): boolean {
+  return (
+    op.type === "payment_receiver_inc" &&
+    op.status !== "Failed" &&
+    op.account?.address === address &&
+    !!op.amount
+  );
+}
 ```
 
-A continuous deposit monitoring loop:
+## Mina-specific notes
 
-```bash
-DEPOSIT_ADDRESS="B62qr..."
-
-HEIGHT=$(curl -s "$ROSETTA_URL/network/status" \
-  -H 'Content-Type: application/json' \
-  -d "{\"network_identifier\":$NETWORK}" | jq '.current_block_identifier.index')
-
-while true; do
-  BLOCK=$(curl -s "$ROSETTA_URL/block" \
-    -H 'Content-Type: application/json' \
-    -d "{\"network_identifier\":$NETWORK,\"block_identifier\":{\"index\":$HEIGHT}}")
-
-  if echo "$BLOCK" | jq -e '.block' > /dev/null 2>&1; then
-    echo "$BLOCK" | jq --arg addr "$DEPOSIT_ADDRESS" '
-      .block.transactions[]
-      | {
-          tx_hash: .transaction_identifier.hash,
-          deposits: [
-            .operations[]
-            | select(.account.address == $addr and .type == "payment_receiver_inc")
-            | { amount: .amount.value }
-          ]
-        }
-      | select(.deposits | length > 0)
-    '
-    HEIGHT=$((HEIGHT + 1))
-  else
-    sleep 10
-  fi
-done
-```
+- **`payment_receiver_inc` is the operation type to filter on**, not `transfer` or similar. Mina's transfer is represented as three distinct operations (fee, source decrement, receiver increment) — the receiver credit is what you care about for deposits. See [Transfer transaction layout](requests#transfer-transaction-layout).
+- **Token IDs**: the default MINA token ID is `wSHV2S4qX9jFsLjQo8r1BsMLH2ZRKsZx6EJd1sbozGPieEC4Jf`. If you support custom tokens, also check `op.account.metadata.token_id`.
+- **Amounts are nanomina** (`decimals: 9`). Display as MINA by dividing by 10⁹.
+- **Failed transactions** still appear in `block.transactions` with operations marked `status: "Failed"`. Always check status before crediting.
+- **Account creation fee**: a deposit to a brand-new address pays a one-time 1 MINA account creation fee that appears as a separate operation. The receiver still receives the full deposit amount minus this fee.
+- **Memos**: Mina supports an optional memo field, but the recommended best practice is **not to require memos** for deposit attribution — see the [FAQ](/node-operators/faq#why-do-some-users-appear-to-have-lost-their-funds-when-sending-to-exchanges).
 
 ---
 url: /node-operators/seed-peers/docker-compose
