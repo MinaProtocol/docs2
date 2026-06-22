@@ -13970,9 +13970,9 @@ Please note the following are the hardware requirements for each node type after
 
 | Node Type | Memory | CPU | Storage | Network |
 |--|--|--|--|--|
-| Block Producer | 32 GB RAM | 8 core processor with BMI2 and AVX CPU instruction set are required | 64 GB | 1 Mbps Internet Connection |
+| Block Producer | 32 GB RAM | 8 core processor with BMI2, ADX and AVX CPU instruction set are required | 64 GB | 1 Mbps Internet Connection |
 | SNARK Coordinator | 32 GB RAM | 8 core processor | 64 GB | 1 Mbps Internet Connection |
-| SNARK Worker | 32 GB RAM | 4 core/8 threads per worker with BMI2 and AVX CPU instruction set are required | 64 GB | 1 Mbps Internet Connection |
+| SNARK Worker | 32 GB RAM | 4 core/8 threads per worker with BMI2. ADX and AVX CPU instruction set are required | 64 GB | 1 Mbps Internet Connection |
 | Archive Node | 32 GB RAM | 8 core processor | 64 GB | 1 Mbps Internet Connection |
 | Rosetta API standalone Docker image | 32 GB RAM | 8 core processor | 64 GB | 1 Mbps Internet Connection |
 | Mina Seed Node | 64 GB RAM | 8 core processor | 64 GB | 1 Mbps Internet Connection |
@@ -17574,6 +17574,73 @@ For more details and examples, please refer to the following GitHub resources:
 - [Indexed Merkle Tree: o1js PR#1666](https://github.com/o1-labs/o1js/pull/1666)
 - [IndexedMerkleMap: Support 0 and -1 Keys: o1js PR#1671](https://github.com/o1-labs/o1js/pull/1671)
 - [Mastermind zkApp Example Using Indexed Merkle Map](https://github.com/o1-labs-XT/mastermind-zkApp/tree/level3)
+
+---
+url: /zkapps/protokit
+---
+
+# Protokit
+
+## Introduction to Protokit 
+
+Protokit is a **development framework for building zkApps** requiring shared state. Built on top of o1js, Protokit simplifies the developer experience, increases throughput, and decreases latency by orchestrating state transitions between an off-chain sequencer and the Mina L1.
+
+Further features, such as runtime abstractions and merkelized data storage, provide components out of the box that zkApp developers would otherwise have to build on top of o1js. 
+
+**Please note that Protokit is in alpha, and settlement support with reorgs is still in progress.**
+
+
+<table>
+  <tr>
+   <td>Info
+   </td>
+  </tr>
+  <tr>
+   <td>Protokit dramatically simplifies the development experience for Mina’s <a href="https://docs.minaprotocol.com/zkapps/writing-a-zkapp/feature-overview/actions-and-reducer">Actions & Reducers</a>, enabling zkApp developers to build more complex applications. 
+   </td>
+  </tr>
+</table>
+
+
+
+## Key benefits of using Protokit
+
+**Concurrency:** Solves concurrency issues for applications with shared state through a novel hybrid execution model.
+
+**Performance**: Improves throughput (TPS) and latency on block production while maintaining Mina L1’s security.
+
+**Developer Experience:** Saves developers writing thousands of lines of code by providing an integrated, verifiable storage solution.
+
+**Flexibility:** Provides a modular architecture that developers can easily customize for their own application’s needs. 
+
+**Zero Knowledge:** Uses the same primitives and proofs as o1js, so Protokit code is provable and compatible with the Mina blockchain by design. 
+
+
+## When to use Protokit
+
+Protokit is well-suited for high-throughput zkApps with multiple concurrent users and applications requiring shared state.
+
+Use Protokit for:
+
+
+
+* DEXes
+* Lending protocols
+* Gaming
+* Lotteries
+* NFT marketplaces
+* Anything that needs a shared state
+
+Choosing [which Protokit mode to use](https://docs.minaprotocol.com/zkapps/zkapp-development-frameworks) (Based Sequencing or Hybrid Sequencing mode) depends on what you’re looking to optimize for in your own zkApp. 
+
+Start here:
+
+
+
+* [zkApp development frameworks (when to use Protokit vs. o1js)](https://docs.minaprotocol.com/zkapps/zkapp-development-frameworks)
+* [Developer documentation](https://protokit.dev/docs/what-is-protokit)
+* [Protokit repository](https://github.com/proto-kit)
+* [Starter Kit](https://github.com/proto-kit/starter-kit)
 
 ---
 url: /zkapps/roadmap
