@@ -120,23 +120,33 @@ The official ledger checkpoint published with the [Mesa release](#mesa-release).
 
 ## Mesa-Specific Changes and Conventions
 
-Mesa bundles four Mina Improvement Proposals (MIPs) that change protocol behavior. Full descriptions live in the [Mesa overview](/network-upgrades/mesa#what-mesa-introduces); the brief definitions below link each to its canonical spec.
+Mesa bundles four Mina Improvement Proposals (MIPs) that change protocol behavior. The canonical MIP specs live in the [MinaProtocol/MIPs](https://github.com/MinaProtocol/MIPs/tree/main/MIPS) repository; each section below links to the spec for the proposal it describes.
 
-### Faster Blocks
+### Faster Blocks — [MIP6](https://github.com/MinaProtocol/MIPs/blob/main/MIPS/mip-0006-slot-reduction-90s.md)
 
-Mesa reduces the slot time to 90 seconds and unsets the default zkApp soft limit (previously 24 commands per block). Defined in [MIP6](https://github.com/MinaProtocol/MIPs/blob/main/MIPS/mip-0006-slot-reduction-90s.md).
+Mesa halves Mina's slot time from **180 seconds to 90 seconds**, doubling block production frequency. To keep the long-term token emission rate flat, the per-block **coinbase reward is also halved** (from 720 MINA to 360 MINA). The total Mina supplied per epoch is unchanged.
 
-### Expanded zkApp State
+Several second-order consequences flow from the slot-time change:
 
-Mesa increases the on-chain state available to zkApps from 8 fields (indexes `0–7`) to 32 fields (indexes `0–31`) per account. This applies to both the `zkapp_states` and `zkapp_states_nullable` database tables. Defined in [MIP7](https://github.com/MinaProtocol/MIPs/blob/main/MIPS/mip-0007-increase-state-size-limit.md). See [Archive Node Schema Changes](/network-upgrades/mesa/appendix/archive-node-schema-changes) for the SQL diff.
+- **Epoch duration halves** from ~14.9 days to ~7.4 days. Scripts and operational procedures tied to epoch boundaries (delegation cooldown, automated payouts, monitoring dashboards) trigger about twice as often.
+- **Vesting schedules on active vesting accounts are automatically migrated** during the hard fork so they continue unlocking on the same real-world cadence. No operator action is required.
+- **SNARK coordinators handling maximum-cost zkApp transactions should deploy at least 4 workers** (≈4 CPU cores each) to keep up with the new 90-second slot timing. A prerequisite SNARK-worker parallelization is delivered via soft fork before Mesa.
 
-### Larger Events and Actions
+### Expanded zkApp State — [MIP7](https://github.com/MinaProtocol/MIPs/blob/main/MIPS/mip-0007-increase-state-size-limit.md)
 
-Mesa raises the per-transaction limit on events and actions from 100 to 1024 field elements each, and removes the previous 16-field-element cap per individual event or action. Defined in [MIP8](https://github.com/MinaProtocol/MIPs/blob/main/MIPS/mip-0008-increase-events-actions-limit.md).
+Mesa raises the on-chain state available to a zkApp account from **8 field elements (indexes `0–7`) to 32 field elements (indexes `0–31`)**. zkApps can now store roughly four times more data directly on chain without off-chain workarounds. This applies to both the `zkapp_states` and `zkapp_states_nullable` database tables. See [Archive Node Schema Changes](/network-upgrades/mesa/appendix/archive-node-schema-changes) for the SQL diff.
 
-### Larger zkApp Transactions
+### Larger Events and Actions — [MIP8](https://github.com/MinaProtocol/MIPs/blob/main/MIPS/mip-0008-increase-events-actions-limit.md)
 
-Mesa roughly triples the maximum number of account updates a single zkApp transaction can contain. Defined in [MIP9](https://github.com/MinaProtocol/MIPs/blob/main/MIPS/mip-0009-increase-zkapp-account-update-limit.md).
+Mesa raises the per-transaction limit on events and actions from **100 field elements to 1024 field elements** for each. The previous cap of 16 field elements per individual event or action is also removed. This makes events and actions a viable channel for richer on-chain signaling and larger off-chain dispatch payloads in a single transaction.
+
+Mostly relevant to zkApp developers — node operators do not need to act on this change, but block producers will validate against the new limits automatically after the fork.
+
+### Larger zkApp Transactions — [MIP9](https://github.com/MinaProtocol/MIPs/blob/main/MIPS/mip-0009-increase-zkapp-account-update-limit.md)
+
+Mesa **roughly triples** the maximum number of account updates a single zkApp transaction can contain. The previous weighted-cost formula (`10.26·np + 10.08·n2 + 9.14·n1 < 69.45`) is replaced with a simpler `np + n2 + n1 ≤ 16` rule that admits any balanced binary proof tree of height 4.
+
+This depends on the SNARK-worker parallelization shipped as a prerequisite for [MIP6](https://github.com/MinaProtocol/MIPs/blob/main/MIPS/mip-0006-slot-reduction-90s.md) — without it, processing maximum-size transactions inside a 90-second slot would not be feasible.
 
 ### Mesa Package Naming Convention
 

@@ -341,6 +341,10 @@ module.exports = {
             to: '/network-upgrades/mesa/archive-upgrade',
           },
           {
+            from: '/mesa-upgrade/fork-schedule',
+            to: '/network-upgrades/mesa/upgrade-steps/upgrade',
+          },
+          {
             from: '/mesa-upgrade/flags-configs',
             to: '/network-upgrades/mesa/upgrade-steps/post-upgrade',
           },
@@ -351,6 +355,10 @@ module.exports = {
           {
             from: '/network-upgrades/mesa/appendix',
             to: '/network-upgrades/mesa/appendix/archive-node-schema-changes',
+          },
+          {
+            from: '/network-upgrades/mesa/fork-schedule',
+            to: '/network-upgrades/mesa/upgrade-steps/upgrade',
           },
           {
             from: '/network-upgrades/mesa/upgrade-modes-details',

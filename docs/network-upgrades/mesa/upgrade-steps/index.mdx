@@ -23,7 +23,7 @@ The Mesa upgrade proceeds through four sequential phases. Each phase has specifi
 | [Pre-Upgrade](/network-upgrades/mesa/requirements) | Prepare infrastructure, upgrade to the stop-slot release, run archive upgrade scripts |
 | [State Finalization](/network-upgrades/mesa/upgrade-steps/state-finalization) | 100-slot stabilization period — no new transactions accepted, block production continues |
 | [Upgrade](/network-upgrades/mesa/upgrade-steps/upgrade) | Network halts, state is exported, Mesa build is published |
-| [Post-Upgrade](/network-upgrades/mesa/upgrade-steps/post-upgrade) | Block production resumes on Mesa, flags and configurations for the new network |
+| [Post-Upgrade](/network-upgrades/mesa/upgrade-steps/post-upgrade) | Block production resumes on Mesa — verification and health checks for the new network |
 
 **Please note:** A simplified Node Status service will be part of the upgrade tooling and enabled by default in the Pre-Upgrade release with stop-slots ([3.x.x](https://github.com/MinaProtocol/mina/releases)). This feature allows for a safe upgrade by monitoring the amount of upgraded active stake. Only non-sensitive data is reported.
 
@@ -37,7 +37,7 @@ Role-specific quick references:
 
 - **Block Producers & SNARK Coordinators** — pick a mode on [Upgrade Modes](/network-upgrades/mesa/upgrade-modes). Install commands for automode are in [Upgrade Modes — Installing automode](/network-upgrades/mesa/upgrade-modes#installing-automode).
 - **SNARK Workers** — coordinator-spawned workers inherit the coordinator's binary; standalone `mina internal snark-worker` deployments must be redeployed with the Mesa binary after the fork.
-- **Archive Node Operators** — archive nodes do **not** support automode. See [Archive Upgrade](/network-upgrades/mesa/archive-upgrade) for the schema upgrade and trustless/trustful paths.
+- **Archive Node Operators** — Archive nodes do **not** support automode (see [Upgrade Modes](/network-upgrades/mesa/upgrade-modes) for limitations). See [Archive Upgrade](/network-upgrades/mesa/archive-upgrade) for the schema upgrade and trustless/trustful paths.
 - **Exchanges** — disable MINA deposits and withdrawals before the _stop-transaction-slot_ and keep them disabled until Mesa block production resumes. See [Exchanges](/network-upgrades/mesa/upgrade-steps/post-upgrade) on the Post-Upgrade page for the re-enable checklist.
 
 :::danger For exchanges

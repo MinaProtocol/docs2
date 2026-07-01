@@ -1,0 +1,202 @@
+---
+title: Connect to Mesa Preflight Network
+sidebar_label: Preflight Setup
+description: Step-by-step instructions for connecting daemon, archive, and Rosetta nodes to the Mesa preflight testing network.
+keywords:
+  - Mesa upgrade
+  - preflight network
+  - testing network
+  - mesa daemon
+  - docker
+  - debian packages
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Connect to Mesa Preflight Network
+
+The Mesa preflight network is a testing environment for validating the Mesa upgrade before deployment to devnet and mainnet. This page walks through connecting each node type.
+
+Before starting, check the [Preflight Network](/network-upgrades/mesa/preflight-network) page for the current build versions, Docker image tags, and Debian package names.
+
+:::caution Preflight Network Notice
+
+The preflight network is intended for testing purposes only. This network may experience instability, breaking changes, and unexpected behavior. Data on this network should not be considered persistent or reliable.
+
+:::
+
+## Connecting to the Network
+
+All node types must use the preflight network seed peer list:
+
+```bash
+--peer-list-url https://storage.googleapis.com/o1labs-gitops-infrastructure/mina-mesa-network/mina-mesa-network-seeds.txt
+```
+
+<Tabs groupId="install-method">
+<TabItem value="docker" label="Docker" default>
+
+### Mina Daemon
+
+```bash
+docker run --name mina-mesa-preflight -d \
+  -p 8302:8302 \
+  --restart=always \
+  gcr.io/o1labs-192920/mina-daemon:4.0.0-preflight-3f038cb-bookworm-mesa \
+  daemon \
+  --peer-list-url https://storage.googleapis.com/o1labs-gitops-infrastructure/mina-mesa-network/mina-mesa-network-seeds.txt
+```
+
+For production deployments, mount config directories and add additional flags:
+
+```bash
+docker run --name mina-mesa-preflight -d \
+  -p 8302:8302 \
+  --restart=always \
+  -v $(pwd)/.mina-config:/root/.mina-config \
+  gcr.io/o1labs-192920/mina-daemon:4.0.0-preflight-3f038cb-bookworm-mesa \
+  daemon \
+  --peer-list-url https://storage.googleapis.com/o1labs-gitops-infrastructure/mina-mesa-network/mina-mesa-network-seeds.txt \
+  --libp2p-keypair /data/.mina-config/keys/libp2p-key
+```
+
+### Archive Node
+
+```bash
+docker run --name mina-archive-mesa -d \
+  -p 3086:3086 \
+  --restart=always \
+  gcr.io/o1labs-192920/mina-archive:4.0.0-preflight-3f038cb-bookworm-mesa \
+  mina-archive run \
+  --postgres-uri postgresql://archive_user:your-secure-password@postgres-host:5432/archive \
+  --server-port 3086
+```
+
+If upgrading an existing Berkeley database, see [Archive Upgrade](/network-upgrades/mesa/archive-upgrade).
+
+### Rosetta API
+
+```bash
+docker run --name mina-rosetta-mesa -d \
+  -p 3087:3087 \
+  --restart=always \
+  gcr.io/o1labs-192920/mina-rosetta:4.0.0-preflight-3f038cb-bookworm-mesa \
+  --port 3087 \
+  --archive-uri http://archive-host:3086/graphql \
+  --graphql-uri http://mina-daemon-host:3085/graphql
+```
+
+**Note:** Rosetta requires a running Mina daemon (port 3085) and archive node (port 3086). Both must be fully synced.
+
+</TabItem>
+<TabItem value="debian" label="Debian">
+
+First, install dependencies and configure the repository:
+
+```bash
+# Step 1: Install dependencies
+sudo apt-get install -y lsb-release ca-certificates wget gnupg
+
+# Step 2: Import the GPG key
+wget -q https://unstable.apt.packages.minaprotocol.com/repo-signing-key.gpg \
+  -O /etc/apt/trusted.gpg.d/minaprotocol.gpg
+
+# Step 3: Add the unstable repository with preflight channel
+echo "deb https://unstable.apt.packages.minaprotocol.com $(lsb_release -cs) preflight" | \
+  sudo tee /etc/apt/sources.list.d/mina-preflight.list
+
+# Step 4: Update and install
+sudo apt-get update
+sudo apt-get install -y mina-mesa=4.0.0-preflight-3f038cb
+```
+
+### Mina Daemon
+
+```bash
+mina daemon \
+  --peer-list-url https://storage.googleapis.com/o1labs-gitops-infrastructure/mina-mesa-network/mina-mesa-network-seeds.txt \
+  --libp2p-keypair ~/.mina-config/keys/libp2p-key
+```
+
+### Archive Node
+
+```bash
+# Install archive package
+sudo apt-get install -y mina-archive-mesa=4.0.0-preflight-3f038cb
+
+# Create PostgreSQL database (if needed)
+sudo -u postgres createdb archive
+sudo -u postgres createuser archive_user
+sudo -u postgres psql -c "ALTER USER archive_user WITH PASSWORD 'your-secure-password';"
+sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE archive TO archive_user;"
+
+# Start archive node
+mina-archive run \
+  --postgres-uri postgresql://archive_user:your-secure-password@localhost:5432/archive \
+  --server-port 3086
+```
+
+If upgrading an existing Berkeley database, see [Archive Upgrade](/network-upgrades/mesa/archive-upgrade).
+
+### Rosetta API
+
+```bash
+sudo apt-get install -y mina-rosetta-mesa=4.0.0-preflight-3f038cb
+
+mina-rosetta \
+  --port 3087 \
+  --archive-uri http://localhost:3086/graphql \
+  --graphql-uri http://localhost:3085/graphql
+```
+
+</TabItem>
+</Tabs>
+
+### Connecting Mina Daemon to Archive
+
+Configure your daemon to send blocks to the archive node:
+
+```bash
+mina daemon \
+  --peer-list-url https://storage.googleapis.com/o1labs-gitops-infrastructure/mina-mesa-network/mina-mesa-network-seeds.txt \
+  --archive-address localhost:3086
+```
+
+## Verification
+
+After starting your node, verify connectivity to the preflight network:
+
+### Check Node Status
+
+```bash
+# For Docker
+docker exec -it mina-mesa-preflight mina client status
+
+# For Debian installation
+mina client status
+```
+
+### Monitor Logs
+
+```bash
+# For Docker
+docker logs -f mina-mesa-preflight
+
+# For systemd service (Debian)
+journalctl -u mina -f
+```
+
+## Support and Feedback
+
+If you encounter issues or have feedback about the Mesa preflight network:
+
+1. Check the [Mina Protocol Discord](https://discord.gg/minaprotocol) for community support
+2. Report issues on the [Mina GitHub repository](https://github.com/MinaProtocol/mina/issues)
+3. Join the Mesa upgrade discussions in the community channels
+
+## Next Steps
+
+- Test your applications and infrastructure against the preflight network
+- Review the [Mesa Upgrade](/network-upgrades/mesa) overview for mainnet preparation
+- Provide feedback to help improve the Mesa upgrade process

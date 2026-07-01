@@ -52,12 +52,12 @@ mina client status
 ```
 
 :::note Dispatcher and non-daemon commands
-The automode dispatcher only supports the `daemon` subcommand and `client status` command — it cannot determine the active runtime for other commands because they don't pass the config directory. For commands like `accounts list`, or `ledger export`, use the correct version-specific binary directly: `mina-mesa` (after the fork) or `mina-berkeley` (before the fork). The full paths `/usr/lib/mina/mesa/mina` and `/usr/lib/mina/berkeley/mina` also work. This limitation may be removed in a future release.
+The automode dispatcher only supports `daemon` and `client status` subcommands. For other commands, use `mina-mesa` or `mina-berkeley` directly. See [Troubleshooting](/network-upgrades/mesa/troubleshooting#can-i-run-non-daemon-commands-or-use-a-specific-binary-version) for details.
 :::
 
 She's done. Her node is producing blocks on Mesa.
 
-> For post-upgrade flags and monitoring, see [Post-Upgrade](/network-upgrades/mesa/upgrade-steps/post-upgrade).
+> For post-upgrade verification, monitoring, and flag reference, see [Post-Upgrade](/network-upgrades/mesa/upgrade-steps/post-upgrade#flag-and-configuration-reference).
 
 </details>
 
@@ -120,7 +120,7 @@ docker run --name mina -d \
 docker exec mina mina client status   # confirms Mesa chain ID
 ```
 
-> For post-upgrade flags and monitoring, see [Post-Upgrade](/network-upgrades/mesa/upgrade-steps/post-upgrade).
+> For post-upgrade verification, monitoring, and flag reference, see [Post-Upgrade](/network-upgrades/mesa/upgrade-steps/post-upgrade#flag-and-configuration-reference).
 
 </details>
 
@@ -270,7 +270,7 @@ sudo apt-get install mina-mainnet=3.x.x
 **Hours before the fork** — Before the _stop-transaction-slot_ arrives, Bob **disables MINA deposits and withdrawals** on his platform and notifies customers about the maintenance window.
 
 :::danger
-Any transactions submitted after the stop-transaction-slot **will not exist on the Mesa chain**. This is the most critical step for exchanges.
+Any transactions submitted after the stop-transaction-slot **will not exist on the Mesa chain**. See [State Finalization](/network-upgrades/mesa/upgrade-steps/state-finalization#exchanges) for the full exchange guidance.
 :::
 
 **Fork day** — The network halts. Bob waits for the Mesa release announcement, then upgrades:
@@ -291,6 +291,6 @@ mina client status   # verify Mesa chain ID
 # test a small internal transfer before opening to customers
 ```
 
-> For post-upgrade flags and configurations, see [Post-Upgrade](/network-upgrades/mesa/upgrade-steps/post-upgrade).
+> For post-upgrade verification, monitoring, and flag reference, see [Post-Upgrade](/network-upgrades/mesa/upgrade-steps/post-upgrade#flag-and-configuration-reference).
 
 </details>

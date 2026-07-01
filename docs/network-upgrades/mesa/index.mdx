@@ -21,37 +21,16 @@ This documentation uses terms like _automode_, _stop-slot_, _trustless upgrade_,
 
 ## What Mesa Introduces
 
-Mesa bundles four Mina Improvement Proposals (MIPs) that change protocol behavior, plus two operational improvements to the upgrade flow itself. The canonical MIP specs live in the [MinaProtocol/MIPs](https://github.com/MinaProtocol/MIPs/tree/main/MIPS) repository; each section below links to the spec for the proposal it describes.
+Mesa bundles four Mina Improvement Proposals (MIPs) that change protocol behavior, plus two operational improvements to the upgrade flow itself. See the **[Glossary](/network-upgrades/mesa/glossary)** for detailed descriptions of each MIP and the canonical specs in the [MinaProtocol/MIPs](https://github.com/MinaProtocol/MIPs/tree/main/MIPS) repository.
 
-### Faster Blocks — [MIP6](https://github.com/MinaProtocol/MIPs/blob/main/MIPS/mip-0006-slot-reduction-90s.md)
-
-Mesa halves Mina's slot time from **180 seconds to 90 seconds**, doubling block production frequency. To keep the long-term token emission rate flat, the per-block **coinbase reward is also halved** (from 720 MINA to 360 MINA). The total Mina supplied per epoch is unchanged.
-
-Several second-order consequences flow from the slot-time change:
-
-- **Epoch duration halves** from ~14.9 days to ~7.4 days. Scripts and operational procedures tied to epoch boundaries (delegation cooldown, automated payouts, monitoring dashboards) trigger about twice as often.
-- **Vesting schedules on active vesting accounts are automatically migrated** during the hard fork so they continue unlocking on the same real-world cadence. No operator action is required.
-- **SNARK coordinators handling maximum-cost zkApp transactions should deploy at least 4 workers** (≈4 CPU cores each) to keep up with the new 90-second slot timing. A prerequisite SNARK-worker parallelization is delivered via soft fork before Mesa.
-
-### Expanded zkApp State — [MIP7](https://github.com/MinaProtocol/MIPs/blob/main/MIPS/mip-0007-increase-state-size-limit.md)
-
-Mesa raises the on-chain state available to a zkApp account from **8 field elements (indexes `0–7`) to 32 field elements (indexes `0–31`)**. zkApps can now store roughly four times more data directly on chain without off-chain workarounds.
-
-### Larger Events and Actions — [MIP8](https://github.com/MinaProtocol/MIPs/blob/main/MIPS/mip-0008-increase-events-actions-limit.md)
-
-Mesa raises the per-transaction limit on events and actions from **100 field elements to 1024 field elements** for each. The previous cap of 16 field elements per individual event or action is also removed. This makes events and actions a viable channel for richer on-chain signaling and larger off-chain dispatch payloads in a single transaction.
-
-Mostly relevant to zkApp developers — node operators do not need to act on this change, but block producers will validate against the new limits automatically after the fork.
-
-### Larger zkApp Transactions — [MIP9](https://github.com/MinaProtocol/MIPs/blob/main/MIPS/mip-0009-increase-zkapp-account-update-limit.md)
-
-Mesa **roughly triples** the maximum number of account updates a single zkApp transaction can contain. The previous weighted-cost formula (`10.26·np + 10.08·n2 + 9.14·n1 < 69.45`) is replaced with a simpler `np + n2 + n1 ≤ 16` rule that admits any balanced binary proof tree of height 4.
-
-This depends on the SNARK-worker parallelization shipped as a prerequisite for [MIP6](https://github.com/MinaProtocol/MIPs/blob/main/MIPS/mip-0006-slot-reduction-90s.md) — without it, processing maximum-size transactions inside a 90-second slot would not be feasible.
+- **[Faster Blocks — MIP6](/network-upgrades/mesa/glossary#faster-blocks)** — Halves slot time to 90 seconds, halves coinbase reward, halves epoch duration.
+- **[Expanded zkApp State — MIP7](/network-upgrades/mesa/glossary#expanded-zkapp-state)** — Raises on-chain state from 8 to 32 field elements per zkApp account.
+- **[Larger Events and Actions — MIP8](/network-upgrades/mesa/glossary#larger-events-and-actions)** — Increases per-transaction event/action limit from 100 to 1024 field elements.
+- **[Larger zkApp Transactions — MIP9](/network-upgrades/mesa/glossary#larger-zkapp-transactions)** — Triples the max account updates per zkApp transaction.
 
 ### Automode Upgrades
 
-For the first time in Mina's history, block producers can upgrade through a hard fork **without manual intervention**. The automode mechanism ships both the pre-fork and post-fork binaries in a single package, with a dispatcher that automatically transitions to the new chain when the fork activates. Archive node and Rosetta API operators still use manual mode — automode is not available for those node types. See [Upgrade Modes](/network-upgrades/mesa/upgrade-modes) for details.
+For the first time in Mina's history, block producers can upgrade through a hard fork **without manual intervention**. The automode mechanism ships both the pre-fork and post-fork binaries in a single package, with a dispatcher that automatically transitions to the new chain when the fork activates. See [Upgrade Modes](/network-upgrades/mesa/upgrade-modes) for details, including which node types do not support automode.
 
 ### Simplified Archive Upgrade
 
@@ -79,78 +58,29 @@ The upgrade moves through four phases — **Pre-Upgrade**, **State Finalization*
 
 > **Goal:** Every participant is prepared and running the stop-slot release before the fork begins.
 
-The table below is a high-level summary. The concrete install commands (Debian, Docker, etc.) and hardware requirements live in the [Requirements](/network-upgrades/mesa/requirements) and [Upgrade Modes](/network-upgrades/mesa/upgrade-modes) pages — start there once you know your role and deployment style.
-
-| Actor | What to do |
-|---|---|
-| **All operators** | Verify [hardware requirements](/network-upgrades/mesa/requirements) (32 GB RAM, 8-core CPU with AVX/BMI2). Back up keys. |
-| **Block Producers** | Choose [upgrade mode](/network-upgrades/mesa/upgrade-modes): **automode** (recommended) or manual. Install stop-slot release [3.x.x](https://github.com/MinaProtocol/mina/releases). If automode, install the `mina-{network}-automode` package — see [Installing automode](/network-upgrades/mesa/upgrade-modes#installing-automode). |
-| **SNARK Coordinators** | A coordinator is a daemon node — follow the Block Producer path (automode or manual). |
-| **Standalone SNARK Workers** | Workers spawned by a coordinator (`--run-snark-worker`) need no separate action — they inherit the coordinator's binary. Workers run as a separate `mina internal snark-worker` process or container must be redeployed with the Mesa release after the fork. |
-| **Archive Nodes** | Install stop-slot release. Choose upgrade method: _trustless_ (run upgrade script now) or _trustful_ (import o1Labs dump later). If trustless, run the [archive upgrade script](/network-upgrades/mesa/archive-upgrade) — it is backward compatible and can be applied early. |
-| **Exchanges** | Install stop-slot release. Update integrations (mina-signer, Rosetta API). Test on devnet. Plan deposit/withdrawal freeze window. |
-| **zkApp Developers** | Update to the Mesa-compatible o1js version (`o1js@3.0.0-mesa.698ca` for the preflight chain), recompile your contract, and verify it on the [preflight network](/network-upgrades/mesa/preflight-network). Plan to redeploy on Mesa after the fork — every zkApp must be redeployed because the protocol version bump changes the verification key. {/* TODO(PR #1133): Link to the official o1js Mesa upgrade guide once published (cjjdespres #3220525842). */} |
-
-:::tip Readiness checklist
-Review the [Requirements](/network-upgrades/mesa/requirements) and pick your [Upgrade Mode](/network-upgrades/mesa/upgrade-modes) before proceeding.
-:::
-
----
+Each actor type has a specific checklist — see **[Requirements](/network-upgrades/mesa/requirements)** for the full per-actor pre-upgrade procedures and hardware requirements.
 
 ### Phase 2: State Finalization — hours before the fork (exactly 5 hours)
 
 > **Goal:** The network reaches consensus on a final state. No new transactions are accepted.
 
-At the predefined [**stop-transaction-slot**](/network-upgrades/mesa/fork-schedule), nodes stop accepting new user transactions. Block production continues for ~100 more slots with empty blocks (no coinbase, no fees) until the [**stop-network-slot**](/network-upgrades/mesa/fork-schedule) to ensure all nodes converge on the same state. The concrete slot numbers and timestamps live on the [Fork Schedule](/network-upgrades/mesa/fork-schedule) page.
-
-| Actor | What to do |
-|---|---|
-| **Block Producers** | **Keep your node running.** Block density during finalization is critical. Do not stop your node. |
-| **SNARK Workers** | **Keep running.** Continue producing SNARK work. |
-| **Archive Nodes** | Keep the archive node running to capture all finalized blocks. If doing trustless upgrade, run the upgrade script now if you haven't already. |
-| **Exchanges** | **Disable MINA deposits and withdrawals.** Any transactions submitted after the stop-transaction-slot will not exist on the Mesa chain. |
-| **zkApp Developers** | No action required. Monitor announcements. |
-
-:::danger For exchanges
-Transactions submitted after the stop-transaction-slot **will not carry over** to the Mesa chain. Freeze all MINA activity before this point.
-:::
-
----
+At the predefined **stop-transaction-slot**, nodes stop accepting new user transactions. Block production continues for ~100 more slots with empty blocks until the **stop-network-slot**. See **[State Finalization](/network-upgrades/mesa/upgrade-steps/state-finalization)** for the full per-actor instructions.
 
 ### Phase 3: Upgrade — fork day (network is down)
 
 > **Goal:** The network halts, state is exported, and the Mesa release is published.
 
-At the **stop-network-slot**, block production stops entirely. o1Labs exports the network state, builds the Mesa release with the final ledger baked in, and publishes packages and Docker images.
-
-| Actor | What to do |
-|---|---|
-| **Block Producers (automode)** | **Nothing.** Your node transitions to Mesa automatically. It will start producing blocks when the Mesa genesis timestamp arrives. |
-| **Block Producers (manual)** | Stop your node. Wait for the Mesa release announcement. Install the new package. Restart with [updated flags](/network-upgrades/mesa/upgrade-steps/post-upgrade). |
-| **SNARK Coordinators** | Same as block producers — automode transitions automatically, manual requires stop + install + restart. |
-| **Standalone SNARK Workers** | Coordinator-spawned workers follow the coordinator automatically. Standalone workers (`mina internal snark-worker` process or container) must be stopped and redeployed with the Mesa binary; an older worker cannot submit work to a Mesa coordinator. |
-| **Archive Nodes** | Install the Mesa archive node release. Point it at your upgraded database (trustless) or import the o1Labs SQL dump into a fresh database (trustful). |
-| **Exchanges** | Install the Mesa release. Keep deposits/withdrawals disabled until Mesa block production begins. |
-
----
+At the **stop-network-slot**, block production stops entirely. o1Labs exports the network state, builds the Mesa release, and publishes packages. See **[Upgrade](/network-upgrades/mesa/upgrade-steps/upgrade)** for the full per-actor instructions and fork schedule.
 
 ### Phase 4: Post-Upgrade — after the fork
 
 > **Goal:** Block production resumes on the Mesa network. Normal operations return.
 
-Exactly **3 hours** after the _stop-network-slot_, at the predefined Mesa genesis timestamp, the first Mesa block is produced.
-
-| Actor | What to do |
-|---|---|
-| **Block Producers** | Verify your node is on the Mesa chain (`mina client status`). If automode, check that the `activated` file exists in your config directory (see [Troubleshooting](/network-upgrades/mesa/troubleshooting#how-do-i-know-which-binary-my-node-is-using)). Monitor block production. |
-| **SNARK Workers** | Reconnect workers to the upgraded coordinator. Standalone workers must already be on the Mesa binary at this point. Verify SNARK work is being produced. |
-| **Archive Nodes** | Verify the archive database is in sync. Run [validation checks](/network-upgrades/mesa/upgrade-steps/post-upgrade#in-depth-validation). Fix any missing blocks using archive tooling. |
-| **Exchanges** | **Re-enable MINA deposits and withdrawals** once block production is confirmed and your systems are verified. |
-| **zkApp Developers** | **Redeploy every zkApp** on Mesa — the protocol version bump invalidates Berkeley verification keys, so a redeploy is required before any zkApp can accept transactions. You can also take advantage of the expanded 32-field on-chain state at this point. |
+Exactly **3 hours** after the _stop-network-slot_, at the predefined Mesa genesis timestamp, the first Mesa block is produced. See **[Post-Upgrade](/network-upgrades/mesa/upgrade-steps/post-upgrade)** for verification checklists.
 
 ---
 
-For step-by-step instructions per phase, see [Upgrade Steps](/network-upgrades/mesa/upgrade-steps). For end-to-end walkthroughs by role (block producer, archive node, zkApp developer, exchange), see [Examples](/network-upgrades/mesa/upgrade-steps/examples).
+For end-to-end walkthroughs by role (block producer, archive node, zkApp developer, exchange), see **[Examples](/network-upgrades/mesa/upgrade-steps/examples)**.
 
 ## Upgrade Modes
 
@@ -158,18 +88,15 @@ The Mesa upgrade supports two modes for daemon node operators: **[Automode](/net
 
 See [Upgrade Modes](/network-upgrades/mesa/upgrade-modes) for the full comparison, requirements, and the persistent-filesystem / process-restart constraints that automode imposes. For low-level details on the dispatcher and dual-binary architecture, see [Upgrade Modes — Details](/network-upgrades/mesa/appendix/upgrade-modes-details).
 
-## Examples
-
-End-to-end walkthroughs of the four phases for different roles (block producer automode/manual, archive node, zkApp developer, exchange) live on the [Examples](/network-upgrades/mesa/upgrade-steps/examples) page.
 ## Quick Reference by Operator Type
 
 | Operator Type | Key Pages |
 |---|---|
-| **Block Producers** | [Requirements](/network-upgrades/mesa/requirements), [Upgrade Modes](/network-upgrades/mesa/upgrade-modes), [Upgrade Steps](/network-upgrades/mesa/upgrade-steps), [Post-Upgrade Flags](/network-upgrades/mesa/upgrade-steps/post-upgrade) |
-| **SNARK Workers / Coordinators** | [Requirements](/network-upgrades/mesa/requirements), [Upgrade Steps](/network-upgrades/mesa/upgrade-steps), [Post-Upgrade Flags](/network-upgrades/mesa/upgrade-steps/post-upgrade) |
-| **Archive Node Operators** | [Requirements](/network-upgrades/mesa/requirements), [Archive Upgrade](/network-upgrades/mesa/archive-upgrade), [Upgrade Steps](/network-upgrades/mesa/upgrade-steps), [Post-Upgrade](/network-upgrades/mesa/upgrade-steps/post-upgrade) |
-| **Rosetta API Operators** | [Requirements](/network-upgrades/mesa/requirements), [Archive Upgrade](/network-upgrades/mesa/archive-upgrade), [Upgrade Steps](/network-upgrades/mesa/upgrade-steps), [Post-Upgrade](/network-upgrades/mesa/upgrade-steps/post-upgrade) |
-| **Exchanges** | [Requirements](/network-upgrades/mesa/requirements), [Upgrade Steps](/network-upgrades/mesa/upgrade-steps), [Post-Upgrade](/network-upgrades/mesa/upgrade-steps/post-upgrade), [Archive Node Schema Changes](/network-upgrades/mesa/appendix/archive-node-schema-changes) |
+| **Block Producers** | [Requirements](/network-upgrades/mesa/requirements), [Upgrade Modes](/network-upgrades/mesa/upgrade-modes), [Upgrade Steps](/network-upgrades/mesa/upgrade-steps) |
+| **SNARK Workers / Coordinators** | [Requirements](/network-upgrades/mesa/requirements), [Upgrade Steps](/network-upgrades/mesa/upgrade-steps) |
+| **Archive Node Operators** | [Requirements](/network-upgrades/mesa/requirements), [Archive Upgrade](/network-upgrades/mesa/archive-upgrade), [Upgrade Steps](/network-upgrades/mesa/upgrade-steps) |
+| **Rosetta API Operators** | [Requirements](/network-upgrades/mesa/requirements), [Archive Upgrade](/network-upgrades/mesa/archive-upgrade), [Upgrade Steps](/network-upgrades/mesa/upgrade-steps) |
+| **Exchanges** | [Requirements](/network-upgrades/mesa/requirements), [Upgrade Steps](/network-upgrades/mesa/upgrade-steps), [Archive Node Schema Changes](/network-upgrades/mesa/appendix/archive-node-schema-changes) |
 
 ## Network Details
 

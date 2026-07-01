@@ -56,7 +56,6 @@ module.exports = {
           items: [
             'network-upgrades/mesa/requirements',
             'network-upgrades/mesa/upgrade-modes',
-            'network-upgrades/mesa/fork-schedule',
             {
               type: 'category',
               label: 'Upgrade Steps',
@@ -73,6 +72,7 @@ module.exports = {
             },
             'network-upgrades/mesa/archive-upgrade',
             'network-upgrades/mesa/preflight-network',
+            'network-upgrades/mesa/preflight-setup',
             'network-upgrades/mesa/troubleshooting',
             {
               type: 'category',

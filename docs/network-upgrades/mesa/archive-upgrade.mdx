@@ -11,26 +11,51 @@ keywords:
   - archive node
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 # Archive Upgrade
 
 This guide describes the general procedure for upgrading a Mina archive database from Berkeley to Mesa. The same steps apply to every Mesa deployment (preflight, devnet, mainnet) — only the archive package version differs.
 
-:::tip Mesa preflight hard fork completed
+:::tip Preflight-specific version info
 
-The Mesa preflight network hard-forked at **2026-04-27 13:00 UTC**. The post-fork chain runs **`4.0.0-preflight-3f038cb`**, which raises the **transaction protocol version to 5.0.0**. Pre-fork builds — including the stop-slot release `4.0.0-preflight-stop-2967b39` — are no longer compatible.
-
-When upgrading a preflight archive database, install the matching `mina-archive-mesa=4.0.0-preflight-3f038cb` package so the archive node speaks the new transaction protocol.
+The Mesa preflight network has already forked. See [Preflight Network](/network-upgrades/mesa/preflight-network) for the current build versions and transaction protocol details.
 
 :::
 
-:::info Choosing the Mesa archive version
+<Tabs groupId="network">
+<TabItem value="preflight" label="Preflight" default>
 
-The commands below use `<MESA_VERSION>` as a placeholder for the archive build you want to install. Substitute the tag that matches your target network:
+The preflight archive version is **`4.0.0-preflight-3f038cb`** (post-hard-fork; transaction protocol v5.0.0). Docker tag: `gcr.io/o1labs-192920/mina-archive:4.0.0-preflight-3f038cb-bookworm-mesa`. See [Preflight Network](./preflight-network) for the full release matrix.
 
-- **Preflight network** — use `4.0.0-preflight-3f038cb` (post-hard-fork; transaction protocol v5.0.0). See [Preflight Network](./preflight-network) for the full release matrix.
-- **Devnet / mainnet** — use the Mesa release tag published for that network when it is announced.
+```bash
+# Substitute this version wherever <MESA_VERSION> appears below
+MESA_VERSION=4.0.0-preflight-3f038cb
+```
 
-:::
+</TabItem>
+<TabItem value="devnet" label="Devnet">
+
+The devnet Mesa archive version will be published when the devnet fork is scheduled. Check [Mina releases](https://github.com/MinaProtocol/mina/releases?q=mesa) for the latest tag.
+
+```bash
+# Substitute this version wherever <MESA_VERSION> appears below
+MESA_VERSION=<devnet-mesa-tag>
+```
+
+</TabItem>
+<TabItem value="mainnet" label="Mainnet">
+
+The mainnet Mesa archive version will be published in the Mesa release announcement. Check [Mina releases](https://github.com/MinaProtocol/mina/releases?q=mesa) for the `4.x.x` tag.
+
+```bash
+# Substitute this version wherever <MESA_VERSION> appears below
+MESA_VERSION=<mainnet-mesa-tag>
+```
+
+</TabItem>
+</Tabs>
 
 To successfully upgrade the archive database to Mesa, you must ensure that your environment meets the foundational requirements.
 
@@ -43,7 +68,7 @@ To successfully upgrade the archive database to Mesa, you must ensure that your 
 
 ## Archive database
 
-One of the most obvious prerequisites is a Mainnet database. If you don't have an existing database with Devnet/Mainnet archive data,
+One of the most obvious prerequisites is an archive database with Berkeley-era data. If you don't have an existing database with Devnet or Mainnet archive data,
 you can always download it from the O1Labs Google Cloud bucket.
 
 ## Upgrade process

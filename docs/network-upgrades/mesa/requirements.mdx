@@ -2,11 +2,12 @@
 title: Requirements
 sidebar_label: Requirements
 hide_title: true
-description: Hardware and connectivity requirements for daemon node operators upgrading to Mesa — block producers, SNARK coordinators, archive nodes, Rosetta API nodes, and seed nodes.
+description: Hardware requirements and pre-upgrade checklist for all node operator types upgrading to Mesa — block producers, SNARK coordinators, archive nodes, Rosetta API, and exchanges.
 keywords:
   - Mesa
   - upgrade
   - hardware requirements
+  - pre-upgrade
 ---
 
 # Requirements
@@ -47,3 +48,46 @@ mina libp2p generate-keypair --privkey-path <path-to-the-key-file>
 ```
 
 Further information on [generating a libp2p key pair](/node-operators/seed-peers/generating-a-libp2p-keypair) on Mina Protocol.
+
+## Pre-Upgrade Checklist
+
+Before the fork, each actor type must complete specific preparations. Complete these steps **weeks before the fork** to ensure a smooth upgrade.
+
+### All operators
+
+- Verify your hardware meets the [requirements](#hardware-requirements) above (32 GB RAM, 8-core CPU with AVX/BMI2).
+- Back up your keys and configuration before installing any new packages.
+
+### Block Producers
+
+- Choose your [Upgrade Mode](/network-upgrades/mesa/upgrade-modes): **automode** (recommended) or manual.
+- Install the stop-slot release [3.x.x](https://github.com/MinaProtocol/mina/releases).
+- If using automode, install the `mina-{network}-automode` package. See [Installing automode](/network-upgrades/mesa/upgrade-modes#installing-automode).
+
+### SNARK Coordinators
+
+- A coordinator is a daemon node — follow the Block Producer path above (automode or manual).
+
+### Standalone SNARK Workers
+
+- Workers spawned by a coordinator (`--run-snark-worker`) need no separate action — they inherit the coordinator's binary.
+- Workers run as a separate `mina internal snark-worker` process or container must be redeployed with the Mesa release after the fork.
+
+### Archive Nodes
+
+- Install the stop-slot release.
+- Choose your upgrade method: [_trustless_](/network-upgrades/mesa/glossary#trustless) (run the upgrade script now) or [_trustful_](/network-upgrades/mesa/glossary#trustful) (import o1Labs dump later).
+- If doing trustless, run the [Archive Upgrade](/network-upgrades/mesa/archive-upgrade) script — it can be applied before the fork while the Berkeley archive node is still running.
+
+### Exchanges
+
+- Install the stop-slot release.
+- Update integrations (mina-signer, Rosetta API).
+- Test on devnet.
+- Plan your deposit/withdrawal freeze window around the [`stop-transaction-slot`](/network-upgrades/mesa/glossary#stop-transaction-slot).
+
+### zkApp Developers
+
+- Update to the Mesa-compatible o1js version (`o1js@3.0.0-mesa.698ca` for the preflight chain).
+- Recompile your contracts and verify them on the [preflight network](/network-upgrades/mesa/preflight-network).
+- Plan to redeploy every zkApp on Mesa — each must be redeployed because the protocol version bump changes the verification key. {/* TODO(PR #1133): Link to the official o1js Mesa upgrade guide once published (cjjdespres #3220525842). */}

@@ -2,15 +2,79 @@
 title: Upgrade
 sidebar_label: Upgrade
 hide_title: true
-description: Upgrade phase of the Mesa hard fork — network halt, state export, and Mesa build publication.
+description: Upgrade phase of the Mesa hard fork — network halt, state export, Mesa build publication, and fork schedule values per network.
 keywords:
   - Mesa
   - upgrade
   - network halt
   - state export
+  - fork schedule
 ---
 
 # Upgrade
+
+## Fork Schedule
+
+The relevant moments that anchor the Upgrade phase:
+
+- **`stop-transaction-slot`** (a.k.a. `slot_tx_end`) — the slot at which nodes stop accepting new user transactions. Block production continues with empty blocks until the stop-network-slot. See [Glossary > Stop-Transaction-Slot](/network-upgrades/mesa/glossary#stop-transaction-slot).
+- **`stop-network-slot`** (a.k.a. `slot_chain_end`) — the slot at which block production halts entirely. The network is offline between this slot and the Mesa genesis timestamp. See [Glossary > Stop-Network-Slot](/network-upgrades/mesa/glossary#stop-network-slot).
+- **Mesa genesis timestamp** — the wall-clock time at which the first Mesa block is produced. Exactly **3 hours** after the stop-network-slot. See [Glossary > Mesa Genesis Timestamp](/network-upgrades/mesa/glossary#mesa-genesis-timestamp).
+
+### Mainnet
+
+:::warning Values not yet published
+The mainnet Mesa fork schedule has not been announced. The values below are placeholders. They will be filled in once o1Labs publishes the stop-slot release and the Mesa genesis timestamp.
+:::
+
+| Field | Value |
+|---|---|
+| Pre-fork (stop-slot) release | _TBD — will be a `3.x.x` tag_ |
+| Mesa release | _TBD — will be a `4.x.x` tag_ |
+| `stop-transaction-slot` (`slot_tx_end`) | _TBD_ |
+| `stop-network-slot` (`slot_chain_end`) | _TBD_ |
+| Mesa genesis timestamp (UTC) | _TBD — exactly 3 hours after the stop-network-slot_ |
+| State Finalization window | Exactly 100 slots = exactly 5 hours between `slot_tx_end` and `slot_chain_end` |
+
+Subscribe to the [MinaProtocol/mina releases](https://github.com/MinaProtocol/mina/releases?q=mesa) and watch the [Mina Foundation announcements channel](https://discord.gg/minaprotocol) for the schedule publication.
+
+### Devnet
+
+:::warning Values not yet published
+Devnet typically forks ahead of mainnet to give integrators a final dress rehearsal. Schedule will be posted here once announced.
+:::
+
+| Field | Value |
+|---|---|
+| Pre-fork (stop-slot) release | _TBD_ |
+| Mesa release | _TBD_ |
+| `stop-transaction-slot` (`slot_tx_end`) | _TBD_ |
+| `stop-network-slot` (`slot_chain_end`) | _TBD_ |
+| Mesa genesis timestamp (UTC) | _TBD_ |
+
+### Preflight
+
+The Mesa preflight network has already forked. The numbers below are historical.
+
+| Field | Value |
+|---|---|
+| Pre-fork release | `4.0.0-preflight1-b649c79` |
+| Stop-slot release | `4.0.0-preflight-stop-2967b39` |
+| Mesa release | `4.0.0-preflight-3f038cb` |
+| Mesa hard-fork time (UTC) | 2026-04-27 13:00 |
+| Transaction protocol version after fork | 5.0.0 |
+| o1js version targeting protocol v5.0.0 | `o1js@3.0.0-mesa.698ca` |
+
+For full preflight context, see [Preflight Network](/network-upgrades/mesa/preflight-network).
+
+### How to use these values
+
+- **Exchanges**: schedule your deposit/withdrawal freeze to begin **before** `stop-transaction-slot` and re-enable **after** the Mesa genesis timestamp confirms block production.
+- **Block producers**: install the stop-slot release any time before `stop-transaction-slot`. If using [automode](/network-upgrades/mesa/upgrade-modes), no further action is needed — the dispatcher swaps to the Mesa binary automatically.
+- **Archive operators**: schedule the archive schema upgrade for any time on or after `stop-network-slot`. The [Archive Upgrade](/network-upgrades/mesa/archive-upgrade) script can also be run earlier.
+- **Rosetta operators**: follow the manual-mode timeline — Rosetta does not support automode. See [Upgrade Modes](/network-upgrades/mesa/upgrade-modes).
+
+---
 
 Starting at the _stop-network-slot_ the network will not produce nor accept new blocks, resulting in halting the network. During the upgrade period, o1Labs will use automated tooling to export the network state based on the block at the slot just before the _stop-transaction-slot_. The exported state will then be baked into the new Mesa build, which will be used to initiate the upgraded network. It is during the upgrade window that the Mesa network infrastructure will be bootstrapped, and seed nodes will become available. o1Labs will also finalize the archive node upgrade and publish the PostgreSQL database dumps for import by the archive node operators who wish to bootstrap their archives in a trustful manner.
 
@@ -25,8 +89,8 @@ If you are using [Automode](/network-upgrades/mesa/upgrade-modes), your node han
 If you are using **Manual mode**:
 
 1. During the upgrade phase (between _stop-network-slot_ and the publishing of the Mesa release), block producers can shut down their nodes.
-2. After the publication of the Mesa node release, block producers and SNARK workers should upgrade their nodes and be prepared for block production at the genesis timestamp, which is the slot when the first Mesa block will be produced.
-3. It is possible to continue using the same libp2p key after the upgrade. Pass it to the Mesa daemon with the [`--libp2p-keypair`](/network-upgrades/mesa/upgrade-steps/post-upgrade#flag-and-configuration-reference) flag (see the Flag and Configuration Reference on the Post-Upgrade page).
+2. After the publication of the Mesa node release, block producers and SNARK workers should upgrade their nodes and be prepared for block production at the Mesa genesis timestamp, which is when the first Mesa block will be produced.
+3. It is possible to continue using the same libp2p key after the upgrade. Pass it to the Mesa daemon with the [`--libp2p-keypair`](/node-operators/block-producer-node/getting-started) flag. All daemon flags carry over unchanged from Berkeley — see the [Post-Upgrade flag reference](/network-upgrades/mesa/upgrade-steps/post-upgrade#flag-and-configuration-reference) for the full per-role configuration.
 
 ## Archive Node Operators and Rosetta Operators
 

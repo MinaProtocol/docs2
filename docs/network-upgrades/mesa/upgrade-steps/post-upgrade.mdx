@@ -119,6 +119,8 @@ Rosetta depends on a healthy archive database.
 
 #### 2. Verify Rosetta is responding
 
+For the full Rosetta API setup and verification guide, see [Rosetta API](/node-operators/data-and-history/rosetta).
+
 ```bash
 curl -s http://localhost:3088/network/list \
   -H 'Content-Type: application/json' \
@@ -288,20 +290,11 @@ The Node Status reporting service is **enabled by default** on the Mesa daemon. 
 
 To opt out of the Node Status service entirely, pass `--disable-node-status` (no value). Note: the previously-documented `--node-stats-type full|none` argument was never accepted by the daemon — `--simplified-node-stats` and `--disable-node-status` are the actual flag names in the Mesa release.
 
-## Report Issues
-
-If you encounter any problems after the upgrade:
-
-- Report bugs on [GitHub](https://github.com/MinaProtocol/mina/issues) with the label `mesa`
-- Reach out on [Discord](https://discord.gg/minaprotocol) in the appropriate channel
-
----
-
 ## Flag and Configuration Reference
 
 The flags below are **unchanged from Berkeley** — if your node was running correctly before the fork, the same flags will work on Mesa. This section is provided as a reference for operators setting up fresh nodes or verifying their configuration.
 
-For full details, see the [Mesa release notes](https://github.com/MinaProtocol/mina/releases?q=mesa). {/* TODO(PR #1133): Replace with the specific Mesa release tag URL once published (e.g. `/releases/tag/4.0.0`). */}
+For the canonical flag reference, see the [Validator Node docs](/node-operators/validator-node/connecting-to-the-network), [Block Producer docs](/node-operators/block-producer-node/getting-started), [SNARK Worker docs](/node-operators/snark-workers/getting-started), and [Archive Node docs](/node-operators/archive-node).
 
 :::info What changed in Mesa
 - **Only if you manually manage your genesis config or genesis ledgers, repoint `--genesis-ledger-dir` and `-config-file` at the Mesa-specific files.** Operators who rely on the package-installed genesis config — including all automode users — do not need to change anything. If you do override them, both ship inside the Mesa Debian/Docker package: `--genesis-ledger-dir` should be `/var/lib/coda/mesa` (or the equivalent path your package installed), and `-config-file` should be the Mesa runtime config (typically `/etc/mina/mesa/daemon.json`).
@@ -331,6 +324,8 @@ ENVIRONMENT VARIABLES
 <details>
 <summary><b>SNARK Coordinator flags</b></summary>
 
+For detailed flag descriptions, see [SNARK Workers — Getting Started](/node-operators/snark-workers/getting-started).
+
 ```
 mina daemon
   --config-directory <path to the mina configuration directory>
@@ -351,6 +346,8 @@ ENVIRONMENT VARIABLES
 
 <details>
 <summary><b>SNARK Worker flags</b></summary>
+
+For detailed flag descriptions, see [SNARK Workers — Getting Started](/node-operators/snark-workers/getting-started).
 
 ```
 mina internal snark-worker
@@ -418,3 +415,10 @@ docker run \
 ```
 
 </details>
+
+## Report Issues
+
+If you encounter any problems after the upgrade:
+
+- Report bugs on [GitHub](https://github.com/MinaProtocol/mina/issues) with the label `mesa`
+- Reach out on [Discord](https://discord.gg/minaprotocol) in the appropriate channel
