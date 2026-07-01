@@ -8,19 +8,11 @@ Further features, such as runtime abstractions and merkelized data storage, prov
 
 **Please note that Protokit is in alpha, and settlement support with reorgs is still in progress.**
 
+:::info
 
-<table>
-  <tr>
-   <td>Info
-   </td>
-  </tr>
-  <tr>
-   <td>Protokit dramatically simplifies the development experience for Mina’s <a href="https://docs.minaprotocol.com/zkapps/writing-a-zkapp/feature-overview/actions-and-reducer">Actions & Reducers</a>, enabling zkApp developers to build more complex applications. 
-   </td>
-  </tr>
-</table>
+Protokit dramatically simplifies the development experience for Mina's [Actions & Reducers](https://docs.minaprotocol.com/zkapps/writing-a-zkapp/feature-overview/actions-and-reducer), enabling zkApp developers to build more complex applications.
 
-
+:::
 
 ## Key benefits of using Protokit
 
