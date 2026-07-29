@@ -1,0 +1,287 @@
+---
+title: Mesa Trail Network
+sidebar_label: Mesa Trail
+description: Build matrix and connection guide for Mesa Trail, the current Mesa upgrade test network — Docker images, Debian packages, compatible SDK releases, and node setup.
+keywords:
+  - Mesa upgrade
+  - Mesa Trail
+  - test network
+  - mesa version
+  - docker
+  - debian packages
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Mesa Trail Network
+
+**Mesa Trail** is the current Mesa test network — the environment for validating the Mesa upgrade before deployment to devnet and mainnet. This page covers the build matrix and how to connect each node type.
+
+:::caution Test network
+
+Mesa Trail is intended for testing only. It may experience instability, breaking changes, and unexpected behavior. Data on this network is not persistent or reliable, and the network may be reset without notice.
+
+:::
+
+Two earlier Mesa test networks — **preflight** and **MUT** — are archived and no longer accept connections. If you are still running a preflight or MUT build, move to the Mesa Trail release below. Their historical values are recorded on [Archived Networks](/network-upgrades/mesa/archived-networks).
+
+## Current Build Version
+
+**Version (install this):** `4.0.0-rc2-3418329`
+
+**Compatible o1js release:** `o1js@3.0.0-mesa.rc2` — the matching SDK for the Mesa transaction protocol. Install with `npm install o1js@3.0.0-mesa.rc2` (or the equivalent for your package manager) when developing or redeploying zkApps against Mesa Trail. Earlier `o1js` versions produce transactions that Mesa nodes reject.
+
+### Docker Images
+
+Images are published to `gcr.io/o1labs-192920`. The tag format is `<version>-<codename>-devnet`:
+
+- **Mina Daemon:** `gcr.io/o1labs-192920/mina-daemon:4.0.0-rc2-3418329-bullseye-devnet`
+- **Archive Node:** `gcr.io/o1labs-192920/mina-archive:4.0.0-rc2-3418329-bullseye-devnet`
+- **Rosetta:** `gcr.io/o1labs-192920/mina-rosetta:4.0.0-rc2-3418329-bullseye-devnet`
+
+Available base distributions: `bullseye`, `bookworm`, `focal`, `jammy`, `noble`. Swap the codename in the tag to select one — for example `mina-daemon:4.0.0-rc2-3418329-noble-devnet`.
+
+### Debian Packages
+
+**Repository:** `packages.o1test.net`
+**Channel:** `dryrun`
+**Codenames:** `bullseye`, `bookworm`, `focal`, `jammy`, `noble`
+
+Available packages (each at version `4.0.0-rc2-3418329`):
+
+| Package | Purpose |
+| --- | --- |
+| `mina-devnet` | Mina daemon |
+| `mina-archive-devnet` | Archive node |
+| `mina-rosetta-devnet` | Rosetta API |
+| `mina-devnet-config` | Network configuration shipped with the daemon |
+| `mina-logproc` | Log processing helper (installed as a daemon dependency) |
+
+:::note Unsigned repository
+
+`packages.o1test.net` is not GPG-signed, so the apt source line below uses `[trusted=yes]`. This is expected for test-network builds.
+
+:::
+
+## Connecting to the Network
+
+All node types must use the Mesa Trail seed peer list:
+
+```bash
+--peer-list-url https://storage.googleapis.com/o1labs-gitops-infrastructure/mina-mesa-rc/mina-mesa-rc-peer-list-url.txt
+```
+
+<Tabs groupId="install-method">
+<TabItem value="docker" label="Docker" default>
+
+### Mina Daemon
+
+```bash
+docker run --name mina-mesa-trail -d \
+  -p 8302:8302 \
+  --restart=always \
+  gcr.io/o1labs-192920/mina-daemon:4.0.0-rc2-3418329-bullseye-devnet \
+  daemon \
+  --peer-list-url https://storage.googleapis.com/o1labs-gitops-infrastructure/mina-mesa-rc/mina-mesa-rc-peer-list-url.txt
+```
+
+For production deployments, mount config directories and add additional flags:
+
+```bash
+docker run --name mina-mesa-trail -d \
+  -p 8302:8302 \
+  --restart=always \
+  -v $(pwd)/.mina-config:/root/.mina-config \
+  gcr.io/o1labs-192920/mina-daemon:4.0.0-rc2-3418329-bullseye-devnet \
+  daemon \
+  --peer-list-url https://storage.googleapis.com/o1labs-gitops-infrastructure/mina-mesa-rc/mina-mesa-rc-peer-list-url.txt \
+  --libp2p-keypair /data/.mina-config/keys/libp2p-key
+```
+
+### Archive Node
+
+```bash
+docker run --name mina-archive-mesa-trail -d \
+  -p 3086:3086 \
+  --restart=always \
+  gcr.io/o1labs-192920/mina-archive:4.0.0-rc2-3418329-bullseye-devnet \
+  mina-archive run \
+  --postgres-uri postgresql://archive_user:your-secure-password@postgres-host:5432/archive \
+  --server-port 3086
+```
+
+If upgrading an existing Berkeley database, see [Archive Upgrade](/network-upgrades/mesa/archive-upgrade).
+
+### Rosetta API
+
+```bash
+docker run --name mina-rosetta-mesa-trail -d \
+  -p 3087:3087 \
+  --restart=always \
+  gcr.io/o1labs-192920/mina-rosetta:4.0.0-rc2-3418329-bullseye-devnet \
+  --port 3087 \
+  --archive-uri http://archive-host:3086/graphql \
+  --graphql-uri http://mina-daemon-host:3085/graphql
+```
+
+**Note:** Rosetta requires a running Mina daemon (port 3085) and archive node (port 3086). Both must be fully synced.
+
+</TabItem>
+<TabItem value="debian" label="Debian">
+
+First, install dependencies and configure the repository:
+
+```bash
+# Step 1: Install dependencies
+sudo apt-get install -y lsb-release ca-certificates wget gnupg
+
+# Step 2: Add the repository with the dryrun channel.
+# packages.o1test.net is unsigned, hence [trusted=yes].
+echo "deb [trusted=yes] http://packages.o1test.net $(lsb_release -cs) dryrun" | \
+  sudo tee /etc/apt/sources.list.d/mina-mesa-trail.list
+
+# Step 3: Update and install
+sudo apt-get update
+sudo apt-get install -y mina-devnet=4.0.0-rc2-3418329
+```
+
+### Mina Daemon
+
+```bash
+mina daemon \
+  --peer-list-url https://storage.googleapis.com/o1labs-gitops-infrastructure/mina-mesa-rc/mina-mesa-rc-peer-list-url.txt \
+  --libp2p-keypair ~/.mina-config/keys/libp2p-key
+```
+
+### Archive Node
+
+```bash
+# Install archive package
+sudo apt-get install -y mina-archive-devnet=4.0.0-rc2-3418329
+
+# Create PostgreSQL database (if needed)
+sudo -u postgres createdb archive
+sudo -u postgres createuser archive_user
+sudo -u postgres psql -c "ALTER USER archive_user WITH PASSWORD 'your-secure-password';"
+sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE archive TO archive_user;"
+
+# Start archive node
+mina-archive run \
+  --postgres-uri postgresql://archive_user:your-secure-password@localhost:5432/archive \
+  --server-port 3086
+```
+
+If upgrading an existing Berkeley database, see [Archive Upgrade](/network-upgrades/mesa/archive-upgrade).
+
+### Rosetta API
+
+```bash
+sudo apt-get install -y mina-rosetta-devnet=4.0.0-rc2-3418329
+
+mina-rosetta \
+  --port 3087 \
+  --archive-uri http://localhost:3086/graphql \
+  --graphql-uri http://localhost:3085/graphql
+```
+
+</TabItem>
+</Tabs>
+
+### Connecting Mina Daemon to Archive
+
+Configure your daemon to send blocks to the archive node:
+
+```bash
+mina daemon \
+  --peer-list-url https://storage.googleapis.com/o1labs-gitops-infrastructure/mina-mesa-rc/mina-mesa-rc-peer-list-url.txt \
+  --archive-address localhost:3086
+```
+
+## Verification
+
+After starting your node, verify connectivity to Mesa Trail:
+
+### Check Node Status
+
+```bash
+# For Docker
+docker exec -it mina-mesa-trail mina client status
+
+# For Debian installation
+mina client status
+```
+
+### Monitor Logs
+
+```bash
+# For Docker
+docker logs -f mina-mesa-trail
+
+# For systemd service (Debian)
+journalctl -u mina -f
+```
+
+## Network Resources
+
+Live status, chain data, and configuration for Mesa Trail. The network is identified as `mesa-rc` in infrastructure paths and explorer URLs.
+
+### Upgrade Status Tracker
+
+The **[Mesa Upgrade Status page](https://mesa-upgrade-tracker.minaprotocol.com/)** is the live source of truth during the upgrade. It publishes the current phase, the fork timeline (`stop-transaction-slot`, `stop-network-slot`, Mesa genesis timestamp), the artifact matrix as builds are promoted, announcements, and a running FAQ / known-issues list. Check it before and during the fork window — the slot values and release tags land there first.
+
+### Chain Data
+
+| Resource | Location |
+| --- | --- |
+| Seed peer list | [`mina-mesa-rc-peer-list-url.txt`](https://storage.googleapis.com/o1labs-gitops-infrastructure/mina-mesa-rc/mina-mesa-rc-peer-list-url.txt) |
+| Genesis config | [`mina-mesa-rc-genesis-config.json`](https://storage.googleapis.com/o1labs-gitops-infrastructure/mina-mesa-rc/mina-mesa-rc-genesis-config.json) |
+| Precomputed blocks | `https://storage.googleapis.com/mesa-rc-precomputed-blocks/` |
+| Archive database dumps | `https://storage.googleapis.com/mina-archive-dumps/` |
+| Block explorer | [MinaExplorer — `mesa-rc`](https://o1-labs.github.io/mina-explorer/#/blocks?network=mesa-rc) |
+| Faucet | [faucet.minaprotocol.com](https://faucet.minaprotocol.com/) |
+
+### Precomputed Blocks
+
+Precomputed blocks are published to the `mesa-rc-precomputed-blocks` bucket, one JSON file per block, named `mina-mesa-rc-1-<height>-<state-hash>.json`:
+
+```bash
+# List recent blocks
+gsutil ls gs://mesa-rc-precomputed-blocks/ | tail
+
+# Fetch a single block over HTTPS (no gsutil required)
+curl -O https://storage.googleapis.com/mesa-rc-precomputed-blocks/mina-mesa-rc-1-<height>-<state-hash>.json
+```
+
+Use these to bootstrap an archive node with [`mina-archive-blocks`](/network-upgrades/mesa/archive-upgrade), or to replay chain history without running a full node.
+
+### Archive Database Dumps
+
+Hourly archive dumps are published to the `mina-archive-dumps` bucket with the prefix `mina-mesa-rc`, named `mina-mesa-rc-1-archive-dump-<YYYY-MM-DD>_<HHMM>.sql.tar.gz`:
+
+```bash
+# List available dumps
+gsutil ls gs://mina-archive-dumps/mina-mesa-rc-1-archive-dump-*
+
+# Download and restore the latest dump
+curl -O https://storage.googleapis.com/mina-archive-dumps/mina-mesa-rc-1-archive-dump-<YYYY-MM-DD>_<HHMM>.sql.tar.gz
+tar -xzf mina-mesa-rc-1-archive-dump-<YYYY-MM-DD>_<HHMM>.sql.tar.gz
+psql -d archive -f mina-mesa-rc-1-archive-dump-<YYYY-MM-DD>_<HHMM>.sql
+```
+
+A dump is the fastest way to stand up an archive node against Mesa Trail without replaying the chain, and it is the same mechanism behind the [_trustful_](/network-upgrades/mesa/glossary#trustful) archive upgrade path.
+
+## Support and Feedback
+
+If you encounter issues or have feedback about Mesa Trail:
+
+1. Check the [Mina Protocol Discord](https://discord.gg/minaprotocol) for community support
+2. Report issues on the [Mina GitHub repository](https://github.com/MinaProtocol/mina/issues)
+3. Join the Mesa upgrade discussions in the community channels
+
+## Next Steps
+
+- Watch the [Mesa Upgrade Status page](https://mesa-upgrade-tracker.minaprotocol.com/) for the fork timeline and artifact promotions
+- Test your applications and infrastructure against Mesa Trail
+- Review the [Mesa Upgrade](/network-upgrades/mesa) overview for mainnet preparation
+- Provide feedback to help improve the Mesa upgrade process

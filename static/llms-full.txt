@@ -3876,16 +3876,16 @@ url: /network-upgrades
 
 Mina Protocol evolves through network upgrades (hard forks). Each upgrade introduces new protocol features, performance improvements, or governance changes. Hard forks are not backward compatible — all node operators must upgrade before the fork activates.
 
-:::tip Mesa preflight update
+:::tip Mesa test network update
 
-The Mesa preflight network hard fork completed on **2026-04-27 13:00 UTC**. See [Preflight Network](/network-upgrades/mesa/preflight-network) for the current build versions and upgrade path.
+**Mesa Trail** is the current Mesa test network. The earlier preflight and MUT networks are [archived](/network-upgrades/mesa/archived-networks). See [Mesa Trail Network](/network-upgrades/mesa/mesa-trail) for the current build versions and upgrade path.
 
 :::
 
 | Upgrade | Status | Date | Key Changes |
 |---------|--------|------|-------------|
 | [Berkeley](/network-upgrades/berkeley/requirements) | Completed | June 2024 | zkApp programmability, recursive proofs, new transaction model, archive database migration |
-| [Mesa](/network-upgrades/mesa/preflight-network) | Preflight hard fork completed | 2026-04-27 13:00 UTC (preflight) | Transaction protocol v5.0.0, automode upgrades, simplified archive migration |
+| [Mesa](/network-upgrades/mesa/mesa-trail) | Testing on Mesa Trail | Mainnet date TBD | Transaction protocol v5.0.0, automode upgrades, simplified archive migration |
 
 ---
 url: /network-upgrades/mesa/appendix/archive-node-schema-changes
@@ -4233,22 +4233,22 @@ url: /network-upgrades/mesa/archive-upgrade
 
 # Archive Upgrade
 
-This guide describes the general procedure for upgrading a Mina archive database from Berkeley to Mesa. The same steps apply to every Mesa deployment (preflight, devnet, mainnet) — only the archive package version differs.
+This guide describes the general procedure for upgrading a Mina archive database from Berkeley to Mesa. The same steps apply to every Mesa deployment (Mesa Trail, devnet, mainnet) — only the archive package version differs.
 
-:::tip Preflight-specific version info
+:::tip Test-network version info
 
-The Mesa preflight network has already forked. See [Preflight Network](/network-upgrades/mesa/preflight-network) for the current build versions and transaction protocol details.
+**Mesa Trail** is the current Mesa test network. See [Mesa Trail Network](/network-upgrades/mesa/mesa-trail) for the current build versions and transaction protocol details.
 
 :::
 
 <Tabs groupId="network">
-<TabItem value="preflight" label="Preflight" default>
+<TabItem value="mesa-trail" label="Mesa Trail" default>
 
-The preflight archive version is **`4.0.0-preflight-3f038cb`** (post-hard-fork; transaction protocol v5.0.0). Docker tag: `gcr.io/o1labs-192920/mina-archive:4.0.0-preflight-3f038cb-bookworm-mesa`. See [Preflight Network](./preflight-network) for the full release matrix.
+The Mesa Trail archive version is **`4.0.0-rc2-3418329`**. Docker tag: `gcr.io/o1labs-192920/mina-archive:4.0.0-rc2-3418329-bullseye-devnet`. See [Mesa Trail Network](./mesa-trail) for the full release matrix.
 
 ```bash
 # Substitute this version wherever <MESA_VERSION> appears below
-MESA_VERSION=4.0.0-preflight-3f038cb
+MESA_VERSION=4.0.0-rc2-3418329
 ```
 
 </TabItem>
@@ -4306,7 +4306,7 @@ The upgrade script ships **inside the Mina archive Debian package and Docker ima
 ```bash
 # Setup the Mina repository and install the archive package.
 # Repository setup (apt sources, GPG key, channel) is network-specific —
-# see Preflight Network for the preflight pin, or your network's release notes.
+# see Mesa Trail Network for the test-network pin, or your network's release notes.
 
 apt-get install mina-archive-mainnet=<MESA_VERSION>
 
@@ -4524,6 +4524,50 @@ See [Archive Replayer](/node-operators/archive-node/replayer) for usage, flags, 
 For the full schema diff (new columns, modified tables, applied SQL), see [Archive Node Schema Changes](/network-upgrades/mesa/appendix/archive-node-schema-changes).
 
 ---
+url: /network-upgrades/mesa/archived-networks
+---
+
+# Archived Networks
+
+The Mesa test networks on this page are **archived**: they are no longer running, their builds are no longer supported, and the versions listed are historical. They are kept here as a reference for operators tracing old logs, images, or package pins.
+
+For all current testing, use [Mesa Trail](/network-upgrades/mesa/mesa-trail).
+
+## Preflight
+
+The preflight network was the first Mesa test network. It hard-forked at **2026-04-27 13:00 UTC**, bumping the transaction protocol version to **5.0.0**.
+
+| Field | Value |
+| --- | --- |
+| Pre-fork release | `4.0.0-preflight1-b649c79` |
+| Stop-slot release | `4.0.0-preflight-stop-2967b39` |
+| Post-fork (Mesa) release | `4.0.0-preflight-3f038cb` |
+| Hard-fork time (UTC) | 2026-04-27 13:00 |
+| Transaction protocol version after fork | 5.0.0 |
+| o1js version targeting protocol v5.0.0 | `o1js@3.0.0-mesa.698ca` |
+| Docker tag suffix | `-mesa` (for example `mina-daemon:4.0.0-preflight-3f038cb-bookworm-mesa`) |
+| Debian channel | `preflight` on `unstable.apt.packages.minaprotocol.com` |
+| Debian packages | `mina-mesa`, `mina-archive-mesa`, `mina-rosetta-mesa` |
+| Seed nodes | `seed-1.mina-mesa-network.gcp.o1test.net`, `seed-2.mina-mesa-network.gcp.o1test.net` |
+
+The preflight fork-schedule values are also recorded on the [Fork Schedule](/network-upgrades/mesa/fork-schedule) page.
+
+## MUT
+
+The MUT network (`mesa-mut`) was a Mesa upgrade-test network that exercised the full stop-slot → fork → post-fork sequence on `4.0.0-rc1` builds. Operator feedback from MUT fed directly into the upgrade procedures documented in these pages.
+
+| Field | Value |
+| --- | --- |
+| Releases | `4.0.0-rc1` builds (for example `4.0.0-rc1-83b4654`, `4.0.0-rc1-mesa-mut-d7513d4`) |
+| Docker tag suffix | `-mesa-mut` (for example `mina-daemon:4.0.0-rc1-83b4654-bullseye-mesa-mut`) |
+| Seed nodes | `seed-1.mesa-mut.minaprotocol.com`, `seed-2.mesa-mut.minaprotocol.com` |
+
+## Next Steps
+
+- [Mesa Trail Network](/network-upgrades/mesa/mesa-trail) — the current test network: build matrix and setup
+- [Mesa Upgrade Overview](/network-upgrades/mesa) — prepare for mainnet
+
+---
 url: /network-upgrades/mesa/fork-schedule
 ---
 
@@ -4568,9 +4612,25 @@ Devnet typically forks ahead of mainnet to give integrators a final dress rehear
 | `stop-network-slot` (`slot_chain_end`)  | _TBD_ |
 | Mesa genesis timestamp (UTC)            | _TBD_ |
 
-## Preflight
+## Mesa Trail
 
-The Mesa preflight network has already forked. The numbers below are historical; they will not change.
+Mesa Trail is the current Mesa test network, running release `4.0.0-rc2-3418329`.
+
+:::warning Values not yet published
+The Mesa Trail fork schedule has not been announced. Live slot values and the Mesa genesis timestamp are published on the [Mesa Upgrade Status page](https://mesa-upgrade-tracker.minaprotocol.com/) as soon as they are set; build versions, image tags, and package names are on the [Mesa Trail Network](/network-upgrades/mesa/mesa-trail) page.
+:::
+
+| Field                                   | Value                   |
+| --------------------------------------- | ----------------------- |
+| Current release                         | `4.0.0-rc2-3418329`     |
+| `stop-transaction-slot` (`slot_tx_end`) | _TBD_                   |
+| `stop-network-slot` (`slot_chain_end`)  | _TBD_                   |
+| Mesa genesis timestamp (UTC)            | _TBD_                   |
+| o1js version targeting protocol v5.0.0  | `o1js@3.0.0-mesa.rc2`   |
+
+## Preflight (archived)
+
+The Mesa preflight network is archived — it is no longer running and its builds are no longer supported. The numbers below are historical; they will not change.
 
 | Field                                   | Value                          |
 | --------------------------------------- | ------------------------------ |
@@ -4581,7 +4641,7 @@ The Mesa preflight network has already forked. The numbers below are historical;
 | Transaction protocol version after fork | 5.0.0                          |
 | o1js version targeting protocol v5.0.0  | `o1js@3.0.0-mesa.698ca`        |
 
-For the full preflight context, see [Preflight Network](/network-upgrades/mesa/preflight-network).
+The **MUT** network (`mesa-mut`), which ran the same sequence on `4.0.0-rc1` builds, is also archived. For the full context on both archived networks, see [Archived Networks](/network-upgrades/mesa/archived-networks).
 
 ## How to use these values
 
@@ -4638,9 +4698,9 @@ The predefined time at which the first block is produced on the new Mesa chain �
 
 The new Mina build (version 4.x.x) published after [state finalization](#state-finalization) is complete. It contains the Mesa chain configuration and genesis ledger derived from the final pre-fork state. In [manual mode](#manual-mode), operators install this release to join the Mesa network.
 
-### Preflight Network
+### Mesa Trail Network
 
-A testing environment for validating the Mesa upgrade before deployment to mainnet. Node operators and developers can test their infrastructure and applications against it. The preflight network may be unstable and is not intended for production use. See [Preflight Network](/network-upgrades/mesa/preflight-network).
+The current testing environment for validating the Mesa upgrade before deployment to mainnet. Node operators and developers can test their infrastructure and applications against it. Mesa Trail may be unstable and is not intended for production use. It replaces the earlier **preflight** and **MUT** test networks, which are now [archived](/network-upgrades/mesa/archived-networks). See [Mesa Trail Network](/network-upgrades/mesa/mesa-trail).
 
 ---
 
@@ -4848,100 +4908,68 @@ Node build
 https://github.com/MinaProtocol/mina/releases?q=mesa
 ```
 
-{/* TODO(PR #1133): When the Mesa mainnet release is cut, add the post-fork Chain ID, Git SHA-1, and the specific release tag URL alongside the pre-fork values above. For the current preflight values, see [Preflight Network](/network-upgrades/mesa/preflight-network). */}
+{/* TODO(PR #1133): When the Mesa mainnet release is cut, add the post-fork Chain ID, Git SHA-1, and the specific release tag URL alongside the pre-fork values above. For the current test-network values, see [Mesa Trail Network](/network-upgrades/mesa/mesa-trail). */}
 
 ---
-url: /network-upgrades/mesa/preflight-network
+url: /network-upgrades/mesa/mesa-trail
 ---
 
-# Mesa Preflight Network
+# Mesa Trail Network
 
-The Mesa preflight network is a testing environment for validating the Mesa upgrade before deployment to devnet and mainnet. For step-by-step connection instructions, see [Preflight Setup](/network-upgrades/mesa/preflight-setup).
+**Mesa Trail** is the current Mesa test network — the environment for validating the Mesa upgrade before deployment to devnet and mainnet. This page covers the build matrix and how to connect each node type.
 
-:::tip Mesa preflight hard fork completed
+:::caution Test network
 
-The Mesa preflight network hard-forked at **2026-04-27 13:00 UTC**. The post-fork chain is now running the Mesa release **`4.0.0-preflight-3f038cb`**, which bumps the **transaction protocol version to 5.0.0**.
-
-The transaction protocol bump is a breaking wire-format change: any node still running a pre-fork build (including the stop-slot release `4.0.0-preflight-stop-2967b39` and the original preflight build `4.0.0-preflight1-b649c79`) will reject the new transaction format and is no longer compatible with the network. Upgrade to **`4.0.0-preflight-3f038cb`** to resume participation.
-
-zkApp developers must rebuild and redeploy against **`o1js@3.0.0-mesa.698ca`** — the first o1js release that targets transaction protocol v5.0.0. Transactions produced by earlier o1js versions will be rejected by post-fork nodes.
+Mesa Trail is intended for testing only. It may experience instability, breaking changes, and unexpected behavior. Data on this network is not persistent or reliable, and the network may be reset without notice.
 
 :::
 
-## Available Build Versions
+Two earlier Mesa test networks — **preflight** and **MUT** — are archived and no longer accept connections. If you are still running a preflight or MUT build, move to the Mesa Trail release below. Their historical values are recorded on [Archived Networks](/network-upgrades/mesa/archived-networks).
 
-**Current version (install this):** `4.0.0-preflight-3f038cb` — post-hard-fork release. Implements transaction protocol version **5.0.0** and is the only build compatible with the post-fork chain.
+## Current Build Version
 
-**Compatible o1js release:** `o1js@3.0.0-mesa.698ca` — the matching SDK for transaction protocol v5.0.0. Install with `npm install o1js@3.0.0-mesa.698ca` (or the equivalent for your package manager) when developing or redeploying zkApps against the post-fork preflight network.
+**Version (install this):** `4.0.0-rc2-3418329`
 
-**Previous versions (historical, do not install on new nodes):**
+**Compatible o1js release:** `o1js@3.0.0-mesa.rc2` — the matching SDK for the Mesa transaction protocol. Install with `npm install o1js@3.0.0-mesa.rc2` (or the equivalent for your package manager) when developing or redeploying zkApps against Mesa Trail. Earlier `o1js` versions produce transactions that Mesa nodes reject.
 
-- `4.0.0-preflight-stop-2967b39` — stop-slot release used to carry nodes up to the fork. Pre-fork transaction protocol; incompatible with the post-fork chain.
-- `4.0.0-preflight1-b649c79` — original preflight build. Listed for reference only.
+### Docker Images
 
-## Docker Images
+Images are published to `gcr.io/o1labs-192920`. The tag format is `<version>-<codename>-devnet`:
 
-Docker images are available for both `amd64` and `arm64` architectures, on the `bookworm` and `noble` base distributions:
+- **Mina Daemon:** `gcr.io/o1labs-192920/mina-daemon:4.0.0-rc2-3418329-bullseye-devnet`
+- **Archive Node:** `gcr.io/o1labs-192920/mina-archive:4.0.0-rc2-3418329-bullseye-devnet`
+- **Rosetta:** `gcr.io/o1labs-192920/mina-rosetta:4.0.0-rc2-3418329-bullseye-devnet`
 
-- **Mina Daemon:** `gcr.io/o1labs-192920/mina-daemon:4.0.0-preflight-3f038cb-bookworm-mesa`
-- **Archive Node:** `gcr.io/o1labs-192920/mina-archive:4.0.0-preflight-3f038cb-bookworm-mesa`
-- **Rosetta:** `gcr.io/o1labs-192920/mina-rosetta:4.0.0-preflight-3f038cb-bookworm-mesa`
+Available base distributions: `bullseye`, `bookworm`, `focal`, `jammy`, `noble`. Swap the codename in the tag to select one — for example `mina-daemon:4.0.0-rc2-3418329-noble-devnet`.
 
-For `noble`, swap `bookworm` for `noble` in the tag (e.g. `mina-daemon:4.0.0-preflight-3f038cb-noble-mesa`).
+### Debian Packages
 
-## Debian Packages
+**Repository:** `packages.o1test.net`
+**Channel:** `dryrun`
+**Codenames:** `bullseye`, `bookworm`, `focal`, `jammy`, `noble`
 
-Debian packages are available from the unstable repository:
+Available packages (each at version `4.0.0-rc2-3418329`):
 
-**Repository:** `unstable.apt.packages.minaprotocol.com`
-**Channel:** `preflight`
-**Codenames:** `bookworm`, `noble`
+| Package | Purpose |
+| --- | --- |
+| `mina-devnet` | Mina daemon |
+| `mina-archive-devnet` | Archive node |
+| `mina-rosetta-devnet` | Rosetta API |
+| `mina-devnet-config` | Network configuration shipped with the daemon |
+| `mina-logproc` | Log processing helper (installed as a daemon dependency) |
 
-Available packages (each at version `4.0.0-preflight-3f038cb`):
+:::note Unsigned repository
 
-- `mina-mesa`
-- `mina-archive-mesa`
-- `mina-rosetta-mesa`
-
-For detailed information about the Debian repository structure and configuration, please refer to the [Debian Repository documentation](https://unstable.apt.packages.minaprotocol.com/).
-
-## Nightly Builds
-
-In addition to the preflight release builds, nightly builds are also available for testing the latest changes.
-
-**Repository:** `nightly.apt.packages.minaprotocol.com`
-
-Nightly builds are available for both Debian packages and Docker images. These builds represent the latest development state and may be even more unstable than preflight releases.
-
-For more information about nightly builds and repository configuration, see the [Debian Repository documentation](https://nightly.apt.packages.minaprotocol.com/).
-
-## Next Steps
-
-- [Connect to the Preflight Network](/network-upgrades/mesa/preflight-setup) — Docker and Debian setup guides
-- [Mesa Upgrade Overview](/network-upgrades/mesa) — prepare for mainnet
-
----
-url: /network-upgrades/mesa/preflight-setup
----
-
-# Connect to Mesa Preflight Network
-
-The Mesa preflight network is a testing environment for validating the Mesa upgrade before deployment to devnet and mainnet. This page walks through connecting each node type.
-
-Before starting, check the [Preflight Network](/network-upgrades/mesa/preflight-network) page for the current build versions, Docker image tags, and Debian package names.
-
-:::caution Preflight Network Notice
-
-The preflight network is intended for testing purposes only. This network may experience instability, breaking changes, and unexpected behavior. Data on this network should not be considered persistent or reliable.
+`packages.o1test.net` is not GPG-signed, so the apt source line below uses `[trusted=yes]`. This is expected for test-network builds.
 
 :::
 
 ## Connecting to the Network
 
-All node types must use the preflight network seed peer list:
+All node types must use the Mesa Trail seed peer list:
 
 ```bash
---peer-list-url https://storage.googleapis.com/o1labs-gitops-infrastructure/mina-mesa-network/mina-mesa-network-seeds.txt
+--peer-list-url https://storage.googleapis.com/o1labs-gitops-infrastructure/mina-mesa-rc/mina-mesa-rc-peer-list-url.txt
 ```
 
 <Tabs groupId="install-method">
@@ -4950,34 +4978,34 @@ All node types must use the preflight network seed peer list:
 ### Mina Daemon
 
 ```bash
-docker run --name mina-mesa-preflight -d \
+docker run --name mina-mesa-trail -d \
   -p 8302:8302 \
   --restart=always \
-  gcr.io/o1labs-192920/mina-daemon:4.0.0-preflight-3f038cb-bookworm-mesa \
+  gcr.io/o1labs-192920/mina-daemon:4.0.0-rc2-3418329-bullseye-devnet \
   daemon \
-  --peer-list-url https://storage.googleapis.com/o1labs-gitops-infrastructure/mina-mesa-network/mina-mesa-network-seeds.txt
+  --peer-list-url https://storage.googleapis.com/o1labs-gitops-infrastructure/mina-mesa-rc/mina-mesa-rc-peer-list-url.txt
 ```
 
 For production deployments, mount config directories and add additional flags:
 
 ```bash
-docker run --name mina-mesa-preflight -d \
+docker run --name mina-mesa-trail -d \
   -p 8302:8302 \
   --restart=always \
   -v $(pwd)/.mina-config:/root/.mina-config \
-  gcr.io/o1labs-192920/mina-daemon:4.0.0-preflight-3f038cb-bookworm-mesa \
+  gcr.io/o1labs-192920/mina-daemon:4.0.0-rc2-3418329-bullseye-devnet \
   daemon \
-  --peer-list-url https://storage.googleapis.com/o1labs-gitops-infrastructure/mina-mesa-network/mina-mesa-network-seeds.txt \
+  --peer-list-url https://storage.googleapis.com/o1labs-gitops-infrastructure/mina-mesa-rc/mina-mesa-rc-peer-list-url.txt \
   --libp2p-keypair /data/.mina-config/keys/libp2p-key
 ```
 
 ### Archive Node
 
 ```bash
-docker run --name mina-archive-mesa -d \
+docker run --name mina-archive-mesa-trail -d \
   -p 3086:3086 \
   --restart=always \
-  gcr.io/o1labs-192920/mina-archive:4.0.0-preflight-3f038cb-bookworm-mesa \
+  gcr.io/o1labs-192920/mina-archive:4.0.0-rc2-3418329-bullseye-devnet \
   mina-archive run \
   --postgres-uri postgresql://archive_user:your-secure-password@postgres-host:5432/archive \
   --server-port 3086
@@ -4988,10 +5016,10 @@ If upgrading an existing Berkeley database, see [Archive Upgrade](/network-upgra
 ### Rosetta API
 
 ```bash
-docker run --name mina-rosetta-mesa -d \
+docker run --name mina-rosetta-mesa-trail -d \
   -p 3087:3087 \
   --restart=always \
-  gcr.io/o1labs-192920/mina-rosetta:4.0.0-preflight-3f038cb-bookworm-mesa \
+  gcr.io/o1labs-192920/mina-rosetta:4.0.0-rc2-3418329-bullseye-devnet \
   --port 3087 \
   --archive-uri http://archive-host:3086/graphql \
   --graphql-uri http://mina-daemon-host:3085/graphql
@@ -5008,24 +5036,21 @@ First, install dependencies and configure the repository:
 # Step 1: Install dependencies
 sudo apt-get install -y lsb-release ca-certificates wget gnupg
 
-# Step 2: Import the GPG key
-wget -q https://unstable.apt.packages.minaprotocol.com/repo-signing-key.gpg \
-  -O /etc/apt/trusted.gpg.d/minaprotocol.gpg
+# Step 2: Add the repository with the dryrun channel.
+# packages.o1test.net is unsigned, hence [trusted=yes].
+echo "deb [trusted=yes] http://packages.o1test.net $(lsb_release -cs) dryrun" | \
+  sudo tee /etc/apt/sources.list.d/mina-mesa-trail.list
 
-# Step 3: Add the unstable repository with preflight channel
-echo "deb https://unstable.apt.packages.minaprotocol.com $(lsb_release -cs) preflight" | \
-  sudo tee /etc/apt/sources.list.d/mina-preflight.list
-
-# Step 4: Update and install
+# Step 3: Update and install
 sudo apt-get update
-sudo apt-get install -y mina-mesa=4.0.0-preflight-3f038cb
+sudo apt-get install -y mina-devnet=4.0.0-rc2-3418329
 ```
 
 ### Mina Daemon
 
 ```bash
 mina daemon \
-  --peer-list-url https://storage.googleapis.com/o1labs-gitops-infrastructure/mina-mesa-network/mina-mesa-network-seeds.txt \
+  --peer-list-url https://storage.googleapis.com/o1labs-gitops-infrastructure/mina-mesa-rc/mina-mesa-rc-peer-list-url.txt \
   --libp2p-keypair ~/.mina-config/keys/libp2p-key
 ```
 
@@ -5033,7 +5058,7 @@ mina daemon \
 
 ```bash
 # Install archive package
-sudo apt-get install -y mina-archive-mesa=4.0.0-preflight-3f038cb
+sudo apt-get install -y mina-archive-devnet=4.0.0-rc2-3418329
 
 # Create PostgreSQL database (if needed)
 sudo -u postgres createdb archive
@@ -5052,7 +5077,7 @@ If upgrading an existing Berkeley database, see [Archive Upgrade](/network-upgra
 ### Rosetta API
 
 ```bash
-sudo apt-get install -y mina-rosetta-mesa=4.0.0-preflight-3f038cb
+sudo apt-get install -y mina-rosetta-devnet=4.0.0-rc2-3418329
 
 mina-rosetta \
   --port 3087 \
@@ -5069,19 +5094,19 @@ Configure your daemon to send blocks to the archive node:
 
 ```bash
 mina daemon \
-  --peer-list-url https://storage.googleapis.com/o1labs-gitops-infrastructure/mina-mesa-network/mina-mesa-network-seeds.txt \
+  --peer-list-url https://storage.googleapis.com/o1labs-gitops-infrastructure/mina-mesa-rc/mina-mesa-rc-peer-list-url.txt \
   --archive-address localhost:3086
 ```
 
 ## Verification
 
-After starting your node, verify connectivity to the preflight network:
+After starting your node, verify connectivity to Mesa Trail:
 
 ### Check Node Status
 
 ```bash
 # For Docker
-docker exec -it mina-mesa-preflight mina client status
+docker exec -it mina-mesa-trail mina client status
 
 # For Debian installation
 mina client status
@@ -5091,15 +5116,64 @@ mina client status
 
 ```bash
 # For Docker
-docker logs -f mina-mesa-preflight
+docker logs -f mina-mesa-trail
 
 # For systemd service (Debian)
 journalctl -u mina -f
 ```
 
+## Network Resources
+
+Live status, chain data, and configuration for Mesa Trail. The network is identified as `mesa-rc` in infrastructure paths and explorer URLs.
+
+### Upgrade Status Tracker
+
+The **[Mesa Upgrade Status page](https://mesa-upgrade-tracker.minaprotocol.com/)** is the live source of truth during the upgrade. It publishes the current phase, the fork timeline (`stop-transaction-slot`, `stop-network-slot`, Mesa genesis timestamp), the artifact matrix as builds are promoted, announcements, and a running FAQ / known-issues list. Check it before and during the fork window — the slot values and release tags land there first.
+
+### Chain Data
+
+| Resource | Location |
+| --- | --- |
+| Seed peer list | [`mina-mesa-rc-peer-list-url.txt`](https://storage.googleapis.com/o1labs-gitops-infrastructure/mina-mesa-rc/mina-mesa-rc-peer-list-url.txt) |
+| Genesis config | [`mina-mesa-rc-genesis-config.json`](https://storage.googleapis.com/o1labs-gitops-infrastructure/mina-mesa-rc/mina-mesa-rc-genesis-config.json) |
+| Precomputed blocks | `https://storage.googleapis.com/mesa-rc-precomputed-blocks/` |
+| Archive database dumps | `https://storage.googleapis.com/mina-archive-dumps/` |
+| Block explorer | [MinaExplorer — `mesa-rc`](https://o1-labs.github.io/mina-explorer/#/blocks?network=mesa-rc) |
+| Faucet | [faucet.minaprotocol.com](https://faucet.minaprotocol.com/) |
+
+### Precomputed Blocks
+
+Precomputed blocks are published to the `mesa-rc-precomputed-blocks` bucket, one JSON file per block, named `mina-mesa-rc-1-<height>-<state-hash>.json`:
+
+```bash
+# List recent blocks
+gsutil ls gs://mesa-rc-precomputed-blocks/ | tail
+
+# Fetch a single block over HTTPS (no gsutil required)
+curl -O https://storage.googleapis.com/mesa-rc-precomputed-blocks/mina-mesa-rc-1-<height>-<state-hash>.json
+```
+
+Use these to bootstrap an archive node with [`mina-archive-blocks`](/network-upgrades/mesa/archive-upgrade), or to replay chain history without running a full node.
+
+### Archive Database Dumps
+
+Hourly archive dumps are published to the `mina-archive-dumps` bucket with the prefix `mina-mesa-rc`, named `mina-mesa-rc-1-archive-dump-<YYYY-MM-DD>_<HHMM>.sql.tar.gz`:
+
+```bash
+# List available dumps
+gsutil ls gs://mina-archive-dumps/mina-mesa-rc-1-archive-dump-*
+
+# Download and restore the latest dump
+curl -O https://storage.googleapis.com/mina-archive-dumps/mina-mesa-rc-1-archive-dump-<YYYY-MM-DD>_<HHMM>.sql.tar.gz
+tar -xzf mina-mesa-rc-1-archive-dump-<YYYY-MM-DD>_<HHMM>.sql.tar.gz
+psql -d archive -f mina-mesa-rc-1-archive-dump-<YYYY-MM-DD>_<HHMM>.sql
+```
+
+A dump is the fastest way to stand up an archive node against Mesa Trail without replaying the chain, and it is the same mechanism behind the [_trustful_](/network-upgrades/mesa/glossary#trustful) archive upgrade path.
+
 ## Support and Feedback
 
-If you encounter issues or have feedback about the Mesa preflight network:
+If you encounter issues or have feedback about Mesa Trail:
 
 1. Check the [Mina Protocol Discord](https://discord.gg/minaprotocol) for community support
 2. Report issues on the [Mina GitHub repository](https://github.com/MinaProtocol/mina/issues)
@@ -5107,7 +5181,8 @@ If you encounter issues or have feedback about the Mesa preflight network:
 
 ## Next Steps
 
-- Test your applications and infrastructure against the preflight network
+- Watch the [Mesa Upgrade Status page](https://mesa-upgrade-tracker.minaprotocol.com/) for the fork timeline and artifact promotions
+- Test your applications and infrastructure against Mesa Trail
 - Review the [Mesa Upgrade](/network-upgrades/mesa) overview for mainnet preparation
 - Provide feedback to help improve the Mesa upgrade process
 
@@ -5193,8 +5268,8 @@ Before the fork, each actor type must complete specific preparations. Complete t
 
 ### zkApp Developers
 
-- Update to the Mesa-compatible o1js version (`o1js@3.0.0-mesa.698ca` for the preflight chain).
-- Recompile your contracts and verify them on the [preflight network](/network-upgrades/mesa/preflight-network).
+- Update to the Mesa-compatible o1js version (`o1js@3.0.0-mesa.rc2` for the Mesa Trail chain).
+- Recompile your contracts and verify them on the [Mesa Trail test network](/network-upgrades/mesa/mesa-trail).
 - Plan to redeploy every zkApp on Mesa — each must be redeployed because the protocol version bump changes the verification key. {/* TODO(PR #1133): Link to the official o1js Mesa upgrade guide once published (cjjdespres #3220525842). */}
 
 ---
@@ -5544,7 +5619,7 @@ docker run --name mina -d \
 
 **Fork day (Upgrade)** — The network halts at the _stop-network-slot_. Carlos waits for the Mesa release announcement, then swaps to the new image.
 
-> Throughout these examples, `<mesa-version>` is a placeholder for the Mesa release tag announced for your target network. For the **preflight** network the current value is published on [Preflight Network](/network-upgrades/mesa/preflight-network); for **devnet/mainnet** the value will be published with the corresponding release announcement.
+> Throughout these examples, `<mesa-version>` is a placeholder for the Mesa release tag announced for your target network. For the **Mesa Trail** test network the current value is published on [Mesa Trail Network](/network-upgrades/mesa/mesa-trail); for **devnet/mainnet** the value will be published with the corresponding release announcement.
 
 ```bash
 docker stop mina && docker rm mina
@@ -5679,20 +5754,20 @@ She checks her explorer UI to confirm new Mesa blocks are appearing and the hist
 
 **Frank** maintains a zkApp deployed on mainnet. His contract uses on-chain state and he wants to take advantage of Mesa's expanded 32-field state.
 
-**Weeks before the fork** — Frank updates his o1js dependency to the Mesa-compatible version and tests his zkApp on the [preflight network](/network-upgrades/mesa/preflight-network):
+**Weeks before the fork** — Frank updates his o1js dependency to the Mesa-compatible version and tests his zkApp on the [Mesa Trail test network](/network-upgrades/mesa/mesa-trail):
 
 ```bash
-npm install o1js@3.0.0-mesa.698ca
+npm install o1js@3.0.0-mesa.rc2
 ```
 
-This is the first o1js release that targets the Mesa transaction protocol. `o1js@latest` currently resolves to a pre-Mesa version and will produce transactions the post-fork preflight network rejects. See [Preflight Network](/network-upgrades/mesa/preflight-network) for the matching daemon/archive/rosetta release.
+This release targets the Mesa transaction protocol. `o1js@latest` currently resolves to a pre-Mesa version and will produce transactions that Mesa nodes reject. See [Mesa Trail Network](/network-upgrades/mesa/mesa-trail) for the matching daemon/archive/rosetta release.
 
 He verifies that:
-- His contract recompiles cleanly against Mesa-compatible o1js and deploys on the preflight Mesa network
+- His contract recompiles cleanly against Mesa-compatible o1js and deploys on Mesa Trail
 - Transactions execute end-to-end against the redeployed contract
-- If he plans to use the expanded state fields (indexes `8–31`), his updated contract version compiles and deploys on preflight
+- If he plans to use the expanded state fields (indexes `8–31`), his updated contract version compiles and deploys on Mesa Trail
 
-> For details on testing with the preflight network, see [Preflight Network](/network-upgrades/mesa/preflight-network).
+> For details on testing against Mesa Trail, see [Mesa Trail Network](/network-upgrades/mesa/mesa-trail).
 
 **Hours before the fork (State Finalization)** — Frank does **nothing**. His deployed zkApp keeps running on the Berkeley chain. No transactions can be submitted during this phase anyway.
 
@@ -5724,7 +5799,7 @@ Bob runs the full Rosetta-based stack, so he upgrades **three packages** — the
 
 (Exchanges on a custom GraphQL integration that do not run Rosetta or an archive only need `mina-mainnet`.)
 
-**Weeks before the fork** — Bob tests his integration (Rosetta API, mina-signer) on the [preflight network](/network-upgrades/mesa/preflight-network). He reviews [schema changes](/network-upgrades/mesa/appendix/archive-node-schema-changes) and installs the stop-slot release on his node:
+**Weeks before the fork** — Bob tests his integration (Rosetta API, mina-signer) on the [Mesa Trail test network](/network-upgrades/mesa/mesa-trail). He reviews [schema changes](/network-upgrades/mesa/appendix/archive-node-schema-changes) and installs the stop-slot release on his node:
 
 ```bash
 sudo apt-get install mina-mainnet=3.x.x
@@ -5840,7 +5915,7 @@ mina client status
 You should see:
 
 - **Sync status**: `Synced`
-- **Chain ID** matching the Mesa chain ID for your network. The chain ID changes at the fork and is network-specific (mainnet, devnet, and preflight each get their own) — the exact value is published in the Mesa release announcement alongside the first Mesa packages.
+- **Chain ID** matching the Mesa chain ID for your network. The chain ID changes at the fork and is network-specific (mainnet, devnet, and each test network get their own) — the exact value is published in the Mesa release announcement alongside the first Mesa packages.
 - **Git SHA-1** matching the published Mesa daemon commit
 - **Genesis timestamp** matching the published Mesa genesis timestamp
 - **Block height** advancing
