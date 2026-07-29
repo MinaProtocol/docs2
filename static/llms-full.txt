@@ -4612,22 +4612,6 @@ Devnet typically forks ahead of mainnet to give integrators a final dress rehear
 | `stop-network-slot` (`slot_chain_end`)  | _TBD_ |
 | Mesa genesis timestamp (UTC)            | _TBD_ |
 
-## Mesa Trail
-
-Mesa Trail is the current Mesa test network, running release `4.0.0-rc2-3418329`.
-
-:::warning Values not yet published
-The Mesa Trail fork schedule has not been announced. Live slot values and the Mesa genesis timestamp are published on the [Mesa Upgrade Status page](https://mesa-upgrade-tracker.minaprotocol.com/) as soon as they are set; build versions, image tags, and package names are on the [Mesa Trail Network](/network-upgrades/mesa/mesa-trail) page.
-:::
-
-| Field                                   | Value                   |
-| --------------------------------------- | ----------------------- |
-| Current release                         | `4.0.0-rc2-3418329`     |
-| `stop-transaction-slot` (`slot_tx_end`) | _TBD_                   |
-| `stop-network-slot` (`slot_chain_end`)  | _TBD_                   |
-| Mesa genesis timestamp (UTC)            | _TBD_                   |
-| o1js version targeting protocol v5.0.0  | `o1js@3.0.0-mesa.rc2`   |
-
 ## Preflight (archived)
 
 The Mesa preflight network is archived — it is no longer running and its builds are no longer supported. The numbers below are historical; they will not change.
@@ -4945,7 +4929,7 @@ Available base distributions: `bullseye`, `bookworm`, `focal`, `jammy`, `noble`.
 ### Debian Packages
 
 **Repository:** `packages.o1test.net`
-**Channel:** `dryrun`
+**Channel:** `mesa-trail`
 **Codenames:** `bullseye`, `bookworm`, `focal`, `jammy`, `noble`
 
 Available packages (each at version `4.0.0-rc2-3418329`):
@@ -4986,7 +4970,7 @@ docker run --name mina-mesa-trail -d \
   --peer-list-url https://storage.googleapis.com/o1labs-gitops-infrastructure/mina-mesa-rc/mina-mesa-rc-peer-list-url.txt
 ```
 
-For production deployments, mount config directories and add additional flags:
+For a long-running node, mount config directories and add additional flags:
 
 ```bash
 docker run --name mina-mesa-trail -d \
@@ -5036,9 +5020,9 @@ First, install dependencies and configure the repository:
 # Step 1: Install dependencies
 sudo apt-get install -y lsb-release ca-certificates wget gnupg
 
-# Step 2: Add the repository with the dryrun channel.
+# Step 2: Add the repository with the mesa-trail channel.
 # packages.o1test.net is unsigned, hence [trusted=yes].
-echo "deb [trusted=yes] http://packages.o1test.net $(lsb_release -cs) dryrun" | \
+echo "deb [trusted=yes] http://packages.o1test.net $(lsb_release -cs) mesa-trail" | \
   sudo tee /etc/apt/sources.list.d/mina-mesa-trail.list
 
 # Step 3: Update and install
@@ -5124,11 +5108,7 @@ journalctl -u mina -f
 
 ## Network Resources
 
-Live status, chain data, and configuration for Mesa Trail. The network is identified as `mesa-rc` in infrastructure paths and explorer URLs.
-
-### Upgrade Status Tracker
-
-The **[Mesa Upgrade Status page](https://mesa-upgrade-tracker.minaprotocol.com/)** is the live source of truth during the upgrade. It publishes the current phase, the fork timeline (`stop-transaction-slot`, `stop-network-slot`, Mesa genesis timestamp), the artifact matrix as builds are promoted, announcements, and a running FAQ / known-issues list. Check it before and during the fork window — the slot values and release tags land there first.
+Chain data and configuration for Mesa Trail. The network is identified as `mesa-rc` in infrastructure paths and explorer URLs.
 
 ### Chain Data
 
@@ -5181,7 +5161,6 @@ If you encounter issues or have feedback about Mesa Trail:
 
 ## Next Steps
 
-- Watch the [Mesa Upgrade Status page](https://mesa-upgrade-tracker.minaprotocol.com/) for the fork timeline and artifact promotions
 - Test your applications and infrastructure against Mesa Trail
 - Review the [Mesa Upgrade](/network-upgrades/mesa) overview for mainnet preparation
 - Provide feedback to help improve the Mesa upgrade process
