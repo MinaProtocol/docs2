@@ -106,7 +106,7 @@ docker run --name mina -d \
 
 **Fork day (Upgrade)** — The network halts at the _stop-network-slot_. Carlos waits for the Mesa release announcement, then swaps to the new image.
 
-> Throughout these examples, `<mesa-version>` is a placeholder for the Mesa release tag announced for your target network. For the **preflight** network the current value is published on [Preflight Network](/network-upgrades/mesa/preflight-network); for **devnet/mainnet** the value will be published with the corresponding release announcement.
+> Throughout these examples, `<mesa-version>` is a placeholder for the Mesa release tag announced for your target network. For the **Mesa Trail** test network the current value is published on [Mesa Trail Network](/network-upgrades/mesa/mesa-trail); for **devnet/mainnet** the value will be published with the corresponding release announcement.
 
 ```bash
 docker stop mina && docker rm mina
@@ -241,20 +241,20 @@ She checks her explorer UI to confirm new Mesa blocks are appearing and the hist
 
 **Frank** maintains a zkApp deployed on mainnet. His contract uses on-chain state and he wants to take advantage of Mesa's expanded 32-field state.
 
-**Weeks before the fork** — Frank updates his o1js dependency to the Mesa-compatible version and tests his zkApp on the [preflight network](/network-upgrades/mesa/preflight-network):
+**Weeks before the fork** — Frank updates his o1js dependency to the Mesa-compatible version and tests his zkApp on the [Mesa Trail test network](/network-upgrades/mesa/mesa-trail):
 
 ```bash
-npm install o1js@3.0.0-mesa.698ca
+npm install o1js@3.0.0-mesa.rc2
 ```
 
-This is the first o1js release that targets the Mesa transaction protocol. `o1js@latest` currently resolves to a pre-Mesa version and will produce transactions the post-fork preflight network rejects. See [Preflight Network](/network-upgrades/mesa/preflight-network) for the matching daemon/archive/rosetta release.
+This release targets the Mesa transaction protocol. `o1js@latest` currently resolves to a pre-Mesa version and will produce transactions that Mesa nodes reject. See [Mesa Trail Network](/network-upgrades/mesa/mesa-trail) for the matching daemon/archive/rosetta release.
 
 He verifies that:
-- His contract recompiles cleanly against Mesa-compatible o1js and deploys on the preflight Mesa network
+- His contract recompiles cleanly against Mesa-compatible o1js and deploys on Mesa Trail
 - Transactions execute end-to-end against the redeployed contract
-- If he plans to use the expanded state fields (indexes `8–31`), his updated contract version compiles and deploys on preflight
+- If he plans to use the expanded state fields (indexes `8–31`), his updated contract version compiles and deploys on Mesa Trail
 
-> For details on testing with the preflight network, see [Preflight Network](/network-upgrades/mesa/preflight-network).
+> For details on testing against Mesa Trail, see [Mesa Trail Network](/network-upgrades/mesa/mesa-trail).
 
 **Hours before the fork (State Finalization)** — Frank does **nothing**. His deployed zkApp keeps running on the Berkeley chain. No transactions can be submitted during this phase anyway.
 
@@ -286,7 +286,7 @@ Bob runs the full Rosetta-based stack, so he upgrades **three packages** — the
 
 (Exchanges on a custom GraphQL integration that do not run Rosetta or an archive only need `mina-mainnet`.)
 
-**Weeks before the fork** — Bob tests his integration (Rosetta API, mina-signer) on the [preflight network](/network-upgrades/mesa/preflight-network). He reviews [schema changes](/network-upgrades/mesa/appendix/archive-node-schema-changes) and installs the stop-slot release on his node:
+**Weeks before the fork** — Bob tests his integration (Rosetta API, mina-signer) on the [Mesa Trail test network](/network-upgrades/mesa/mesa-trail). He reviews [schema changes](/network-upgrades/mesa/appendix/archive-node-schema-changes) and installs the stop-slot release on his node:
 
 ```bash
 sudo apt-get install mina-mainnet=3.x.x

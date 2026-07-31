@@ -334,7 +334,15 @@ module.exports = {
           },
           {
             from: '/mesa-upgrade/preflight-network',
-            to: '/network-upgrades/mesa/preflight-network',
+            to: '/network-upgrades/mesa/archived-networks',
+          },
+          {
+            from: '/network-upgrades/mesa/preflight-network',
+            to: '/network-upgrades/mesa/archived-networks',
+          },
+          {
+            from: '/network-upgrades/mesa/preflight-setup',
+            to: '/network-upgrades/mesa/mesa-trail',
           },
           {
             from: '/mesa-upgrade/archive-upgrade',

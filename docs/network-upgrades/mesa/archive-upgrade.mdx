@@ -2,7 +2,7 @@
 title: Archive Upgrade
 sidebar_label: Archive Upgrade
 hide_title: true
-description: General guide for upgrading a Mina archive database to the Mesa schema — applies to preflight, devnet, and mainnet.
+description: General guide for upgrading a Mina archive database to the Mesa schema — applies to Mesa Trail, devnet, and mainnet.
 keywords:
   - Mesa
   - upgrade
@@ -16,22 +16,22 @@ import TabItem from '@theme/TabItem';
 
 # Archive Upgrade
 
-This guide describes the general procedure for upgrading a Mina archive database from Berkeley to Mesa. The same steps apply to every Mesa deployment (preflight, devnet, mainnet) — only the archive package version differs.
+This guide describes the general procedure for upgrading a Mina archive database from Berkeley to Mesa. The same steps apply to every Mesa deployment (Mesa Trail, devnet, mainnet) — only the archive package version differs.
 
-:::tip Preflight-specific version info
+:::tip Test-network version info
 
-The Mesa preflight network has already forked. See [Preflight Network](/network-upgrades/mesa/preflight-network) for the current build versions and transaction protocol details.
+**Mesa Trail** is the current Mesa test network. See [Mesa Trail Network](/network-upgrades/mesa/mesa-trail) for the current build versions and transaction protocol details.
 
 :::
 
 <Tabs groupId="network">
-<TabItem value="preflight" label="Preflight" default>
+<TabItem value="mesa-trail" label="Mesa Trail" default>
 
-The preflight archive version is **`4.0.0-preflight-3f038cb`** (post-hard-fork; transaction protocol v5.0.0). Docker tag: `gcr.io/o1labs-192920/mina-archive:4.0.0-preflight-3f038cb-bookworm-mesa`. See [Preflight Network](./preflight-network) for the full release matrix.
+The Mesa Trail archive version is **`4.0.0-rc2-3418329`**. Docker tag: `gcr.io/o1labs-192920/mina-archive:4.0.0-rc2-3418329-bullseye-devnet`. See [Mesa Trail Network](./mesa-trail) for the full release matrix.
 
 ```bash
 # Substitute this version wherever <MESA_VERSION> appears below
-MESA_VERSION=4.0.0-preflight-3f038cb
+MESA_VERSION=4.0.0-rc2-3418329
 ```
 
 </TabItem>
@@ -89,7 +89,7 @@ The upgrade script ships **inside the Mina archive Debian package and Docker ima
 ```bash
 # Setup the Mina repository and install the archive package.
 # Repository setup (apt sources, GPG key, channel) is network-specific —
-# see Preflight Network for the preflight pin, or your network's release notes.
+# see Mesa Trail Network for the test-network pin, or your network's release notes.
 
 apt-get install mina-archive-mainnet=<MESA_VERSION>
 
