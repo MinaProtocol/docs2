@@ -6025,6 +6025,10 @@ Only re-enable MINA deposits and withdrawals after:
 
 The checks in the tabs above cover basic health. This section provides deeper validation procedures for operators who want thorough verification.
 
+:::tip Verify the packaged state itself
+The checks below confirm that your node and archive database are healthy. To prove that the Mesa packages were built from the final pre-fork chain state, and to reproduce the genesis ledgers yourself, see [Verify the Release](/network-upgrades/mesa/verify-the-release).
+:::
+
 <Tabs groupId="indepth-validation">
 <TabItem value="daemon" label="Daemon" default>
 
@@ -6384,7 +6388,7 @@ url: /network-upgrades/mesa/upgrade-steps/upgrade
 
 Starting at the _stop-network-slot_ the network will not produce nor accept new blocks, resulting in halting the network. During the upgrade period, o1Labs will use automated tooling to export the network state based on the block at the slot just before the _stop-transaction-slot_. The exported state will then be baked into the new Mesa build, which will be used to initiate the upgraded network. It is during the upgrade window that the Mesa network infrastructure will be bootstrapped, and seed nodes will become available. o1Labs will also finalize the archive node upgrade and publish the PostgreSQL database dumps for import by the archive node operators who wish to bootstrap their archives in a trustful manner.
 
-There is a tool available to validate that the Mesa node was built from the pre-upgrade network state. See [In-Depth Validation](/network-upgrades/mesa/upgrade-steps/post-upgrade#in-depth-validation) for the `mina-archive-hardfork-toolbox` commands (`validate-fork`, `fork-candidate no-commands-after`) used to verify fork-block integrity. {/* TODO(PR #1133): If/when an authoritative `upgrading-to-mesa.md` lands in MinaProtocol/mina, link to it here. The previous link to `mina/blob/mesa/docs/upgrading-to-mesa.md` returned 404 — the `mesa` branch does not exist on the main repo. */}
+There are tools available to validate that the Mesa node was built from the pre-upgrade network state. To reproduce the packaged genesis ledgers and runtime configuration from the exported fork configuration, see [Verify the Release](/network-upgrades/mesa/verify-the-release). To check fork-block integrity in the archive database, see [In-Depth Validation](/network-upgrades/mesa/upgrade-steps/post-upgrade#in-depth-validation) for the `mina-archive-hardfork-toolbox` commands (`validate-fork`, `fork-candidate no-commands-after`).
 
 ## Per-actor summary
 
@@ -6419,6 +6423,215 @@ If you are using **Manual mode**:
    - _Trustful_
      - Operators shall import the SQL dump file provided by o1Labs to a freshly created database.
      - Operators should direct their Mesa archive process to the newly created database.
+
+---
+url: /network-upgrades/mesa/verify-the-release
+---
+
+# Verify the Release
+
+The Mesa packages contain a genesis ledger and a runtime configuration that o1Labs generated from the state of the pre-fork chain. This page shows how to prove, on your own machine, that the packages you install were made from that state and from nothing else.
+
+This procedure is optional. It is written for exchanges, custodians, and node operators who must not take the contents of a package on trust.
+
+:::info This is not part of the upgrade path
+You do not have to run these checks to upgrade. For the upgrade itself, see [Upgrade Steps](/network-upgrades/mesa/upgrade-steps). For health checks on a node that is already running Mesa, see [Post-Upgrade](/network-upgrades/mesa/upgrade-steps/post-upgrade#in-depth-validation).
+:::
+
+## What the checks prove
+
+The verification tool compares three independent things:
+
+| Check | What it compares | What a pass means |
+| --- | --- | --- |
+| `config` | The ledger hashes in the fork configuration against the hashes in the precomputed fork block | The fork configuration describes the same chain state as the last block of the pre-fork chain |
+| `ledgers` | The ledgers a node exports from the packaged configuration against the ledgers exported from a configuration you build yourself | The packaged runtime configuration produces the same accounts as the fork configuration |
+| `tarballs` | The RocksDB contents of the packaged ledger tarballs against tarballs you generate, and against the copies published on S3 | The shipped ledger databases are byte-for-byte what the fork configuration produces |
+
+Together they show that the accounts, balances, and epoch ledgers in the Mesa release come from the pre-fork chain.
+
+**The checks do not prove** that the fork block itself is the correct one, or that the pre-fork chain was honest. To check the fork block and the archive database, use `mina-archive-hardfork-toolbox`, described in [Post-Upgrade](/network-upgrades/mesa/upgrade-steps/post-upgrade#in-depth-validation) and [Archive Upgrade](/network-upgrades/mesa/archive-upgrade#verification-with-the-archive-hardfork-toolbox).
+
+## Before you start
+
+### Machine
+
+Use a Debian or Ubuntu machine on x86-64. The node needs AVX instructions, which Intel emulation on macOS does not provide.
+
+Allow for the cost: the `ledgers` and `tarballs` checks each start a node and rehash every account. Together they take more than 20 minutes on mainnet-sized data, and they need enough free disk for three copies of the genesis ledgers.
+
+### Packages
+
+Two packages supply the programs. Replace `4.x.x` with the published Mesa version, `3.4.x` with the pre-fork release version, and `<network>` with the network you forked from.
+
+```bash
+# The Mesa daemon, which also carries the verification tooling
+sudo apt-get install mina-mesa=4.x.x
+
+# The pre-fork genesis generator, used to build the reference ledgers
+sudo apt-get install mina-create-<network>-prefork-genesis-ledger=3.4.x
+```
+
+The first package installs the verification script and every program it calls, except one:
+
+| Program | Package |
+| --- | --- |
+| `mina-verify-packaged-fork-config` | `mina-mesa` |
+| `mina` | `mina-mesa` |
+| `mina-create-genesis` | `mina-mesa` |
+| `mina-hf-create-runtime-config` | `mina-mesa` |
+| `mina-rocksdb-scanner` | `mina-mesa` |
+| `mina-create-prefork-genesis` | `mina-create-<network>-prefork-genesis-ledger` |
+
+The pre-fork generator is a separate package because it is built from the pre-fork release, not from Mesa. Install the one whose `<network>` matches the chain you forked from: `mina-create-mainnet-prefork-genesis-ledger` for a mainnet fork, `mina-create-devnet-prefork-genesis-ledger` for a devnet fork. The same `<network>` value goes in `--network` and in the `<network>.old.json` path used below.
+
+:::note Reference ledgers instead of the pre-fork package
+If you already hold a directory of reference ledgers and a `legacy_hashes.json`, pass `--reference-data-dir <dir>`. The tool then skips the pre-fork generation step, and you do not need `mina-create-<network>-prefork-genesis-ledger` at all.
+:::
+
+### Other tools
+
+- `jq`
+- `curl`
+- `gsutil`, unless you supply the precomputed fork block yourself through `PRECOMPUTED_FORK_BLOCK`
+
+## Inputs
+
+| Input | Default | What it is |
+| --- | --- | --- |
+| Fork configuration | none, you must supply it | The full configuration exported from the pre-fork chain, with all accounts |
+| Packaged configuration | `/var/lib/coda/config_*.json` | The runtime configuration the Mesa package installed |
+| Genesis ledger directory | `/var/lib/coda` | Where the packaged ledger tarballs are |
+| Pre-fork configuration | `/var/lib/coda/<network>.old.json` | The genesis ledger of the chain you forked from |
+| Precomputed fork block | fetched with `gsutil` | The last block of the pre-fork chain |
+
+### Getting the fork configuration
+
+o1Labs publishes the fork configuration with the release. To export it yourself, query a node that is still on the pre-fork chain and is synchronized, before the network halts:
+
+```bash
+curl --location "http://localhost:3085/graphql" \
+  --header "Content-Type: application/json" \
+  --data '{"query":"query { fork_config }"}' \
+  | jq '.data.fork_config' > fork_config.json
+```
+
+The file is large, because it holds every account.
+
+## Run the checks
+
+Run the three checks separately. Each one can fail on its own, and running them apart makes a failure easier to read. Set `FORKING_FROM_CONFIG_JSON` to the pre-fork genesis ledger that the package installed.
+
+<Tabs groupId="verify-checks">
+<TabItem value="config" label="1. Config" default>
+
+The quickest check. It fetches the precomputed fork block and compares hashes. It takes minutes, not hours.
+
+```bash
+FORKING_FROM_CONFIG_JSON=/var/lib/coda/<network>.old.json \
+mina-verify-packaged-fork-config \
+  --network <network> \
+  --fork-config fork_config.json \
+  --working-dir /tmp/mina-verification \
+  --checks config
+```
+
+Run this one first. If the hashes do not agree, the other two checks cannot pass either.
+
+</TabItem>
+<TabItem value="ledgers" label="2. Ledgers">
+
+This check starts a node three times and exports the staged ledger, the staking epoch ledger, and the next epoch ledger from each configuration. It is slow.
+
+```bash
+FORKING_FROM_CONFIG_JSON=/var/lib/coda/<network>.old.json \
+mina-verify-packaged-fork-config \
+  --network <network> \
+  --fork-config fork_config.json \
+  --working-dir /tmp/mina-verification \
+  --checks ledgers
+```
+
+The check also removes the tarballs from the genesis ledger directory once, to confirm that the node can download the same ledgers from S3 and that they agree. To skip that download, set `NO_TEST_LEDGER_DOWNLOAD=1`.
+
+</TabItem>
+<TabItem value="tarballs" label="3. Tarballs">
+
+This check compares the RocksDB contents of three copies of each ledger tarball: the packaged one, one it generates, and the one published on S3.
+
+```bash
+FORKING_FROM_CONFIG_JSON=/var/lib/coda/<network>.old.json \
+mina-verify-packaged-fork-config \
+  --network <network> \
+  --fork-config fork_config.json \
+  --working-dir /tmp/mina-verification \
+  --checks tarballs
+```
+
+</TabItem>
+</Tabs>
+
+To run all three in one command, leave `--checks` out. Its default is `config,tarballs,ledgers`.
+
+### Result
+
+The tool writes `Validation successful` and exits with code 0 when every comparison agrees. On any mismatch it writes the file that differs and exits with code 1. Treat a non-zero exit as a failure to reproduce the package, and report it before you upgrade.
+
+## Options
+
+| Flag | Meaning |
+| --- | --- |
+| `--network` | Name of the network, used to build the precomputed block path |
+| `--fork-config` | Path to the exported fork configuration |
+| `--working-dir` | Directory for the generated ledgers and configurations |
+| `--checks` | Comma-separated list from `config`, `ledgers`, `tarballs`. Default: all three |
+| `--precomputed-block-prefix` | Overrides the bucket prefix for the fork block, for example `gs://mina_network_block_data/devnet` |
+| `--reference-data-dir` | Directory of pre-generated reference ledgers. Skips pre-fork generation |
+| `--cached-hardfork-data` | Directory of already generated ledgers and `hashes.json`, to save a rehash |
+
+The tool also reads these environment variables:
+
+| Variable | Default | Use |
+| --- | --- | --- |
+| `FORKING_FROM_CONFIG_JSON` | `/var/lib/coda/mainnet.json` | The pre-fork genesis ledger. Set this to `<network>.old.json` for a Mesa package |
+| `PACKAGED_DAEMON_CONFIG` | `/var/lib/coda/config_*.json` | The configuration to verify |
+| `GENESIS_LEDGER_DIR` | `/var/lib/coda` | Where the packaged tarballs are |
+| `PRECOMPUTED_FORK_BLOCK` | fetched with `gsutil` | A local copy of the fork block |
+| `NO_TEST_LEDGER_DOWNLOAD` | unset | Set it to skip the S3 download comparison |
+| `MINA_LEDGER_S3_BUCKET` | `https://s3-us-west-2.amazonaws.com/snark-keys-ro.o1test.net` | Where the published tarballs are |
+| `SECONDS_PER_SLOT` | `180` | Slot length of the network |
+| `MINA_LOG_LEVEL` | `info` | Log level of the node used for the exports |
+| `MINA_EXE`, `MINA_GENESIS_EXE`, `MINA_LEGACY_GENESIS_EXE`, `CREATE_RUNTIME_CONFIG`, `MINA_ROCKSDB_SCANNER` | the installed programs | Override any program, for example when you build from source |
+
+## Verify from a container
+
+The Mesa Docker images carry the same programs, so you can verify without installing packages on the host. Replace the tag with the published Mesa tag for your distribution.
+
+```bash
+docker run --rm -it \
+  -v "$PWD:/workdir" \
+  gcr.io/o1labs-192920/mina-daemon:<mesa-tag> \
+  bash -c 'FORKING_FROM_CONFIG_JSON=/var/lib/coda/<network>.old.json \
+    mina-verify-packaged-fork-config \
+      --network <network> \
+      --fork-config /workdir/fork_config.json \
+      --working-dir /workdir/verification \
+      --checks config'
+```
+
+The image does not contain `mina-create-prefork-genesis`. For the `ledgers` and `tarballs` checks from a container, mount a reference directory and pass `--reference-data-dir`.
+
+## If a check fails
+
+| Symptom | Likely cause |
+| --- | --- |
+| `Hashes in config ... don't match hashes from the precomputed block` | The fork configuration and the fork block are from different blocks. Confirm you exported the configuration from the correct chain, and that `--network` and `--precomputed-block-prefix` point at the right bucket |
+| `Error: program not found in PATH` | A package is missing. Check the program table above |
+| `Error: gsutil is required when PRECOMPUTED_FORK_BLOCK is nonexistent path` | Install `gsutil`, or give a local fork block through `PRECOMPUTED_FORK_BLOCK` |
+| `daemon died before exporting ledgers` | The node could not start. Read the node log in the working directory. Not enough memory is the usual cause |
+| `kvdb contents mismatch` | A ledger tarball does not agree with the reference. This is a real failure. Report it |
+
+For other problems, see [Troubleshooting](/network-upgrades/mesa/troubleshooting).
 
 ---
 url: /node-developers/bip44

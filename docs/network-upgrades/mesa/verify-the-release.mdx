@@ -49,14 +49,14 @@ Allow for the cost: the `ledgers` and `tarballs` checks each start a node and re
 
 ### Packages
 
-Two packages supply the programs. Replace `4.x.x` with the published Mesa version, and `<codename>` with your distribution (`bullseye`, `bookworm`, `focal`, `jammy`, or `noble`).
+Two packages supply the programs. Replace `4.x.x` with the published Mesa version, `3.4.x` with the pre-fork release version, and `<network>` with the network you forked from.
 
 ```bash
 # The Mesa daemon, which also carries the verification tooling
 sudo apt-get install mina-mesa=4.x.x
 
 # The pre-fork genesis generator, used to build the reference ledgers
-sudo apt-get install mina-create-devnet-prefork-genesis-ledger=3.4.x
+sudo apt-get install mina-create-<network>-prefork-genesis-ledger=3.4.x
 ```
 
 The first package installs the verification script and every program it calls, except one:
@@ -70,7 +70,7 @@ The first package installs the verification script and every program it calls, e
 | `mina-rocksdb-scanner` | `mina-mesa` |
 | `mina-create-prefork-genesis` | `mina-create-<network>-prefork-genesis-ledger` |
 
-The pre-fork generator is a separate package because it is built from the pre-fork release, not from Mesa. Install the one that matches the chain you forked from — `mina-create-devnet-prefork-genesis-ledger` for a devnet fork, `mina-create-mainnet-prefork-genesis-ledger` for a mainnet fork.
+The pre-fork generator is a separate package because it is built from the pre-fork release, not from Mesa. Install the one whose `<network>` matches the chain you forked from: `mina-create-mainnet-prefork-genesis-ledger` for a mainnet fork, `mina-create-devnet-prefork-genesis-ledger` for a devnet fork. The same `<network>` value goes in `--network` and in the `<network>.old.json` path used below.
 
 :::note Reference ledgers instead of the pre-fork package
 If you already hold a directory of reference ledgers and a `legacy_hashes.json`, pass `--reference-data-dir <dir>`. The tool then skips the pre-fork generation step, and you do not need `mina-create-<network>-prefork-genesis-ledger` at all.
