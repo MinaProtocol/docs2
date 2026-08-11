@@ -71,6 +71,7 @@ module.exports = {
                 'network-upgrades/mesa/upgrade-steps/examples',
               ],
             },
+            'network-upgrades/mesa/verify-the-release',
             'network-upgrades/mesa/archive-upgrade',
             'network-upgrades/mesa/mesa-trail',
             'network-upgrades/mesa/archived-networks',
