@@ -49,15 +49,17 @@ Allow for the cost: the `ledgers` and `tarballs` checks each start a node and re
 
 ### Packages
 
-Two packages supply the programs. Replace `4.x.x` with the published Mesa version, `3.4.x` with the pre-fork release version, and `<network>` with the network you forked from.
+Two packages supply the programs. Versions carry a release tag and a commit suffix, so copy them exactly instead of substituting a plain version number. Replace `<network>` with the network you forked from, and the versions below with the ones published for your release.
 
 ```bash
 # The Mesa daemon, which also carries the verification tooling
-sudo apt-get install mina-mesa=4.x.x
+sudo apt-get install mina-mesa=4.0.0-devnet-2dc9218
 
 # The pre-fork genesis generator, used to build the reference ledgers
-sudo apt-get install mina-create-<network>-prefork-genesis-ledger=3.4.x
+sudo apt-get install mina-create-<network>-prefork-genesis-ledger=3.5.0-devnet-stop-slot-7a60364
 ```
+
+The two versions differ because the packages come from different branches: the Mesa side is built from the post-fork release, and the pre-fork generator from the `compatible` branch that the chain runs before the fork.
 
 The first package installs the verification script and every program it calls, except one:
 
