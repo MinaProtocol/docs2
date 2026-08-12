@@ -6466,7 +6466,7 @@ Two packages supply the programs. Versions carry a release tag and a commit suff
 
 ```bash
 # The Mesa daemon, which also carries the verification tooling
-sudo apt-get install mina-mesa=4.0.0-devnet-2dc9218
+sudo apt-get install mina-<network>=4.0.0-devnet-2dc9218
 
 # The pre-fork genesis generator, used to build the reference ledgers
 sudo apt-get install mina-create-<network>-prefork-genesis-ledger=3.5.0-devnet-stop-slot-7a60364
@@ -6478,11 +6478,11 @@ The first package installs the verification script and every program it calls, e
 
 | Program | Package |
 | --- | --- |
-| `mina-verify-packaged-fork-config` | `mina-mesa` |
-| `mina` | `mina-mesa` |
-| `mina-create-genesis` | `mina-mesa` |
-| `mina-hf-create-runtime-config` | `mina-mesa` |
-| `mina-rocksdb-scanner` | `mina-mesa` |
+| `mina-verify-packaged-fork-config` | `mina-<network>` |
+| `mina` | `mina-<network>` |
+| `mina-create-genesis` | `mina-<network>` |
+| `mina-hf-create-runtime-config` | `mina-<network>` |
+| `mina-rocksdb-scanner` | `mina-<network>` |
 | `mina-create-prefork-genesis` | `mina-create-<network>-prefork-genesis-ledger` |
 
 The pre-fork generator is a separate package because it is built from the pre-fork release, not from Mesa. Install the one whose `<network>` matches the chain you forked from: `mina-create-mainnet-prefork-genesis-ledger` for a mainnet fork, `mina-create-devnet-prefork-genesis-ledger` for a devnet fork. The same `<network>` value goes in `--network` and in the `<network>.old.json` path used below.
