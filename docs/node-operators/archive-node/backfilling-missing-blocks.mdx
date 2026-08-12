@@ -1,0 +1,166 @@
+---
+title: Backfilling Missing Blocks
+sidebar_label: Backfilling Missing Blocks
+description: How to detect and repair gaps in a Mina archive database using archive dumps, precomputed blocks, mina-archive-blocks, and the mina-missing-blocks-auditor.
+keywords:
+  - mina archive node
+  - missing blocks
+  - mina-missing-blocks-auditor
+  - mina-archive-blocks
+  - precomputed blocks
+  - archive dump
+  - backfill
+  - hardfork
+---
+
+# Backfilling Missing Blocks
+
+A Mina archive database can develop gaps whenever the daemon or the `mina-archive` process is unavailable while a new block is being added — for example a process restart, a network blip between the daemon and the archive, or the archive process being briefly down. The daemon does not persist missed blocks for later delivery, so any block that lands during the outage will be missing from the database until you backfill it from another source.
+
+Because the archive stores only incremental changes, even a single missing block breaks chain continuity and makes downstream queries (balances, Rosetta, zkApp event/action lookups, replayer runs) unreliable.
+
+This page explains how to:
+
+- detect and repair gaps automatically with the [missing-blocks-guardian](#recommended-the-missing-blocks-guardian) script (recommended for most setups),
+- obtain the block data the repair pulls from (see [Sources of block data](#sources-of-block-data)),
+- and reach for the [individual tools](#individual-tools) when the guardian's defaults are not a good fit.
+
+## Recommended: the missing-blocks-guardian
+
+For almost every archive setup, the right tool is `mina-missing-blocks-guardian`. It is shipped in the `mina-archive` Debian package and Docker image, and wraps the auditor and the block-importer into a single loop — detect gap → download the missing precomputed block → import it → re-check. The [Docker Compose example](./docker-compose) wires it up out of the box.
+
+The guardian has three modes:
+
+| Subcommand | Behavior |
+| --- | --- |
+| `audit` | Run the check once and exit. Returns whether the database is healthy without modifying anything. Use this from monitoring / alerting (e.g. a Kubernetes liveness check or a cron-driven Prometheus exporter). |
+| `single-run` | Detect gaps, then walk back from each orphan parent, download the corresponding precomputed block from `PRECOMPUTED_BLOCKS_URL`, import it, and repeat until the database is clean. Exits when done. Right for one-off repairs and bootstrapping. |
+| `daemon` | The same recovery loop as `single-run`, but kept running forever. Re-audits every `TIMEOUT` seconds (default 600); when a repair completes it sleeps `6 × TIMEOUT` before checking again. Right for production archive nodes. |
+
+Required environment variables:
+
+| Variable | Purpose |
+| --- | --- |
+| `DB_USERNAME`, `PGPASSWORD`, `DB_HOST`, `DB_PORT`, `DB_NAME` | PostgreSQL connection for the archive database. |
+| `PRECOMPUTED_BLOCKS_URL` | Base URL of the precomputed-blocks bucket (e.g. `https://storage.googleapis.com/mina_network_block_data` or your own mirror). |
+| `MINA_NETWORK` | Network name used as a filename prefix (`mainnet`, `devnet`, ...). |
+
+Optional overrides (`MISSING_BLOCKS_AUDITOR`, `ARCHIVE_BLOCKS`, `BLOCKS_FORMAT`, `TIMEOUT`) are documented in the script's `--help` output.
+
+A minimal one-shot repair:
+
+```bash
+export DB_USERNAME=postgres DB_HOST=localhost DB_PORT=5432 DB_NAME=archive
+export PGPASSWORD=postgres
+export PRECOMPUTED_BLOCKS_URL=https://storage.googleapis.com/mina_network_block_data
+export MINA_NETWORK=mainnet
+
+mina-missing-blocks-guardian single-run
+```
+
+Swap `single-run` for `daemon` to run the loop continuously alongside your archive node, or `audit` to plug it into health-checking.
+
+## Sources of block data
+
+To fill a gap you need the block(s) that the auditor reports as missing in one of two formats:
+
+- **Precomputed blocks** — the full block JSON the daemon serializes, named `<network>-<height>-<state_hash>.json`. Use these whenever possible.
+- **Extensional blocks** — a slimmer JSON generated from an existing archive database via `mina-extract-blocks`. Sufficient to repair an archive but lacks the SNARK and other fields that are not stored in PostgreSQL.
+
+How to *store* these files (uploading blocks from a daemon, saving them from logs, extracting them from another archive, scheduling database dumps) is covered on [Archive Redundancy](./archive-redundancy#back-up-block-data). This page assumes the files already exist somewhere and only documents *where to read them from* for a backfill.
+
+The two public sources that o1Labs operates as a convenience are:
+
+| Bucket | Contents | Use for |
+| --- | --- | --- |
+| [`gs://mina-archive-dumps`](https://storage.googleapis.com/mina-archive-dumps/) | Nightly archive-database snapshots (`<network>-archive-dump-<date>_0000.sql.tar.gz`) | Bootstrapping a fresh archive — apply the dump first, then backfill anything produced after the snapshot. |
+| [`gs://mina_network_block_data`](https://storage.googleapis.com/mina_network_block_data/) | Per-block precomputed JSON files (`<network>-<height>-<state_hash>.json`) | The block-by-block input the auditor + guardian walk through to close gaps. |
+
+:::tip Decentralization
+
+These o1Labs buckets are a convenience, not a guarantee. The network is healthier when operators publish their own dumps and precomputed-block mirrors — see [Archive Redundancy](./archive-redundancy) for how to set that up.
+
+:::
+
+If you mirror the data to your own bucket, point the guardian at your URL via the `PRECOMPUTED_BLOCKS_URL` environment variable.
+
+## Individual tools
+
+The guardian script is a thin wrapper around two underlying binaries shipped in the `mina-archive` Debian package and Docker image: `mina-missing-blocks-auditor` (detect) and `mina-archive-blocks` (restore). Most operators never need to invoke them directly — but the details are useful when:
+
+- you want to plug detection into an existing monitoring pipeline rather than run the guardian's loop,
+- you are importing extensional blocks produced by `mina-extract-blocks` instead of precomputed blocks from a bucket,
+- you are debugging a repair that the guardian could not complete on its own,
+- or your setup deviates enough from the assumed shape that the guardian's defaults do not apply (custom block-name layout, non-Postgres staging, etc.).
+
+### Detecting gaps with mina-missing-blocks-auditor
+
+`mina-missing-blocks-auditor` reports on the health of the archive database. It is read-only and safe to run against a live node.
+
+```bash
+mina-missing-blocks-auditor \
+  --archive-uri postgres://<user>:<password>@<host>:<port>/<db>
+```
+
+It performs four independent checks and encodes the results in its exit code (a bitfield, `0` means a healthy database):
+
+| Bit | Check | What it means |
+| --- | --- | --- |
+| 0 | Missing blocks | One or more blocks have no parent row in `blocks` (orphan parents). Genesis and the first post-hard-fork block are excluded. |
+| 1 | Pending blocks below tip | Pending blocks exist at a height below the highest canonical block — a sign that finalization stalled or rows were lost. |
+| 2 | Chain length | The reconstructed canonical chain is shorter than `max(height)` of canonical blocks. |
+| 3 | Chain status | A block reachable from the canonical tip has a `chain_status` other than `canonical`. |
+
+For every missing block the auditor logs a structured entry that names the orphan, its expected parent, and the size of the gap:
+
+```text
+Block has no parent in archive db
+  block_id: 12345
+  state_hash: 3N...
+  height: 387200
+  parent_hash: 3N...
+  parent_height: 387199
+  missing_blocks_gap: 1
+```
+
+The `parent_hash` and `parent_height` are exactly what you need to locate the missing block file — this is how the guardian drives its download loop.
+
+### Restoring blocks with mina-archive-blocks
+
+Once you have the missing block files, `mina-archive-blocks` writes them into PostgreSQL. Pass `--precomputed` or `--extensional` to match the file format:
+
+```bash
+# Precomputed blocks (from the daemon or the public bucket)
+mina-archive-blocks \
+  --precomputed \
+  --archive-uri postgres://<user>:<password>@<host>:<port>/<db> \
+  mainnet-387200-3NK....json mainnet-387201-3NL....json
+
+# Extensional blocks (produced by mina-extract-blocks)
+mina-archive-blocks \
+  --extensional \
+  --archive-uri postgres://<user>:<password>@<host>:<port>/<db> \
+  3NK....json
+```
+
+Useful flags:
+
+- `--successful-files <path>` — append successfully imported filenames to a log.
+- `--failed-files <path>` — append filenames that failed (parse error, schema mismatch, missing dependency).
+- `--log-successful false` — suppress per-block success logs when importing many files.
+
+Re-run `mina-missing-blocks-auditor` after the import to confirm the gap is closed.
+
+## Backfilling around a hard fork
+
+The chain itself is continuous across a hard fork — but it is a common case that an archive operator is not online at the moment the fork happens, or joins the network later, and therefore has to patch in the post-fork blocks they missed. Backfilling around a hard fork uses exactly the same workflow as any other gap, with one extra precondition:
+
+- **The first canonical block of the new fork must already be in the database.** This is the block whose `global_slot_since_hard_fork = 0`. It is typically inserted either by running the upgrade script that comes with the new release, or by importing a post-fork archive dump that already contains it. Without this row, the auditor has no anchor on the new chain to walk back from, and the guardian cannot stitch the post-fork blocks together.
+
+With the fork block present, run `mina-missing-blocks-guardian single-run` (or `daemon`) as in the [recommended flow](#recommended-the-missing-blocks-guardian) and it will pull every precomputed block in between from `PRECOMPUTED_BLOCKS_URL` until the new chain is contiguous.
+
+## Related
+
+- [Archive Redundancy](./archive-redundancy) — the companion page on how to *store* precomputed blocks, extensional blocks, and database dumps so a backfill source always exists. This page covers what to do once those backups are in place.
+- [Docker Compose example](./docker-compose) — a ready-made stack that runs the guardian alongside a bootstrap-from-dump postgres and a mina-archive process.
+- [Archive Nodes Getting Started](./getting-started) — initial setup of the archive database and `mina-archive` process.

@@ -1,0 +1,53 @@
+---
+title: Archived Networks
+sidebar_label: Archived Networks
+description: Historical reference for retired Mesa test networks — the preflight and MUT networks, their release versions, Docker tags, Debian channels, and fork values.
+keywords:
+  - Mesa upgrade
+  - archived network
+  - preflight network
+  - MUT network
+  - mesa version
+  - docker
+  - debian packages
+---
+
+# Archived Networks
+
+The Mesa test networks on this page are **archived**: they are no longer running, their builds are no longer supported, and the versions listed are historical. They are kept here as a reference for operators tracing old logs, images, or package pins.
+
+For all current testing, use [Mesa Trail](/network-upgrades/mesa/mesa-trail).
+
+## Preflight
+
+An early Mesa test network, used to validate the upgrade before Mesa Trail.
+
+| Field | Value |
+| --- | --- |
+| Pre-fork release | `4.0.0-preflight1-b649c79` |
+| Stop-slot release | `4.0.0-preflight-stop-2967b39` |
+| Post-fork (Mesa) release | `4.0.0-preflight-3f038cb` |
+| Hard-fork time (UTC) | 2026-04-27 13:00 |
+| Transaction protocol version after fork | 5.0.0 |
+| o1js version targeting protocol v5.0.0 | `o1js@3.0.0-mesa.698ca` |
+| Docker tag suffix | `-mesa` (for example `mina-daemon:4.0.0-preflight-3f038cb-bookworm-mesa`) |
+| Debian channel | `preflight` on `unstable.apt.packages.minaprotocol.com` |
+| Debian packages | `mina-mesa`, `mina-archive-mesa`, `mina-rosetta-mesa` |
+| Seed nodes | `seed-1.mina-mesa-network.gcp.o1test.net`, `seed-2.mina-mesa-network.gcp.o1test.net` |
+
+The preflight fork-schedule values are also recorded on the [Fork Schedule](/network-upgrades/mesa/fork-schedule) page.
+
+## MUT
+
+The MUT network (`mesa-mut`) was a Mesa upgrade-test network that exercised the full stop-slot → fork → post-fork sequence on `4.0.0-rc1` builds. Operator feedback from MUT fed directly into the upgrade procedures documented in these pages.
+
+| Field | Value |
+| --- | --- |
+| Releases | `4.0.0-rc1` builds (for example `4.0.0-rc1-83b4654`, `4.0.0-rc1-mesa-mut-d7513d4`) |
+| Docker tag suffix | `-mesa-mut` (for example `mina-daemon:4.0.0-rc1-83b4654-bullseye-mesa-mut`) |
+| Seed nodes | `seed-1.mesa-mut.minaprotocol.com`, `seed-2.mesa-mut.minaprotocol.com` |
+
+## Next Steps
+
+- [Mesa Trail Network](/network-upgrades/mesa/mesa-trail) — the current test network: build matrix and setup
+- [Mesa Upgrade Overview](/network-upgrades/mesa) — prepare for mainnet

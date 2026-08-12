@@ -44,7 +44,7 @@ And stop mina by running.
 docker stop mina
 ```
 
-You can use the Mina CLI to interact with the sandbox node. The following command opens a shell inside the docker container from where you can issue any of the available [cli commands](/node-operators/mina-cli-reference).
+You can use the Mina CLI to interact with the sandbox node. The following command opens a shell inside the docker container from where you can issue any of the available [cli commands](/node-operators/reference/mina-cli-reference).
 
 ```
 docker exec -it mina bash
@@ -64,7 +64,7 @@ The password for this account is the empty string (there's no password -- you ca
 
 There are a few things you can do with your sandbox now that you have it running:
 
-- [Install Mina](/node-operators/block-producer-node/getting-started#installation) as usual and use many of the client commands. Since the daemon is already running in the container, you don't need to run `mina daemon`!
+- [Install Mina](/node-operators/validator-node/installing-on-ubuntu-and-debian) as usual and use many of the client commands. Since the daemon is already running in the container, you don't need to run `mina daemon`!
 
 - Install the GUI Wallet app to use a graphical interface to your node. Enter '127.0.0.1' as the host of your node during setup.
 

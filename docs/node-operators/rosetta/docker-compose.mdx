@@ -1,0 +1,155 @@
+---
+title: Docker Compose Rosetta
+sidebar_label: Docker Compose example
+description: Example of how to run Mina Rosetta node using Docker Compose.
+keywords:
+  - mina rosetta
+  - docker compose
+  - postgres
+  - archive
+  - daemon
+  - graphQL
+---
+
+# Docker Compose Rosetta
+
+For production deployments, use Docker Compose to run each Rosetta component as a separate container. This gives you control over resource allocation, logging, and restarts.
+
+The full Docker Compose configuration — including `docker-compose.yml`, example environment files for mainnet and devnet, a `Makefile`, and a `README` — is maintained in the Mina repository:
+
+**[`mina/src/app/rosetta/docker-compose/`](https://github.com/MinaProtocol/mina/tree/compatible/src/app/rosetta/docker-compose)**
+
+## Quick start
+
+:::tip
+Before running the commands below, review the [Configuration](#configuration) section to see all available options — including image tags, network selection, ports, and database settings.
+:::
+
+```bash
+git clone https://github.com/MinaProtocol/mina.git
+cd mina/src/app/rosetta/docker-compose
+
+# For mainnet
+cp example.mainnet.env .env
+
+# For devnet
+cp example.devnet.env .env
+
+# Edit .env — set MINA_LIBP2P_PASS and review POSTGRES_PASSWORD
+vi .env
+
+# Start all services
+docker compose up -d
+
+# Or use make shortcuts
+make mainnet   # copies mainnet env and starts services
+make devnet    # copies devnet env and starts services
+```
+
+## Services overview
+
+The Docker Compose setup includes six services:
+
+| Service | Description | Default Port |
+|---------|-------------|--------------|
+| **postgres** | PostgreSQL 17 with health checks | 5432 (container), configurable host port |
+| **bootstrap_db** | One-shot: downloads and imports the latest daily archive dump | — |
+| **mina_archive** | Archive process, stores block data in PostgreSQL | 3086 |
+| **mina_node** | Mina daemon with GraphQL API | 3085 (GraphQL), 8302 (P2P) |
+| **mina_rosetta** | Rosetta API for exchange integration | 3087 |
+| **missing_blocks_guardian** | Monitors and recovers missing blocks between nightly dumps and chain tip | — |
+
+## Configuration
+
+All configuration is done through a single `.env` file. Key variables:
+
+### Docker images
+
+| Variable | Description |
+|----------|-------------|
+| `MINA_DAEMON_IMAGE` | Mina daemon Docker image |
+| `MINA_ARCHIVE_IMAGE` | Mina archive Docker image |
+| `MINA_ROSETTA_IMAGE` | Mina Rosetta Docker image |
+
+For mainnet, images are pulled from [Docker Hub](https://hub.docker.com/u/minaprotocol) (`minaprotocol/mina-*`).
+For devnet, images are pulled from the o1Labs GCR registry.
+
+### Network
+
+| Variable | Description |
+|----------|-------------|
+| `MINA_NETWORK` | `mainnet` or `devnet` |
+| `MINA_PEERLIST_URL` | Bootstrap peers URL |
+| `MINA_LIBP2P_PASS` | Passphrase for the libp2p key (required) |
+
+### Ports
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `POSTGRES_PORT` | `5433` | Host port mapped to PostgreSQL |
+| `MINA_REST_PORT` | `3085` | GraphQL API port |
+| `MINA_P2P_PORT` | `8302` | P2P networking port |
+| `MINA_ARCHIVE_PORT` | `3086` | Archive server port |
+| `MINA_ROSETTA_PORT` | `3087` | Rosetta API port |
+
+### Archive bootstrap
+
+| Variable | Description |
+|----------|-------------|
+| `ARCHIVE_DUMP_BASE_URL` | Base URL for daily archive dumps |
+| `ARCHIVE_DUMP_PREFIX` | Dump filename prefix (`mainnet-archive-dump` or `devnet-archive-dump`) |
+| `GUARDIAN_PRECOMPUTED_BLOCKS_URL` | S3 bucket URL for precomputed blocks used by the missing blocks guardian |
+
+## Data persistence
+
+Bind mounts preserve data across `docker compose down` / `up`:
+
+| Host path | Container path | Contents |
+|-----------|---------------|----------|
+| `./archive/postgresql/data` | `/var/lib/postgresql/data` | PostgreSQL data |
+| `./archive/data` | `/data` | Archive node data |
+| `./mina_node/.mina-config` | `/root/.mina-config` | Daemon config, keys, peers |
+| `./mina_rosetta/.mina-config` | `/root/.mina-config` | Rosetta config |
+
+## Make targets
+
+| Command | Description |
+|---------|-------------|
+| `make devnet` | Copy devnet env and start services |
+| `make mainnet` | Copy mainnet env and start services |
+| `make stop` | Stop all services |
+| `make clean` | Stop services, remove volumes and all persisted data |
+| `make logs` | Follow logs for all services |
+| `make status` | Show container status |
+| `make health` | Check health of Postgres, GraphQL, and Rosetta endpoints |
+
+## Verifying the deployment
+
+Once services are running and the node is synced:
+
+```bash
+# Check container status
+make status
+
+# Run health checks
+make health
+
+# Check sync status
+docker compose exec mina_node mina client status
+
+# Query Rosetta API
+curl -s http://localhost:3087/network/list \
+  -H 'Content-Type: application/json' -d '{}' | jq .
+
+# Connect to archive database
+psql postgres://postgres:postgres@localhost:5433/archive
+```
+
+## Clean start
+
+To wipe all data and start fresh:
+
+```bash
+make clean
+docker compose up -d
+```

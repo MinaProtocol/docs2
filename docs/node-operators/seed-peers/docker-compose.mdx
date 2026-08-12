@@ -22,12 +22,12 @@ services:
     entrypoint: []
     command: >
       bash -c '
-        mina libp2p generate-keypair -privkey-path /data/.mina-config/keys/libp2p-key
-        chmod -R 0700 /data/.mina-config/keys
-        chmod -R 0600 /data/.mina-config/keys/libp2p-key
+        mina libp2p generate-keypair -privkey-path /root/.mina-config/keys/libp2p-key
+        chmod -R 0700 /root/.mina-config/keys
+        chmod -R 0600 /root/.mina-config/keys/libp2p-key
       '
     volumes:
-      - './node/mina-config:/data/.mina-config'
+      - './node/mina-config:/root/.mina-config'
   mina_node:
     image: 'minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet'
     # image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet' # Use this image for Devnet
@@ -39,12 +39,12 @@ services:
       bash -c '
         mina daemon \
              --peer-list-url https://bootnodes.minaprotocol.com/networks/mainnet.txt \
-             --libp2p-keypair /data/.mina-config/keys/libp2p-key \
+             --libp2p-keypair /root/.mina-config/keys/libp2p-key \
              --seed
       '
     # use  --peer-list-url https://bootnodes.minaprotocol.com/networks/devnet.txt for Devnet
     volumes:
-      - './node/mina-config:/data/.mina-config'
+      - './node/mina-config:/root/.mina-config'
     ports:
       - '8302:8302'
     depends_on:

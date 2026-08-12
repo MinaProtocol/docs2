@@ -36,9 +36,9 @@ This approach maintains a provably secure connection between the on-chain smart 
 
 Presently, Offchain storage offers support for two types of state: `OffchainState.Field`, representing a single field of state, and `OffchainState.Map`, akin to the key-value maps found in JavaScript, like `let myMap = new Map<string, number>();`.
 
-All offchain state resides within a single Merkle Map, which is essentially a wrapper around a [Merkle Tree](/zkapps/o1js/merkle-tree.mdx). Practically speaking, there are no constraints on the number of state fields and maps that a developer can store in a smart contract using Offchain storage.
+All offchain state resides within a single Merkle Map, which is essentially a wrapper around a [Merkle Tree](https://docs.o1labs.org/o1js/basic-types/merkle-trees). Practically speaking, there are no constraints on the number of state fields and maps that a developer can store in a smart contract using Offchain storage.
 
-Under this framework, [Actions and Reducer](/zkapps/writing-a-zkapp/feature-overview/actions-and-reducer.mdx) are utilized to manage state changes, with actions dispatching state updates and reducers settling them. Additionally, a Merkle Tree is employed to maintain a provably secure commitment to the data, with the root stored on-chain.
+Under this framework, [Actions and Reducer](https://docs.o1labs.org/o1js/zkapps/actions-and-reducers) are utilized to manage state changes, with actions dispatching state updates and reducers settling them. Additionally, a Merkle Tree is employed to maintain a provably secure commitment to the data, with the root stored on-chain.
 
 Prior to users accessing published state, it must first undergo settlement. Thanks to the design of Offchain storage, all state is recoverable from actions alone, eliminating the need for additional events or external data storage.
 

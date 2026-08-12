@@ -1,0 +1,37 @@
+name: Check llms-full.txt is up to date
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'docs/**/*.mdx'
+      - 'docs/**/*.md'
+      - 'scripts/generate-llms-txt.mjs'
+      - 'static/llms-full.txt'
+  workflow_dispatch: {}
+
+jobs:
+  check-llms-txt:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Regenerate llms-full.txt
+        run: node scripts/generate-llms-txt.mjs
+
+      - name: Check for differences
+        run: |
+          if ! git diff --exit-code static/llms-full.txt; then
+            echo ""
+            echo "❌ static/llms-full.txt is out of date!"
+            echo "Run 'npm run generate-llms-txt' and commit the result."
+            exit 1
+          fi

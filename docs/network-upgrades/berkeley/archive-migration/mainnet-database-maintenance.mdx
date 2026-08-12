@@ -1,0 +1,196 @@
+---
+title: Devnet/Mainnet database maintenance
+sidebar_label: Devnet/Mainnet database maintenance
+hide_title: true
+description: Steps to properly maintain correctness of archive database.
+keywords:
+  - Berkeley
+  - upgrade
+  - archive migration
+  - planning
+  - prerequisites
+  - mina archive node
+  - archive node
+  - mainnet
+  - devnet
+  - database
+---
+
+# Devnet/Mainnet database maintenance
+
+After the Berkeley migration, the original Devnet/Mainnet database is not required unless you are interested in
+preserving some aspect of the database that is lost during the migration process.
+
+Two databases exist after the successful migration:
+
+- The original Devnet/Mainnet database with small data adjustments:
+  - All pending blocks from last canoncial block until the fork block are converted to canonical blocks
+
+- A new Berkeley database based on Devnet/Mainnet data with these differences:
+  - Without Devnet/Mainnet orphaned blocks
+  - Without pending blocks that are not in the canonical chain
+  - With all pending blocks on the canonical chain converted to canonical blocks
+
+The o1Labs and Mina Foundation teams have consistently prioritized rigorous testing and the delivery of high-quality software products.
+
+However, being human entails the possibility of making mistakes.
+
+## Known issues
+
+Recently, a few mistakes were identified while working on a version of Mina used on Mainnet. These issues were promptly addressed; however, within the decentralized environment, archive nodes can retain historical issues despite our best efforts.
+
+Fixes are available for the following known issues:
+
+- **Missing or invalid nonces** - a historical issue skewed nonces in the `balances` table. Although the issue was resolved, you might still have nonces that are missing or invalid.
+- **Incorrect ledger hashes** - a historical issue with the same root cause as 'Missing or invalid nonces'. However, the outcome is that a 'replayer run' operation of validating archive node against daemon ledger shows ledger mismatches and cannot pass problematic blocks.
+- **Missing blocks** - This recurring missing blocks issue consistently poses challenges and is a source of concern for all archive node operators. This persistent challenge from disruptions in daemon node operations can potentially lead to incomplete block reception by archive nodes. This situation can compromise chain continuity within the archive database.
+
+To address these issues, install and use the special archive node maintenance package that includes fixes.
+
+## Installing the archive node maintenance package
+
+The package provides support for codenames:
+
+- bullseye
+- buster
+- focal
+
+The following steps describe only the bullseye package installation. Modify the steps as appropriate for your environment.
+
+### Debian packages
+
+To get the Debian package:
+
+```sh
+CODENAME=bullseye
+CHANNEL=stable
+VERSION=1.4.1
+
+echo "deb [trusted=yes] http://packages.o1test.net $CODENAME $CHANNEL" | tee /etc/apt/sources.list.d/mina.list
+apt-get update
+apt-get install --allow-downgrades -y "mina-archive-maintenance=$VERSION"
+```
+
+### Docker image
+
+To get the Docker image:
+
+```sh
+docker pull minaprotocol/mina-archive-maintenance:1.4.1-060f0a5-bullseye
+```
+
+## Usage for missing or invalid nonces
+
+The replayer application was developed to verify the Devnet/Mainnet archive data. You must run the replayer application against your existing Devnet/Mainnet database to verify the blockchain state.
+
+To run the replayer application:
+
+```sh
+mina-replayer \
+   --archive-uri {db_connection_string} \
+   --input-file reference_replayer_input.json \
+   --output-file replayer_input_file.json \
+   --checkpoint-interval 10000 \
+   --fix-nonces \
+   --set-nonces \
+   --dump-repair-script
+```
+
+where:
+
+- `archive-uri` - connection string to the archive database
+- `input-file` - JSON file that holds the archive database
+- `output-file` - JSON file that will hold the ledger with auxiliary information, like global slot and blockchain height, which will be dumped on the last block
+- `checkpoint-interval` - frequency of checkpoints expressed in blocks count
+- `replayer_input_file.json` - JSON file constructed from the Devnet/Mainnet genesis ledger:
+
+ ```sh
+    jq '.ledger.accounts' genesis_ledger.json | jq  '{genesis_ledger: {accounts: .}}' > replayer_input_config.json
+ ```
+
+- `--fix-nonces` - adjust nonces values while replaying transactions
+- `--set-nonces` - set missing nonces while replaying transactions
+- `--dump-repair-script` - path to the output SQL script that will contain all updates to nonces made during the replayer run that can be directly applied to other database instances that contain the same data with invalid nonces
+
+Running a replayer from scratch on a Devnet/Mainnet database can take up to a couple of days. The recommended best practice is to break the replayer into smaller parts by using the checkpoint capabilities of the replayer.
+Additionally, running the replayer can exert significant demands on system resources that potentially affect the performance of the archive node. Because of the large resource requirements, we recommend that you execute the replayer in isolation from network connections, preferably within an isolated environment where the Devnet/Mainnet dumps can be imported.
+
+## Bad ledger hashes
+
+There is no ultimate fix for this issue because preserving historical ledger hashes is essential to the overall security of the Mina network. Even with this issue, you can validate archive data integrity.
+
+The replayer application has a built-in mechanism to skip errors when the `--continue-on-error` flag is enabled.
+However, instead of skipping only blocks with bad ledger hashes, this mode skipped all of the problems with integrity.
+With the new archive node maintenance package, you can run the replayer application without a special flag and to correctly handle the bad ledger hashes issue.
+
+To run replayer:
+
+```sh
+mina-replayer --archive-uri {db_connection_string} --input-file reference_replayer_input.json --output-file reference_replayer_output.json --checkpoint-interval 10000
+```
+
+where:
+
+- `archive-uri` - connection string to the archive database
+- `input-file` - JSON file that holds the archive database
+- `output-file` - JSON file that will hold the ledger with auxiliary information, like global slot and blockchain height, which will be dumped on the last block
+- `checkpoint-interval` - frequency of checkpoints expressed in blocks count
+- `replayer_input_file.json` - JSON file constructed from the Devnet/Mainnet genesis ledger:
+
+   ```
+      jq '.ledger.accounts' genesis_ledger.json | jq  '{genesis_ledger: {accounts: .}}' > replayer_input_config.json
+   ```
+
+:warning: Running a replayer from scratch on a Devnet/Mainnet database can take up to a couple of days. The recommended best practice is to break the replayer into smaller parts by using the checkpoint capabilities of the replayer.
+
+:warning: You must run the replayer using the Mainnet version. You can run it from the Docker image at `minaprotocol/mina-archive:3.1.0-ae112d3-bullseye`.
+
+## Missing blocks
+
+The daemon node unavailability can cause the archive node to miss some of the blocks. This recurring missing blocks issue consistently poses challenges. To address this issue, you can reapply missing blocks.
+
+If you uploaded the missing blocks to Google Cloud, the missing blocks can be reapplied from precomputed blocks to preserve chain continuity.
+
+1. To automatically verify and patch missing blocks, use the [download-missing-blocks.sh](https://github.com/MinaProtocol/mina/blob/berkeley/scripts/archive/download-missing-blocks.sh) script.
+
+   The `download-missing-blocks` script uses `localhost` as the database host so the script assumes that psql is running on localhost on port 5432. Modify `PG_CONN` in `download_missing_block.sh` for your environment.
+
+1. Install the required `mina-archive-blocks` and `mina-missing-blocks-auditor` scripts that are packed in the `minaprotocol/mina-archive:3.1.0-ae112d3-bullseye` Docker image.
+
+1. Export the `BLOCKS_BUCKET`:
+
+    ```sh
+    export BLOCKS_BUCKET="https://storage.googleapis.com/my_bucket_with_precomputed_blocks"
+    ```
+
+1. Run the `mina-missing-blocks-auditor` script from the database host:
+
+    For Devnet:
+
+    ```sh
+    download-missing-blocks.sh devnet {db_user} {db_password}
+    ```
+
+    For Mainnet:
+
+    ```sh
+    download-missing-blocks.sh mainnet {db_user} {db_password}
+    ```
+### Using precomputed blocks from O1labs bucket
+
+O1labs maintains a Google bucket containing precomputed blocks from Devnet and Mainnet, accessible at https://storage.googleapis.com/mina_network_block_data/.
+
+Note: It's important to highlight that precomputed blocks for **Devnet** between heights `2` and `1582` have missing fields or incorrect transaction data. Utilizing these blocks to patch your Devnet archive database will result in failure. For those who rely on precomputed blocks from this bucket, please follow the outlined steps:
+
+1. Download additional blocks from `gs://mina_network_block_data/devnet-extensional-bundle.tar.gz`.
+2. Install the necessary `mina-archive-blocks` script contained within the `minaprotocol/mina-archive:3.1.0-ae112d3-bullseye` Docker image.
+3. Execute mina-archive-blocks to import the extracted blocks from step 1 using the provided command:
+
+      ```sh
+      mina-archive-blocks --archive-uri <postgres uri to the devnet database> --extensional ./extensional/*
+      ```
+4. Proceed with patching your Devnet database with blocks having heights other than `2` to `1582` using the available precomputed blocks.
+
+## Next steps
+
+Now that you have completed the steps to properly maintain the correctness of the archive database, you are ready to perform the archive [migration process](/network-upgrades/berkeley/archive-migration/migrating-archive-database-to-berkeley).

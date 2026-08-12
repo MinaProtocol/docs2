@@ -29,9 +29,13 @@ A zkApp consists of two parts:
 - A smart contract
 
 - A user interface (UI) for users to interact with the zkApp
-<figure>
-  <img src="/img/3_zkApps_Structure.jpg" width="100%" alt="Diagram showing two parts of a zkApp" />
-</figure>
+  <figure>
+    <img
+      src="/img/3_zkApps_Structure.jpg"
+      width="100%"
+      alt="Diagram showing two parts of a zkApp"
+    />
+  </figure>
 - The term _smart contract_ refers to the code written with o1js.
 
 - The term _zkApp_ refers to the UI + the smart contract.
@@ -47,7 +51,11 @@ The prover function is the function that executes a smart contract's custom logi
 When interacting with a zkApp UI, users enter any data (for example, buy ABC for y price) that is required as input to the prover function, which then generates a zero knowledge proof.
 
 <figure>
-<img src="/img/4_zkApps_Prover_Function.jpg" width="90%" alt="Diagram showing private and public inputs to prover function to create zero knowledge proof" />
+  <img
+    src="/img/4_zkApps_Prover_Function.jpg"
+    width="90%"
+    alt="Diagram showing private and public inputs to prover function to create zero knowledge proof"
+  />
 </figure>
 
 Private and public inputs represent data that must be provided to the prover function when it runs in the end user's web browser.
@@ -59,7 +67,11 @@ The verifier function validates whether a zero knowledge proof successfully pass
 Within the Mina network, Mina acts as the verifier and runs the verifier function.
 
 <figure>
-  <img src="/img/5_zkApps_Verifier_Function.jpg" width="90%" alt="Diagram showing verifier function validation" />
+  <img
+    src="/img/5_zkApps_Verifier_Function.jpg"
+    width="90%"
+    alt="Diagram showing verifier function validation"
+  />
 </figure>
 
 ## Prover Function and Verification Key
@@ -78,8 +90,13 @@ You can also use the verifier function or verification key to verify proofs off-
 ## Deploy a smart contract
 
 zkApp developers use the zkApp CLI to deploy smart contracts to the Mina network. The deployment process sends a transaction that contains the verification key that is an output of the verifier function to an address on the Mina blockchain.
+
 <figure>
-  <img src="/img/6_zkApps_DeploySmartContract.jpg" width="75%" alt="Diagram showing deployment of a Mina zkApp smart contract" />
+  <img
+    src="/img/6_zkApps_DeploySmartContract.jpg"
+    width="75%"
+    alt="Diagram showing deployment of a Mina zkApp smart contract"
+  />
 </figure>
 When a Mina address contains a verification key, it acts as a zkApp account.
 
@@ -97,7 +114,11 @@ A zkApp consists of a smart contract and a UI to interact with it.
 
 To enable users to interact with your smart contract in a web browser, you build a website UI and then deploy this interactive UI as a static website. Choosing a host that offers a global content delivery network (CDN) ensures the best experience for all users.
 
-<img src="/img/7_zkApps_DeploySmartContract.jpg" width="95%" alt="Diagram of a zkApp that includes JavaScript and the UI" />
+<img
+  src="/img/7_zkApps_DeploySmartContract.jpg"
+  width="95%"
+  alt="Diagram of a zkApp that includes JavaScript and the UI"
+/>
 
 Your website must contain the JavaScript `smart_contract.js` file that you generated with the `npm run build` command. To learn more, see [How to Write a zkApp](/zkapps/writing-a-zkapp/introduction-to-zkapps/how-to-write-a-zkapp).
 
@@ -111,15 +132,16 @@ After a zkApp is deployed to a host (for example, mycoolzkapp.com), end users ca
 1. The user interacts with the zkApp and enters the required data. For example, if this were an automated market maker, the user might specify to buy x amount of ABC at y price.
 1. The prover function in the zkApp generates a zero knowledge proof locally using the data entered by the user. This data can be either:
 
-    - Private, the data is never seen by the blockchain.
-    - Public, the data is stored on-chain or off-chain, depending on what the zkApp specified as required for a given use case.
+   - Private, the data is never seen by the blockchain.
+   - Public, the data is stored on-chain or off-chain, depending on what the zkApp specified as required for a given use case.
 
-  A list of state updates (called account updates) to be created by the transaction is generated. The account updates are associated with this proof.
+A list of state updates (called account updates) to be created by the transaction is generated. The account updates are associated with this proof.
+
 1. The user selects **Submit to chain** in the zkApp UI.
 
-    - The user confirms the transaction on their wallet.
-    - The wallet signs the transaction containing the proof and the associated description of state to update.
-    - The wallet sends the transaction to the Mina network.
+   - The user confirms the transaction on their wallet.
+   - The wallet signs the transaction containing the proof and the associated description of state to update.
+   - The wallet sends the transaction to the Mina network.
 
 1. The Mina network receives this transaction and verifies that the proof successfully passes the verifier method listed on the zkApp account. If the network accepts this transaction, this proof and the requested state changes are valid and are allowed to update the zkApp state.
 
@@ -127,7 +149,7 @@ The end user's privacy is maintained because their interaction occurs locally in
 
 ### How state is updated on-chain
 
-The zkApp account gets updated on-chain. 
+The zkApp account gets updated on-chain.
 
 When the prover function runs in a web browser, the smart contract outputs a proof and some associated data called "account updates" that are sent to a zkApp address as part of the transaction. The account updates are a JSON plain text description that describes how to update the state on a zkApp account.
 

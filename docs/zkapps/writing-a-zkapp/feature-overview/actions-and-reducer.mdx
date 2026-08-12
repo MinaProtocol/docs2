@@ -134,11 +134,13 @@ The `getActions` function retrieves a list of previously emitted actions:
 ```ts
 let pendingActions = this.reducer.getActions({ fromActionState?: Field, endActionState?: Field }): MerkleList<MerkleList<Action>>;
 ```
-The final action state can be accessed on `pendingActions.hash`. 
+
+The final action state can be accessed on `pendingActions.hash`.
 
 ```ts
 let endActionState = pendingActions.hash;
 ```
+
 If the optional `endActionState` parameter is provided, the list of actions will be fetched up to that state.
 In that case, `pendingActions.hash` is guaranteed to equal `endActionState`.
 

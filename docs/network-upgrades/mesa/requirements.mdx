@@ -1,0 +1,93 @@
+---
+title: Requirements
+sidebar_label: Requirements
+hide_title: true
+description: Hardware requirements and pre-upgrade checklist for all node operator types upgrading to Mesa — block producers, SNARK coordinators, archive nodes, Rosetta API, and exchanges.
+keywords:
+  - Mesa
+  - upgrade
+  - hardware requirements
+  - pre-upgrade
+---
+
+# Requirements
+
+## Hardware Requirements
+
+Please note the following are the hardware requirements for each node type after the upgrade:
+
+| Node Type | Memory | CPU | Storage | Network |
+|--|--|--|--|--|
+| Mina Daemon Node | 32 GB RAM | 8 core processor with BMI2 and AVX CPU instruction set are required | 16 GB | 1 Mbps Internet Connection |
+| SNARK Coordinator | 32 GB RAM | 8 core processor | 16 GB | 1 Mbps Internet Connection |
+| SNARK Worker (per worker) | 8 GB RAM | 6 core/12 threads with BMI2 and AVX CPU instruction set are required | 1 GB | 1 Mbps Internet Connection |
+| Archive Node | 32 GB RAM | 8 core processor | 64 GB | 1 Mbps Internet Connection |
+| Rosetta API standalone Docker image | 8 GB RAM | 2 core processor | 16 GB | 1 Mbps Internet Connection |
+| Rosetta API + Archive Node | 32 GB RAM | 8 core processor | 64 GB | 1 Mbps Internet Connection |
+| Mina Seed Node | 64 GB RAM | 8 core processor | 16 GB | 1 Mbps Internet Connection |
+
+## Mina Daemon Requirements
+
+The Mesa daemon inherits the same networking and process-management requirements as the Berkeley daemon. Rather than restate them here, refer to the canonical sections in the Validator Node docs:
+
+- **IP and port configuration** — `--external-ip`, `--external-port`, default port `8302` (libp2p). See [Validator Node Requirements](/node-operators/validator-node/requirements#networking).
+- **Auto-restart on crash** — systemd `Restart=always`, Docker `--restart=always`. See [Running mina node as a service](/node-operators/validator-node/connecting-to-the-network#running-mina-node-as-a-service).
+
+The hardware table above is Mesa-specific; everything else lives once in the Validator Node docs.
+
+## Seed Peer Requirements
+
+### Generation of libp2p keypair
+
+To ensure connectivity across the network, it is essential that all seed nodes start with the **same** `libp2p` keypair.
+This consistency allows other nodes in the network to reliably connect.
+Although the same libp2p keys can be reused from before the upgrade, if you need to manually generate new libp2p keys, use the following command:
+
+```
+mina libp2p generate-keypair --privkey-path <path-to-the-key-file>
+```
+
+Further information on [generating a libp2p key pair](/node-operators/seed-peers/generating-a-libp2p-keypair) on Mina Protocol.
+
+## Pre-Upgrade Checklist
+
+Before the fork, each actor type must complete specific preparations. Complete these steps **weeks before the fork** to ensure a smooth upgrade.
+
+### All operators
+
+- Verify your hardware meets the [requirements](#hardware-requirements) above (32 GB RAM, 8-core CPU with AVX/BMI2).
+- Back up your keys and configuration before installing any new packages.
+
+### Block Producers
+
+- Choose your [Upgrade Mode](/network-upgrades/mesa/upgrade-modes): **automode** (recommended) or manual.
+- Install the stop-slot release [3.x.x](https://github.com/MinaProtocol/mina/releases).
+- If using automode, install the `mina-{network}-automode` package. See [Installing automode](/network-upgrades/mesa/upgrade-modes#installing-automode).
+
+### SNARK Coordinators
+
+- A coordinator is a daemon node — follow the Block Producer path above (automode or manual).
+
+### Standalone SNARK Workers
+
+- Workers spawned by a coordinator (`--run-snark-worker`) need no separate action — they inherit the coordinator's binary.
+- Workers run as a separate `mina internal snark-worker` process or container must be redeployed with the Mesa release after the fork.
+
+### Archive Nodes
+
+- Install the stop-slot release.
+- Choose your upgrade method: [_trustless_](/network-upgrades/mesa/glossary#trustless) (run the upgrade script now) or [_trustful_](/network-upgrades/mesa/glossary#trustful) (import o1Labs dump later).
+- If doing trustless, run the [Archive Upgrade](/network-upgrades/mesa/archive-upgrade) script — it can be applied before the fork while the Berkeley archive node is still running.
+
+### Exchanges
+
+- Install the stop-slot release.
+- Update integrations (mina-signer, Rosetta API).
+- Test on devnet.
+- Plan your deposit/withdrawal freeze window around the [`stop-transaction-slot`](/network-upgrades/mesa/glossary#stop-transaction-slot).
+
+### zkApp Developers
+
+- Update to the Mesa-compatible o1js version (`o1js@3.0.0-mesa.rc2` for the Mesa Trail chain).
+- Recompile your contracts and verify them on the [Mesa Trail test network](/network-upgrades/mesa/mesa-trail).
+- Plan to redeploy every zkApp on Mesa — each must be redeployed because the protocol version bump changes the verification key. {/* TODO(PR #1133): Link to the official o1js Mesa upgrade guide once published (cjjdespres #3220525842). */}

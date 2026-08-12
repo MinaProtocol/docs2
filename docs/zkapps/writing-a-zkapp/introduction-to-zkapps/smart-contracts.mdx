@@ -165,7 +165,7 @@ When you use an on-chain value, you have to _prove_ that this value is the on-ch
 You must link "`x` at proving time" to be the same as "`x` at verification time". This is a _precondition_, a condition that is checked by the verifier (a Mina node) when it receives the proof in a transaction:
 
 ```ts
-this.x.requireEquals(x)
+this.x.requireEquals(x);
 ```
 
 This code adds the precondition that `this.x` – the on-chain state at verification time – must equal `x` – the value fetched from the chain on the client side. In zkSNARK language, `x` becomes part of the public input.

@@ -1,24 +1,23 @@
 ---
 title: SNARK Workers
 hide_title: true
-description: What are snark workers 
+description: SNARK workers produce zk-SNARK proofs that keep the Mina blockchain succinct.
 keywords:
   - snark worker
+  - snark coordinator
+  - zk-snark
 ---
 
-# About SNARK Workers
+# SNARK Workers
 
-While most protocols have just one primary group of node operators (often called miners, validators, or block producers), Mina has a second group — the **SNARK worker**.
+While most protocols have one primary group of node operators (miners, validators, or block producers), Mina has a second group — **SNARK workers**. These nodes produce [zk-SNARK](/glossary#zk-snark) proofs of transactions, which keep the Mina blockchain at a constant size instead of growing over time.
 
-SNARK workers are integral to the Mina network's health because these nodes are responsible for snarking, or producing SNARK proofs, of transactions in the network. By producing these proofs, snark workers help maintain the succinctness of the Mina blockchain. A SNARK coordinator can also be used to coordinate work across a pool of SNARK workers.  
+A **SNARK coordinator** can distribute work across a pool of SNARK workers.
 
-Read on to learn why SNARK workers are needed, how the economic incentives align, and operational details of performing SNARK work. Feel free to click through to any of the sections that are most relevant to your needs.
+Deep knowledge of zk-SNARKs is not required to run a SNARK worker, but for background see the [What are zk-SNARKs?](https://minaprotocol.com/blog/what-are-zk-snarks) primer.
 
-Note: The theory of zk-SNARKs is not covered. Deep knowledge of SNARKs is not required to read this section, but it is helpful to understand in general how SNARKs work and what they are useful for. To learn more, check out this
- [What are zk-SNARKs?](https://minaprotocol.com/blog/what-are-zk-snarks) primer first.
+## Next steps
 
- ## SNARK Workers
-
-This section describes how to run SNARK coordinators and SNARK workers on the Mina Protocol.
-
-- [Getting Started](snark-workers/getting-started) - How to install and get started running a SNARK worker.
+- [Getting Started](/node-operators/snark-workers/getting-started) — Run a SNARK worker or coordinator
+- [Docker Compose Example](/node-operators/snark-workers/docker-compose) — Run a coordinator and worker with Docker Compose
+- [FAQ: SNARKs and SNARK Workers](/node-operators/faq#snarks-and-snark-workers) — Common questions about SNARK pricing, fees, and performance

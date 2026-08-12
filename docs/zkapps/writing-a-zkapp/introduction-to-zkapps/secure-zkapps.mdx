@@ -275,7 +275,7 @@ Like every account on Mina, zkApps have permissions that restrict what account u
 }
 ```
 
-If you don't know what these permissions mean, we recommend to read the [permissions docs](/zkapps/writing-a-zkapp/feature-overview/permissions) first.
+If you don't know what these permissions mean, we recommend to read the [permissions docs](https://docs.o1labs.org/o1js/zkapps/permissions) first.
 
 Two of these defaults stand out as highly problematic:
 
@@ -317,13 +317,13 @@ For example, calling a DEX might involve spending your own token A and _trusting
 
 In the [previous section](#only-call-external-contracts-with-locked-down-permissions), we described how calling a contract which sets its `access` permission to `impossible` can deadlock your zkApp. It was fairly easy to defend against because we assumed that you know the contract account up front, and can manually check its permissions.
 
-There is a more complicated version of this problem when interacting with accounts that you _can't_ check a priori, or can't expect to have locked-down permissions. It typically arises in the scenario where you create account updates from a [reducer](/zkapps/writing-a-zkapp/feature-overview/actions-and-reducer) call.
+There is a more complicated version of this problem when interacting with accounts that you _can't_ check a priori, or can't expect to have locked-down permissions. It typically arises in the scenario where you create account updates from a [reducer](https://docs.o1labs.org/o1js/zkapps/actions-and-reducers) call.
 
 #### A problematic token airdrop
 
-To have a concrete example, consider a token airdrop. As the token contract developer, you precompute a [Merkle map](/zkapps/o1js/merkle-tree) containing eligible accounts and their airdrop amounts, and store the Merkle root onchain. _Claiming_ an airdrop has to involve updating the tree and onchain root, because otherwise the same account could claim the airdrop multiple times.
+To have a concrete example, consider a token airdrop. As the token contract developer, you precompute a [Merkle map](https://docs.o1labs.org/o1js/basic-types/merkle-trees) containing eligible accounts and their airdrop amounts, and store the Merkle root onchain. _Claiming_ an airdrop has to involve updating the tree and onchain root, because otherwise the same account could claim the airdrop multiple times.
 
-To scale payouts to multiple concurrent users per block, you approach the problem with [actions and reducer](/zkapps/writing-a-zkapp/feature-overview/actions-and-reducer). To claim, a user dipatches a "claim" action that contains their address and airdrop amount.
+To scale payouts to multiple concurrent users per block, you approach the problem with [actions and reducer](https://docs.o1labs.org/o1js/zkapps/actions-and-reducers). To claim, a user dipatches a "claim" action that contains their address and airdrop amount.
 
 On top of that, every block, you run a reducer method which contains the following logic:
 
@@ -351,7 +351,7 @@ There will be cases where a similar fix is not applicable; but more complicated 
 
 When developing a token contract, a number of security considerations come into play.
 
-First and foremost, it is important to implement token approvals correctly. The [`access` permission](/zkapps/writing-a-zkapp/feature-overview/permissions#types-of-permissions) exists so that token contracts are able to have every token interaction approved by one of the contract's methods.
+First and foremost, it is important to implement token approvals correctly. The [`access` permission](https://docs.o1labs.org/o1js/zkapps/permissions) exists so that token contracts are able to have every token interaction approved by one of the contract's methods.
 
 When a token is built off of the default `SmartContract` and doesn't change the `access` permission from its `none` default, users can get any token interaction approved. Simply by including a dummy account update of the token contract in their transaction, they can mint an arbitrary number of tokens to themselves.
 

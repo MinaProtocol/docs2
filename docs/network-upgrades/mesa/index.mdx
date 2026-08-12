@@ -1,0 +1,119 @@
+---
+title: Mesa Upgrade
+sidebar_label: Mesa Upgrade
+hide_title: true
+description: Overview of the Mesa mainnet upgrade for Mina Protocol — expanded zkApp state, automode upgrades, and protocol improvements.
+keywords:
+  - Mesa
+  - upgrade
+  - hard fork
+  - overview
+  - mainnet
+---
+
+# Mesa Upgrade
+
+The Mesa upgrade is a major network upgrade (hard fork) for the Mina Protocol mainnet. It is not backward compatible: every consensus-participating Mina daemon (block producers, SNARK coordinators, archive nodes, Rosetta API nodes, and seed nodes) must run a Mesa-compatible release to remain on the network. Wallets, off-chain services, and downstream tooling do not run a daemon and only need to update if they pin to a specific transaction format or version.
+
+:::info New to the Mesa upgrade?
+This documentation uses terms like _automode_, _stop-slot_, _trustless upgrade_, _dispatcher_, and more. If you encounter an unfamiliar term, check the **[Glossary](/network-upgrades/mesa/glossary)** for definitions.
+:::
+
+## What Mesa Introduces
+
+Mesa bundles four Mina Improvement Proposals (MIPs) that change protocol behavior, plus two operational improvements to the upgrade flow itself. See the **[Glossary](/network-upgrades/mesa/glossary)** for detailed descriptions of each MIP and the canonical specs in the [MinaProtocol/MIPs](https://github.com/MinaProtocol/MIPs/tree/main/MIPS) repository.
+
+- **[Faster Blocks — MIP6](/network-upgrades/mesa/glossary#faster-blocks)** — Halves slot time to 90 seconds, halves coinbase reward, halves epoch duration.
+- **[Expanded zkApp State — MIP7](/network-upgrades/mesa/glossary#expanded-zkapp-state)** — Raises on-chain state from 8 to 32 field elements per zkApp account.
+- **[Larger Events and Actions — MIP8](/network-upgrades/mesa/glossary#larger-events-and-actions)** — Increases per-transaction event/action limit from 100 to 1024 field elements.
+- **[Larger zkApp Transactions — MIP9](/network-upgrades/mesa/glossary#larger-zkapp-transactions)** — Triples the max account updates per zkApp transaction.
+
+### Automode Upgrades
+
+For the first time in Mina's history, block producers can upgrade through a hard fork **without manual intervention**. The automode mechanism ships both the pre-fork and post-fork binaries in a single package, with a dispatcher that automatically transitions to the new chain when the fork activates. See [Upgrade Modes](/network-upgrades/mesa/upgrade-modes) for details, including which node types do not support automode.
+
+### Simplified Archive Upgrade
+
+Unlike the Berkeley upgrade (which required up to 48 hours for archive database conversion), the Mesa archive upgrade is a fast schema upgrade that completes in under a minute. See [Archive Upgrade](/network-upgrades/mesa/archive-upgrade).
+
+## Upgrade Flow — End-to-End Timeline
+
+The Mesa upgrade follows four phases. The timeline below shows what happens at each stage, when it happens, and what **you** need to do.
+
+### Overview
+
+<img src="/img/network-upgrades/mesa/mesa-upgrade-timeline.png" alt="Mina's Mesa Upgrade — four-phase timeline from Pre-Upgrade through Post-Upgrade, with state finalization and network shutdown markers" width="100%" />
+
+The upgrade moves through four phases — **Pre-Upgrade**, **State Finalization**, **Upgrade**, and **Post-Upgrade** — anchored by three key moments:
+
+| Milestone | When | What happens |
+|---|---|---|
+| **stop-transaction-slot** | Hours before the fork | Network stops accepting new transactions |
+| **stop-network-slot** | Exactly 5 hours after stop-transaction-slot | Block production halts entirely |
+| **Mesa genesis timestamp** | Exactly 3 hours after stop-network-slot | First Mesa block is produced |
+
+---
+
+### Phase 1: Pre-Upgrade — weeks before the fork
+
+> **Goal:** Every participant is prepared and running the stop-slot release before the fork begins.
+
+Each actor type has a specific checklist — see **[Requirements](/network-upgrades/mesa/requirements)** for the full per-actor pre-upgrade procedures and hardware requirements.
+
+### Phase 2: State Finalization — hours before the fork (exactly 5 hours)
+
+> **Goal:** The network reaches consensus on a final state. No new transactions are accepted.
+
+At the predefined **stop-transaction-slot**, nodes stop accepting new user transactions. Block production continues for ~100 more slots with empty blocks until the **stop-network-slot**. See **[State Finalization](/network-upgrades/mesa/upgrade-steps/state-finalization)** for the full per-actor instructions.
+
+### Phase 3: Upgrade — fork day (network is down)
+
+> **Goal:** The network halts, state is exported, and the Mesa release is published.
+
+At the **stop-network-slot**, block production stops entirely. o1Labs exports the network state, builds the Mesa release, and publishes packages. See **[Fork Schedule](/network-upgrades/mesa/fork-schedule)** for the schedule values and **[Upgrade](/network-upgrades/mesa/upgrade-steps/upgrade)** for the per-actor instructions.
+
+### Phase 4: Post-Upgrade — after the fork
+
+> **Goal:** Block production resumes on the Mesa network. Normal operations return.
+
+Exactly **3 hours** after the _stop-network-slot_, at the predefined Mesa genesis timestamp, the first Mesa block is produced. See **[Post-Upgrade](/network-upgrades/mesa/upgrade-steps/post-upgrade)** for verification checklists.
+
+---
+
+For end-to-end walkthroughs by role (block producer, archive node, zkApp developer, exchange), see **[Examples](/network-upgrades/mesa/upgrade-steps/examples)**.
+
+## Upgrade Modes
+
+The Mesa upgrade supports two modes for daemon node operators: **[Automode](/network-upgrades/mesa/upgrade-modes)** (recommended — node handles the fork transition automatically) and **[Manual](/network-upgrades/mesa/upgrade-modes)** (operator stops the node, installs the Mesa release, and restarts).
+
+See [Upgrade Modes](/network-upgrades/mesa/upgrade-modes) for the full comparison, requirements, and the persistent-filesystem / process-restart constraints that automode imposes. For low-level details on the dispatcher and dual-binary architecture, see [Upgrade Modes — Details](/network-upgrades/mesa/appendix/upgrade-modes-details).
+
+## Quick Reference by Operator Type
+
+| Operator Type | Key Pages |
+|---|---|
+| **Block Producers** | [Requirements](/network-upgrades/mesa/requirements), [Upgrade Modes](/network-upgrades/mesa/upgrade-modes), [Upgrade Steps](/network-upgrades/mesa/upgrade-steps) |
+| **SNARK Workers / Coordinators** | [Requirements](/network-upgrades/mesa/requirements), [Upgrade Steps](/network-upgrades/mesa/upgrade-steps) |
+| **Archive Node Operators** | [Requirements](/network-upgrades/mesa/requirements), [Archive Upgrade](/network-upgrades/mesa/archive-upgrade), [Upgrade Steps](/network-upgrades/mesa/upgrade-steps) |
+| **Rosetta API Operators** | [Requirements](/network-upgrades/mesa/requirements), [Archive Upgrade](/network-upgrades/mesa/archive-upgrade), [Upgrade Steps](/network-upgrades/mesa/upgrade-steps) |
+| **Exchanges** | [Requirements](/network-upgrades/mesa/requirements), [Upgrade Steps](/network-upgrades/mesa/upgrade-steps), [Archive Node Schema Changes](/network-upgrades/mesa/appendix/archive-node-schema-changes) |
+
+## Network Details
+
+The values below describe the **current Mainnet (pre-fork)** chain. They will change after the Mesa fork activates — the post-fork Chain ID, Git SHA-1, and node build link will be published in the Mesa release announcement.
+
+```
+Chain ID (Mainnet, pre-fork)
+a7351abc7ddf2ea92d1b38cc8e636c271c1dfd2c081c637f62ebc2af34eb7cc1
+
+Git SHA-1 (Mainnet, pre-fork)
+ae112d3a96fe71b4ccccf3c54e7b7494db4898a4
+
+Seed List
+https://bootnodes.minaprotocol.com/networks/mainnet.txt
+
+Node build
+https://github.com/MinaProtocol/mina/releases?q=mesa
+```
+
+{/* TODO(PR #1133): When the Mesa mainnet release is cut, add the post-fork Chain ID, Git SHA-1, and the specific release tag URL alongside the pre-fork values above. For the current test-network values, see [Mesa Trail Network](/network-upgrades/mesa/mesa-trail). */}

@@ -1,7 +1,7 @@
 ---
 title: Archive Redundancy
 hide_title: true
-description: Steps to install mina and connect to the Devnet network.
+description: Strategies for archive node redundancy, backup, and data recovery.
 keywords:
   - mina historical archive data
   - what is an archive node
@@ -19,7 +19,7 @@ Archive data is critical for applications that require historical lookup.
 
 On the protocol side, archive data is important for disaster recovery to reconstruct a certain state. A single [archive node](/node-operators/archive-node/getting-started)  set up might not be sufficient. 
 
-If the daemon that sends blocks to the archive process or if the archive process itself fails for some reason, there can be missing blocks in the database. To minimize the risk of archive data loss, employ redundancy techniques.
+If the daemon that sends blocks to the archive process or if the archive process itself fails for some reason, there can be missing blocks in the database. To minimize the risk of archive data loss, employ the redundancy techniques described on this page; to detect and repair gaps once they have already formed, see [Backfilling Missing Blocks](./backfilling-missing-blocks).
 
 A single archive node setup has a daemon sending blocks to an archive process that writes them to the database.
 
@@ -89,31 +89,35 @@ If only the end hash is provided, then the tool generates blocks starting with t
 
 Provide the flag `--all-blocks` to write out all blocks contained in the database.
 
-## Identify missing blocks
+### Back up the archive database
 
-To determine any missing blocks in an archive database, use the `mina-missing-block-auditor` tool.
+In addition to retaining per-block files, you can snapshot the entire PostgreSQL archive database. A database dump is the fastest way to seed a fresh archive without replaying every block.
 
-The tool outputs a list of state hashes of all the blocks in the database that are missing a parent. You can use this list to monitor the archive database for any missing blocks. To specify the URI of the PostgreSQL database, use the `--archive-uri` flag.
+Use `pg_dump` to create a snapshot:
 
-## Restore blocks
-
-When you have block data (precomputed or extensional) available from [Back up block data](/node-operators/archive-node/archive-redundancy#back-up-block-data), you can restore missing blocks in an archive database using the tool `mina-archive-blocks`. 
-
-1. Restore precomputed blocks from: 
-
-  - [Upload block data to Google Cloud Storage](/node-operators/archive-node/archive-redundancy#upload-block-data-to-google-cloud-storage)
-
-  - [Save block data from logs](/node-operators/archive-node/archive-redundancy#save-block-data-from-logs)
-
-```
-  mina-archive-blocks --precomputed --archive-uri <postgres uri> FILES
+```bash
+pg_dump -U <user> -Fp <database> | gzip > archive-$(date +%F).sql.gz
 ```
 
-2. For extensional blocks: (Generated from option [3](#generate-block-data-from-another-archive-database))
+Schedule this regularly (a nightly cron is typical) and publish the dumps to object storage that your downstream consumers can reach.
 
+o1Labs publishes nightly dumps of its public-network archives to the [mina-archive-dumps](https://storage.googleapis.com/mina-archive-dumps/) GCS bucket as a convenience:
+
+```bash
+# Mainnet
+curl -O https://storage.googleapis.com/mina-archive-dumps/mainnet-archive-dump-$(date +%F)_0000.sql.tar.gz
+# Devnet — swap "mainnet" for "devnet".
 ```
-  mina-archive-blocks --extensional --archive-uri <postgres uri> FILES
-```
+
+:::tip Mirror the dumps you depend on
+
+Hosting your own dumps (and your own per-block files) is what keeps the network from converging on a single provider. The o1Labs bucket is a convenience, not a guarantee.
+
+:::
+
+## Restoring missing blocks
+
+Detecting gaps and restoring blocks from the backups described above is covered on a dedicated page: [Backfilling Missing Blocks](./backfilling-missing-blocks). That guide walks through `mina-missing-blocks-auditor`, `mina-archive-blocks`, and the missing-blocks guardian script.
 
 ## Staking ledgers
 

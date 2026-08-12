@@ -1,0 +1,158 @@
+---
+title: Glossary
+sidebar_label: Glossary
+hide_title: true
+description: Definitions of key terms used throughout the Mesa upgrade documentation — stop-slots, automode, dispatcher, trustless/trustful upgrades, and more.
+keywords:
+  - Mesa
+  - glossary
+  - terminology
+  - stop-slot
+  - automode
+  - hard fork
+---
+
+# Glossary
+
+This page defines the key terms used throughout the Mesa upgrade documentation. If you encounter an unfamiliar term in any of the upgrade guides, you can look it up here.
+
+:::tip
+Bookmark this page for quick reference while reading the upgrade docs.
+:::
+
+---
+
+## Network and Fork Terms
+
+### Hard Fork
+
+A major, non-backward-compatible network upgrade. All node operators must upgrade their software before the fork activates. After the fork, nodes running the old software can no longer participate in the network. The Mesa upgrade is a hard fork.
+
+### Stop-Slot Release
+
+The Mina release (version 3.x.x) that node operators install **before** the fork. This release contains the stop-slot logic that gracefully halts the network at the designated time. In [automode](#automode), this release also bundles both the [pre-fork](#pre-fork-binary) and [post-fork binary](#post-fork-binary).
+
+### Stop-Transaction-Slot {#stop-transaction-slot}
+
+A predefined global slot number baked into the [stop-slot release](#stop-slot-release). When the network reaches this slot, nodes stop accepting new user transactions. Block production continues with empty blocks (no user commands, no coinbase, no fee transfers) for exactly 100 more slots (5 hours) until the [stop-network-slot](#stop-network-slot). This is the point where exchanges must disable deposits and withdrawals.
+
+Referred to as `slot_tx_end` in the Mina codebase and daemon configuration.
+
+### Stop-Network-Slot {#stop-network-slot}
+
+A predefined global slot number that comes after the [stop-transaction-slot](#stop-transaction-slot). When the network reaches this slot, block production halts entirely. The network is now frozen, and the final state is used to build the Mesa release. In [automode](#automode), this is when the daemon automatically transitions to the [post-fork binary](#post-fork-binary).
+
+Referred to as `slot_chain_end` in the Mina codebase and daemon configuration.
+
+### State Finalization
+
+The stabilization period between the [stop-transaction-slot](#stop-transaction-slot) and the [stop-network-slot](#stop-network-slot) — 100 slots, which is exactly 5 hours. During this window, empty blocks are produced so that all nodes converge on the same final state. No operator action is required; nodes should remain running. See [State Finalization](/network-upgrades/mesa/upgrade-steps/state-finalization).
+
+### Mesa Genesis Timestamp
+
+The predefined time at which the first block is produced on the new Mesa chain — exactly 3 hours after the network reaches the [stop-network-slot](#stop-network-slot). This marks the start of the upgraded network.
+
+### Mesa Release
+
+The new Mina build (version 4.x.x) published after [state finalization](#state-finalization) is complete. It contains the Mesa chain configuration and genesis ledger derived from the final pre-fork state. In [manual mode](#manual-mode), operators install this release to join the Mesa network.
+
+### Mesa Trail Network
+
+The current testing environment for validating the Mesa upgrade before deployment to mainnet. Node operators and developers can test their infrastructure and applications against it. Mesa Trail may be unstable and is not intended for production use. It replaces the earlier **preflight** and **MUT** test networks, which are now [archived](/network-upgrades/mesa/archived-networks). See [Mesa Trail Network](/network-upgrades/mesa/mesa-trail).
+
+---
+
+## Upgrade Mode Terms
+
+### Automode {#automode}
+
+The recommended upgrade path for daemon nodes (block producers, SNARK coordinators). In automode, the node handles the entire fork transition automatically — no manual intervention is required during the fork window. The [stop-slot release](#stop-slot-release) ships both the [pre-fork](#pre-fork-binary) and [post-fork binary](#post-fork-binary), and the [dispatcher](#dispatcher) routes to the correct one based on the fork state. See [Upgrade Modes](/network-upgrades/mesa/upgrade-modes).
+
+### Manual Mode {#manual-mode}
+
+The traditional upgrade path where operators manually stop their node after the network halts, install the [Mesa release](#mesa-release), and restart. This gives full control over every step but requires prompt action when the release is published. See [Upgrade Modes](/network-upgrades/mesa/upgrade-modes).
+
+### Automode Image {#automode-image}
+
+The Docker image that bundles the [automode](#automode) runtime — both the [pre-fork](#pre-fork-binary) and [post-fork binary](#post-fork-binary), plus the [dispatcher](#dispatcher). Published as `minaprotocol/mina-daemon-auto-hardfork:{version}-{codename}-{network}`. Use this image when running automode in Docker. The companion image `minaprotocol/mina-daemon-hardfork` is the manual-mode equivalent (no dispatcher).
+
+### Pre-Fork Binary {#pre-fork-binary}
+
+The binary that runs the current (Berkeley) chain up to the [stop-network-slot](#stop-network-slot). In [automode](#automode), this is shipped as part of the `mina-{network}-automode` package and installed at `/usr/lib/mina/berkeley/mina`. In Docker, the [automode image](#automode-image) includes this binary.
+
+### Post-Fork Binary {#post-fork-binary}
+
+The binary that runs the new Mesa chain after the fork activates. In [automode](#automode), this is shipped as part of the `mina-{network}-automode` package and installed at `/usr/lib/mina/mesa/mina`. The [dispatcher](#dispatcher) switches to this binary once the [activation file](#activation-file) is created.
+
+### Dispatcher {#dispatcher}
+
+A shell script wrapper (`mina-dispatch`) installed at `/usr/local/bin/` that routes commands to the correct binary — [pre-fork](#pre-fork-binary) or [post-fork](#post-fork-binary). For `daemon`, routing is based on whether the [activation file](#activation-file) exists. For `client`, commands are always routed to the [post-fork binary](#post-fork-binary). Other subcommands (e.g., `accounts list`) are not supported — invoke the [pre-fork](#pre-fork-binary) or [post-fork](#post-fork-binary) binary by its full path (`/usr/lib/mina/berkeley/mina` or `/usr/lib/mina/mesa/mina`) directly. See [Upgrade Modes - Details](/network-upgrades/mesa/appendix/upgrade-modes-details).
+
+### Activation File {#activation-file}
+
+A sentinel file created by the daemon when it reaches the [stop-network-slot](#stop-network-slot) during [automode](#automode). Its presence signals to the [dispatcher](#dispatcher) that the fork has completed and the [post-fork binary](#post-fork-binary) should be used on subsequent restarts. Located at `{config-directory}/auto-fork-mesa-{network}/activated`.
+
+---
+
+## Archive Upgrade Terms
+
+### Trustless Upgrade {#trustless}
+
+An archive database upgrade method where operators run the `upgrade_to_mesa.sql` script on their existing database. The script is backward-compatible and can be applied before the fork while the Berkeley archive node is still running. It completes in under 1 minute. See [Archive Upgrade](/network-upgrades/mesa/archive-upgrade).
+
+### Trustful Upgrade {#trustful}
+
+An archive database upgrade method where operators import an official SQL database dump published by o1Labs after the fork. This requires no pre-fork action — operators wait for the dump, create a fresh database, and import it. The trade-off is that you trust o1Labs' export rather than verifying the data yourself.
+
+### Archive Hardfork Toolbox {#hardfork-toolbox}
+
+A dedicated CLI tool (`mina-archive-hardfork-toolbox`) for verifying the integrity of archive database upgrades and fork transitions. It provides commands to validate the fork block, verify schema upgrades, and mark the canonical chain. Shipped with the Mina archive package. See [Archive Upgrade — Verification](/network-upgrades/mesa/archive-upgrade#verification-with-the-archive-hardfork-toolbox).
+
+### Replayer {#replayer}
+
+A verification tool (`mina-replayer`) that replays all transactions from a Mina archive database to reconstruct the ledger state from scratch. It can be used to verify that the archive database faithfully represents the canonical chain — both during the fork and as an ongoing integrity check. See [Archive Replayer](/node-operators/archive-node/replayer).
+
+### Fork Config
+
+The official ledger checkpoint published with the [Mesa release](#mesa-release). Operators can compare the output of the [replayer](#replayer) against this config to verify their archive matches the canonical state used to build Mesa.
+
+---
+
+## Mesa-Specific Changes and Conventions
+
+Mesa bundles four Mina Improvement Proposals (MIPs) that change protocol behavior. The canonical MIP specs live in the [MinaProtocol/MIPs](https://github.com/MinaProtocol/MIPs/tree/main/MIPS) repository; each section below links to the spec for the proposal it describes.
+
+### Faster Blocks — [MIP6](https://github.com/MinaProtocol/MIPs/blob/main/MIPS/mip-0006-slot-reduction-90s.md)
+
+Mesa halves Mina's slot time from **180 seconds to 90 seconds**, doubling block production frequency. To keep the long-term token emission rate flat, the per-block **coinbase reward is also halved** (from 720 MINA to 360 MINA). The total Mina supplied per epoch is unchanged.
+
+Several second-order consequences flow from the slot-time change:
+
+- **Epoch duration halves** from ~14.9 days to ~7.4 days. Scripts and operational procedures tied to epoch boundaries (delegation cooldown, automated payouts, monitoring dashboards) trigger about twice as often.
+- **Vesting schedules on active vesting accounts are automatically migrated** during the hard fork so they continue unlocking on the same real-world cadence. No operator action is required.
+- **The zkApp per-block command soft limit is lowered** from 24 to 12, ensuring SNARK workers can keep up with the faster 90-second block cadence. This change is delivered via soft fork before Mesa.
+- **SNARK coordinators handling maximum-cost zkApp transactions should deploy at least 4 workers** (≈4 CPU cores each) to keep up with the new 90-second slot timing. A prerequisite SNARK-worker parallelization is delivered via soft fork before Mesa.
+
+### Expanded zkApp State — [MIP7](https://github.com/MinaProtocol/MIPs/blob/main/MIPS/mip-0007-increase-state-size-limit.md)
+
+Mesa raises the on-chain state available to a zkApp account from **8 field elements (indexes `0–7`) to 32 field elements (indexes `0–31`)**. zkApps can now store roughly four times more data directly on chain without off-chain workarounds. This applies to both the `zkapp_states` and `zkapp_states_nullable` database tables. See [Archive Node Schema Changes](/network-upgrades/mesa/appendix/archive-node-schema-changes) for the SQL diff.
+
+### Larger Events and Actions — [MIP8](https://github.com/MinaProtocol/MIPs/blob/main/MIPS/mip-0008-increase-events-actions-limit.md)
+
+Mesa raises the per-transaction limit on events and actions from **100 field elements to 1024 field elements** for each. The previous cap of 16 field elements per individual event or action is also removed. This makes events and actions a viable channel for richer on-chain signaling and larger off-chain dispatch payloads in a single transaction.
+
+Mostly relevant to zkApp developers — node operators do not need to act on this change, but block producers will validate against the new limits automatically after the fork.
+
+### Larger zkApp Transactions — [MIP9](https://github.com/MinaProtocol/MIPs/blob/main/MIPS/mip-0009-increase-zkapp-account-update-limit.md)
+
+Mesa **roughly triples** the maximum number of account updates a single zkApp transaction can contain. The previous weighted-cost formula (`10.26·np + 10.08·n2 + 9.14·n1 < 69.45`) is replaced with a simpler `np + n2 + n1 ≤ 16` rule that admits any balanced binary proof tree of height 4.
+
+This depends on the SNARK-worker parallelization shipped as a prerequisite for [MIP6](https://github.com/MinaProtocol/MIPs/blob/main/MIPS/mip-0006-slot-reduction-90s.md) — without it, processing maximum-size transactions inside a 90-second slot would not be feasible.
+
+### Mesa Package Naming Convention
+
+The [automode](#automode) Debian package is published as `mina-{network}-automode` to distinguish the dual-binary automode variant from the standard manual-mode `mina-{network}` package. This allows operators to install the automode package side-by-side with the existing daemon without one replacing the other. `mina-{network}-automode` is an umbrella package: under the hood it depends on `mina-{network}-prefork-mesa` (the [pre-fork binary](#pre-fork-binary)) and `mina-{network}-postfork-mesa` (the [post-fork binary](#post-fork-binary) plus the [dispatcher](#dispatcher)), and apt resolves both transitively when you install it.
+
+### Node Status Service
+
+A telemetry feature that reports non-sensitive node data (e.g., version, sync status) to help monitor the amount of upgraded active stake during the upgrade. Enabled by default on the Mesa daemon; pass `--simplified-node-stats` to keep the report minimal, or `--disable-node-status` to opt out entirely. See [Help Monitor the Network](/network-upgrades/mesa/upgrade-steps/post-upgrade#help-monitor-the-network) for the full flag set.

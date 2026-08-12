@@ -236,7 +236,7 @@ Since this code extends `SmartContract` that has its own initialization to perfo
 
 Then, `this.num.set(Field(3))` initializes the on-chain state `num` to a value of `3`.
 
-You can optionally specify permissions. See [setPermissions](/zkapps/o1js-reference/classes/SmartContract#setpermissions) in the o1js Reference documentation.
+You can optionally specify permissions. See [setPermissions](https://docs.o1labs.org/o1js/api-reference/classes/SmartContract) in the o1js Reference documentation.
 
 Finally, this code adds the `update()` function:
 
@@ -272,7 +272,7 @@ Notice that `get()` and `set()` methods are used for retrieving and setting on-c
 
 - Similarly, using `set()` changes the transaction to indicate that changes to this particular on-chain state are updated only when the transaction is received by the Mina network if it contains a valid authorization (usually, a valid authorization is a proof).
 
-The logic also uses the `.mul()` method for multiplication of the values stored in `Field` types. You can view all available [methods](/zkapps/o1js-reference/classes/Field#methods) in the o1js Reference documentation.
+The logic also uses the `.mul()` method for multiplication of the values stored in `Field` types. You can view all available [methods](https://docs.o1labs.org/o1js/api-reference/classes/Field#methods) in the o1js Reference documentation.
 
 You remember that functions in your smart contract must operate on o1js compatible data types: `Field` types and other types built on top of `Field` types. Because a smart contract is really a zero knowledge circuit, functions from random npm packages work inside a smart contract only if the functions the contract provides operate on o1js-compatible data types.
 

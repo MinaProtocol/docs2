@@ -1,0 +1,48 @@
+---
+title: Scanning Blocks
+description: Poll for new blocks and inspect transactions using curl
+---
+
+# Scanning Blocks
+
+To poll for new blocks, query `/network/status` for the current block height, then fetch each block sequentially.
+
+Get the current block height:
+
+```bash
+curl -s "$ROSETTA_URL/network/status" \
+  -H 'Content-Type: application/json' \
+  -d "{\"network_identifier\":$NETWORK}" | jq '.current_block_identifier.index'
+```
+
+Fetch a specific block by index:
+
+```bash
+BLOCK_INDEX=1000
+
+curl -s "$ROSETTA_URL/block" \
+  -H 'Content-Type: application/json' \
+  -d "{\"network_identifier\":$NETWORK,\"block_identifier\":{\"index\":$BLOCK_INDEX}}" | jq .
+```
+
+A simple polling loop that waits for new blocks:
+
+```bash
+HEIGHT=$(curl -s "$ROSETTA_URL/network/status" \
+  -H 'Content-Type: application/json' \
+  -d "{\"network_identifier\":$NETWORK}" | jq '.current_block_identifier.index')
+
+while true; do
+  BLOCK=$(curl -s "$ROSETTA_URL/block" \
+    -H 'Content-Type: application/json' \
+    -d "{\"network_identifier\":$NETWORK,\"block_identifier\":{\"index\":$HEIGHT}}")
+
+  if echo "$BLOCK" | jq -e '.block' > /dev/null 2>&1; then
+    echo "Block $HEIGHT:"
+    echo "$BLOCK" | jq '.block.transactions[] | .transaction_identifier.hash'
+    HEIGHT=$((HEIGHT + 1))
+  else
+    sleep 10
+  fi
+done
+```

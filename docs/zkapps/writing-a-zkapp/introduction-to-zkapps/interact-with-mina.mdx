@@ -256,7 +256,7 @@ Two quick observations:
 
 - The user update has `authorizationKind: 'None_given'`. That means the update is not authorized. This is possible because it doesn't include any changes that require authorization: It just receives MINA. You can send someone MINA without their permission.
 
-In general, there are three kinds of authorizations that an account update can have: a proof, a signature, or none. You learn more about signatures in the next section. You can find more details in [Permissions](/zkapps/writing-a-zkapp/feature-overview/permissions).
+In general, there are three kinds of authorizations that an account update can have: a proof, a signature, or none. You learn more about signatures in the next section. You can find more details in [Permissions](https://docs.o1labs.org/o1js/zkapps/permissions).
 
 ## Account update tree structures
 
@@ -411,7 +411,7 @@ Recall that account updates can have three types of authorization:
 - Signature authorization – used to update user accounts. Signatures are verified against the account's public key.
 - No authorization – used on updates which don't require authorization. For example, positive balance changes.
 
-These are common defaults. The full source of truth is set by the _account permissions_, see [Permissions](/zkapps/writing-a-zkapp/feature-overview/permissions). Using permissions, account owners can decide on a fine-grained level which type of authorization is required on which kinds of updates. Permissions are checked every time an account update tries to interact with an account.
+These are common defaults. The full source of truth is set by the _account permissions_, see [Permissions](https://docs.o1labs.org/o1js/zkapps/permissions). Using permissions, account owners can decide on a fine-grained level which type of authorization is required on which kinds of updates. Permissions are checked every time an account update tries to interact with an account.
 
 ## Sending transactions
 
@@ -475,4 +475,4 @@ Doing this means setting up a fresh, local ledger that is pre-filled with a coup
 
 Fun fact: The `LocalBlockchain` instance literally uses the same OCaml code for transaction validation and application that the Mina node uses; it's compiled to JavaScript with [js_of_ocaml](https://github.com/ocsigen/js_of_ocaml).
 
-You can learn more about testing in [Test zkApps Locally](/zkapps/writing-a-zkapp/introduction-to-zkapps/testing-zkapps-locally).
+You can learn more about testing in [Test zkApps Locally](https://docs.o1labs.org/o1js/zkapps/local-development).

@@ -1,0 +1,129 @@
+---
+title: Downgrading to Older Versions
+hide_title: true
+description: How to downgrade your Mina node from versions above 3.3.0 to 3.3.0 or below by converting on-disk state, avoiding a full rebootstrap.
+keywords:
+  - mina downgrade
+  - mina storage converter
+  - node operators
+  - version rollback
+  - mina-rocksdb-scanner
+  - rebootstrap
+  - on-disk state
+---
+
+# Downgrading to Older Versions
+
+If you are running a Mina node on a version above 3.3.0 and need to roll back to 3.3.0 or below, you can convert the on-disk state in place using `mina-storage-converter`. This avoids a full rebootstrap from a remote S3 ledger bucket, which can save significant time.
+
+## When is downgrading needed?
+
+Downgrading is typically necessary when a fork fails and there is a RocksDB version bump between the stop slot release and the pre-stop slot release. In such cases, the development team will notify node operators that a downgrade is required to continue operating on the correct chain.
+
+## Debian/Ubuntu
+
+### 1. Stop the Mina daemon
+
+Ensure your Mina node is fully shut down before proceeding:
+
+```sh
+mina client stop daemon
+```
+
+Or however you normally stop your node process. Verify it is no longer running before continuing.
+
+### 2. Install storage toolbox packages
+
+Install the required toolbox packages that provide `mina-storage-converter` and the RocksDB scanners:
+
+```sh
+sudo apt-get install -y mina-daemon-storage-toolbox mina-daemon-recovery-storage-toolbox
+```
+
+### 3. Convert on-disk state
+
+Run `mina-storage-converter` to convert the local database to the format expected by the older version.
+
+```sh
+mina-storage-converter \
+    --node-dir ${NODE_DIR} \
+    --current-scanner /usr/lib/mina/storage/*/${SOURCE_VERSION}/mina-rocksdb-scanner \
+    --stable-scanner /usr/lib/mina/storage/*/${TARGET_VERSION}/mina-rocksdb-scanner
+```
+
+Where:
+
+- `NODE_DIR` is the path to your node's config directory. This is usually `~/.mina-config` if you haven't set it explicitly.
+- `SOURCE_VERSION` is the version you are downgrading from.
+- `TARGET_VERSION` is the version you are downgrading to (e.g. `3.3.0`).
+
+The `*` wildcard lets bash resolve the RocksDB version directory automatically, so you don't need to know which RocksDB version is bundled with each Mina release.
+
+The tool will prompt for confirmation before making changes.
+
+### 4. Install the target version
+
+Install the older Mina package. For example, to install 3.3.0:
+
+```sh
+sudo apt-get install --allow-downgrades -y mina-mainnet=3.3.0
+```
+
+### 5. Start the Mina daemon
+
+Start your node as usual:
+
+```sh
+mina daemon ${YOUR_EXTRA_DAEMON_ARGS_HERE}
+```
+
+Your node should resume from the converted local state without needing to rebootstrap.
+
+## Docker
+
+On-disk state conversion is only possible if your `mina-config` directory is persisted as a volume outside the container (e.g. via `--mount "type=bind,source=$(pwd)/.mina-config,dst=/root/.mina-config"`).
+
+:::caution
+
+If your `mina-config` is not persisted outside of the container, there is no way to convert the on-disk state. You will need to rebootstrap from scratch after switching to the older image.
+
+:::
+
+Since the Docker image is a Debian/Ubuntu environment with the Mina Debian package installed, you can run the same conversion steps inside the container. The default `NODE_DIR` inside the container is `/root/.mina-config`.
+
+### 1. Stop the running container
+
+Assume your mina daemon container is running with name `mina-node`
+
+```sh
+docker stop mina-node
+```
+
+### 2. Install toolbox packages and run the converter
+
+Use the current (newer) image to install the toolbox packages and run the conversion against your mounted `mina-config` volume:
+
+```sh
+docker run -it --rm \
+    --entrypoint bash \
+    --mount "type=bind,source=$(pwd)/.mina-config,dst=/root/.mina-config" \
+    minaprotocol/mina-daemon:${SOURCE_VERSION}-bullseye-mainnet \
+    -c "apt-get update && apt-get install -y mina-daemon-storage-toolbox mina-daemon-recovery-storage-toolbox && mina-storage-converter --node-dir /root/.mina-config --current-scanner /usr/lib/mina/storage/*/${SOURCE_VERSION}/mina-rocksdb-scanner --stable-scanner /usr/lib/mina/storage/*/${TARGET_VERSION}/mina-rocksdb-scanner"
+```
+
+### 3. Start a new container with the target version
+
+Remove the old container and start with the target image:
+
+```sh
+docker rm mina-node
+
+docker run --name mina-node -d \
+    -p 8302:8302 \
+    --restart=always \
+    --mount "type=bind,source=$(pwd)/.mina-config,dst=/root/.mina-config" \
+    minaprotocol/mina-daemon:${TARGET_VERSION}-bullseye-mainnet \
+    daemon ${YOUR_EXTRA_DAEMON_ARGS_HERE}
+```
+
+Your node should resume from the converted local state without needing to rebootstrap.

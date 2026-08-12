@@ -238,7 +238,7 @@ export default function Admonition(props: Props): JSX.Element {
     admonitionStyles = styles.admonitionTip;
   } else if (type === 'info') {
     admonitionStyles = styles.admonitionInfo;
-  } else if (type === 'danger' || type === 'caution') {
+  } else if (type === 'danger' || type === 'caution' || type === 'warning') {
     admonitionStyles = styles.admonitionDanger;
   } else if (type === 'experimental') {
     admonitionStyles = styles.admonitionExperimental;

@@ -1,0 +1,128 @@
+---
+title: "Logging"
+hide_title: true
+description: Mina daemon log files, levels, formats, and export options.
+keywords:
+  - logging
+  - mina daemon
+  - log files
+  - log levels
+  - crash reports
+  - export logs
+---
+
+# Logging
+
+## Log files
+
+Mina logs are stored in `~/.mina-config/`:
+
+| File | Description | Size limit | Rotation |
+|--|--|--|--|
+| `mina.log` | Main daemon logs | 10 MiB | 50 files (`mina.log.0` .. `mina.log.50`) |
+| `mina-best-tip.log` | Best tip logs (useful for hard fork analysis) | 5 MiB | 1 file |
+| `mina-prover.log` | Prover memory usage and batch sizes | 128 MiB | 1 file |
+| `mina-verifier.log` | Verifier memory usage and batch sizes | 128 MiB | 1 file |
+
+## Following logs
+
+Depending on how you started the daemon:
+
+```sh
+# Docker
+docker logs --follow mina-node
+
+# Systemd
+journalctl --user -u mina -n 1000 -f
+
+# Direct
+tail -f ~/.mina-config/mina.log
+```
+
+## Log levels
+
+The Mina daemon supports the following log levels, from most to least verbose:
+
+1. Spam
+2. Trace
+3. Debug
+4. **Info** (default for stdout)
+5. Warn
+6. Error
+7. Fatal
+
+Setting a level filters out all messages below it. For example, `Info` shows only Info, Warn, Error, and Fatal messages.
+
+## Log format
+
+By default, logs are output as plain text. When `-log-json` is enabled, logs use the following JSON structure:
+
+```json
+{
+  "timestamp": "2020-12-23 21:25:04.616526Z",
+  "level": "Error",
+  "source": {
+    "module": "Transition_router",
+    "location": "File \"src/lib/transition_router/transition_router.ml\", line 231, characters 12-24"
+  },
+  "message": "Failed to find any peers during initialization (crashing because this is not a seed node)",
+  "metadata": {
+    "host": "1.1.1.2",
+    "peer_id": "12D3KooWGQSPgo7ypy9717D3Vgz2RHaqB2ndDRHEFcAfJDAv284q",
+    "pid": 12,
+    "port": 8302
+  }
+}
+```
+
+## Daemon logging options
+
+Set these flags when starting the daemon:
+
+| Flag | Default | Description |
+|--|--|--|
+| `-log-level` | Info | Log level for stdout |
+| `-file-log-level` | Trace | Log level for log files |
+| `-log-json` | off | Output logs as JSON instead of plain text |
+| `-log-block-creation` | true | Log steps for including transactions and SNARK work in a block |
+| `-log-received-blocks` | false | Log blocks received from peers |
+| `-log-snark-work-gossip` | false | Log snark-pool diffs received from peers |
+| `-log-txn-pool-gossip` | false | Log transaction-pool diffs received from peers |
+| `-log-precomputed-blocks` | false | Include precomputed blocks in logs |
+
+## Exporting logs
+
+### From a running node
+
+```sh
+mina client export-logs -tarfile <FILENAME>
+```
+
+Compresses available logs into a `.tar.gz` archive in `~/.mina-config/exported_logs/`. The `-tarfile` flag is optional and defaults to the current date-time.
+
+Logs can also be exported via GraphQL using the `exportLogs` [mutation](/node-developers/graphql-api#mutations).
+
+### From a stopped node
+
+```sh
+mina client export-local-logs -tarfile <FILENAME>
+```
+
+Same behavior, but works without a running daemon.
+
+## Crash reports
+
+If the daemon crashes, it generates a crash report in `~/.mina-config/`. Only the latest report is retained, named with the crash date-time.
+
+A crash report may contain:
+
+| File | Description |
+|--|--|
+| `crash_summary.json` | System info, version, and final log output |
+| `mina_status.json` | Output of `mina client status` at time of crash |
+| `mina_short.log` | Last 4 MB of `mina.log` |
+| `registered_mask.dot` | Latest ledger visualization |
+| `frontier.dot` | Latest frontier visualization |
+| `daemon.json` | Daemon configuration file |
+
+You can upload crash reports and exported logs directly to a [GitHub issue](https://github.com/MinaProtocol/mina/issues) to help with debugging.

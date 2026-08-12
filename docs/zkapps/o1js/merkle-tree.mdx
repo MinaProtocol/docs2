@@ -107,7 +107,11 @@ class Leaderboard extends SmartContract {
     );
   }
 
-  @method async guessPreimage(guess: Field, account: Account, path: MerkleWitness) {
+  @method async guessPreimage(
+    guess: Field,
+    account: Account,
+    path: MerkleWitness
+  ) {
     // we fetch z from the chain
     const z = this.z.get();
     this.z.requireEquals(z);
@@ -160,7 +164,7 @@ You can look at the [Merkle tree example](https://github.com/o1-labs/o1js/tree/m
 
 Merkle trees are great for _referencing_ off-chain state, but you must also store this off-chain state somewhere.
 
-Where and how to store the data off-chain storage is left up to you, the developer. Tell us how you are using Merkle trees in the  [#zkapps-developers](https://discord.com/channels/484437221055922177/915745847692636181) channel in Mina Protocol Discord.
+Where and how to store the data off-chain storage is left up to you, the developer. Tell us how you are using Merkle trees in the [#zkapps-developers](https://discord.com/channels/484437221055922177/915745847692636181) channel in Mina Protocol Discord.
 
 :::
 

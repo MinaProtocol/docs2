@@ -289,7 +289,7 @@ this.account.permissions.set({
   ...Permissions.default(),
   setVerificationKey: {
     auth: Permissions.impossible(),
-    txnVersion: TransactionVersion.current()
+    txnVersion: TransactionVersion.current(),
   },
 });
 ```
@@ -301,7 +301,6 @@ Most of the time, you will not have to manually specify the transaction version 
 Mainly, this special set of permissions replaces normal permissions such as `Permission.proof` or `Permission.impossible` by less restrictive permissions - `impossibleDuringCurrentVersion` and `proofDuringCurrentVersion`.
 
 Here's a detailed overview of the new permissions:
-
 
 ```ts
 VerificationKey: {
@@ -348,7 +347,8 @@ class UpgradeabilityImpossible extends SmartContract {
     super.init();
     this.account.permissions.set({
       ...Permissions.default(),
-      setVerificationKey: Permissions.VerificationKey.impossibleDuringCurrentVersion(),
+      setVerificationKey:
+        Permissions.VerificationKey.impossibleDuringCurrentVersion(),
     });
   }
 

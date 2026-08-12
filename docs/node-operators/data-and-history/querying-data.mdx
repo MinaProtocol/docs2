@@ -17,11 +17,9 @@ keywords:
 
 # Querying Data
 
-import Subhead from "@site/src/components/common/Subhead";
+import Subhead from '@site/src/components/common/Subhead';
 
-<Subhead>
-Data querying for node operators.
-</Subhead>
+<Subhead>Data querying for node operators.</Subhead>
 
 Some node operators don't wish to participate in block production or SNARK work creation, but just want to sit on the network and passively aggregate information for querying or submit signed transactions. These nodes don't require an account key pair themselves to run successfully.
 
@@ -37,13 +35,13 @@ To prevent this node from starting as a block producer, remove the `MINA_PRIVKEY
 
 To expose recent information of the blockchain, expose the GraphQL REST server.
 
-You can provide `-rest-server-port XXXX` if the default port of 0xc0d or 3085 does not work for you. 
+You can provide `-rest-server-port XXXX` if the default port of 0xc0d or 3085 does not work for you.
 
 To make the REST server accessible from outside of `localhost`, provide `-insecure-rest-server`. Make sure you set your firewall up properly. See [GraphQL API](/node-developers/graphql-api) for more information.
 
 ## Querying information
 
-Presented here are examples about querying for _recent_ information on the chain -- around 290 blocks, in practice around 10 hours of recent activity. 
+Presented here are examples about querying for _recent_ information on the chain -- around 290 blocks, in practice around 10 hours of recent activity.
 
 The best way to explore all the specific details available for each of the GraphQL objects is to visit your favorite web browser pointing to the REST server running from within a Mina daemon that hosts a GraphQL sandbox. Visit the [GraphQL API page](/node-developers/graphql-api) to learn more. Documentation is also present on most of the individual fields, you can learn more about each field by hovering over the entries in the sandbox or by visiting the hosted schema (coming soon).
 

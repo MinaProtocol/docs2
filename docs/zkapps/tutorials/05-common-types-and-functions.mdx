@@ -43,11 +43,11 @@ Ensure your environment meets the [Prerequisites](/zkapps/tutorials#prerequisite
 
 Five basic types are derived from Fields:
 
-- [Bool](../o1js-reference/classes/Bool)
-- [UInt32](../o1js-reference/classes/UInt32)
-- [UInt64](../o1js-reference/classes/UInt64)
-- [Int64](../o1js-reference/classes/Int64)
-- [Character](../o1js-reference/classes/Character)
+- [Bool](https://docs.o1labs.org/o1js/api-reference/classes/Bool)
+- [UInt32](https://docs.o1labs.org/o1js/api-reference/classes/UInt32)
+- [UInt64](https://docs.o1labs.org/o1js/api-reference/classes/UInt64)
+- [Int64](https://docs.o1labs.org/o1js/api-reference/classes/Int64)
+- [Character](https://docs.o1labs.org/o1js/api-reference/classes/Character)
 
 Each type has the usual programming language semantics.
 
@@ -99,10 +99,10 @@ Fields in char1: 1
 
 Four advanced types are:
 
-- [CircuitString](../o1js-reference/classes/CircuitString)
-- [PrivateKey](../o1js-reference/classes/PrivateKey)
-- [PublicKey](../o1js-reference/classes/PublicKey)
-- [Signature](../o1js-reference/classes/Signature)
+- [CircuitString](https://docs.o1labs.org/o1js/api-reference/classes/CircuitString)
+- [PrivateKey](https://docs.o1labs.org/o1js/api-reference/classes/PrivateKey)
+- [PublicKey](https://docs.o1labs.org/o1js/api-reference/classes/PublicKey)
+- [Signature](https://docs.o1labs.org/o1js/api-reference/classes/Signature)
 
 All arguments passed into smart contracts must be arguments o1js can consume. You cannot pass normal strings. Instead, you must pass in strings that are wrapped to be compatible with circuits. This is accomplished with `Struct`.
 
@@ -161,7 +161,7 @@ There are 255 Fields in a private key and 256 Fields in a signature. If you are 
 
 ## Struct
 
-You can create your own compound data types with the special [Struct](../o1js-reference#struct) type.
+You can create your own compound data types with the special [Struct](https://docs.o1labs.org/o1js/api-reference/functions/Struct) type.
 
 Define a Struct as one or more data types that o1js understands. For example, Field, higher-order types built into o1js based on Field, or other Struct types defined by you. You can also define methods on your Struct to act upon this data type.
 
@@ -208,10 +208,10 @@ points8 Fields: {"points":[{"x":"0","y":"0"},{"x":"1","y":"10"},{"x":"2","y":"20
 
 Two functions help do control flow in o1js:
 
-- [Provable.if](../o1js-reference/classes/Circuit#if)
+- Provable.if
   Similar to a ternary in JavaScript
 
-- [Provable.switch](../o1js-reference/classes/Circuit#switch)
+- Provable.switch
   Similar to a switch case statement in JavaScript
 
 You can write conditionals inside o1js with these functions.
@@ -282,11 +282,11 @@ Circuits in o1js have a fixed maximum size. Each operation performed in a functi
 - about `2^17` field multiplies
 - about `2^17` field additions
 
-If a program is too large to fit into these constraints, it can be broken up into multiple recursive proof verifications. See [Recursion](../o1js/recursion).
+If a program is too large to fit into these constraints, it can be broken up into multiple recursive proof verifications. See [Recursion](https://docs.o1labs.org/o1js/advanced-concepts/recursion).
 
 ## Merkle Trees
 
-You can use [Merkle trees](../o1js-reference/classes/MerkleTree) to manage large amounts of data within a circuit. The power of Merkle trees is demonstrated in the [05-common-types-and-functions/src](https://github.com/o1-labs/docs2/tree/main/examples/zkapps/05-common-types-and-functions/src) reference project for this tutorial. See the [BasicMerkleTreeContract.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/05-common-types-and-functions/src/BasicMerkleTreeContract.ts) contract and [main.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/05-common-types-and-functions/src/main.ts) that demonstrates how contracts interact with Merkle trees and how to construct them.
+You can use [Merkle trees](https://docs.o1labs.org/o1js/api-reference/classes/MerkleTree) to manage large amounts of data within a circuit. The power of Merkle trees is demonstrated in the [05-common-types-and-functions/src](https://github.com/o1-labs/docs2/tree/main/examples/zkapps/05-common-types-and-functions/src) reference project for this tutorial. See the [BasicMerkleTreeContract.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/05-common-types-and-functions/src/BasicMerkleTreeContract.ts) contract and [main.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/05-common-types-and-functions/src/main.ts) that demonstrates how contracts interact with Merkle trees and how to construct them.
 
 The first step is to import `MerkleTree`:
 
@@ -307,7 +307,7 @@ const tree = new MerkleTree(height);
 
 The height variable determines how many leaves are available to the application. For example, a height of 20 leads to a tree with `2^(20-1)`, or 524,288 leaves.
 
-Merkle trees in smart contracts are stored as the hash of the Merkle tree's root. Smart contract methods that update the Merkle root can take a _witness_ of the change as an argument. The [MerkleMapWitness](/zkapps/o1js-reference/classes/MerkleMapWitness) represents the Merkle path to the data for which inclusion is being proved.
+Merkle trees in smart contracts are stored as the hash of the Merkle tree's root. Smart contract methods that update the Merkle root can take a _witness_ of the change as an argument. The [MerkleMapWitness](https://docs.o1labs.org/o1js/api-reference/classes/MerkleMapWitness) represents the Merkle path to the data for which inclusion is being proved.
 
 A contract stores the root of a Merkle tree, where each leaf stores a number, and the smart contract has an `update` function that adds a number to the leaf.
 
@@ -413,7 +413,7 @@ A more advanced example `LedgerContract` implements a basic ledger of tokens, in
 
 ## Merkle Map
 
-See the API reference documentation for the [MerkleMap](../o1js-reference/classes/MerkleMap) class you can use to implement key-value stores.
+See the API reference documentation for the [MerkleMap](https://docs.o1labs.org/o1js/api-reference/classes/MerkleMap) class you can use to implement key-value stores.
 
 The API for Merkle Maps is similar to Merkle Trees, just instead of using an index to set a leaf, one uses a key:
 
@@ -493,7 +493,7 @@ const txn1 = await Mina.transaction(deployerAccount, async () => {
 ...
 ```
 
-You use [MerkleMaps](/zkapps/o1js-reference/classes/MerkleMap) to implement many useful patterns. For example:
+You use [MerkleMaps](https://docs.o1labs.org/o1js/api-reference/classes/MerkleMap) to implement many useful patterns. For example:
 
 - A key value store from public keys to booleans, of token accounts to whether they've participated in a voted yet.
 - A nullifier that privately tracks if an input was used, without revealing it.

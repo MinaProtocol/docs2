@@ -1,0 +1,79 @@
+---
+title: Installation
+hide_title: true
+description: Install the Mina daemon on Ubuntu, Debian, macOS, Windows, or Docker.
+keywords:
+  - mina installation
+  - ubuntu
+  - debian
+  - docker
+  - macOS
+  - mainnet
+  - devnet
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Installation
+
+Supported environments include Linux (Debian 10, 11, 12 and Ubuntu 20.04, 22.04 and 24.04), any host with Docker, and macOS (build from source). The binary download is around 1 GB.
+
+For pre-release builds, see the [Mina Releases](https://github.com/MinaProtocol/mina/releases) page on GitHub.
+
+## Install by platform
+
+### Ubuntu and Debian
+
+<Tabs groupId="network">
+<TabItem value="mainnet" label="Mainnet">
+
+```sh
+sudo rm /etc/apt/sources.list.d/mina*.list
+echo "deb [trusted=yes] http://packages.o1test.net $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/mina.list
+sudo apt-get update
+sudo apt-get install --yes curl unzip mina-mainnet=3.3.0-8c0c2e6
+```
+
+</TabItem>
+<TabItem value="devnet" label="Devnet">
+
+```sh
+sudo rm /etc/apt/sources.list.d/mina*.list
+echo "deb [trusted=yes] http://packages.o1test.net $(lsb_release -cs) alpha" | sudo tee /etc/apt/sources.list.d/mina-devnet.list
+sudo apt-get install --yes apt-transport-https
+sudo apt-get update
+sudo apt-get install --yes curl unzip mina-devnet=3.3.0-alpha1
+```
+
+</TabItem>
+</Tabs>
+
+### Docker
+
+Docker is cross-platform (Linux, macOS, Windows). Install Docker from [Get Docker](https://docs.docker.com/get-docker/), then follow the [Connect to the Mina Network](/node-operators/validator-node/connecting-to-the-network) instructions to run the daemon as a container.
+
+### Windows
+
+Windows is not natively supported. Use the [Docker](#docker) instructions instead.
+
+### macOS
+
+No pre-built packages are available for macOS. Use [Docker](#docker) or [build from source](#build-from-source).
+
+### Build from source
+
+On Linux or macOS, you can build from source by following the [Building Mina](https://github.com/MinaProtocol/mina/blob/master/README-dev.md#building-mina) instructions.
+
+## Verify your installation
+
+```sh
+mina version
+```
+
+The output should include a `Commit` line.
+
+## Next steps
+
+- [Generating a Wallet Key Pair](/node-operators/validator-node/generating-a-keypair)
+- [Connect to Mainnet or Devnet](/node-operators/validator-node/connecting-to-the-network)

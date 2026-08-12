@@ -1,0 +1,49 @@
+---
+title: Exchange Operators
+hide_title: true
+description: Guide for exchanges integrating with the Mina blockchain using Rosetta API, archive nodes, and block producer nodes.
+keywords:
+  - exchange
+  - listing mina
+  - rosetta
+  - archive node
+  - block producer
+  - integration
+  - mina protocol
+---
+
+# Exchange Operators
+
+import Subhead from "@site/src/components/common/Subhead";
+
+<Subhead>
+Exchange operators are node operators who run additional infrastructure for blockchain integration.
+</Subhead>
+
+To list MINA on your exchange, you need to run a Mina node with archive and Rosetta API support. This page provides an overview of the components involved and links to the relevant setup guides.
+
+## Components
+
+### Validator Node
+
+A Mina daemon connected to the network. This is the base requirement for any node operator. See [Validator Node](/node-operators/validator-node) for setup instructions.
+
+### Archive Node
+
+An archive node stores the full history of the blockchain in a PostgreSQL database. Exchanges need this to query historical transactions and track deposits.
+
+- [Archive Node](/node-operators/archive-node) — set up and run an archive node
+
+### Rosetta API
+
+[Rosetta](https://www.rosetta-api.org/) is a standardized API for blockchain integration. It is the recommended way to integrate MINA deposits, withdrawals, and balance queries.
+
+- [Rosetta API Overview](/node-operators/data-and-history/rosetta) — architecture and available endpoints
+- [Run with Docker](/node-operators/rosetta/run-with-docker) — quickest way to get started
+- [Docker Compose](/node-operators/rosetta/docker-compose) — production setup with all services
+- [Build from Sources](/node-operators/rosetta/build-from-sources) — build and run from source
+- [Code Samples](/node-operators/rosetta/samples) — example integrations for deposits, withdrawals, and block scanning
+
+## FAQ
+
+See the [Exchange Integration FAQ](/node-operators/faq#exchange-integration) for answers to common questions about listing MINA, account creation fees, transaction memos, staking, and more.

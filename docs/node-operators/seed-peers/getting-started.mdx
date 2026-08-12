@@ -11,6 +11,8 @@ keywords:
   - max-connection
 ---
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
 # Seed Peers Getting Started
 
@@ -29,14 +31,9 @@ First of all, you need a static host where you'll be running your node. Preferab
 
 Secondly, you'll need to select the port that your node is running on. By default, it's on `8302`.
 
-Thirdly, you'll want to pregenerate your libp2p keypair -- this is used to identify you on the gossip network. To do so:
+Thirdly, you'll want to pregenerate your libp2p keypair -- this is used to identify you on the gossip network. See [Generating a libp2p Key Pair](/node-operators/seed-peers/generating-a-libp2p-keypair) for instructions.
 
-```
-mina libp2p generate-keypair -privkey-path <path-to-the-key-file>
-```
-
-This will generate a libp2p keypair on your machine.
-And run your daemon with the `--libp2p-keypair <path-to-the-key-file>` and `--seed` flags:
+Then run your daemon with the `--libp2p-keypair <path-to-the-key-file>` and `--seed` flags:
 
 Finally you'd publish your DNS address like so:
 
@@ -60,9 +57,7 @@ It would be preferable to run with a larger `--max-connection` flag. At least 10
 
 ## Example Configuration
 
-### ~/.mina-env
-
-Create a file called ~/.mina-env to store your private configuration, passwords, etc.
+Create a file called `~/.mina-env` to store your private configuration, passwords, etc.
 
 ```
 MINA_LIBP2P_PASS="My_V3ry_S3cure_Password"
@@ -72,13 +67,24 @@ EXTRA_FLAGS=" --libp2p-keypair <path-to-the-key-file> --seed --max-connection 10
 PEERS_LIST_URL=https://bootnodes.minaprotocol.com/networks/mainnet.txt
 ```
 
-Please note that `<path-to-the-key-file>` could change in value depending on where you stored your libp2p keypair from the previous steps. In docker, the keypath will always be `/keys/filename` due to where volumes are mounted.
+Please note that `<path-to-the-key-file>` could change in value depending on where you stored your libp2p keypair from the previous steps. In Docker, the keypath will always be `/keys/filename` due to where volumes are mounted.
 
-Then follow along as normal with systemctl to start the mina service.
+<Tabs groupId="install-method">
+<TabItem value="systemd" label="Systemd">
 
-### Docker
+Follow along as normal with systemctl to start the mina service:
 
-If you're using Docker, then here is a similar example:
+```sh
+systemctl --user daemon-reload
+systemctl --user start mina
+systemctl --user enable mina
+sudo loginctl enable-linger
+```
+
+</TabItem>
+<TabItem value="docker" label="Docker">
+
+Run the image with your config and keys mounted into the container:
 
 ```
 cd ~
@@ -92,7 +98,10 @@ minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet \
 daemon
 ```
 
-Make sure to create ~/.mina-env as described above so that it can be mounted into the docker container.
+Make sure to create `~/.mina-env` as described above so that it can be mounted into the Docker container.
+
+</TabItem>
+</Tabs>
 
 ## Peers List
 

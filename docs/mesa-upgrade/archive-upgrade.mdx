@@ -82,7 +82,6 @@ psql -U <username> -d <database> -f upgrade-to-mesa.sql
 
 Make sure to replace `<username>` and `<database>` with your actual PostgreSQL username and database name.
 
-
 #### Rollback
 
 You can rollback the upgrade process by restoring the database from a backup taken before running the upgrade script.
@@ -99,19 +98,21 @@ psql -U <username> -d <database> -f /etc/mina/archive/downgrade-to-berkeley.sql
 
 Make sure to replace `<username>` and `<database>` with your actual PostgreSQL username and database name.
 
-
 ### Post-upgrade steps
 
 After successfully running the upgrade script, you DO NOT need to restart your archive node or Rosetta API.
 Changes in upgrade script are backward compatible and will be picked up by the archive node and Rosetta API automatically.
 
 ### Verification
+
 To verify that the upgrade was successful, you can check the version table in the PostgreSQL database.
 
 You can do this by running the following command:
+
 ```bash
 psql -U <username> -d <database> -c "SELECT * FROM version;"
 ```
+
 Make sure to replace `<username>` and `<database>` with your actual PostgreSQL username and database name.
 
 If the upgrade was successful, you should see the new version number in the output.
@@ -152,6 +153,7 @@ CREATE TABLE IF NOT EXISTS version (
 ```
 
 The version table provides:
+
 - **Migration tracking**: Records which migrations have been applied
 - **Timestamp tracking**: Shows when each migration was executed
 - **Idempotency**: Prevents duplicate migration runs

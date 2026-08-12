@@ -30,7 +30,7 @@ const FeatureList: FeatureItem[] = [
       <>
         {'Learn '}
         <Link
-          to="/zkapps/writing-a-zkapp/introduction-to-zkapps/how-zkapps-work"
+          to="https://docs.o1labs.org/o1js/zkapps/intro"
           className={styles.minaLink}
         >
           how zero knowledge smart contracts work

@@ -66,6 +66,17 @@ function hasTemplatePlaceholders(imageRef) {
     return true;
   }
 
+  // Skip image refs whose tag contains a literal version placeholder
+  // such as "x.x.x", "X.X", or "TBD" (case-insensitive). These are
+  // documentation placeholders the reader must substitute, not real tags.
+  const tag = imageRef.split(':').slice(1).join(':');
+  if (tag && /\b[xX]\.[xX](?:\.[xX])?\b/.test(tag)) {
+    return true;
+  }
+  if (tag && /\bTBD\b/i.test(tag)) {
+    return true;
+  }
+
   return false;
 }
 

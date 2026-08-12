@@ -62,7 +62,7 @@ Now that you have a curve, you can create an instance of the ECDSA gadget:
 class Ecdsa extends createEcdsa(Secp256k1) {}
 ```
 
-Before you can verify a signature, you must create one by signing a message. Messages are of type `Bytes`, see [Bytes - API reference](keccak#bytes---api-reference).
+Before you can verify a signature, you must create one by signing a message. Messages are of type `Bytes`, see [Bytes - API reference](https://docs.o1labs.org/o1js/api-reference/functions/Bytes).
 To sign a message, use the `sign` function of the `Ecdsa` class. Note that signing is not a provable operation, only verifying is.
 
 ```ts

@@ -1,0 +1,176 @@
+---
+title: Interacting with the Node via GraphQL API
+hide_title: true
+description: How to interact with a Mina node via GraphQL to query blockchain data and submit transactions.
+keywords:
+  - node
+  - query
+  - graphQL
+  - block data
+  - current balance
+  - staking information
+  - get transaction details
+  - submit a transaction
+  - node operators
+---
+
+# Interacting with the Node via GraphQL API
+
+The Mina daemon exposes a [GraphQL API](/node-developers/graphql-api) that you can use to query recent blockchain data and submit signed transactions.
+
+## Setup
+
+Once your node is [connected to the network](./connecting-to-the-network), the GraphQL server is available at `localhost:3085` by default.
+
+To use a different port:
+
+```sh
+mina daemon ... -rest-server-port <PORT>
+```
+
+To make the server accessible from outside `localhost`:
+
+```sh
+mina daemon ... -insecure-rest-server
+```
+
+:::caution
+If you expose the GraphQL server externally, ensure your firewall is configured properly. See [GraphQL API](/node-developers/graphql-api) for details.
+:::
+
+If you want to archive historical data beyond what the node keeps in memory, see [Archive Node](/node-operators/archive-node/getting-started).
+
+## Querying data
+
+The examples below query _recent_ chain data -- approximately the last 290 blocks (~10 hours of activity). To explore all available fields, open the GraphQL sandbox at `http://localhost:3085/graphql` in your browser.
+
+### Block data
+
+```graphql
+query BlockData {
+  bestChain(maxLength: 10) {
+    stateHash
+    creatorAccount {
+      balance {
+        total
+      }
+    }
+  }
+}
+```
+
+### Account balance
+
+Query the current balance of a public key. The response also includes the `blockHeight` and `stateHash` of the block the balance was read from.
+
+```graphql
+query CurrentBalance {
+  account(publicKey: "B62qmyjqEtUEZrsBpUaiz18DCkwh1ovCrJboiHbDhpvH8JEoaag5fUP") {
+    balance {
+      blockHeight
+      total
+      stateHash
+    }
+  }
+}
+```
+
+### Staking information
+
+In Mina, an account is either staking directly or delegating its entire stake. Query the current delegation status:
+
+```graphql
+query StakingInfo {
+  account(publicKey: "B62qmyjqEtUEZrsBpUaiz18DCkwh1ovCrJboiHbDhpvH8JEoaag5fUP") {
+    balance {
+      blockHeight
+      total
+      stateHash
+    }
+    delegateAccount {
+      publicKey
+    }
+  }
+}
+```
+
+If `delegateAccount.publicKey` is `null`, the account is staking directly.
+
+:::note
+The active staking ledger for the current epoch is drawn from the SNARKed ledger of the last block two epochs prior. In practice, staking ledger transitions happen every 2-4 weeks.
+:::
+
+### Transaction details
+
+Look up transactions within recent blocks on the best chain:
+
+```graphql
+query TransactionDetails {
+  bestChain(maxLength: 10) {
+    stateHash
+    creatorAccount {
+      balance {
+        total
+      }
+    }
+    transactions {
+      coinbase
+      userCommands {
+        amount
+        fee
+        feePayer {
+          publicKey
+        }
+        hash
+        isDelegation
+        kind
+        memo
+        nonce
+        receiver {
+          publicKey
+        }
+        source {
+          publicKey
+        }
+      }
+    }
+  }
+}
+```
+
+## Submitting a signed transaction
+
+Send a pre-signed payment using the `sendPayment` mutation:
+
+```graphql
+mutation SubmitSignedTransaction {
+  __typename
+  sendPayment(input: {
+    fee: "3000000",
+    amount: "42",
+    to: "B62qrcFstkpqXww1EkSGrqMCwCNho86kuqBd4FrAAUsPxNKdiPzAUsy",
+    from: "B62qiy32p8kAKnny8ZFwoMhYpBppM1DWVCqAPBYNcXnsAHhnfAAuXgg",
+    nonce: "0",
+    memo: "This is a memo",
+    validUntil: "50000"
+  }, signature: {
+      field: "26393275544831950408026742662950427846842308902199169146789849923161392179806",
+      scalar: "28530962508461835801829592060779431956054746814505059654319465133050504973404"
+   }) {
+    payment {
+      amount
+      fee
+      kind
+      memo
+      nonce
+      source {
+        publicKey
+      }
+      receiver {
+        publicKey
+      }
+      isDelegation
+    }
+  }
+}
+```

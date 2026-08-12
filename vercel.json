@@ -4,6 +4,58 @@
     { "source": "/en", "destination": "/" },
     { "source": "/en/:path(.*)", "destination": "/:path(.*)" },
     {
+      "source": "/zkapps/o1js/recursion",
+      "destination": "https://docs.o1labs.org/o1js/advanced-concepts/recursion"
+    },
+    {
+      "source": "/zkapps/o1js/merkle-tree",
+      "destination": "https://docs.o1labs.org/o1js/basic-types/merkle-trees"
+    },
+    {
+      "source": "/zkapps/o1js/keccak",
+      "destination": "https://docs.o1labs.org/o1js/basic-types/hashing"
+    },
+    {
+      "source": "/zkapps/o1js/sha256",
+      "destination": "https://docs.o1labs.org/o1js/basic-types/hashing"
+    },
+    {
+      "source": "/zkapps/writing-a-zkapp/feature-overview/permissions",
+      "destination": "https://docs.o1labs.org/o1js/zkapps/permissions"
+    },
+    {
+      "source": "/zkapps/writing-a-zkapp/feature-overview/events",
+      "destination": "https://docs.o1labs.org/o1js/zkapps/events"
+    },
+    {
+      "source": "/zkapps/writing-a-zkapp/feature-overview/actions-and-reducer",
+      "destination": "https://docs.o1labs.org/o1js/zkapps/actions-and-reducers"
+    },
+    {
+      "source": "/zkapps/writing-a-zkapp/feature-overview/upgradability",
+      "destination": "https://docs.o1labs.org/o1js/advanced-concepts/ZkApps/upgradability"
+    },
+    {
+      "source": "/zkapps/writing-a-zkapp/feature-overview/on-chain-values",
+      "destination": "https://docs.o1labs.org/o1js/advanced-concepts/ZkApps/onChainPreconditions"
+    },
+    {
+      "source": "/zkapps/writing-a-zkapp/introduction-to-zkapps/how-zkapps-work",
+      "destination": "https://docs.o1labs.org/o1js/zkapps/intro"
+    },
+    {
+      "source": "/zkapps/writing-a-zkapp/introduction-to-zkapps/smart-contracts",
+      "destination": "https://docs.o1labs.org/o1js/zkapps/smart-contracts"
+    },
+    {
+      "source": "/zkapps/writing-a-zkapp/introduction-to-zkapps/testing-zkapps-locally",
+      "destination": "https://docs.o1labs.org/o1js/zkapps/local-development"
+    },
+    {
+      "source": "/zkapps/how-to-test-a-zkapp",
+      "destination": "https://docs.o1labs.org/o1js/zkapps/local-development"
+    },
+    {
       "source": "/zkapps/snarkyjs",
       "destination": "/zkapps/o1js"
     },
@@ -13,27 +65,39 @@
     },
     {
       "source": "/zkapps/snarkyjs-reference/:path(.*)",
-      "destination": "/zkapps/o1js-reference/:path(.*)"
+      "destination": "https://docs.o1labs.org/o1js/api-reference/:path(.*)"
+    },
+    {
+      "source": "/zkapps/o1js-reference",
+      "destination": "https://docs.o1labs.org/o1js/api-reference/Introduction"
+    },
+    {
+      "source": "/zkapps/o1js-reference/README",
+      "destination": "https://docs.o1labs.org/o1js/api-reference/Introduction"
+    },
+    {
+      "source": "/zkapps/o1js-reference/:path(.*)",
+      "destination": "https://docs.o1labs.org/o1js/api-reference/:path(.*)"
     },
     {
       "source": "/zkapps/o1js/smart-contracts",
-      "destination": "/zkapps/writing-a-zkapp/feature-overview/smart-contracts"
+      "destination": "https://docs.o1labs.org/o1js/zkapps/smart-contracts"
     },
     {
       "source": "/zkapps/o1js/on-chain-values",
-      "destination": "/zkapps/writing-a-zkapp/feature-overview/on-chain-values"
+      "destination": "https://docs.o1labs.org/o1js/advanced-concepts/ZkApps/onChainPreconditions"
     },
     {
       "source": "/zkapps/o1js/permissions",
-      "destination": "/zkapps/writing-a-zkapp/feature-overview/permissions"
+      "destination": "https://docs.o1labs.org/o1js/zkapps/permissions"
     },
     {
       "source": "/zkapps/o1js/events",
-      "destination": "/zkapps/writing-a-zkapp/feature-overview/events"
+      "destination": "https://docs.o1labs.org/o1js/zkapps/events"
     },
     {
       "source": "/zkapps/o1js/actions-and-reducer",
-      "destination": "/zkapps/writing-a-zkapp/feature-overview/actions-and-reducer"
+      "destination": "https://docs.o1labs.org/o1js/zkapps/actions-and-reducers"
     },
     {
       "source": "/zkapps/o1js/fetch-events-and-actions",
@@ -53,7 +117,7 @@
     },
     {
       "source": "/zkapps/how-zkapps-work",
-      "destination": "/zkapps/writing-a-zkapp/introduction-to-zkapps/how-zkapps-work"
+      "destination": "https://docs.o1labs.org/o1js/zkapps/intro"
     },
     {
       "source": "/zkapps/install-zkapp-cli",
@@ -65,7 +129,7 @@
     },
     {
       "source": "/zkapps/testing-zkapps-locally",
-      "destination": "/zkapps/writing-a-zkapp/introduction-to-zkapps/testing-zkapps-locally"
+      "destination": "https://docs.o1labs.org/o1js/zkapps/local-development"
     },
     {
       "source": "/zkapps/testing-zkapps-lightnet",

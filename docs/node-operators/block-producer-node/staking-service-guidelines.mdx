@@ -1,0 +1,123 @@
+---
+title: Staking Service Guidelines
+hide_title: true
+---
+
+# Staking Service Guidelines
+
+The important parts of running a staking service are predicting/determining winning slots in which you can produce blocks and paying out participants. The Mina protocol does not automatically payout rewards to delegates, so part of running a staking service is manually paying out participants by [sending many transactions](#sending-many-transactions).
+
+This document aims to explain the different components that you should think about when managing those payouts. Specifically, this document provides an understanding of odds of winning blocks, gathering data from the ledger for later use, and computing relevant staking payout information from this data.
+
+## Staking Rewards
+
+The coinbase reward for producing a block is 360 MINA. 
+
+## Dumping Staking Ledgers
+
+In order to compute odds of winning a block for a given epoch, or to retroactively compute the coinbase reward a given account would receive, you need to have the staking ledger from that epoch. Mina daemons only keep around the staking ledger for the current epoch and the staking ledger for the next epoch, so if you want to capture a staking ledger for an epoch, you need to do it before or during that epoch.
+
+The `mina ledger export` command can be used to export ledgers from a running daemon:
+
+```
+Print the specified ledger (default: staged ledger at the best tip). Note: Exporting snarked ledger is an expensive operation and can take a few seconds
+
+  mina ledger export STAGED-LEDGER|SNARKED-LEDGER|STAKING-EPOCH-LEDGER|NEXT-EPOCH-LEDGER
+
+=== flags ===
+
+  [--daemon-port HOST:PORT/LOCALHOST-PORT]  Client to local daemon
+                                            communication. If HOST is omitted,
+                                            then localhost is assumed to be
+                                            HOST. (examples: 8301,
+                                            154.97.53.97:8301) (default: 8301)
+                                            (alias: -daemon-port)
+  [--plaintext]                             Use plaintext input or output
+                                            (default: JSON)
+                                            (alias: -plaintext)
+  [--state-hash STATE-HASH]                 State hash, if printing a staged
+                                            ledger (default: state hash for the
+                                            best tip)
+                                            (alias: -state-hash)
+  [-help]                                   print this help text and exit
+                                            (alias: -?)
+
+```
+
+
+It requires an argument to identifier of the ledger you wish to export. The table below describes what each of these identifiers represent.
+
+<br />
+
+| Identifier           | Description                                                     |
+|----------------------|-----------------------------------------------------------------|
+| staking-epoch-ledger | The staking ledger for the current epoch.                       |
+| next-epoch-ledger    | The staking ledger for the next epoch (epoch after current).    |
+| staged-ledger        | The most recent staged ledger (from the best tip of that node). |
+| snarked-ledger       | The most recent snarked ledger (from the best tip of that node).|
+
+<br />
+
+
+In order to ensure you always have each staking ledger available for use after epochs have expired, we recommend exporting the staking-epoch-ledger every (7140 × 1.5) ÷ 60 = 178.5 hours (there are 7140 slots in an epoch, and each slot is 90 seconds long).
+
+By default, ledgers are exported as json data. See `mina ledger export -help` for documentation of flags which will enable other formats. When output as json, the ledger will be represented as an array of account objects. Below is an example of what an account object in json looks like.
+
+```json
+{
+  "pk": "B62qrwZRsNkU39TrGpFwDdpRS2JaCB2yFZKMFNqLFYjcqGE5G5fWA8p",
+  "balance": "17000",
+  "delegate": "B62qrwZRsNkU39TrGpFwDdpRS2JaCB2yFZKMFNqLFYjcqGE5G5fWA8p",
+  "token": "1",
+  "token_permissions": {},
+  "receipt_chain_hash": "2mzbV7WevxLuchs2dAMY4vQBS6XttnCUF8Hvks4XNBQ5qiSGGBQe",
+  "voting_for": "3NK2tkzqqK5spR2sZ7tujjqPksL45M3UUrcA4WhCkeiPtnugyE2x",
+  "permissions": {
+    "stake": true,
+    "edit_state": "signature",
+    "send": "signature",
+    "set_delegate": "signature",
+    "set_permissions": "signature",
+    "set_verification_key": "signature"
+  }
+}
+```
+
+For a running staking service, you are interested in the accounts which you control and the accounts which are staking to accounts you control. As an example, if we only had one account in our staking service, we could grab all the accounts we are interested in for a ledger using a command like:
+
+```sh
+mina ledger export staking-epoch-ledger | jq "$(cat <<EOF
+  .[] | \
+  select( \
+    .pk == "B62qjwvvHoM9RVt9onMpSMS5rFzhy3jjXY1Q9JU7HyHW4oWFEbWpghe" or \
+    .delegate == "B62qjwvvHoM9RVt9onMpSMS5rFzhy3jjXY1Q9JU7HyHW4oWFEbWpghe" \
+  )
+EOF
+)"
+```
+
+## Choosing How to Payout Rewards
+
+It's up to each staking service to decide how they wish to compute rewards. It's important to take account supercharging and the weights of different delegators into account, depending no how you choose to payout rewards.
+
+As an example for calculating staking service payouts, we recommend taking a look at a document put together by a member of our community over at [docs.blockberry.one](https://docs.blockberry.one/docs/mina-reward-calculation).
+
+## Odds of Winning a Block
+
+Blocks in Mina are produced within distinct time intervals called "slots". Each account in the ledger has a chance of winning each slot on the network, which allows them to produce a block for that slot (or, in the case of delegation, allows the delegated account to produce a block on their behalf). An account computes a random number (via a [Verifiable Random Function, or VRF](/glossary#verifiable-random-function-vrf)) for each slot, and compares that random number against a required threshold to determine if they have "won" that slot and can produce a block at that time. Their chance of winning a slot is thus determined by the threshold, which is a function of their relative stake in the network.
+
+The stake distribution that is sampled when determining the VRF threshold are contained in a special ledger called the "staking ledger". Staking ledgers are fixed ledgers from past epochs in the network (epochs are fixed spans of slots; every epoch is 7140 slots long). Using past fixed ledgers prevents malicious stakers from increasing their chances of winning during an epoch by altering the distribution of stake on the main ledger (the "staged ledger"). Every epoch, the staking ledger changes. Due to this constraint, any account on the system can only check for "winning slots" within the next 2 epochs at any given time.
+
+Once you know the staking ledger that will be used for a given epoch, the required VRF threshold for producing blocks in that epoch can be computed for each account. We can compute a stake ratio for a given account by dividing the stake that account controls in the staking ledger by the total amount of currency in the staking ledger. Figure 1 on page 20 of the [Ouroboros Genesis](https://eprint.iacr.org/2018/378.pdf) paper provides the raw function for computing VRF thresholds. Filling in Mina's value for the active slots coefficient f gives us the following function: φ(α) = 1 - (1/4)^α. This function takes as a parameter α, which is the stake ratio we compute for an account.
+
+Since each VRF is compared against this threshold (which is between 0 and 1), and each VRF is a pseudo-random number between 0 and 1, the VRF threshold for a given account is essentially the probability that a slot will be won by that account. Thus, we can extrapolate this function for computing VRF thresholds to compute the mean number of blocks we can expect a given account to win within an epoch. This can be done merely by summing all the probabilities for winning each slot of an epoch, and since the probability for an entire epoch is fixed, the mathematical expression to compute this simplifies to φ(α) × 7140.
+
+As an example, let's say there is an account on the network which has 10^6 (1 million) mina tokens in the staking ledger epoch ep. This same staking ledger for epoch ep has a total supply of 8×10^8 (800 million) mina tokens. We can compute the odds that this account will win an individual slot in ep using φ(10^6 ÷ 8×10^8) = 0.0017313674. This gives us a ~0.17% chance that this account will win each slot during epoch ep. We can then compute the mean number of blocks we expect this account to produce for this epoch by multiplying the result by 7140, giving us a probabilistic mean of ~12.36 blocks for the epoch.
+
+Another way to calculate the probability is 1 - 0.25^(10^6 ÷ 8×10^8) which gives the same result as above.
+
+## Sending Many Transactions
+
+It is important to pay out rewards to participants who have delegated their stake to your staking service.
+
+To learn how, see [Sending Many Transactions](/mina-protocol/sending-a-payment#sending-many-transactions).
