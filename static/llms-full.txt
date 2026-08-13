@@ -4781,7 +4781,7 @@ The [automode](#automode) Debian package is published as `mina-{network}-automod
 
 ### Node Status Service
 
-A telemetry feature that reports non-sensitive node data (e.g., version, sync status) to help monitor the amount of upgraded active stake during the upgrade. Enabled by default on the Mesa daemon; pass `--simplified-node-stats` to keep the report minimal, or `--disable-node-status` to opt out entirely. See [Help Monitor the Network](/network-upgrades/mesa/upgrade-steps/post-upgrade#help-monitor-the-network) for the full flag set.
+A telemetry feature that reports non-sensitive node data (e.g., version, sync status) to help monitor the amount of upgraded active stake during the upgrade. **Off by default on the Mesa daemon** — it runs only when you pass `--node-status-url`, which is both the collector address and the on/off control. `--simplified-node-stats` (a boolean, default `true`) selects how much the report contains, not whether one is sent. `--disable-node-status` is an unrelated flag that controls whether your node answers node-status queries from other peers. See [Help Monitor the Network](/network-upgrades/mesa/upgrade-steps/post-upgrade#help-monitor-the-network) for the full flag set.
 
 ---
 url: /network-upgrades/mesa
@@ -6148,19 +6148,23 @@ In rare cases a non-empty block can appear after the _stop-transaction-slot_ —
 
 ## Help Monitor the Network
 
-The Node Status reporting service is **enabled by default** on the Mesa daemon. If you want to keep it on and point it at the o1Labs collection endpoints, pass:
+The Node Status reporting service is **off by default** on the Mesa daemon. The daemon sends nothing until you give it a collector address. To switch reporting on and point it at the o1Labs collection endpoints, pass:
 
 ```bash
---simplified-node-stats
 --node-status-url https://nodestats.minaprotocol.com/submit/stats
 --node-error-url https://nodestats.minaprotocol.com/submit/stats
+--simplified-node-stats true
 ```
 
-- `--simplified-node-stats` (no value) makes the reported payload a minimal, non-sensitive subset (version, sync status, peer count).
-- `--node-status-url` is the endpoint that receives status reports.
-- `--node-error-url` is the endpoint that receives crash reports the daemon emits just before terminating.
+- `--node-status-url` is the endpoint that receives status reports. It is also the on/off control: leave it out and the daemon starts no reporting service.
+- `--node-error-url` is the endpoint that receives crash reports the daemon emits just before terminating. It is a separate service with its own address.
+- `--simplified-node-stats` takes a boolean value and defaults to `true`. It selects the size of the report, not whether a report is sent. `true` sends a minimal, non-sensitive subset (version, sync status, peer count). `false` sends the full report, which contains more data, not less.
 
-To opt out of the Node Status service entirely, pass `--disable-node-status` (no value). Note: the previously-documented `--node-stats-type full|none` argument was never accepted by the daemon — `--simplified-node-stats` and `--disable-node-status` are the actual flag names in the Mesa release.
+:::caution `--disable-node-status` is a different feature
+`--disable-node-status` does **not** switch the reporting service off. It stops your node answering node-status queries from **other peers** on the network, which is a separate behavior and is enabled by default. To send nothing to a collector, simply leave `--node-status-url` unset.
+
+The `--node-stats-type` argument does not exist on the Mesa daemon.
+:::
 
 ## Flag and Configuration Reference
 
