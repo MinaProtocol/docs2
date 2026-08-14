@@ -1,0 +1,84 @@
+---
+title: Events
+hide_title: true
+description: How events in zkApps serve as a light-weight way of attaching information about your smart contract execution, use cases of events, and how to declare and emit events.
+keywords:
+  - smart contracts
+  - zkapp
+  - events
+  - merkle tree
+  - emit event
+  - o1js
+  - blockchain
+  - mina
+  - archive nodes
+  - transaction
+---
+
+import MigrateBanner from '@site/src/components/snippets/migrate-banner.mdx';
+
+<MigrateBanner />
+
+# Events
+
+Events are _public_ arbitrary information that can be passed along with a transaction. If your zkApp allows users to publish a message, for example, those messages could be events.
+
+Another use case for events are zkApps that keep some large internal state and only store a commitment to that internal state on-chain. For example, a Merkle tree where only the root is stored in on-chain state. Events could be used to attach state changes to the transactions in full. In the Merkle tree example, this could mean sending any Merkle leaves that are changed by the transaction as events. An observer of these transactions can follow along and keep track of the full Merkle tree on their side.
+
+To use events, you must declare an `events` field at the top level of your smart contract. The `events` field contains the _names_ and _types_ of your events. Here's an example:
+
+```ts
+class MyContract extends SmartContract {
+  events = {
+    'add-merkle-leaf': Field,
+    'update-merkle-leaf': Field,
+  };
+}
+```
+
+This example declares events called `"add-merkle-leaf"` and `"update-merkle-leaf"`, both with a type of `Field`. Instead of `Field`, you can also use other built-in o1js types as well as any `Struct`. In fact, a custom `Struct` is probably better-suited to encode leaves of a Merkle tree -- we just use `Field` for simplicity here.
+
+After declaring your events, you can use `this.emitEvent(name, event)` in any smart contract method, where `event` has to have the type you declared for that `name`. Example:
+
+```ts
+class MyContract extends SmartContract {
+  events = {
+    "add-merkle-leaf": Field,
+    "update-merkle-leaf": Field,
+  }
+
+  @method async updateMerkleTree(leaf: Field, ...) {
+    this.emitEvent("update-merkle-leaf", leaf);
+    // ...
+  }
+}
+```
+
+Some important facts about events:
+
+- Events are not stored on-chain. Only events from the most recent couple of transactions are retained by consensus nodes. After that, the events are discarded, but are still accessible on archive nodes.
+- You can't refer to previously emitted events in a smart contract, because there is no way of proving that the events you refer to are actually the events emitted by that contract.
+
+:::tip
+
+A zkApp can retrieve events and actions from one or more Mina archive nodes. If your smart contract needs to fetch events and actions from an archive node, see [How to Fetch Events and Actions](fetch-events-and-actions).
+
+:::
+
+:::info Mesa Upgrade
+
+With the [Mesa upgrade](/mesa-upgrade/mesa-upgrade-overview), the per-transaction capacity for events has been increased from 100 to **1,024 field elements**. This allows zkApps to emit richer, more detailed events within a single transaction.
+
+:::
+
+This is all you need to know about events! Think of them as a convenience feature -- a lightweight way of attaching information about your smart contract execution to expose the event to the outside world,  such as your UI. Don't treat events as fully-fledged storage that can be safely accessed in smart contracts.
+
+### Events: API reference
+
+```ts
+class SmartContract {
+  static events?: Record<string, any>;
+
+  emitEvent(name: string, event: any): void;
+}
+```

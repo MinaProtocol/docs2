@@ -1,0 +1,133 @@
+---
+title: Mesa Upgrade Overview
+sidebar_label: Overview
+description: Overview of the Mesa upgrade for the Mina network, including MIP-6 (slot time reduction), MIP-7 (expanded on-chain state), MIP-8 (actions and events), and MIP-9 (account update limits).
+keywords:
+  - Mesa upgrade
+  - MIP-6
+  - MIP-7
+  - MIP-8
+  - MIP-9
+  - slot time
+  - on-chain state
+  - account updates
+  - actions
+  - events
+  - hardfork
+  - mina upgrade
+---
+
+# Mesa Upgrade Overview
+
+The Mesa upgrade is Mina Protocol's hard fork that bundles four Mina Improvement Proposals (MIPs 6-9). These proposals were approved through an on-chain community vote.
+
+This page summarizes the key changes that affect zkApp developers.
+
+## MIP-6: Slot Time Reduction
+
+The slot duration has been halved, increasing block production frequency and reducing transaction inclusion latency.
+
+### Before Mesa
+
+| Parameter     | Value                |
+| ------------- | -------------------- |
+| Slot duration | 180 seconds (3 min)  |
+
+### After Mesa
+
+| Parameter     | Value                |
+| ------------- | -------------------- |
+| Slot duration | 90 seconds (1.5 min) |
+
+The 50% reduction in slot time means blocks are produced twice as frequently, which roughly halves the time it takes for transactions to be included in a block.
+
+:::note
+
+The reduced slot time does not mean every transaction is included within 90 seconds. Transaction inclusion latency ranges from roughly 40 to 600 seconds, which is approximately half the previous range. The slot duration defines the block production window, not a guarantee on individual transaction confirmation time.
+
+:::
+
+## MIP-7: Expanded On-Chain State
+
+Each zkApp account's on-chain state has been expanded from **8 fields to 32 fields** (each field is ~32 bytes).
+
+### Before Mesa
+
+- zkApp accounts could store at most **8 field elements** of on-chain state.
+- Developers frequently needed workarounds for storage-constrained applications: packing multiple values into a single field, splitting state across multiple zkApp accounts, or pushing state off-chain.
+
+### After Mesa
+
+- zkApp accounts can store up to **32 field elements** of on-chain state.
+- This enables simpler zkApps as you get more storage for metadata and avoid the complicated workarounds that add dev overhead and circuit constraints, although it wouldn't completely remove the need for the workarounds mentioned above if you need to store more than 32 states.
+
+For more details on on-chain state, see [Smart Contracts](/zkapps/writing-a-zkapp/introduction-to-zkapps/smart-contracts#on-chain-state) and [On-Chain Values](/zkapps/writing-a-zkapp/feature-overview/on-chain-values).
+
+## MIP-8: Increased Actions and Events Capacity
+
+The per-transaction capacity for both actions and events has been significantly increased.
+
+### Before Mesa
+
+| Limit                                     | Value |
+| ----------------------------------------- | ----- |
+| Max event field elements per transaction  | 100   |
+| Max action field elements per transaction | 100   |
+
+### After Mesa
+
+| Limit                                     | Value |
+| ----------------------------------------- | ----- |
+| Max event field elements per transaction  | 1,024 |
+| Max action field elements per transaction | 1,024 |
+
+This 10x increase allows zkApps to emit richer, more expressive events and actions within a single transaction. Applications that need to log detailed state transitions or dispatch complex actions benefit from the expanded capacity.
+
+For more details on actions and events, see [Events](/zkapps/writing-a-zkapp/feature-overview/events), [Actions & Reducer](/zkapps/writing-a-zkapp/feature-overview/actions-and-reducer), and [How to Fetch Events and Actions](/zkapps/writing-a-zkapp/feature-overview/fetch-events-and-actions).
+
+## MIP-9: Increased Account Update Limits
+
+The transaction cost model for account updates has been simplified and the limits increased.
+
+### Before Mesa
+
+Transactions used a **cost-based model** where each type of account update segment had a fractional cost, and the total cost of all segments had to stay within a limit of 69.45 cost units:
+
+| Segment Type               | Cost per Segment |
+| -------------------------- | ---------------- |
+| Proof-based update         | 10.26            |
+| Signed pair update         | 10.08            |
+| Signed single update       | 9.14             |
+| **Transaction cost limit** | **69.45**        |
+
+This yielded approximately **6 proof-based** or **7 signature-based** account updates per transaction.
+
+### After Mesa
+
+Mesa replaces the cost-based model with a simpler **segment-count model**. Each segment counts as 1 unit regardless of type, with a maximum of **16 segments per transaction**:
+
+| Segment Type                     | Cost per Segment |
+| -------------------------------- | ---------------- |
+| Proof-based update               | 1                |
+| Signed pair update               | 1                |
+| Signed single update             | 1                |
+| **Max segments per transaction** | **16**           |
+
+This means:
+
+- **Up to 15 proof-based account updates** per transaction (previously ~5)
+- **Up to 16 signed-single account updates** per transaction (including fee payer)
+- **Up to 32 signature-based account updates** if all are paired (16 pairs, one including the fee payer)
+- Any combination where `proof_segments + signed_single_segments + signed_pair_segments <= 16`
+
+This enables fitting more account updates into one transaction, whether by multiple calls or interactions with zkApps, or more logic in your zkApp including cross-calls with other zkApps within one zkApp method.
+
+:::note
+
+In practice, each zkApp method call generates one proof-based account update. The highest total number of account updates in a single transaction would be 31: 1 proof segment for the method call plus 15 signed-pair segments (each containing 2 updates = 30 signed updates).
+
+The actual number of max account updates varies depending on the combination of segments used.
+
+:::
+
+For more details on account updates, see [Tutorial 10: Account Updates](/zkapps/tutorials/account-updates).

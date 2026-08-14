@@ -1,0 +1,250 @@
+Permissions specify how specific aspects of the zkapp account are allowed
+to be modified. All fields are denominated by a Permission.
+
+## Extends
+
+- `Permissions_`
+
+## Properties
+
+### access
+
+```ts
+access: AuthRequired;
+```
+
+Permission to control the ability to include _any_ account update for this
+account in a transaction. Note that this is more restrictive than all other
+permissions combined. For normal accounts it can safely be set to `none`,
+but for token contracts this has to be more restrictive, to prevent
+unauthorized token interactions -- for example, it could be
+`proofOrSignature`.
+
+#### Overrides
+
+`Permissions_.access`
+
+#### Source
+
+[lib/mina/account-update.ts:397](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L397)
+
+---
+
+### editActionState
+
+```ts
+editActionState: AuthRequired;
+```
+
+The Permission corresponding to the ability to emit actions to the account.
+
+#### Overrides
+
+`Permissions_.editActionState`
+
+#### Source
+
+[lib/mina/account-update.ts:376](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L376)
+
+---
+
+### editState
+
+```ts
+editState: AuthRequired;
+```
+
+The Permission corresponding to the 32 state fields associated with
+an account.
+
+#### Overrides
+
+`Permissions_.editState`
+
+#### Source
+
+[lib/mina/account-update.ts:332](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L332)
+
+---
+
+### incrementNonce
+
+```ts
+incrementNonce: AuthRequired;
+```
+
+#### Overrides
+
+`Permissions_.incrementNonce`
+
+#### Source
+
+[lib/mina/account-update.ts:385](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L385)
+
+---
+
+### receive
+
+```ts
+receive: AuthRequired;
+```
+
+The Permission corresponding to the ability to receive transactions
+to this account.
+
+#### Overrides
+
+`Permissions_.receive`
+
+#### Source
+
+[lib/mina/account-update.ts:344](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L344)
+
+---
+
+### send
+
+```ts
+send: AuthRequired;
+```
+
+The Permission corresponding to the ability to send transactions
+from this account.
+
+#### Overrides
+
+`Permissions_.send`
+
+#### Source
+
+[lib/mina/account-update.ts:338](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L338)
+
+---
+
+### setDelegate
+
+```ts
+setDelegate: AuthRequired;
+```
+
+The Permission corresponding to the ability to set the delegate
+field of the account.
+
+#### Overrides
+
+`Permissions_.setDelegate`
+
+#### Source
+
+[lib/mina/account-update.ts:350](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L350)
+
+---
+
+### setPermissions
+
+```ts
+setPermissions: AuthRequired;
+```
+
+The Permission corresponding to the ability to set the permissions
+field of the account.
+
+#### Overrides
+
+`Permissions_.setPermissions`
+
+#### Source
+
+[lib/mina/account-update.ts:356](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L356)
+
+---
+
+### setTiming
+
+```ts
+setTiming: AuthRequired;
+```
+
+#### Overrides
+
+`Permissions_.setTiming`
+
+#### Source
+
+[lib/mina/account-update.ts:387](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L387)
+
+---
+
+### setTokenSymbol
+
+```ts
+setTokenSymbol: AuthRequired;
+```
+
+The Permission corresponding to the ability to set the token symbol
+for this account.
+
+#### Overrides
+
+`Permissions_.setTokenSymbol`
+
+#### Source
+
+[lib/mina/account-update.ts:382](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L382)
+
+---
+
+### setVerificationKey
+
+```ts
+setVerificationKey: VerificationKeyPermission;
+```
+
+The Permission corresponding to the ability to set the verification
+key associated with the circuit tied to this account. Effectively
+"upgradeability" of the smart contract.
+
+#### Overrides
+
+`Permissions_.setVerificationKey`
+
+#### Source
+
+[lib/mina/account-update.ts:363](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L363)
+
+---
+
+### setVotingFor
+
+```ts
+setVotingFor: AuthRequired;
+```
+
+#### Overrides
+
+`Permissions_.setVotingFor`
+
+#### Source
+
+[lib/mina/account-update.ts:386](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L386)
+
+---
+
+### setZkappUri
+
+```ts
+setZkappUri: AuthRequired;
+```
+
+The Permission corresponding to the ability to set the zkapp uri
+typically pointing to the source code of the smart contract. Usually this
+should be changed whenever the [Permissions.setVerificationKey](Permissions.mdx#setverificationkey) is
+changed. Effectively "upgradeability" of the smart contract.
+
+#### Overrides
+
+`Permissions_.setZkappUri`
+
+#### Source
+
+[lib/mina/account-update.ts:371](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L371)

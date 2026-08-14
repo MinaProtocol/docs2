@@ -1,0 +1,210 @@
+---
+title: On-Chain Values
+hide_title: true
+description: Learn about accessing and manipulating on-chain values in a zkApp, including network and account-level data. Understand potential use cases such as timestamp restrictions, on-chain balances, and account properties.
+keywords:
+  - on-chain values
+  - zkapp
+  - smart contract
+  - mina protocol
+  - blockchain
+  - defi
+  - zkapp account
+  - network state
+---
+
+import MigrateBanner from '@site/src/components/snippets/migrate-banner.mdx';
+
+<MigrateBanner />
+
+# On-Chain Values
+
+In a zkApp, you can access the current [on-chain state](/zkapps/writing-a-zkapp/introduction-to-zkapps/how-to-write-a-zkapp#on-chain-state) and many other on-chain values of the account.
+
+The zkApp account's on-chain state can be updated by account updates included in a transaction (see [Tutorial 10: Account Updates](/zkapps/tutorials/account-updates)). On the Mina blockchain, each zkApp account provides 32 fields of ~32 bytes each of arbitrary storage for the on-chain state.
+
+Two possible use cases:
+
+- You want to let users vote on a proposal, but only within a specific timespan. To restrict the dates, your zkApp can require that the current timestamp lies in a certain range.
+- In DeFi, you want to compute amounts relative to a balance. For example, paying a yield of `0.001` times the account balance requires the current on-chain balance.
+
+There are two categories of on-chain values:
+
+- **Network**: includes the current timestamp, block height, total Mina in circulation, and other network state
+- **Account**: includes fields and properties of the zkApp account, such as balance, nonce, and delegate
+
+In a smart contract, the subfields are accessible on `this.network` and `this.account`.
+For example, the timestamp on `this.network.timestamp` has four methods:
+
+```ts
+this.network.timestamp.get();
+this.network.timestamp.requireEquals(timestamp);
+this.network.timestamp.requireBetween(lower, upper);
+```
+
+- The familiar on-chain state has the same `get()` and `requireEquals()` methods.
+- The `requireBetween()` method has even more power: it allows you to make assertions that the timestamp is between `lower` and `upper` (inclusive).
+
+### Example: Restricting timestamps
+
+To use the `requireBetween()` method in a voting example, you can allow voting throughout September 2024. Timestamps are represented as a `UInt64` in milliseconds since the [UNIX epoch](https://en.wikipedia.org/wiki/Unix_time). You can use the JS `Date` object to easily convert to this representation. In the simplest case, a zkApp could just hard-code the dates:
+
+```ts
+const startDate = UInt64.from(Date.UTC(2024, 9, 1));
+const endDate = UInt64.from(Date.UTC(2024, 10, 1));
+
+class VotingApp extends SmartContract {
+  // ...
+
+  @method async vote(...) {
+    this.network.timestamp.requireBetween(startDate, endDate);
+    // ...
+  }
+}
+```
+
+A more refined example could store the current start date in an on-chain state variable, which can then be reset by some process that is also encoded by the zkApp.
+
+### Network reference
+
+For completeness, here is the list of network states you can use and make assertions about in your zkApp.
+
+All of these fields have a `get()` and an `requireEquals()` method. The subset that represents "ordered values" (those that are `UInt32` or `UInt64`) also have `requireBetween()`.
+
+```ts
+// current UNIX time in milliseconds, as measured by the block producer
+this.network.timestamp.get(): UInt64;
+// length of the blockchain, also known as block height
+this.network.blockchainLength.get(): UInt32;
+// total minted currency measured in units of 1e-9 MINA
+this.network.totalCurrency.get(): UInt64;
+// slots since genesis / hardfork -- a "slot" is the Mina-native time unit of 90 seconds
+this.network.globalSlotSinceGenesis.get(): UInt32;
+this.network.globalSlotSinceHardFork.get(): UInt32;
+// hash of the snarked ledger -- i.e., the state of Mina included in the blockchain proof
+this.network.snarkedLedgerHash.get(): Field;
+// minimum window density in our consensus algorithm
+this.network.minWindowDensity.get(): UInt32;
+// consensus data relevant to the current staking epoch
+this.network.stakingEpochData.ledger.hash.get(): Field;
+this.network.stakingEpochData.ledger.totalCurrency.get(): UInt64;
+this.network.stakingEpochData.epochLength.get(): UInt32;
+this.network.stakingEpochData.seed.get(): Field;
+this.network.stakingEpochData.lockCheckpoint.get(): Field;
+this.network.stakingEpochData.startCheckpoint.get(): Field;
+// consensus data relevant to the next, upcoming staking epoch
+this.network.nextEpochData.ledger.hash.get(): Field;
+this.network.nextEpochData.ledger.totalCurrency.get(): UInt64;
+this.network.nextEpochData.epochLength.get(): UInt32;
+this.network.nextEpochData.seed.get(): Field;
+this.network.nextEpochData.lockCheckpoint.get(): Field;
+this.network.nextEpochData.startCheckpoint.get(): Field;
+```
+
+You don't have to remember this, just type `this.network.` and let the intelligent code complete guide you.
+
+### Account reference
+
+Here's the full list of values you can access on the zkApp account. Like the network states, these values have `get()` and `requireEquals()`. Balance and nonce also have `requireBetween()`.
+
+```ts
+// the account balance; this might be nanoMINA or a custom token
+this.account.balance.get(): UInt64;
+// account nonce -- increases by 0 or 1 in every transaction
+this.account.nonce.get(): UInt32;
+// the account the zkApp delegates its stake to (default: its own address)
+this.account.delegate.get(): PublicKey;
+// boolean indicating whether an account is new (= didn't exist before the transaction)
+this.account.isNew.get(): Bool;
+// boolean indicating whether all 32 on-chain state fields were last changed by a transaction
+// authorized by a zkApp proof (as opposed to a signature)
+this.account.provedState.get(): Bool;
+// hash receipt which includes all prior transaction to an account
+this.account.receiptChainHash.get(): Field;
+```
+
+### Bailing out
+
+In some rare cases, you might, for whatever reason, want to `get()` an on-chain value _without_ constraining it to any value.
+However, if you try this, o1js throws a helpful error reminding you to use `requireEquals()` and `requireBetween()`.
+As an escape hatch, if you want to `get()` a value and are really sure you do not want to constrain the on-chain value in any way,
+you can use `requireNothing()` on all of these fields (including on-chain state). **Use `requireNothing()` at your own risk.**
+
+:::danger
+
+`requireNothing()` should be rarely used and could cause security issues through unexpected behavior if used improperly. Be certain you know what you're doing before using this.
+
+:::
+
+### Setting account fields
+
+Just like on-chain state, some account fields can be written to. Again, the API is consistent with state: `this.account.<field>.set(newValue)`.
+
+For example, here's how to change permissions on an account:
+
+```ts
+this.account.permissions.set({
+  ...Permissions.default(),
+  setVerificationKey: {
+    auth: Permissions.proof(),
+    txnVersion: TransactionVersion.current(),
+  },
+});
+```
+
+To set the delegate (the account that your smart contract delegates its stake to):
+
+```ts
+this.account.delegate.set(delegatePublicKey);
+```
+
+The fields that you can set are not the same as the fields that you can make assertions about.
+
+Here is the full list of fields that have a `.set()`:
+
+```ts
+// the account that this account delegates its MINA stake to
+this.account.delegate.set(value: PublicKey);
+// the verification key
+this.account.verificationKey.set(value: VerificationKey);
+// account permissions, to control authorization for performing actions on the account
+this.account.permissions.set(value: Permissions);
+// currently unused - could become URL holding zkApp metadata
+this.account.zkappUri.set(value: string);
+// token symbol of the token owned by this account — only relevant for token contracts!
+this.account.tokenSymbol.set(value: string);
+// parameters to control a vesting schedule, used in time-locked accounts
+this.account.timing.set(value: Timing);
+```
+
+### Accessing accounts other than the zkApp's account
+
+The API described in this section (get / set / assertEquals / ...) can be used to access the zkApp account itself, but also any other account. Account updates are a flexible and powerful data structure that can express all kinds of updates, events, and preconditions you use to develop smart contracts. See [Tutorial 10: Account Updates](/zkapps/tutorials/account-updates).
+
+To create an account update to find the same `account` and `network` fields:
+
+```ts
+let accountUpdate = AccountUpdate.create(address);
+
+// use the balance of this account
+let balance = accountUpdate.account.balance.get();
+accountUpdate.account.balance.assertEquals(balance);
+
+// assert that this account is new
+accountUpdate.account.isNew.assertEquals(Bool(true));
+
+// set permissions this account
+accountUpdate.account.permissions.set(permissions);
+```
+
+When setting fields on an account update, you must ensure that this _same_ account update has the correct authorization to perform those actions.
+
+For example, to initially set the verification key, the update requires a signature from the account owner:
+
+```ts
+// use createSigned to require a signature
+let accountUpdate = AccountUpdate.createSigned(address);
+
+// set the verification key on the account; could be used to deploy a zkApp from a zkApp
+accountUpdate.account.verificationKey.set(vk);
+```

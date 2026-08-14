@@ -1,0 +1,382 @@
+---
+title: Smart Contracts
+hide_title: true
+description: How to create and interact with a smart contract. How to prove an on-chain value. Learn about the public state of a zkApp and private method parameters.
+keywords:
+  - smart contracts
+  - zkapps
+  - zero knowledge proof programming
+  - zk proof
+  - zk
+  - zkapp account
+  - o1js
+  - blockchain
+  - mina
+  - typescript
+  - public input
+  - private input
+  - on-chain state
+---
+
+import MigrateBanner from '@site/src/components/snippets/migrate-banner.mdx';
+
+<MigrateBanner />
+
+# Smart Contracts
+
+You write smart contracts by extending the base class `SmartContract`:
+
+```ts
+class HelloWorld extends SmartContract {}
+```
+
+The `constructor` of a `SmartContract` is inherited from the base class and cannot be overriden.
+
+The zkApp account address (a public key) is its only argument:
+
+```ts
+let zkAppKey = PrivateKey.random();
+let zkAppAddress = PublicKey.fromPrivateKey(zkAppKey);
+
+let zkApp = new HelloWorld(zkAppAddress);
+```
+
+## zkApp Accounts
+
+On Mina, there is no strong distinction between normal "user accounts" and
+"zkApp accounts". A zkApp account:
+
+- Is an account on the Mina blockchain where a zkApp smart contract is deployed.
+
+- Has a verification key associated with it.
+
+The verification key stored on the zkApp account can verify zero knowledge proofs generated with the smart contract. The verification key lives on-chain for a given zkApp account and is used by the Mina network to verify that a zero knowledge proof has met all constraints defined in the prover. See [Prover Function and Verification Key](/zkapps/writing-a-zkapp/introduction-to-zkapps/how-zkapps-work#prover-function-and-verification-key).
+
+## Methods
+
+Interaction with a smart contract happens by calling one or more of its _methods_. You declare methods using the `@method` decorator:
+
+```ts
+class HelloWorld extends SmartContract {
+  @method async myMethod(x: Field) {
+    x.mul(2).assertEquals(5);
+  }
+}
+```
+
+Within a method, you can use o1js data types and methods to define your custom logic.
+
+To understand what successful execution means, look at this line in the example:
+
+```ts
+x.mul(2).assertEquals(5);
+```
+
+Creating a proof for this method is possible only if the input `x` satisfies the equation `x * 2 === 5`. This is called a "constraint".
+Magically, the proof can be checked without seeing `x` because it's a _private input_.
+
+The method has one input parameter, `x` of type `Field`. In general, arguments can be any of the built-in o1js types: `Bool`, `UInt64`, `PrivateKey`, and so on. These types are referred to as [structs`](#custom-data-types).
+
+## zk-SNARK circuits
+
+Internally, every `@method` defines a zk-SNARK circuit. From the cryptography standpoint, a smart contract is a collection of circuits, all of which are compiled into a single prover and a verification key. The proof says something to the effect of "I ran one of these methods, with some private input, and it produced this particular set of account updates". In zero knowledge proof terms, the account updates are the _public input_. The proof is accepted on the network only if it verifies against the verification key stored in the account. This verification requirement ensures that the same zkApp code also ran on the end user's device and that the account updates conform to the smart contract's rules.
+
+### @method
+
+Inside a `@method`, things sometimes behave a little differently.
+
+To construct a circuit which can then be proven, o1js calls into SnarkyML, a language that builds circuits and connects variables and constraints. As a zkApp developer, you must use the methods, functions, and types provided by o1js. Plain JavaScript code does not call into SnarkyML and therefore is not able to construct circuits.
+
+When `SmartContract` is compiled into prover and verification keys, methods are in an environment where the method inputs don't have any concrete values attached to them. Instead, they are like mathematical variables `x`, `y`, `z` that are used to build up abstract computations like `x^2 + y^2` by running the method code.
+
+In contrast, all the variables _have_ actual values attached to them (cryptographers call them "witnesses") during proof generation.
+To log these values for debugging, use a special function for logging from inside your method:
+
+```ts
+Provable.log(x);
+```
+
+The API is like `console.log`, but it automatically handles printing o1js data types in a readable format. However, the `Provable.log(x)` function does not have any effect while `SmartContract` is being compiled.
+
+## On-chain state
+
+A smart contract can contain [on-chain state](/glossary#on-chain-state). Declare it as a property on the class with the `@state` decorator:
+
+```ts
+class HelloWorld extends SmartContract {
+  @state(Field) x = State<Field>();
+
+  // ...
+}
+```
+
+Here, `x` is of type `Field`. Like with method inputs, only o1js structs can be used for state variables. The state can consist of at most 32 fields of 32 bytes each. These states are stored on the zkApp account.
+
+Some structs take up more than one `Field`. For example, a `PublicKey` needs two of the 32 fields.
+
+States are initialized with the `State()` function.
+
+A method can modify on-chain state by using `this.<state>.set()`:
+
+```ts
+class HelloWorld extends SmartContract {
+  @state(Field) x = State<Field>();
+
+  @method async setX(x: Field) {
+    this.x.set(x);
+  }
+}
+```
+
+As a zkApp developer, if you add this method to your smart contract, you are saying: "Anyone can call this method to set `x` on the account to any value they want."
+
+## Reading state
+
+This example _reads_ state:
+
+```ts
+class HelloWorld extends SmartContract {
+  @state(Field) x = State<Field>();
+
+  @method async increment() {
+    // read state
+    const x = this.x.get();
+    this.x.requireEquals(x);
+
+    // write state
+    this.x.set(x.add(1));
+  }
+}
+```
+
+The `@increment()` method fetches the current on-chain state `x` with `this.x.get()`.
+Later, it sets the new state to `x + 1` using `this.x.set()`. Simple!
+
+Another line might looks weird at first:
+
+```ts
+this.x.requireEquals(x);
+```
+
+Here's what it means to "use an on-chain value" during off-chain execution.
+
+When you use an on-chain value, you have to _prove_ that this value is the on-chain value. Verification has to fail if it's a different value. Otherwise, a malicious user could modify o1js and make it just use any other value than the current on-chain state – breaking the zkApp.
+
+You must link "`x` at proving time" to be the same as "`x` at verification time". This is a _precondition_, a condition that is checked by the verifier (a Mina node) when it receives the proof in a transaction:
+
+```ts
+this.x.requireEquals(x);
+```
+
+This code adds the precondition that `this.x` – the on-chain state at verification time – must equal `x` – the value fetched from the chain on the client side. In zkSNARK language, `x` becomes part of the public input.
+
+Using `this.<state>.requireEquals` is more flexible than equating with the current value. For example, `this.x.requireEquals(10)` fixes the on-chain `x` to the number `10`.
+
+Why not use `this.x.get()` to add the precondition automatically, instead of writing `this.x.requireEquals(x)`?
+To keep things explicit. The assertion reminds you to add logic which makes the proof fail: If `x` isn't the same at verification time, the transaction will be rejected.
+
+So, you must use care to read on-chain values if many users are expected to read and update state concurrently. It is applicable in some situations, but might cause race conditions or call for workarounds, in some situations.
+One workaround is to use actions. See [Actions and Reducer](/zkapps/writing-a-zkapp/feature-overview/actions-and-reducer).
+
+## Assertions
+
+Assertions can be incredibly useful to constrain state updates.
+
+Common assertions you can use are:
+
+<!-- prettier-ignore -->
+```ts
+x.assertEquals(y); // x = y
+x.assertBoolean(); // x = 0 or x = 1
+x.assertLt(y);     // x < y
+x.assertLte(y);    // x <= y
+x.assertGt(y);     // x > y
+x.assertGte(y);    // x >= y
+```
+
+For a full list, see the [o1js reference](/zkapps/o1js-reference).
+
+To modify the `increment()` method to accept a parameter:
+
+```ts
+class HelloWorld extends SmartContract {
+  @state(Field) x = State<Field>();
+
+  @method async increment(xPlus1: Field) {
+    const x = this.x.get();
+    this.x.requireEquals(x);
+
+    x.add(1).assertEquals(xPlus1);
+
+    this.x.set(xPlus1);
+  }
+}
+```
+
+Here, after obtaining the current state `x` and asserting that it equals the on-chain value, make another assertion:
+
+```ts
+x.add(1).assertEquals(xPlus1);
+```
+
+If the assertion fails, o1js throws an error and does not submit the transaction.
+If the assertion succeeds, it becomes part of the proof that is verified on-chain.
+
+Because of this, the new version of `increment()` is _guaranteed_ to behave like the previous version: It can only ever update the state `x` to `x + 1`.
+
+### Debugging
+
+Add optional failure messages to assertions to make debugging easier. For example, write the previous example as:
+
+```ts
+x.add(1).assertEquals(xPlus1, 'x + 1 should equal xPlus1');
+```
+
+## Public and private inputs
+
+While the state of a zkApp is **public**, method parameters are **private**.
+
+When a smart contract method is called, the proof it produces uses zero knowledge to hide inputs and details of the computation.
+
+The only way method parameters can be exposed is when the computation explicitly exposes them. For example, in the last example the input was directly stored in the public state: `this.x.set(xPlus1);`
+
+If this were not the case, define a new method called `incrementSecret()`:
+
+```ts
+class HelloWorld extends SmartContract {
+  @state(Field) x = State<Field>();
+
+  // ...
+
+  @method async incrementSecret(secret: Field) {
+    const x = this.x.get();
+    this.x.requireEquals(x);
+
+    Poseidon.hash(secret).assertEquals(x);
+    this.x.set(Poseidon.hash(secret.add(1)));
+  }
+}
+```
+
+This time, the input is called `secret`. Check that the hash of the secret is equal to the current state `x`.
+If this is the case, add `1` to the secret and set `x` to the hash of that.
+
+When this code is run successfully, it just proves that the code was run with _some_ input `secret` whose hash is `x` and that the new `x` is set to `hash(secret + 1)`.
+However, the secret itself remains private, because it can't be deduced from its hash.
+
+## Initializing state
+
+To initialize on-chain state, use the `init()` method.
+
+Like the constructor, `init()` is predefined on the base `SmartContract` class.
+
+- It is called when you deploy your zkApp with the zkApp CLI for the first time.
+- It is not called if you upgrade your contract and deploy a second time.
+
+You can override this method to add initialization of your on-chain state:
+
+```ts
+class HelloWorld extends SmartContract {
+  @state(Field) x = State<Field>();
+
+  init() {
+    super.init();
+    this.x.set(Field(10)); // initial state
+  }
+}
+```
+
+You must call `super.init()` to set your entire state to 0.
+
+If you don't have any state to initialize to values other than 0, then there's no need to override `init()`, you can just leave it out.
+The previous example set the state `x` to `Field(10)`.
+
+## Composing zkApps
+
+A powerful feature of zkApps is that they are composable, just like Ethereum smart contracts. You can simply call smart contract methods from other smart contract methods:
+
+```ts
+class HelloWorld extends SmartContract {
+  @method async myMethod(otherAddress: PublicKey) {
+    const calledContract = new OtherContract(otherAddress);
+    calledContract.otherMethod();
+  }
+}
+
+class OtherContract extends SmartContract {
+  @method async otherMethod() {}
+}
+```
+
+When a zkApp user calls `HelloWorld.myMethod()`, o1js creates two separate proofs:
+
+- One proof for the execution of `myMethod()` as usual
+- A _separate_ proof for the execution of `OtherContract.otherMethod()`
+
+The `myMethod()` proof:
+
+- Computes an appropriate hash of the function signature of `otherMethod()` plus any arguments and return values of that function call.
+- Guarantees that this hash matches the `callData` field on the account update produced by `otherMethod()` that is made part of `myMethod()`'s public input.
+
+Therefore, when you call another zkApp method, you effectively prove: "I called a method with this name, on this zkApp account, with this particular arguments and return value."
+
+To return a value from the method, you have to explicitly declare the return type using the `method.returns` decorator:
+
+Here's an example of returning a `Bool` called `isSuccess`:
+
+```ts
+@method.returns(Bool) async otherMethod(): Promise<Bool> { // annotated return type
+  // ...
+  return isSuccess;
+}
+```
+
+## Custom data types
+
+Smart contract method arguments can be any of the built-in [o1js types](/zkapps/o1js/basic-concepts#built-in-data-types).
+
+However, what if you want to define your own data type?
+
+You can create a custom data type for your smart contract using the `Struct` function that o1js exposes:
+
+1. Create a class that extends `Struct({ })`.
+1. Then, inside the object `{ }`, define the fields that you want to use in your custom data type.
+
+For example, you can create a custom data type called `Point` to represent a 2D point on a grid. The `Point` struct has no instance methods and is used only to hold information about the `x` and `y` points.
+
+To create the `Point` class, extend the `Struct` class:
+
+```ts
+class Point extends Struct({
+  x: Field,
+  y: Field,
+}) {}
+```
+
+Now that `Struct` is defined, you can use it in your smart contract for any o1js built-in types.
+
+For example, the following smart contract uses the `Point` struct defined earlier as state and as a method argument:
+
+```ts
+export class Grid extends SmartContract {
+  @state(Point) p = State<Point>();
+
+  @method async init() {
+    this.p.set(new Point({ x: Field(1), y: Field(2) }));
+  }
+
+  @method async move(newPoint: Point) {
+    const point = this.p.get();
+    this.p.requireEquals(point);
+
+    const newX = point.x.add(newPoint.x);
+    const newY = point.y.add(newPoint.y);
+
+    this.p.set(new Point({ x: newX, y: newY }));
+  }
+}
+```
+
+Note that your `Struct` classes can contain o1js built-in types like `Field`, `Bool`, `UInt64`, and so on, or even other custom types that you've defined that are based on the `Struct` class.
+
+This flexibility allows for great composability and reusability of structs.
