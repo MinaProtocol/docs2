@@ -18,9 +18,9 @@ Please note the following are the hardware requirements for each node type after
 
 | Node Type | Memory | CPU | Storage | Network |
 |--|--|--|--|--|
-| Mina Daemon Node | 32 GB RAM | 8 core processor with BMI2 and AVX CPU instruction set are required | 16 GB | 1 Mbps Internet Connection |
+| Mina Daemon Node | 32 GB RAM | 8 core processor with BMI2, ADX and AVX CPU instruction sets are required | 16 GB | 1 Mbps Internet Connection |
 | SNARK Coordinator | 32 GB RAM | 8 core processor | 16 GB | 1 Mbps Internet Connection |
-| SNARK Worker (per worker) | 8 GB RAM | 6 core/12 threads with BMI2 and AVX CPU instruction set are required | 1 GB | 1 Mbps Internet Connection |
+| SNARK Worker (per worker) | 8 GB RAM | 6 core/12 threads with BMI2, ADX and AVX CPU instruction sets are required | 1 GB | 1 Mbps Internet Connection |
 | Archive Node | 32 GB RAM | 8 core processor | 64 GB | 1 Mbps Internet Connection |
 | Rosetta API standalone Docker image | 8 GB RAM | 2 core processor | 16 GB | 1 Mbps Internet Connection |
 | Rosetta API + Archive Node | 32 GB RAM | 8 core processor | 64 GB | 1 Mbps Internet Connection |
@@ -39,8 +39,9 @@ The hardware table above is Mesa-specific; everything else lives once in the Val
 
 ### Generation of libp2p keypair
 
-To ensure connectivity across the network, it is essential that all seed nodes start with the **same** `libp2p` keypair.
-This consistency allows other nodes in the network to reliably connect.
+To ensure connectivity across the network, it is essential that each seed node starts with its own **stable** `libp2p` keypair.
+A keypair determines the peer ID of the node, so each seed node needs a different keypair, and that keypair must stay the same across restarts.
+This stability allows other nodes in the network to reliably connect to the addresses in the published seed list.
 Although the same libp2p keys can be reused from before the upgrade, if you need to manually generate new libp2p keys, use the following command:
 
 ```
@@ -55,7 +56,7 @@ Before the fork, each actor type must complete specific preparations. Complete t
 
 ### All operators
 
-- Verify your hardware meets the [requirements](#hardware-requirements) above (32 GB RAM, 8-core CPU with AVX/BMI2).
+- Verify your hardware meets the [requirements](#hardware-requirements) above (32 GB RAM, 8-core CPU with BMI2, ADX and AVX).
 - Back up your keys and configuration before installing any new packages.
 
 ### Block Producers
@@ -90,4 +91,5 @@ Before the fork, each actor type must complete specific preparations. Complete t
 
 - Update to the Mesa-compatible o1js version (`o1js@3.0.0-mesa.rc2` for the Mesa Trail chain).
 - Recompile your contracts and verify them on the [Mesa Trail test network](/network-upgrades/mesa/mesa-trail).
-- Plan to redeploy every zkApp on Mesa — each must be redeployed because the protocol version bump changes the verification key. {/* TODO(PR #1133): Link to the official o1js Mesa upgrade guide once published (cjjdespres #3220525842). */}
+- Plan to redeploy every zkApp on Mesa — each must be redeployed because the protocol version bump changes the verification key.
+  Your zkApp account and its on-chain state carry over to Mesa automatically, including the state fields at indexes `0-7`. The redeploy replaces the verification key; it does not reset your state. {/* TODO(PR #1133): Link to the official o1js Mesa upgrade guide once published (cjjdespres #3220525842). */}
