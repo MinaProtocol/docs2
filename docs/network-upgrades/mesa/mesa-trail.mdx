@@ -243,9 +243,9 @@ Precomputed blocks are published to the `mesa-rc-precomputed-blocks` bucket, one
 
 ```bash
 # List recent blocks
-gsutil ls gs://mesa-rc-precomputed-blocks/ | tail
+gcloud storage ls gs://mesa-rc-precomputed-blocks/ | tail
 
-# Fetch a single block over HTTPS (no gsutil required)
+# Fetch a single block over HTTPS (no Google Cloud CLI required)
 curl -O https://storage.googleapis.com/mesa-rc-precomputed-blocks/mina-mesa-rc-1-<height>-<state-hash>.json
 ```
 
@@ -257,7 +257,7 @@ Hourly archive dumps are published to the `mina-archive-dumps` bucket with the p
 
 ```bash
 # List available dumps
-gsutil ls gs://mina-archive-dumps/mina-mesa-rc-1-archive-dump-*
+gcloud storage ls gs://mina-archive-dumps/mina-mesa-rc-1-archive-dump-*
 
 # Download and restore the latest dump
 curl -O https://storage.googleapis.com/mina-archive-dumps/mina-mesa-rc-1-archive-dump-<YYYY-MM-DD>_<HHMM>.sql.tar.gz
