@@ -19,7 +19,7 @@ To successfully migrate the archive database into the Berkeley version of the Mi
 
 - PostgreSQL database for database server
 - If you use Docker, then any of the supported OS by Mina (bullseye, focal, or buster) with at least 32 GB of RAM
-- gsutil application from Google Cloud Suite in version 5 or later
+- Google Cloud CLI (`gcloud`), which provides the `gcloud storage` commands
 - (Optional) Docker in version 23.0 or later
 
 ## (Optional) Devnet/Mainnet database 
@@ -40,25 +40,37 @@ However, it is strongly recommended that you perform migration on your own data 
 For Devnet blocks:
 
 ```sh
-gsutil cp gs://mina_network_block_data/devnet-*.json .
+gcloud storage cp gs://mina_network_block_data/devnet-*.json .
 ```
 
 For Mainnet blocks:
 
 ```sh
-gsutil cp gs://mina_network_block_data/mainnet-*.json .
+gcloud storage cp gs://mina_network_block_data/mainnet-*.json .
 ```
 
 :warning: Precomputed blocks for the Mainnet network take ~800 GB of disk space. Plan for adequate time to download these blocks. The Berkeley migration app downloads them incrementally only when needed. You can instead download a 100 GB bundle of only the canonical Mainnet blocks that unpacks into ~220 GB: 
 
 ```sh
-gsutil cp gs://mina_network_block_data/mainnet-bundle-2024-03-20.tar.zst . ; tar -xf mainnet-bundle-2024-03-20.tar.zst
+gcloud storage cp gs://mina_network_block_data/mainnet-bundle-2024-03-20.tar.zst . ; tar -xf mainnet-bundle-2024-03-20.tar.zst
+```
+
+Or, without the Google Cloud CLI, over HTTPS:
+
+```sh
+wget https://storage.googleapis.com/mina_network_block_data/mainnet-bundle-2024-03-20.tar.zst ; tar -xf mainnet-bundle-2024-03-20.tar.zst
 ```
 
 :warning: Precomputed blocks for the Devnet network take several hundred GBs. Plan for adequate time to download these blocks. Instead, you can download a ~50 GB bundle of only the canonical Devnet blocks that unpacks into ~90 GB:
 
 ```sh
-gsutil cp gs://mina_network_block_data/devnet-bundle-3NKRsRWBzmPR8Z8ZmJb4u8FLpnSkjRitUpKZzVkHp11QuwP5i839.tar.gz . ; tar -xf devnet-bundle-3NKRsRWBzmPR8Z8ZmJb4u8FLpnSkjRitUpKZzVkHp11QuwP5i839.tar.gz
+gcloud storage cp gs://mina_network_block_data/devnet-bundle-3NKRsRWBzmPR8Z8ZmJb4u8FLpnSkjRitUpKZzVkHp11QuwP5i839.tar.gz . ; tar -xf devnet-bundle-3NKRsRWBzmPR8Z8ZmJb4u8FLpnSkjRitUpKZzVkHp11QuwP5i839.tar.gz
+```
+
+Or, without the Google Cloud CLI, over HTTPS:
+
+```sh
+wget https://storage.googleapis.com/mina_network_block_data/devnet-bundle-3NKRsRWBzmPR8Z8ZmJb4u8FLpnSkjRitUpKZzVkHp11QuwP5i839.tar.gz ; tar -xf devnet-bundle-3NKRsRWBzmPR8Z8ZmJb4u8FLpnSkjRitUpKZzVkHp11QuwP5i839.tar.gz
 ```
 
 These bundles are partial. Updated documentation with the new links and final data will be provided _after_ the Berkeley major upgrade is completed.

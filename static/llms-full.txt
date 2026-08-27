@@ -2302,7 +2302,7 @@ To mitigate these limitations, the archive node maintenance package is available
 
 ## Install with Google Cloud SDK
 
-The Google Cloud SDK installer does not always register a `google-cloud-sdk` apt package. The best way to install gsutil is using the apt repostory:
+The Google Cloud SDK installer does not always register a `google-cloud-sdk` apt package. The best way to install the Google Cloud CLI is using the apt repostory:
 
 ```sh
 curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg
@@ -2314,7 +2314,7 @@ sudo apt-get update && sudo apt-get install google-cloud-sdk
 
 We strongly encourage you to perform the migration on your own data to preserve the benefits of decentralization. However, if you want to use the archive data that o1labs runs (for example, to bootstrap a new archive from SQL without waiting all day for the chain to download and replay), you can use the following steps:
 
-1. Download the Devnet/Mainnet archive data using cURL or gsutil:
+1. Download the Devnet/Mainnet archive data using cURL or gcloud storage:
 
     - cURL:
 
@@ -2332,10 +2332,10 @@ We strongly encourage you to perform the migration on your own data to preserve 
 
      :warning: The majority of backups have the `0000` suffix. If a download with that name suffix is not available, try incrementing it. For example, `0001`, `0002`, and so on.
 
-    - gsutil:
+    - gcloud storage:
 
        ```sh
-       gsutil cp gs://mina-archive-dumps/mainnet-archive-dump-2024-01-15* .
+       gcloud storage cp gs://mina-archive-dumps/mainnet-archive-dump-2024-01-15* .
        ```
 
 2. Extract the tar package.
@@ -2360,7 +2360,7 @@ We strongly encourage you to perform the migration on your own data to preserve 
 
 The recommended method is to perform migration on your own data to preserve the benefits of decentralization.
 
-`gsutil cp gs://mina_network_block_data/{network}-*.json .`
+`gcloud storage cp gs://mina_network_block_data/{network}-*.json .`
 
 :warning: Precomputed blocks for the Mainnet network take ~800 GB of disk space. Plan for adequate time to download these blocks. The Berkeley migration app downloads them incrementally only when needed.
 
@@ -2442,7 +2442,7 @@ To successfully migrate the archive database into the Berkeley version of the Mi
 
 - PostgreSQL database for database server
 - If you use Docker, then any of the supported OS by Mina (bullseye, focal, or buster) with at least 32 GB of RAM
-- gsutil application from Google Cloud Suite in version 5 or later
+- Google Cloud CLI (`gcloud`), which provides the `gcloud storage` commands
 - (Optional) Docker in version 23.0 or later
 
 ## (Optional) Devnet/Mainnet database 
@@ -2463,25 +2463,37 @@ However, it is strongly recommended that you perform migration on your own data 
 For Devnet blocks:
 
 ```sh
-gsutil cp gs://mina_network_block_data/devnet-*.json .
+gcloud storage cp gs://mina_network_block_data/devnet-*.json .
 ```
 
 For Mainnet blocks:
 
 ```sh
-gsutil cp gs://mina_network_block_data/mainnet-*.json .
+gcloud storage cp gs://mina_network_block_data/mainnet-*.json .
 ```
 
 :warning: Precomputed blocks for the Mainnet network take ~800 GB of disk space. Plan for adequate time to download these blocks. The Berkeley migration app downloads them incrementally only when needed. You can instead download a 100 GB bundle of only the canonical Mainnet blocks that unpacks into ~220 GB: 
 
 ```sh
-gsutil cp gs://mina_network_block_data/mainnet-bundle-2024-03-20.tar.zst . ; tar -xf mainnet-bundle-2024-03-20.tar.zst
+gcloud storage cp gs://mina_network_block_data/mainnet-bundle-2024-03-20.tar.zst . ; tar -xf mainnet-bundle-2024-03-20.tar.zst
+```
+
+Or, without the Google Cloud CLI, over HTTPS:
+
+```sh
+wget https://storage.googleapis.com/mina_network_block_data/mainnet-bundle-2024-03-20.tar.zst ; tar -xf mainnet-bundle-2024-03-20.tar.zst
 ```
 
 :warning: Precomputed blocks for the Devnet network take several hundred GBs. Plan for adequate time to download these blocks. Instead, you can download a ~50 GB bundle of only the canonical Devnet blocks that unpacks into ~90 GB:
 
 ```sh
-gsutil cp gs://mina_network_block_data/devnet-bundle-3NKRsRWBzmPR8Z8ZmJb4u8FLpnSkjRitUpKZzVkHp11QuwP5i839.tar.gz . ; tar -xf devnet-bundle-3NKRsRWBzmPR8Z8ZmJb4u8FLpnSkjRitUpKZzVkHp11QuwP5i839.tar.gz
+gcloud storage cp gs://mina_network_block_data/devnet-bundle-3NKRsRWBzmPR8Z8ZmJb4u8FLpnSkjRitUpKZzVkHp11QuwP5i839.tar.gz . ; tar -xf devnet-bundle-3NKRsRWBzmPR8Z8ZmJb4u8FLpnSkjRitUpKZzVkHp11QuwP5i839.tar.gz
+```
+
+Or, without the Google Cloud CLI, over HTTPS:
+
+```sh
+wget https://storage.googleapis.com/mina_network_block_data/devnet-bundle-3NKRsRWBzmPR8Z8ZmJb4u8FLpnSkjRitUpKZzVkHp11QuwP5i839.tar.gz ; tar -xf devnet-bundle-3NKRsRWBzmPR8Z8ZmJb4u8FLpnSkjRitUpKZzVkHp11QuwP5i839.tar.gz
 ```
 
 These bundles are partial. Updated documentation with the new links and final data will be provided _after_ the Berkeley major upgrade is completed.
@@ -2498,6 +2510,8 @@ You can follow these steps that can be copy-pasted directly into a fresh Debian 
 
 This example uses an altered two-step version of the [full simplified workflow](/network-upgrades/berkeley/archive-migration/migrating-archive-database-to-berkeley#simplified-approach).
 
+If you would rather not install the Google Cloud CLI, every `gcloud storage cp gs://<bucket>/<object> .` below can be replaced with `wget https://storage.googleapis.com/<bucket>/<object>`.
+
 ```sh
 apt update && apt install lsb-release sudo postgresql curl wget gpg # debian:11 is surprisingly light
 
@@ -2512,7 +2526,7 @@ sudo apt-get update && sudo apt-get install --allow-downgrades -y mina-archive-m
 mkdir -p mina-migration-workdir
 cd mina-migration-workdir
 
-gsutil cp gs://mina_network_block_data/devnet-bundle-3NKRsRWBzmPR8Z8ZmJb4u8FLpnSkjRitUpKZzVkHp11QuwP5i839.tar.gz .
+gcloud storage cp gs://mina_network_block_data/devnet-bundle-3NKRsRWBzmPR8Z8ZmJb4u8FLpnSkjRitUpKZzVkHp11QuwP5i839.tar.gz .
 tar -xf devnet-bundle-3NKRsRWBzmPR8Z8ZmJb4u8FLpnSkjRitUpKZzVkHp11QuwP5i839.tar.gz
 
 wget https://raw.githubusercontent.com/MinaProtocol/mina/berkeley/src/app/archive/create_schema.sql
@@ -2524,7 +2538,7 @@ createdb devnet_really_migrated
 
 psql -d devnet_really_migrated -f create_schema.sql
 
-gsutil cp gs://mina-archive-dumps/devnet-archive-dump-2024-03-22_0000.sql.tar.gz .
+gcloud storage cp gs://mina-archive-dumps/devnet-archive-dump-2024-03-22_0000.sql.tar.gz .
 tar -xf devnet-archive-dump-2024-03-22_0000.sql.tar.gz
 # the next step ensures you don't accidentally merge mainnet and devnet data
 sed -i -e s/archive_balances_migrated/devnet_balances_migrated/g devnet-archive-dump-2024-03-22_0000.sql
@@ -2539,7 +2553,7 @@ mina-berkeley-migration-script initial \
 
 # now, do a final migration
 
-gsutil cp gs://mina-archive-dumps/devnet-archive-dump-2024-03-22_2050.sql.tar.gz .
+gcloud storage cp gs://mina-archive-dumps/devnet-archive-dump-2024-03-22_2050.sql.tar.gz .
 tar -xf devnet-archive-dump-2024-03-22_2050.sql.tar.gz
 # the next step ensures you don't accidentally merge mainnet and devnet data
 sed -i -e s/archive_balances_migrated/devnet_balances_migrated/g devnet-archive-dump-2024-03-22_2050.sql
@@ -4280,7 +4294,7 @@ To successfully upgrade the archive database to Mesa, you must ensure that your 
 
 - PostgreSQL database for database server
 - If you use Docker, then any of the supported OS by Mina (bullseye, focal, noble, bookworm or jammy) with at least 32 GB of RAM
-- gsutil application from Google Cloud Suite in version 5 or later
+- Google Cloud CLI (`gcloud`), which provides the `gcloud storage` commands
 - (Optional) Docker in version 23.0 or later
 
 ## Archive database
