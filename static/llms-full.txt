@@ -8876,6 +8876,329 @@ It is important to pay out rewards to participants who have delegated their stak
 To learn how, see [Sending Many Transactions](/mina-protocol/sending-a-payment#sending-many-transactions).
 
 ---
+url: /node-operators/data-and-history/archive-node-api
+---
+
+# Archive Node API
+
+
+
+
+
+<Subhead>
+A GraphQL service over an archive node database — the supported way for zkApps, explorers, and indexers to read Mina's history.
+</Subhead>
+
+An [archive node](/node-operators/archive-node) stores Mina's history in a Postgres database, but it exposes no public API of its own. The [Archive Node API](https://github.com/o1-labs/Archive-Node-API) closes that gap: it is a read-only GraphQL server that you point at an existing archive node database and query for blocks, events, actions, and transactions.
+
+It does **not** run an archive node. You need one already syncing, or a snapshot of its database, before this service has anything to serve.
+
+## Choose a data path
+
+Four ways to read Mina data. They are not interchangeable — pick by what you are building.
+
+| You need | Use | Why |
+|---|---|---|
+| Current network state, recent blocks, sending transactions | [Daemon GraphQL](/node-operators/validator-node/querying-data) | The daemon keeps only the last k blocks (currently 290) |
+| zkApp events and actions, block and transaction history | **Archive Node API** | Purpose-built for o1js and zkApp developers |
+| Exchange integration — deposits, withdrawals, balances | [Rosetta API](/node-operators/data-and-history/rosetta) | A standardized cross-chain interface exchanges already support |
+| Arbitrary analytical queries over the full schema | The archive Postgres directly | No API constrains your query shape — and none protects the database |
+
+The Archive Node API and Rosetta read the *same* archive database. Running both against one database is normal.
+
+## Architecture
+
+| Component | Default port | Role |
+|---|---|---|
+| Mina daemon | 8302 (P2P), 3085 (GraphQL) | Syncs with the network |
+| `mina-archive` process | 3086 | Receives blocks from the daemon, writes them to Postgres |
+| PostgreSQL | 5432 | Stores the history |
+| **Archive Node API** | 8080 | Serves GraphQL over that Postgres |
+
+The API holds a connection pool to Postgres and issues read-only queries. It has no write path, no keys, and no daemon connection of its own.
+
+## Quick start
+
+<Tabs>
+<TabItem value="npm" label="npm" default>
+
+Lightest weight, for when you already have an archive database reachable.
+
+```sh
+npm install -g @o1-labs/mina-archive-node-graphql
+
+PG_CONN='postgres://postgres:postgres@localhost:5432/archive' \
+  ENABLE_GRAPHIQL=true \
+  mina-archive-node-graphql
+# → {"level":"info",...,"port":"8080","msg":"server started"}
+```
+
+Open `http://localhost:8080` for the GraphiQL playground.
+
+</TabItem>
+<TabItem value="docker" label="Docker">
+
+For when you have a database reachable but no Node toolchain.
+
+```sh
+docker pull ghcr.io/o1-labs/archive-node-api:latest
+
+docker run --rm -p 8080:8080 \
+  -e PG_CONN='postgres://postgres:postgres@host.docker.internal:5432/archive' \
+  -e ENABLE_GRAPHIQL=true \
+  ghcr.io/o1-labs/archive-node-api:latest
+```
+
+Pin a version tag rather than `latest` for production.
+
+</TabItem>
+<TabItem value="compose" label="Docker Compose">
+
+For when you have no archive database at all — Compose stands one up from a published snapshot.
+
+```sh
+git clone https://github.com/o1-labs/Archive-Node-API.git
+cd Archive-Node-API
+cp .env.example.compose .env
+
+./scripts/download_db.sh devnet   # or: mainnet
+docker compose up
+```
+
+</TabItem>
+</Tabs>
+
+Confirm it is serving:
+
+```sh
+curl -s -X POST http://localhost:8080 \
+  -H 'Content-Type: application/json' \
+  --data '{"query":"{ networkState { maxBlockHeight { canonicalMaxBlockHeight pendingMaxBlockHeight } } }"}'
+```
+
+## The query surface
+
+Five root fields. The authoritative definition is [`schema.graphql`](https://github.com/o1-labs/Archive-Node-API/blob/main/schema.graphql) in the repository.
+
+| Query | Returns |
+|---|---|
+| `events(input:)` | Events emitted by a zkApp account, filtered by address, token, block range, and chain status |
+| `actions(input:)` | Actions dispatched from a zkApp account, optionally bounded by action state |
+| `blocks(query:, limit:, sortBy:)` | Blocks by height or date range, with transaction detail |
+| `networkState` | The archive's maximum canonical and pending block heights |
+| `verificationKeyUpdates(input:)` | Applied account updates that set a given verification key, over a required block range |
+
+Events for one address, over a block range:
+
+```graphql
+query {
+  events(
+    input: {
+      address: "B62qiaEMrWiYdK7LcJ2ScdMyG8LzUxi7yaw17XvBD34on7UKfhAkRML"
+      status: CANONICAL
+      from: 100
+      to: 200
+    }
+  ) {
+    blockInfo {
+      height
+      stateHash
+      timestamp
+      chainStatus
+    }
+    eventData {
+      data
+      transactionInfo {
+        hash
+        status
+        memo
+      }
+    }
+  }
+}
+```
+
+Actions folded from a checkpoint, which is what an o1js reducer does:
+
+```graphql
+query {
+  actions(
+    input: {
+      address: "B62qiaEMrWiYdK7LcJ2ScdMyG8LzUxi7yaw17XvBD34on7UKfhAkRML"
+      fromActionState: "25079927036070901246064867767436987657692091363973573142121686150614948079097"
+    }
+  ) {
+    actionState {
+      actionStateOne
+      actionStateTwo
+    }
+    actionData {
+      accountUpdateId
+      data
+    }
+  }
+}
+```
+
+:::note
+Every query is bounded by `BLOCK_RANGE_SIZE` (10000 blocks by default). Walk a wider history in pages rather than in one request — the server rejects a span wider than its configured limit.
+:::
+
+## Using it from o1js
+
+A zkApp reaches the API through the `archive` property of its network configuration. o1js then uses it for `fetchEvents` and `fetchActions`:
+
+```ts
+const Network = Mina.Network({
+  mina: 'https://api.minascan.io/node/devnet/v1/graphql',
+  archive: 'https://api.minascan.io/archive/devnet/v1/graphql',
+});
+Mina.setActiveInstance(Network);
+```
+
+Without an `archive` endpoint, fetching events or actions raises an error. For the full o1js workflow, see [Fetch Events and Actions](/zkapps/writing-a-zkapp/feature-overview/fetch-events-and-actions).
+
+## Client SDKs
+
+Typed clients wrap the same endpoint with configurable retries and timeouts. Each exposes one method per root field, so the surface below is the surface above.
+
+<Tabs>
+<TabItem value="ts" label="TypeScript" default>
+
+```sh
+npm install @o1-labs/mina-archive-sdk
+```
+
+```ts
+
+
+const client = new ArchiveClient('https://api.minascan.io/archive/devnet/v1/graphql');
+
+const events = await client.getEvents({
+  address: 'B62q...',
+  status: 'CANONICAL',
+  from: 100,
+  to: 200,
+});
+```
+
+</TabItem>
+<TabItem value="rust" label="Rust">
+
+```sh
+cargo add mina-archive-sdk
+```
+
+```rust
+use mina_archive_sdk::{ArchiveClient, EventFilterOptionsInput, BlockStatusFilter};
+
+let client = ArchiveClient::new("https://api.minascan.io/archive/devnet/v1/graphql");
+let events = client
+    .get_events(
+        EventFilterOptionsInput::for_address("B62q...")
+            .status(BlockStatusFilter::Canonical),
+    )
+    .await?;
+```
+
+</TabItem>
+<TabItem value="go" label="Go">
+
+```sh
+go get github.com/o1-labs/mina-archive-sdk-go
+```
+
+```go
+client := archive.NewClient(
+    archive.WithGraphQLURI("https://api.minascan.io/archive/devnet/v1/graphql"),
+)
+events, err := client.GetEvents(ctx, archive.EventFilterOptionsInput{
+    Address: "B62q...",
+    Status:  archive.BlockStatusCanonical,
+})
+```
+
+</TabItem>
+</Tabs>
+
+Sources: [mina-archive-sdk-js](https://github.com/o1-labs/mina-archive-sdk-js), [mina-archive-sdk-rust](https://github.com/o1-labs/mina-archive-sdk-rust), [mina-archive-sdk-go](https://github.com/o1-labs/mina-archive-sdk-go).
+
+## Configuration
+
+`PG_CONN` is the only required variable. Configuration is validated at startup: a missing connection string, a non-numeric port, or a mistyped boolean stops the server with a clear message rather than booting into a broken state.
+
+Boolean variables accept `true`/`false`, `1`/`0`, `yes`/`no`, or `on`/`off`, case-insensitively.
+
+### Essentials
+
+| Variable | Default | Description |
+|---|---|---|
+| `PG_CONN` | *(required)* | Postgres connection string for the archive database |
+| `PORT` | `8080` | Port the GraphQL server listens on |
+| `BLOCK_RANGE_SIZE` | `10000` | Maximum block span a single query may cover |
+| `ENABLED_QUERIES` | *(all)* | Comma-separated subset of root fields to expose |
+| `ENABLE_GRAPHIQL` | `false` | Serve the GraphiQL playground at `/` |
+| `ENABLE_INTROSPECTION` | `false` | Allow schema introspection |
+| `ENABLE_BLOCK_TRANSACTION_DETAILS` | `false` | Include `userCommands`, `zkappCommands`, and `feeTransfers` on blocks |
+
+### Database
+
+| Variable | Default | Description |
+|---|---|---|
+| `PG_MAX_CONNECTIONS` | `10` | Maximum pooled connections, total rather than per host |
+| `PG_IDLE_TIMEOUT` | `30` | Seconds an idle connection is kept |
+| `PG_CONNECT_TIMEOUT` | `30` | Seconds to wait for a new connection |
+| `PG_STATEMENT_TIMEOUT` | `15000` | Server-side timeout in milliseconds per statement; `0` disables |
+
+For redundancy, `PG_CONN` accepts several hosts — `postgres://host1:5432,host2:5432/archive`, the same syntax `psql` uses. The driver **fails over** between them; it does not spread reads across them.
+
+### Exposure controls
+
+| Variable | Default | Description |
+|---|---|---|
+| `CORS_ORIGIN` | *(disabled)* | Cross-origin access. Unset means same-origin only; `*` means any origin; or give a comma-separated allowlist |
+| `RATE_LIMIT_MAX` | `600` | Requests per client IP per window; `0` disables |
+| `RATE_LIMIT_WINDOW_MS` | `60000` | Rate-limit window length |
+| `TRUST_PROXY` | *(unset)* | Number of trusted proxy hops in front of the API |
+| `GRAPHQL_MAX_DEPTH` | `12` | Maximum selection-set nesting depth |
+| `GRAPHQL_MAX_ALIASES` | `15` | Maximum aliases in one operation |
+| `GRAPHQL_MAX_TOKENS` | `1000` | Maximum lexical tokens in a query document |
+| `GRAPHQL_MAX_COST` | `5000` | Maximum estimated query cost |
+
+:::caution
+`TRUST_PROXY` has no default, and the rate limiter stays **disabled** until you set it. Neither reading is safe to assume: keying on the socket address behind a load balancer collapses every client into one bucket, while trusting `X-Forwarded-For` without a hop count lets any caller mint a fresh bucket per request. A bare GCP external Application Load Balancer is `TRUST_PROXY=2`; add one per additional proxy. Use `TRUST_PROXY=0` only for a directly exposed server.
+:::
+
+:::caution
+Browser clients need `CORS_ORIGIN` set. The default sends no permissive CORS headers, so a web front end on another origin cannot call the API until you allowlist its origin. Server-to-server callers and `curl` are unaffected.
+:::
+
+The complete reference, including tracing variables, is in the repository's [setup guide](https://github.com/o1-labs/Archive-Node-API/blob/main/docs/getting-started.md#configuration).
+
+## Running it in production
+
+| Endpoint | Purpose |
+|---|---|
+| `/healthcheck` | Liveness — the process is up and serving HTTP |
+| `/readiness` | Readiness — the database is reachable; returns 503 when it is not |
+| `/metrics` | Prometheus request-rate, error-rate, and duration metrics, behind `ENABLE_METRICS` |
+
+Point your orchestrator's liveness probe at `/healthcheck` and its readiness probe at `/readiness`, so a pod with an unreachable database leaves the load-balancer pool instead of being restarted.
+
+Two things to keep in mind when you deploy it:
+
+- `/metrics` is unauthenticated. Do not publish it on the same address as the API.
+- On `SIGTERM` the server drains in-flight requests before exiting, bounded by `SHUTDOWN_TIMEOUT_MS` (20000 by default). Keep the orchestrator's grace period above that value or it will kill the process mid-drain.
+
+Reference Kubernetes manifests, a production Compose file, and an operations runbook covering SLOs, capacity, and failover are published in the repository under [`deploy/`](https://github.com/o1-labs/Archive-Node-API/tree/main/deploy) and [`docs/`](https://github.com/o1-labs/Archive-Node-API/tree/main/docs).
+
+## Schema stability
+
+The GraphQL schema follows semantic versioning. A new root field or a new optional argument is a minor release; removing or renaming anything a client can select is a major one, and never happens silently — a schema check gates every change to the repository.
+
+Client SDK versions track the schema they speak, so an SDK on the same major and minor version as the server is known to match it.
+
+---
 url: /node-operators/data-and-history
 ---
 
@@ -8887,9 +9210,14 @@ While prior transaction history is not required to prove the current state is va
 
 You can optionally run an [archive node](/node-operators/archive-node/getting-started) to access historic data. The archive node process stores a summary of each block in a Postgres database. The archive node requires a running mina-archive daemon that connects to a running mina daemon and a [PostgreSQL](https://www.postgresql.org/) database.
 
+An archive database on its own is not an integration surface — it has no API, and exposing Postgres to applications is not an option. Two services read that database and serve it over the network. Which one you want depends on what you are building.
+
 ## In This Section
 
+- [Archive Node API](/node-operators/data-and-history/archive-node-api) - A GraphQL service over the archive database. Serves blocks, events, actions, and transactions, and is the path o1js and zkApps use to read history.
 - [Rosetta API](/node-operators/data-and-history/rosetta) - A standardized API for blockchain integration, exchange support, and historical data queries.
+
+Both read the same archive database, and running both against one database is normal. Choose the Archive Node API for zkApp, explorer, and indexer work; choose Rosetta when you need the cross-chain interface exchanges already support.
 
 For querying data from a running node via GraphQL, see [Querying Data](/node-operators/validator-node/querying-data).
 
