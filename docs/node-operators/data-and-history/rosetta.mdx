@@ -55,7 +55,7 @@ The all-in-one image bundles the daemon, archive node, PostgreSQL, and Rosetta A
 docker run -it --rm --name rosetta \
   --entrypoint=./docker-start.sh \
   -p 8302:8302 -p 3085:3085 -p 3086:3086 -p 3087:3087 \
-  minaprotocol/mina-rosetta:3.3.1-7b34378-noble-mainnet
+  minaprotocol/mina-rosetta:4.0.0-6850301-noble-mainnet
 ```
 
 #### Devnet
@@ -66,7 +66,7 @@ docker run -it --rm --name rosetta \
   -p 8302:8302 -p 3085:3085 -p 3086:3086 -p 3087:3087 \
   -e MINA_NETWORK=devnet \
   -e PEER_LIST_URL=https://bootnodes.minaprotocol.com/networks/devnet.txt \
-  minaprotocol/mina-rosetta:3.2.0-97ad487-bookworm-devnet
+  minaprotocol/mina-rosetta:4.0.0-6965b50-bookworm-devnet
 ```
 
 Initial sync typically takes between 20 minutes and 1 hour depending on your hardware and network connection. You can check sync status with:
@@ -134,7 +134,7 @@ The Rosetta Construction API requires an "offline" endpoint that can build and s
 docker run -it --rm --name rosetta-offline \
   --entrypoint=./docker-standalone-start.sh \
   -p 3088:3088 \
-  minaprotocol/mina-rosetta:3.3.1-7b34378-noble-mainnet
+  minaprotocol/mina-rosetta:4.0.0-6850301-noble-mainnet
 ```
 
 This starts only the Rosetta API process — no daemon, archive, or database. Point your Construction API calls to this endpoint for offline operations.
@@ -147,7 +147,7 @@ For development and testing, the demo mode launches a local sandbox with a simpl
 docker run -it --rm --name rosetta-demo \
   --entrypoint=./docker-demo-start.sh \
   -p 3085:3085 -p 3087:3087 \
-  minaprotocol/mina-rosetta:3.3.1-7b34378-noble-mainnet
+  minaprotocol/mina-rosetta:4.0.0-6850301-noble-mainnet
 ```
 
 This creates an isolated network with no external connectivity — useful for developing integrations before connecting to mainnet or devnet.
@@ -156,9 +156,9 @@ This creates an isolated network with no external connectivity — useful for de
 
 | Network | Image | Notes |
 |---|---|---|
-| **Mainnet (noble)** | `minaprotocol/mina-rosetta:3.3.1-7b34378-noble-mainnet` | amd64 |
-| **Mainnet (bookworm)** | `minaprotocol/mina-rosetta:3.3.1-7b34378-bookworm-mainnet` | Also available for arm64 |
-| **Devnet (bookworm)** | `minaprotocol/mina-rosetta:3.2.0-97ad487-bookworm-devnet` | Latest devnet |
+| **Mainnet (noble)** | `minaprotocol/mina-rosetta:4.0.0-6850301-noble-mainnet` | amd64 |
+| **Mainnet (bookworm)** | `minaprotocol/mina-rosetta:4.0.0-6850301-bookworm-mainnet` | Also available for arm64 |
+| **Devnet (bookworm)** | `minaprotocol/mina-rosetta:4.0.0-6965b50-bookworm-devnet` | Latest devnet |
 
 Images are published on [Docker Hub](https://hub.docker.com/r/minaprotocol/mina-rosetta/tags).
 

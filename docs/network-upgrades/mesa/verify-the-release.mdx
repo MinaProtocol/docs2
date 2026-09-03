@@ -53,7 +53,9 @@ Two packages supply the programs. Versions carry a release tag and a commit suff
 
 ```bash
 # The Mesa daemon, which also carries the verification tooling
-sudo apt-get install mina-<network>=4.0.0-devnet-2dc9218
+# Mainnet: mina-mainnet=4.0.0-6850301
+# Devnet: mina-devnet=4.0.0-6965b50
+sudo apt-get install mina-<network>=<mesa-version>
 
 # The pre-fork genesis generator, used to build the reference ledgers
 sudo apt-get install mina-create-<network>-prefork-genesis-ledger=3.5.0-devnet-stop-slot-7a60364
@@ -199,7 +201,7 @@ The Mesa Docker images carry the same programs, so you can verify without instal
 ```bash
 docker run --rm -it \
   -v "$PWD:/workdir" \
-  gcr.io/o1labs-192920/mina-daemon:<mesa-tag> \
+  minaprotocol/mina-daemon:<mesa-tag> \
   bash -c 'FORKING_FROM_CONFIG_JSON=/var/lib/coda/<network>.old.json \
     mina-verify-packaged-fork-config \
       --network <network> \
