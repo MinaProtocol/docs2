@@ -111,12 +111,12 @@ docker run --name mina -d \
 ```bash
 docker stop mina && docker rm mina
 
-docker pull minaprotocol/mina-daemon:<mesa-version>-bullseye-mainnet
+docker pull minaprotocol/mina-daemon:4.0.0-6850301-bullseye-mainnet
 
 docker run --name mina -d \
   --restart=always \
   -v mina-config:/root/.mina-config \
-  minaprotocol/mina-daemon:<mesa-version>-bullseye-mainnet \
+  minaprotocol/mina-daemon:4.0.0-6850301-bullseye-mainnet \
   daemon \
     --block-producer-key /keys/my-wallet \
     --config-directory /root/.mina-config \
@@ -157,7 +157,7 @@ She chooses the **trustless** path — running the upgrade script early, while h
 # /etc/mina/archive/upgrade_to_mesa.sql. The upgrade is backward-compatible,
 # so her Berkeley archive keeps running normally afterwards.
 sudo apt-get update
-sudo apt-get install mina-archive-mainnet=4.x.x
+sudo apt-get install mina-archive-mainnet=4.0.0-6850301
 
 # Back up the database first
 pg_dump -U <user> archive_db > berkeley-archive-backup.sql
@@ -184,7 +184,7 @@ sudo systemctl stop mina-archive
 sudo systemctl stop mina
 
 sudo apt-get update
-sudo apt-get install mina-archive-mainnet=4.x.x mina-mainnet=4.x.x
+sudo apt-get install mina-archive-mainnet=4.0.0-6850301 mina-mainnet=4.0.0-6850301
 
 # Start archive process pointing to the upgraded DB
 mina-archive run \
@@ -208,7 +208,7 @@ She also restarts Rosetta:
 docker run --name rosetta --rm -d \
   -p 3088:3088 \
   --entrypoint '' \
-  minaprotocol/mina-rosetta:<mesa-version>-bullseye-mainnet \
+  minaprotocol/mina-rosetta:4.0.0-6850301-bullseye-mainnet \
   /usr/local/bin/mina-rosetta \
     --archive-uri "postgres://<user>:<pass>@localhost:5432/archive_db" \
     --graphql-uri "http://localhost:3085/graphql" \
@@ -308,7 +308,7 @@ sudo systemctl stop mina mina-archive
 
 # Install the Mesa releases for the node, archive, and Rosetta
 sudo apt-get update
-sudo apt-get install mina-mainnet=4.x.x mina-archive-mainnet=4.x.x mina-rosetta-mainnet=4.x.x
+sudo apt-get install mina-mainnet=4.0.0-6850301 mina-archive-mainnet=4.0.0-6850301 mina-rosetta-mainnet=4.0.0-6850301
 
 # Upgrade the archive schema — the mina-archive package ships the script
 psql -U <user> -d archive_db -f /etc/mina/archive/upgrade_to_mesa.sql

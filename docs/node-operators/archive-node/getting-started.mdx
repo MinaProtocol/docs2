@@ -58,13 +58,13 @@ Running an archive node requires some knowledge of managing a PostgreSQL databas
    - Ubuntu/Debian:
 
      ```
-     sudo apt-get install mina-archive=3.3.0-8c0c2e6
+     sudo apt-get install mina-archive=4.0.0-6850301
      ```
 
    - Docker:
 
      ```
-     minaprotocol/mina-archive:3.3.0-8c0c2e6-bullseye-mainnet
+     minaprotocol/mina-archive:4.0.0-6850301-bullseye-mainnet
      ```
 
 ## Set up the archive node
@@ -138,7 +138,7 @@ To run a local archive node in the foreground for testing:
 2. Pull the archive node image from Docker Hub.
 
    ```sh
-   docker pull minaprotocol/mina-archive:3.3.0-8c0c2e6-bullseye-mainnet
+   docker pull minaprotocol/mina-archive:4.0.0-6850301-bullseye-mainnet
    ```
 
 3. Pull and install the postgres image from Docker Hub.
@@ -180,7 +180,7 @@ To run a local archive node in the foreground for testing:
    --name archive \
    -p 3086:3086 \
    -v /tmp/archive:/data \
-   minaprotocol/mina-archive:3.3.0-8c0c2e6-bullseye-mainnet \
+   minaprotocol/mina-archive:4.0.0-6850301-bullseye-mainnet \
    mina-archive run \
    --postgres-uri postgres://postgres:postgres@postgres:5432/archive \
    --server-port 3086
@@ -207,7 +207,7 @@ With Compose, you use a YAML file to configure your application's services. Then
 2. Pull the required images:
 
    ```sh
-   docker pull minaprotocol/mina-archive:3.3.0-8c0c2e6-bullseye-mainnet
+   docker pull minaprotocol/mina-archive:4.0.0-6850301-bullseye-mainnet
    docker pull postgres
    ```
 
@@ -230,7 +230,7 @@ With Compose, you use a YAML file to configure your application's services. Then
        ports:
          - '5432:5432'
      archive:
-       image: 'minaprotocol/mina-archive:3.3.0-8c0c2e6-bullseye-mainnet'
+       image: 'minaprotocol/mina-archive:4.0.0-6850301-bullseye-mainnet'
        command: >-
          mina-archive run --postgres-uri
          postgres://postgres:postgres@postgres:5432/archive --server-port 3086

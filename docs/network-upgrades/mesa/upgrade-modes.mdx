@@ -158,7 +158,7 @@ After the fork, when the Mesa release is published, stop your node and install t
 
 ```bash
 sudo systemctl stop mina
-sudo apt-get install mina-mainnet=4.x.x
+sudo apt-get install mina-mainnet=4.0.0-6850301
 sudo systemctl start mina
 ```
 
@@ -180,7 +180,7 @@ docker stop mina && docker rm mina
 docker run --name mina -d \
   --restart=always \
   -v mina-config:/root/.mina-config \
-  minaprotocol/mina-daemon:<mesa-version>-bullseye-mainnet \
+  minaprotocol/mina-daemon:4.0.0-6850301-bullseye-mainnet \
   daemon ...
 ```
 

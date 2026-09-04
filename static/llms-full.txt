@@ -4268,21 +4268,21 @@ MESA_VERSION=4.0.0-rc2-3418329
 </TabItem>
 <TabItem value="devnet" label="Devnet">
 
-The devnet Mesa archive version will be published when the devnet fork is scheduled. Check [Mina releases](https://github.com/MinaProtocol/mina/releases?q=mesa) for the latest tag.
+The devnet Mesa archive version is `4.0.0-6965b50`. Check [Mina releases](https://github.com/MinaProtocol/mina/releases?q=mesa) for the latest tag.
 
 ```bash
 # Substitute this version wherever <MESA_VERSION> appears below
-MESA_VERSION=<devnet-mesa-tag>
+MESA_VERSION=4.0.0-6965b50
 ```
 
 </TabItem>
 <TabItem value="mainnet" label="Mainnet">
 
-The mainnet Mesa archive version will be published in the Mesa release announcement. Check [Mina releases](https://github.com/MinaProtocol/mina/releases?q=mesa) for the `4.x.x` tag.
+The mainnet Mesa archive version is `4.0.0-6850301`.
 
 ```bash
 # Substitute this version wherever <MESA_VERSION> appears below
-MESA_VERSION=<mainnet-mesa-tag>
+MESA_VERSION=4.0.0-6850301
 ```
 
 </TabItem>
@@ -4605,7 +4605,7 @@ The mainnet stop-slot schedule is published and is compiled into the releases be
 | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Pre-fork (stop-slot) release            | [`3.5.0-mainnet-stop-slot`](https://github.com/MinaProtocol/mina/releases/tag/3.5.0-mainnet-stop-slot) — `mina-mainnet=3.5.0-mainnet-stop-slot-5e100ee` |
 | Automode release                        | [`4.0.0-mainnet`](https://github.com/MinaProtocol/mina/releases/tag/4.0.0-mainnet) — `mina-mainnet-automode=4.0.0-mainnet-893c877`                      |
-| Mesa release (manual mode only)         | _Published after the stop-network-slot_                                                                                                                 |
+| Mesa release (manual mode only)         | `mina-mainnet=4.0.0-6850301`                                                                                                                 |
 | `stop-transaction-slot` (`slot_tx_end`) | Slot **393800** — 2026-09-03 10:00 UTC                                                                                                                  |
 | `stop-network-slot` (`slot_chain_end`)  | Slot **393900** — 2026-09-03 15:00 UTC                                                                                                                  |
 | Mesa genesis timestamp (UTC)            | 2026-09-03 18:00 (`hard_fork_genesis_slot_delta` = 60 slots = 3 hours)                                                                                  |
@@ -5491,7 +5491,7 @@ After the fork, when the Mesa release is published, stop your node and install t
 
 ```bash
 sudo systemctl stop mina
-sudo apt-get install mina-mainnet=4.x.x
+sudo apt-get install mina-mainnet=4.0.0-6850301
 sudo systemctl start mina
 ```
 
@@ -5513,7 +5513,7 @@ docker stop mina && docker rm mina
 docker run --name mina -d \
   --restart=always \
   -v mina-config:/root/.mina-config \
-  minaprotocol/mina-daemon:<mesa-version>-bullseye-mainnet \
+  minaprotocol/mina-daemon:4.0.0-6850301-bullseye-mainnet \
   daemon ...
 ```
 
@@ -5629,12 +5629,12 @@ docker run --name mina -d \
 ```bash
 docker stop mina && docker rm mina
 
-docker pull minaprotocol/mina-daemon:<mesa-version>-bullseye-mainnet
+docker pull minaprotocol/mina-daemon:4.0.0-6850301-bullseye-mainnet
 
 docker run --name mina -d \
   --restart=always \
   -v mina-config:/root/.mina-config \
-  minaprotocol/mina-daemon:<mesa-version>-bullseye-mainnet \
+  minaprotocol/mina-daemon:4.0.0-6850301-bullseye-mainnet \
   daemon \
     --block-producer-key /keys/my-wallet \
     --config-directory /root/.mina-config \
@@ -5675,7 +5675,7 @@ She chooses the **trustless** path — running the upgrade script early, while h
 # /etc/mina/archive/upgrade_to_mesa.sql. The upgrade is backward-compatible,
 # so her Berkeley archive keeps running normally afterwards.
 sudo apt-get update
-sudo apt-get install mina-archive-mainnet=4.x.x
+sudo apt-get install mina-archive-mainnet=4.0.0-6850301
 
 # Back up the database first
 pg_dump -U <user> archive_db > berkeley-archive-backup.sql
@@ -5702,7 +5702,7 @@ sudo systemctl stop mina-archive
 sudo systemctl stop mina
 
 sudo apt-get update
-sudo apt-get install mina-archive-mainnet=4.x.x mina-mainnet=4.x.x
+sudo apt-get install mina-archive-mainnet=4.0.0-6850301 mina-mainnet=4.0.0-6850301
 
 # Start archive process pointing to the upgraded DB
 mina-archive run \
@@ -5726,7 +5726,7 @@ She also restarts Rosetta:
 docker run --name rosetta --rm -d \
   -p 3088:3088 \
   --entrypoint '' \
-  minaprotocol/mina-rosetta:<mesa-version>-bullseye-mainnet \
+  minaprotocol/mina-rosetta:4.0.0-6850301-bullseye-mainnet \
   /usr/local/bin/mina-rosetta \
     --archive-uri "postgres://<user>:<pass>@localhost:5432/archive_db" \
     --graphql-uri "http://localhost:3085/graphql" \
@@ -5826,7 +5826,7 @@ sudo systemctl stop mina mina-archive
 
 # Install the Mesa releases for the node, archive, and Rosetta
 sudo apt-get update
-sudo apt-get install mina-mainnet=4.x.x mina-archive-mainnet=4.x.x mina-rosetta-mainnet=4.x.x
+sudo apt-get install mina-mainnet=4.0.0-6850301 mina-archive-mainnet=4.0.0-6850301 mina-rosetta-mainnet=4.0.0-6850301
 
 # Upgrade the archive schema — the mina-archive package ships the script
 psql -U <user> -d archive_db -f /etc/mina/archive/upgrade_to_mesa.sql
@@ -6496,7 +6496,9 @@ Two packages supply the programs. Versions carry a release tag and a commit suff
 
 ```bash
 # The Mesa daemon, which also carries the verification tooling
-sudo apt-get install mina-<network>=4.0.0-devnet-2dc9218
+# Mainnet: mina-mainnet=4.0.0-6850301
+# Devnet: mina-devnet=4.0.0-6965b50
+sudo apt-get install mina-<network>=<mesa-version>
 
 # The pre-fork genesis generator, used to build the reference ledgers
 sudo apt-get install mina-create-<network>-prefork-genesis-ledger=3.5.0-devnet-stop-slot-7a60364
@@ -6642,7 +6644,7 @@ The Mesa Docker images carry the same programs, so you can verify without instal
 ```bash
 docker run --rm -it \
   -v "$PWD:/workdir" \
-  gcr.io/o1labs-192920/mina-daemon:<mesa-tag> \
+  minaprotocol/mina-daemon:<mesa-tag> \
   bash -c 'FORKING_FROM_CONFIG_JSON=/var/lib/coda/<network>.old.json \
     mina-verify-packaged-fork-config \
       --network <network> \
@@ -7192,7 +7194,7 @@ docker run \
   --name mina \
   -e RUN_DEMO=true \
   -e MINA_PRIVKEY_PASS='' \
-  minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet
+  minaprotocol/mina-daemon:4.0.0-6850301-bullseye-mainnet
 
 ```
 
@@ -7802,8 +7804,8 @@ services:
     ports:
       - '5432:5432'
   bootstrap_db:
-    image: 'minaprotocol/mina-archive:3.3.0-8c0c2e6-bullseye-mainnet'
-    # image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet' # Use this image for Devnet
+    image: 'minaprotocol/mina-archive:4.0.0-6850301-bullseye-mainnet'
+    # image: 'minaprotocol/mina-daemon:4.0.0-6965b50-bullseye-devnet' # Use this image for Devnet
     command: >
       bash -c '
       curl -O https://storage.googleapis.com/mina-archive-dumps/mainnet-archive-dump-$(date +%F_0000).sql.tar.gz;
@@ -7821,8 +7823,8 @@ services:
       postgres:
         condition: service_healthy
   missing_blocks_guardian:
-    image: 'minaprotocol/mina-archive:3.3.0-8c0c2e6-bullseye-mainnet'
-    # image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet' # Use this image for Devnet
+    image: 'minaprotocol/mina-archive:4.0.0-6850301-bullseye-mainnet'
+    # image: 'minaprotocol/mina-daemon:4.0.0-6965b50-bullseye-devnet' # Use this image for Devnet
     command: >
       bash -c '
       curl -O https://raw.githubusercontent.com/MinaFoundation/helm-charts/main/mina-archive/scripts/missing-blocks-guardian-command.sh;
@@ -7836,7 +7838,7 @@ services:
       bootstrap_db:
         condition: service_completed_successfully
   mina_archive:
-    image: 'minaprotocol/mina-archive:3.3.0-8c0c2e6-bullseye-mainnet'
+    image: 'minaprotocol/mina-archive:4.0.0-6850301-bullseye-mainnet'
     restart: always
     command:
       - mina-archive
@@ -7851,8 +7853,8 @@ services:
       bootstrap_db:
         condition: service_completed_successfully
   mina_node:
-    image: 'minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet'
-    # image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet' # Use this image for Devnet
+    image: 'minaprotocol/mina-daemon:4.0.0-6850301-bullseye-mainnet'
+    # image: 'minaprotocol/mina-daemon:4.0.0-6965b50-bullseye-devnet' # Use this image for Devnet
     restart: always
     entrypoint: []
     command: >
@@ -7924,13 +7926,13 @@ Running an archive node requires some knowledge of managing a PostgreSQL databas
    - Ubuntu/Debian:
 
      ```
-     sudo apt-get install mina-archive=3.3.0-8c0c2e6
+     sudo apt-get install mina-archive=4.0.0-6850301
      ```
 
    - Docker:
 
      ```
-     minaprotocol/mina-archive:3.3.0-8c0c2e6-bullseye-mainnet
+     minaprotocol/mina-archive:4.0.0-6850301-bullseye-mainnet
      ```
 
 ## Set up the archive node
@@ -8004,7 +8006,7 @@ To run a local archive node in the foreground for testing:
 2. Pull the archive node image from Docker Hub.
 
    ```sh
-   docker pull minaprotocol/mina-archive:3.3.0-8c0c2e6-bullseye-mainnet
+   docker pull minaprotocol/mina-archive:4.0.0-6850301-bullseye-mainnet
    ```
 
 3. Pull and install the postgres image from Docker Hub.
@@ -8046,7 +8048,7 @@ To run a local archive node in the foreground for testing:
    --name archive \
    -p 3086:3086 \
    -v /tmp/archive:/data \
-   minaprotocol/mina-archive:3.3.0-8c0c2e6-bullseye-mainnet \
+   minaprotocol/mina-archive:4.0.0-6850301-bullseye-mainnet \
    mina-archive run \
    --postgres-uri postgres://postgres:postgres@postgres:5432/archive \
    --server-port 3086
@@ -8073,7 +8075,7 @@ With Compose, you use a YAML file to configure your application's services. Then
 2. Pull the required images:
 
    ```sh
-   docker pull minaprotocol/mina-archive:3.3.0-8c0c2e6-bullseye-mainnet
+   docker pull minaprotocol/mina-archive:4.0.0-6850301-bullseye-mainnet
    docker pull postgres
    ```
 
@@ -8096,7 +8098,7 @@ With Compose, you use a YAML file to configure your application's services. Then
        ports:
          - '5432:5432'
      archive:
-       image: 'minaprotocol/mina-archive:3.3.0-8c0c2e6-bullseye-mainnet'
+       image: 'minaprotocol/mina-archive:4.0.0-6850301-bullseye-mainnet'
        command: >-
          mina-archive run --postgres-uri
          postgres://postgres:postgres@postgres:5432/archive --server-port 3086
@@ -8611,8 +8613,8 @@ Copy and paste the provided configuration into a `docker-compose.yml` file. Then
 ```yaml
 services:
   generate_wallet_key:
-    image: 'minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet'
-    # image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet' # Use this image for Devnet
+    image: 'minaprotocol/mina-daemon:4.0.0-6850301-bullseye-mainnet'
+    # image: 'minaprotocol/mina-daemon:4.0.0-6965b50-bullseye-devnet' # Use this image for Devnet
     environment:
       MINA_PRIVKEY_PASS: PssW0rD
     entrypoint: []
@@ -8625,8 +8627,8 @@ services:
     volumes:
       - './node/mina-config:/root/.mina-config'
   mina_block_producer:
-    image: 'minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet'
-    # image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet' # Use this image for Devnet
+    image: 'minaprotocol/mina-daemon:4.0.0-6850301-bullseye-mainnet'
+    # image: 'minaprotocol/mina-daemon:4.0.0-6965b50-bullseye-devnet' # Use this image for Devnet
     restart: always
     environment:
       MINA_PRIVKEY_PASS: PssW0rD
@@ -8964,7 +8966,7 @@ The all-in-one image bundles the daemon, archive node, PostgreSQL, and Rosetta A
 docker run -it --rm --name rosetta \
   --entrypoint=./docker-start.sh \
   -p 8302:8302 -p 3085:3085 -p 3086:3086 -p 3087:3087 \
-  minaprotocol/mina-rosetta:3.3.1-7b34378-noble-mainnet
+  minaprotocol/mina-rosetta:4.0.0-6850301-noble-mainnet
 ```
 
 #### Devnet
@@ -8975,7 +8977,7 @@ docker run -it --rm --name rosetta \
   -p 8302:8302 -p 3085:3085 -p 3086:3086 -p 3087:3087 \
   -e MINA_NETWORK=devnet \
   -e PEER_LIST_URL=https://bootnodes.minaprotocol.com/networks/devnet.txt \
-  minaprotocol/mina-rosetta:3.2.0-97ad487-bookworm-devnet
+  minaprotocol/mina-rosetta:4.0.0-6965b50-bookworm-devnet
 ```
 
 Initial sync typically takes between 20 minutes and 1 hour depending on your hardware and network connection. You can check sync status with:
@@ -9043,7 +9045,7 @@ The Rosetta Construction API requires an "offline" endpoint that can build and s
 docker run -it --rm --name rosetta-offline \
   --entrypoint=./docker-standalone-start.sh \
   -p 3088:3088 \
-  minaprotocol/mina-rosetta:3.3.1-7b34378-noble-mainnet
+  minaprotocol/mina-rosetta:4.0.0-6850301-noble-mainnet
 ```
 
 This starts only the Rosetta API process — no daemon, archive, or database. Point your Construction API calls to this endpoint for offline operations.
@@ -9056,7 +9058,7 @@ For development and testing, the demo mode launches a local sandbox with a simpl
 docker run -it --rm --name rosetta-demo \
   --entrypoint=./docker-demo-start.sh \
   -p 3085:3085 -p 3087:3087 \
-  minaprotocol/mina-rosetta:3.3.1-7b34378-noble-mainnet
+  minaprotocol/mina-rosetta:4.0.0-6850301-noble-mainnet
 ```
 
 This creates an isolated network with no external connectivity — useful for developing integrations before connecting to mainnet or devnet.
@@ -9065,9 +9067,9 @@ This creates an isolated network with no external connectivity — useful for de
 
 | Network | Image | Notes |
 |---|---|---|
-| **Mainnet (noble)** | `minaprotocol/mina-rosetta:3.3.1-7b34378-noble-mainnet` | amd64 |
-| **Mainnet (bookworm)** | `minaprotocol/mina-rosetta:3.3.1-7b34378-bookworm-mainnet` | Also available for arm64 |
-| **Devnet (bookworm)** | `minaprotocol/mina-rosetta:3.2.0-97ad487-bookworm-devnet` | Latest devnet |
+| **Mainnet (noble)** | `minaprotocol/mina-rosetta:4.0.0-6850301-noble-mainnet` | amd64 |
+| **Mainnet (bookworm)** | `minaprotocol/mina-rosetta:4.0.0-6850301-bookworm-mainnet` | Also available for arm64 |
+| **Devnet (bookworm)** | `minaprotocol/mina-rosetta:4.0.0-6965b50-bookworm-devnet` | Latest devnet |
 
 Images are published on [Docker Hub](https://hub.docker.com/r/minaprotocol/mina-rosetta/tags).
 
@@ -12339,7 +12341,7 @@ Run the container with following command (replace the image tag with one from do
     docker run -it --rm --name rosetta \
         --entrypoint=./docker-start.sh \
         -p 10101:10101 -p 3085:3085 -p 3086:3086 -p 3087:3087 \
-        minaprotocol/mina-rosetta:3.3.0-8c0c2e6-bullseye-mainnet
+        minaprotocol/mina-rosetta:4.0.0-6850301-bullseye-mainnet
 ```
 
 You can also create a file with the environment variables and pass it to the docker run command with `--env-file` flag. For example, create a file named `mainnet.env` with the following content:
@@ -12868,7 +12870,7 @@ Copy and paste the provided configuration into a `docker-compose.yml` file. Then
 ```yaml
 services:
   generate_libp2p_key:
-    image: 'minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet'
+    image: 'minaprotocol/mina-daemon:4.0.0-6850301-bullseye-mainnet'
     environment:
       MINA_LIBP2P_PASS: PssW0rD
     entrypoint: []
@@ -12881,8 +12883,8 @@ services:
     volumes:
       - './node/mina-config:/root/.mina-config'
   mina_node:
-    image: 'minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet'
-    # image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet' # Use this image for Devnet
+    image: 'minaprotocol/mina-daemon:4.0.0-6850301-bullseye-mainnet'
+    # image: 'minaprotocol/mina-daemon:4.0.0-6965b50-bullseye-devnet' # Use this image for Devnet
     restart: always
     environment:
       MINA_LIBP2P_PASS: PssW0rD
@@ -13049,7 +13051,7 @@ docker run --name mina-seed-node -d \
 -v "$(pwd)/keys:/root/keys:ro" \
 -v "$(pwd)/.mina-config:/root/.mina-config" \
 -v "$(pwd)/.mina-env:/entrypoint.d/mina-env:ro" \
-minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet \
+minaprotocol/mina-daemon:4.0.0-6850301-bullseye-mainnet \
 daemon
 ```
 
@@ -13105,7 +13107,7 @@ Save the following as `docker-compose.yml`, then start with `docker compose up -
 ```yaml
 services:
   generate_wallet_key:
-    image: 'minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet'
+    image: 'minaprotocol/mina-daemon:4.0.0-6850301-bullseye-mainnet'
     environment:
       MINA_PRIVKEY_PASS: PssW0rD
     entrypoint: []
@@ -13118,7 +13120,7 @@ services:
     volumes:
       - './node/mina-config:/root/.mina-config'
   mina_snark_coordinator:
-    image: 'minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet'
+    image: 'minaprotocol/mina-daemon:4.0.0-6850301-bullseye-mainnet'
     restart: always
     environment:
       MINA_PRIVKEY_PASS: PssW0rD
@@ -13145,7 +13147,7 @@ services:
       generate_wallet_key:
         condition: service_completed_successfully
   mina_snark_worker:
-    image: 'minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet'
+    image: 'minaprotocol/mina-daemon:4.0.0-6850301-bullseye-mainnet'
     restart: always
     entrypoint: []
     command: >
@@ -13169,7 +13171,7 @@ services:
 ```yaml
 services:
   generate_wallet_key:
-    image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet'
+    image: 'minaprotocol/mina-daemon:4.0.0-6965b50-bullseye-devnet'
     environment:
       MINA_PRIVKEY_PASS: PssW0rD
     entrypoint: []
@@ -13182,7 +13184,7 @@ services:
     volumes:
       - './node/mina-config:/root/.mina-config'
   mina_snark_coordinator:
-    image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet'
+    image: 'minaprotocol/mina-daemon:4.0.0-6965b50-bullseye-devnet'
     restart: always
     environment:
       MINA_PRIVKEY_PASS: PssW0rD
@@ -13209,7 +13211,7 @@ services:
       generate_wallet_key:
         condition: service_completed_successfully
   mina_snark_worker:
-    image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet'
+    image: 'minaprotocol/mina-daemon:4.0.0-6965b50-bullseye-devnet'
     restart: always
     entrypoint: []
     command: >
@@ -13834,7 +13836,7 @@ docker run --name mina-node -d \
 -v $(pwd)/.mina-env:/entrypoint.d/mina-env:ro \
 -v $(pwd)/keys:/keys:ro \
 -v $(pwd)/.mina-config:/root/.mina-config \
-minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet \
+minaprotocol/mina-daemon:4.0.0-6850301-bullseye-mainnet \
 daemon
 ```
 
@@ -13848,7 +13850,7 @@ docker run --name mina-node -d \
 -v $(pwd)/.mina-env:/entrypoint.d/mina-env:ro \
 -v $(pwd)/keys:/keys:ro \
 -v $(pwd)/.mina-config:/root/.mina-config \
-gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet \
+minaprotocol/mina-daemon:4.0.0-6965b50-bullseye-devnet \
 daemon
 ```
 
@@ -13966,7 +13968,7 @@ If you don't have Mina installed locally, you can use Docker. Start an interacti
 ```sh
 docker run -it --rm --entrypoint /bin/bash \
        --volume "$YOUR_KEY_DIR":/root/keys \
-       minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet
+       minaprotocol/mina-daemon:4.0.0-6850301-bullseye-mainnet
 ```
 
 All `mina` commands below can then be run directly inside the container.
@@ -14070,7 +14072,7 @@ For pre-release builds, see the [Mina Releases](https://github.com/MinaProtocol/
 sudo rm /etc/apt/sources.list.d/mina*.list
 echo "deb [trusted=yes] http://packages.o1test.net $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/mina.list
 sudo apt-get update
-sudo apt-get install --yes curl unzip mina-mainnet=3.3.0-8c0c2e6
+sudo apt-get install --yes curl unzip mina-mainnet=4.0.0-6850301
 ```
 
 </TabItem>
@@ -14081,7 +14083,7 @@ sudo rm /etc/apt/sources.list.d/mina*.list
 echo "deb [trusted=yes] http://packages.o1test.net $(lsb_release -cs) alpha" | sudo tee /etc/apt/sources.list.d/mina-devnet.list
 sudo apt-get install --yes apt-transport-https
 sudo apt-get update
-sudo apt-get install --yes curl unzip mina-devnet=3.3.0-alpha1
+sudo apt-get install --yes curl unzip mina-devnet=4.0.0-6965b50
 ```
 
 </TabItem>
