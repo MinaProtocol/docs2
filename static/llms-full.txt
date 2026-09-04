@@ -1,4 +1,195 @@
 ---
+url: /exchange-operators/faq
+---
+
+# FAQ Listing Mina
+
+<Subhead>Frequently asked questions about listing Mina.</Subhead>
+
+## Basics
+
+### Where can I find third-party audit reports for Mina?
+
+The latest third-party audit reports are publicly available here:
+
+- [https://research.nccgroup.com/2020/05/13/public-report-coda-cryptographic-review](https://research.nccgroup.com/2020/05/13/public-report-coda-cryptographic-review/)
+- [https://leastauthority.com/blog/audit-of-mina-ledger-application-for-o1-labs](https://leastauthority.com/blog/audit-of-mina-ledger-application-for-o1-labs/)
+- [https://research.nccgroup.com/2022/02/22/public-report-o1-labs-mina-client-sdk-signature-library-and-base-components-cryptography-and-implementation-review](https://research.nccgroup.com/2022/02/22/public-report-o1-labs-mina-client-sdk-signature-library-and-base-components-cryptography-and-implementation-review)
+
+<br></br>
+
+:::note
+
+Any news and updates related to exchange listing shared by the Mina Foundation are on [www.minaprotocol.com](https://minaprotocol.com) or the official [Mina Protocol](https://x.com/MinaProtocol) X (Twitter). Mina Foundation cannot individually answer any listing questions.
+
+:::
+
+## Rosetta
+
+### Why do you recommend using Rosetta for integrating Mina to our exchange?
+
+Rosetta is an open-source specification that helps exchanges and developers integrate blockchains. Since Rosetta is actively maintained and specifically designed to enable simpler, faster, and more reliable blockchain integrations, we highly recommend using Rosetta to integrate Mina blockchain with your exchange.
+
+### What if I have a question about Rosetta?
+
+Ask in [Mina Protocol Discord](https://discord.gg/minaprotocol) or post to the Mina GitHub [Discussions](https://github.com/MinaProtocol/mina/discussions).
+
+## Accounts
+
+### Is there an account creation fee?
+
+Yes, Mina Protocol charges a fee of 1 MINA when you create a new account. This fee helps protect the network from denial of service-type attacks. Over time, this fee can change.
+
+## Transactions
+
+### What is the maximum size of the mempool? How do we work around this?
+
+The max mempool size is 3,000. After it hits that size, transactions with the lowest fees are discarded.
+
+Set your fee to an amount higher than 0.001 MINA, the current average fee for transactions in the pool.
+
+You can view the fees for pending transactions and adjust your fees accordingly: [https://minascan.io/mainnet/txs/pending-txs](https://minascan.io/mainnet/txs/pending-txs).
+
+### Why do some users appear to have lost their funds when sending to exchanges?
+
+:::tip
+
+While Mina and its SDKs do support the memo field when sending a transaction, the recommended best practice is <u>do NOT require a memo for deposits</u>.
+
+:::
+
+To associate the deposit with the user's account, some exchanges require their users to include a unique memo field when sending MINA deposits to the exchange's address.
+
+If the user does not include this unique memo when sending their deposit, the receiving exchange may not be able to associate the deposit properly with the user's exchange account.
+
+These funds are <u>NOT lost</u>. The exchanges have received the funds at the exchange's address, but the exchange may not be able to automatically associate the deposit with the user's exchange account without such a memo.
+
+To prevent this issue, we recommend that exchanges <u>do NOT require a memo</u> for deposits. At the same time, exchanges and wallet creators are recommended to <u>expose an optional memo field</u> during a Mina send transaction.
+
+### What is the maximum number of rollback blocks?
+
+The table in [Lifecycle of a Payment](/mina-protocol/lifecycle-of-a-payment) describes how many blocks you wait for a transaction to be confirmed.
+
+### How should I calculate transaction fees?
+
+To calculate your transaction fees, use [https://fees.mina.tools](https://fees.mina.tools/).
+
+## Running a node
+
+### My Mina node gets stuck sometimes. How can I detect this and fix it?
+
+This is a known issue for some earlier releases. Restart your mina node whenever this issue is detected.
+
+You can use the following script to run a cron job every 90 seconds (the slot length) or more frequently:
+
+```
+MINA_STATUS=$($MINA client status --json)
+HIGHESTBLOCK="$(echo $MINA_STATUS | jq .highest_block_length_received)"
+HIGHESTUNVALIDATEDBLOCK="$(echo $MINA_STATUS | jq .highest_unvalidated_block_length_received)"
+
+# Calculate difference between validated and unvalidated blocks.
+# If block height is more than 4 block behind, something is likely wrong.
+
+DELTAVALIDATED="$(($HIGHESTUNVALIDATEDBLOCK-$HIGHESTBLOCK))"
+if [[ "$DELTAVALIDATED" -gt 4 ]]; then
+  $MINA client stop
+fi
+```
+
+:::tip
+
+Be sure your Mina daemon is monitored by something such as systemd, so it can auto-restart.
+
+:::
+
+### My archive node is missing block information after a restart. How can I recover the data?
+
+Archive node operators often choose to run redundant archive nodes to store block data to one or more locations of their choice (for example, PostgreSQL, GCP, local files, or a logging service) and to backfill any missed block data if needed.
+
+For convenience, [mina_network_block_data](https://console.cloud.google.com/storage/browser/mina_network_block_data) from the archive node is available to help others in the community backfill any missing information.
+
+This bucket contains blocks from various Mina networks — for example, Mainnet and the most recent Devnet `devnet2`. Filter by filename for the network you want. Note that this bucket contains blocks for various other networks too, such as QAnet, which is not recommended for your testing. QAnet is used by o1Labs during targeted iterative development.
+
+Filenames contain the network name, block height, and state hash of the block. Blocks older than height 25,705 include only the network name and state hash in the filename.
+
+Example filenames:
+
+(Recent)
+
+```
+mainnet-30627-3NLfKanQ53X2MRKx5ZRvb9nVCEB9eJpcnssGCTpT3J1cojhB5M19.json
+```
+
+(Older)
+
+```
+mainnet-3NKUBmkc7UZ7ik5JyCM4WNzkN1HG5heMB5zNDUkf3Kgta1MFY6LY.json
+```
+
+You can download a specific block using curl:
+
+```
+curl https://mina_network_block_data.storage.googleapis.com/<filename.json>
+```
+
+You can import this file using the mina archive blocks tool. The command for it is:
+
+```
+mina-archive-blocks --precomputed --archive-uri <postgres uri> FILE.
+```
+
+### How do I query for the canonical block at a certain height from the archive node
+
+Use a recursive query. See [Query the database](/node-operators/archive-node/getting-started#query-the-database) examples in the Archive Node docs.
+
+### Why am I getting this error message: "Not able to connect to the network"?
+
+This error message usually occurs due to a chain ID mismatch from running a Devnet build on Mainnet, or vice versa.
+
+To check whether you are running a devnet or mainnet build, run `Mina client status`. Next, compare the output's chain ID of your node to the expected chain ID of the network you are trying to connect to. You can find required information for comparison within the [GitHub announcements](https://github.com/MinaProtocol/mina/discussions/categories/announcements) or [Discord](https://discord.com/channels/484437221055922177/601171209287368715) server.
+
+### Are there any official broadcast nodes that can be used?
+
+No, there are no official broadcast nodes at this time. However, you can broadcast transactions using [https://minascan.io/mainnet/broadcast/payment](https://minascan.io/mainnet/broadcast/payment). Use this method as a backup, the recommended method is to broadcast transactions yourself.
+
+## Staking
+
+### Should I be staking my funds?
+
+Since Mina is a Proof of Stake (PoS) consensus network without lockup for staked tokens, it is recommended to stak these funds to support the quality of the Mina network. Additionally, by not staking, you are missing out on staking rewards that you can otherwise be receiving from the Mina blockchain.
+
+You can look into staking this wallet, either by running your own block production node or just by delegating your funds to a staking pool on the network. Delegating to a staking pool is simpler to set up.
+
+:::note
+
+Newly staked accounts incur a delay of 18 to 29 days before you start receiving rewards.
+
+:::
+
+### Why is there a delay for staking to take effect?
+
+For purposes of ensuring consensus, there is a delay between when delegations are sent on the blockchain and when they take effect with respect to staking on the network. The staking ledger always operates between 18 to 29 days behind the live ledger.
+
+### In that case, how long is the delay and when is the next staking snapshot?
+
+The timing of the next staking snapshot varies.
+
+Since the timing is based on a combination of consensus timing (epochs) and snarketplace throughput, it is difficult to determine exactly how long this delay can be.
+
+A conservative estimate is that delegations sent 3 days before the epoch transition can take effect in the upcoming epoch. This means that, for any given delegation, there is an average of 18 to 29 days delay before this delegation updates block production.
+
+You can use this Delegation Calculator tool built by Carbonara to see the next staking ledger cutoff:
+[https://epoch.mina.tools](https://epoch.mina.tools/).
+
+## Testing
+
+### What is the best way to test tooling and integration with Mina?
+
+Test tooling and integrations on Devnet before going live on Mainnet. The Devnet network is dedicated for developers building on top of the Mina protocol and is designed for testing and experimentation. Be sure to simulate expected Mainnet conditions, such as transaction volume and frequency, to help identify and solve potential issues ahead of time.
+
+See [Connect to Devnet](/node-operators/block-producer-node/connecting-to-devnet).
+
+---
 url: /glossary
 ---
 
@@ -156,7 +347,7 @@ An approach to public key cryptography based on the algebraic structure of ellip
 
 ### epoch
 
-A unit of time equal to 7140 slots at Mainnet. An epoch is divided into [slots](#slot) of 3 minutes each.
+A unit of time equal to 7140 slots at Mainnet. An epoch is divided into [slots](#slot) of 90 seconds each.
 
 ### extensional blocks
 
@@ -324,7 +515,7 @@ A transfer of value or data, including transactions, that exist on and have been
 
 ### on-chain state
 
-State that lives on the Mina blockchain. Each zkApp account provides eight fields of 32 bytes each of arbitrary storage for the on-chain state.
+State that lives on the Mina blockchain. Each zkApp account provides 32 fields of 32 bytes each of arbitrary storage for the on-chain state.
 
 ### oracle
 
@@ -462,7 +653,7 @@ The local testing blockchain you use in the first phase of testing. Using a simu
 
 ### slot
 
-A unit of time in the Mina network. As of Mainnet launch, a slot in Mina is 3minutes long. An [epoch](#epoch) is divided into slots. Block producers can find eligible slots to produce blocks in to earn rewards.
+A unit of time in the Mina network. A slot in Mina is 90 seconds long. An [epoch](#epoch) is divided into slots. Block producers can find eligible slots to produce blocks in to earn rewards.
 
 ### smart contract
 
@@ -592,7 +783,7 @@ A command line tool that zkApp developers use to scaffold and deploy smart contr
 
 ### zkApp account
 
-A zkApp account is an account on the Mina blockchain where a zkApp smart contract is deployed. Each zkApp account provides 8 fields of 32 bytes each of arbitrary storage. When a Mina address contains a verification key, it acts as a zkApp account.
+A zkApp account is an account on the Mina blockchain where a zkApp smart contract is deployed. Each zkApp account provides 32 fields of 32 bytes each of arbitrary storage. When a Mina address contains a verification key, it acts as a zkApp account.
 
 ### zkApp manager account
 
@@ -607,6 +798,277 @@ Technology that the Mina network uses to connect to other chains.
 A zero knowledge proof. zk-SNARK is the acronym for zero knowledge succinct non-interactive argument of knowledge. Specific properties of interest in Mina's implementation of SNARKs are succinctness and non-interactivity, which allow for any node to quickly verify the state of the network. SNARK workers create [zk-SNARKs](https://minaprotocol.com/blog/what-are-zk-snarks) for each transaction. zk-SNARKs are used to create recursive zk-SNARKs that prove the correctness of a block, and in turn, these zk-SNARKs are used to create recursive zk-SNARKs that prove the correctness of the network.
 
 [A](#a) [B](#b) [C](#c) [D](#d) [E](#e) [F](#f) G [H](#h) [I](#i) J [K](#k) [L](#l) [M](#m) [N](#n) [O](#o) [P](#p) Q [R](#r) [S](#s) [T](#t) [U](#u) [V](#v) W X Y [Z](#z)
+
+---
+url: /mesa-upgrade/archive-upgrade
+---
+
+# Archive Upgrade
+
+To successfully upgrade the archive database into the Mesa version of the Mina network, you must ensure that your environment meets the foundational requirements.
+
+## Migration host
+
+- PostgreSQL database for database server
+- If you use Docker, then any of the supported OS by Mina (bullseye, focal, noble, bookworm or jammy) with at least 32 GB of RAM
+- gsutil application from Google Cloud Suite in version 5 or later
+- (Optional) Docker in version 23.0 or later
+
+## Archive database
+
+One of the most obvious prerequisites is a Mainnet database. If you don't have an existing database with Devnet/Mainnet archive data,
+you can always download it from the O1Labs Google Cloud bucket.
+
+## Upgrade process
+
+### Upgrade script
+
+Assuming that you have a PostgreSQL database with Mainnet archive data, in order to upgrade it to Mesa version, you need to run SQL upgrade script.
+We put all efforts to make the upgrade process as smooth as possible. Script can be run on archive node which is online or offline.
+Script can be run multiple times, it will skip steps that were already completed. It also performs sanity checks before each step to ensure that the upgrade process is successful.
+Finally it creates new table (version) in the database to keep track of the upgrade process.
+
+#### Getting the script
+
+You can find the SQL upgrade script in the Mina repository on GitHub. Make sure to download the latest version of the script before proceeding.
+You can download the script directly using the following command:
+
+```bash
+curl -O https://raw.githubusercontent.com/MinaProtocol/mina/refs/heads/mesa/src/app/archive/upgrade_to_mesa.sql
+```
+
+We also ship the script in the Mina archive Docker image and Debian package.
+
+```bash
+docker run --rm gcr.io/o1labs-192920/mina-archive:4.0.0-preflight1-b649c79-bookworm-mesa cat /etc/mina/archive/upgrade-to-mesa.sql > upgrade-to-mesa.sql
+```
+
+```bash
+# Setup the Mina repository and install the archive package
+# See preflight-network.mdx for detailed repository setup instructions
+
+apt-get install mina-archive-mesa=4.0.0-preflight1-b649c79
+
+# View the upgrade and downgrade scripts
+cat /etc/mina/archive/upgrade-to-mesa.sql
+cat /etc/mina/archive/downgrade-to-berkeley.sql
+```
+
+#### Running the script
+
+:::caution Database Backup
+
+Before running the upgrade script, **backup your archive database**. The upgrade modifies the database schema.
+
+```bash
+pg_dump -U <username> <database> > berkeley-archive-backup.sql
+```
+
+:::
+
+To run the upgrade script, execute the following command:
+
+```bash
+psql -U <username> -d <database> -f upgrade-to-mesa.sql
+```
+
+Make sure to replace `<username>` and `<database>` with your actual PostgreSQL username and database name.
+
+#### Rollback
+
+You can rollback the upgrade process by restoring the database from a backup taken before running the upgrade script.
+Another is to run rollback script which is part of the upgrade script. It will drop all tables and other database objects created by the upgrade script.
+It will also update the version table to reflect the rollback.
+
+##### Running the rollback script
+
+To run the rollback script, you need to execute the following command:
+
+```bash
+psql -U <username> -d <database> -f /etc/mina/archive/downgrade-to-berkeley.sql
+```
+
+Make sure to replace `<username>` and `<database>` with your actual PostgreSQL username and database name.
+
+### Post-upgrade steps
+
+After successfully running the upgrade script, you DO NOT need to restart your archive node or Rosetta API.
+Changes in upgrade script are backward compatible and will be picked up by the archive node and Rosetta API automatically.
+
+### Verification
+
+To verify that the upgrade was successful, you can check the version table in the PostgreSQL database.
+
+You can do this by running the following command:
+
+```bash
+psql -U <username> -d <database> -c "SELECT * FROM version;"
+```
+
+Make sure to replace `<username>` and `<database>` with your actual PostgreSQL username and database name.
+
+If the upgrade was successful, you should see the new version number in the output.
+
+We put a lot of effort into making the upgrade process as smooth as possible.
+However, if you encounter any issues or need assistance, please reach out to the Mina community on [Discord](https://discord.gg/minaprotocol) or [GitHub Discussions](https://github.com/MinaProtocol/mina/discussions).
+
+## Appendix: Database Schema Changes
+
+Below we present details of what was changed in the archive node database schema between Berkeley and Mesa versions.
+
+### Zkapp_state_nullable Additional Columns
+
+The `zkapp_state_nullable` table has been modified to include new columns `element8` through `element31` which are nullable and can store additional state information for zkApps.
+
+```sql
+, element8          int     REFERENCES zkapp_field(id)
+...
+, element31         int     REFERENCES zkapp_field(id)
+);
+```
+
+This expansion allows zkApps to store up to 32 state elements (element0 through element31) instead of the previous 8, significantly increasing the state storage capacity for complex smart contracts.
+
+### Version Table
+
+We also introduced a new table `version` to keep track of the database schema version.
+The purpose of this table is to help with future database migrations. The table tracks which migration scripts were applied and when.
+Ultimately it helps to determine the current version of the database schema and helps to avoid applying the same migration script multiple times.
+
+This table is created if it does not exist already. Rollback and upgrade scripts will insert a new row with the version number and timestamp when the script was applied.
+
+```sql
+CREATE TABLE IF NOT EXISTS version (
+    version_num INT PRIMARY KEY,
+    applied_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+The version table provides:
+
+- **Migration tracking**: Records which migrations have been applied
+- **Timestamp tracking**: Shows when each migration was executed
+- **Idempotency**: Prevents duplicate migration runs
+- **Version identification**: Easily identify the current database schema version
+
+---
+url: /mesa-upgrade/mesa-upgrade-overview
+---
+
+# Mesa Upgrade Overview
+
+The Mesa upgrade is Mina Protocol's hard fork that bundles four Mina Improvement Proposals (MIPs 6-9). These proposals were approved through an on-chain community vote.
+
+This page summarizes the key changes that affect zkApp developers.
+
+## MIP-6: Slot Time Reduction
+
+The slot duration has been halved, increasing block production frequency and reducing transaction inclusion latency.
+
+### Before Mesa
+
+| Parameter     | Value                |
+| ------------- | -------------------- |
+| Slot duration | 180 seconds (3 min)  |
+
+### After Mesa
+
+| Parameter     | Value                |
+| ------------- | -------------------- |
+| Slot duration | 90 seconds (1.5 min) |
+
+The 50% reduction in slot time means blocks are produced twice as frequently, which roughly halves the time it takes for transactions to be included in a block.
+
+:::note
+
+The reduced slot time does not mean every transaction is included within 90 seconds. Transaction inclusion latency ranges from roughly 40 to 600 seconds, which is approximately half the previous range. The slot duration defines the block production window, not a guarantee on individual transaction confirmation time.
+
+:::
+
+## MIP-7: Expanded On-Chain State
+
+Each zkApp account's on-chain state has been expanded from **8 fields to 32 fields** (each field is ~32 bytes).
+
+### Before Mesa
+
+- zkApp accounts could store at most **8 field elements** of on-chain state.
+- Developers frequently needed workarounds for storage-constrained applications: packing multiple values into a single field, splitting state across multiple zkApp accounts, or pushing state off-chain.
+
+### After Mesa
+
+- zkApp accounts can store up to **32 field elements** of on-chain state.
+- This enables simpler zkApps as you get more storage for metadata and avoid the complicated workarounds that add dev overhead and circuit constraints, although it wouldn't completely remove the need for the workarounds mentioned above if you need to store more than 32 states.
+
+For more details on on-chain state, see [Smart Contracts](/zkapps/writing-a-zkapp/introduction-to-zkapps/smart-contracts#on-chain-state) and [On-Chain Values](/zkapps/writing-a-zkapp/feature-overview/on-chain-values).
+
+## MIP-8: Increased Actions and Events Capacity
+
+The per-transaction capacity for both actions and events has been significantly increased.
+
+### Before Mesa
+
+| Limit                                     | Value |
+| ----------------------------------------- | ----- |
+| Max event field elements per transaction  | 100   |
+| Max action field elements per transaction | 100   |
+
+### After Mesa
+
+| Limit                                     | Value |
+| ----------------------------------------- | ----- |
+| Max event field elements per transaction  | 1,024 |
+| Max action field elements per transaction | 1,024 |
+
+This 10x increase allows zkApps to emit richer, more expressive events and actions within a single transaction. Applications that need to log detailed state transitions or dispatch complex actions benefit from the expanded capacity.
+
+For more details on actions and events, see [Events](/zkapps/writing-a-zkapp/feature-overview/events), [Actions & Reducer](/zkapps/writing-a-zkapp/feature-overview/actions-and-reducer), and [How to Fetch Events and Actions](/zkapps/writing-a-zkapp/feature-overview/fetch-events-and-actions).
+
+## MIP-9: Increased Account Update Limits
+
+The transaction cost model for account updates has been simplified and the limits increased.
+
+### Before Mesa
+
+Transactions used a **cost-based model** where each type of account update segment had a fractional cost, and the total cost of all segments had to stay within a limit of 69.45 cost units:
+
+| Segment Type               | Cost per Segment |
+| -------------------------- | ---------------- |
+| Proof-based update         | 10.26            |
+| Signed pair update         | 10.08            |
+| Signed single update       | 9.14             |
+| **Transaction cost limit** | **69.45**        |
+
+This yielded approximately **6 proof-based** or **7 signature-based** account updates per transaction.
+
+### After Mesa
+
+Mesa replaces the cost-based model with a simpler **segment-count model**. Each segment counts as 1 unit regardless of type, with a maximum of **16 segments per transaction**:
+
+| Segment Type                     | Cost per Segment |
+| -------------------------------- | ---------------- |
+| Proof-based update               | 1                |
+| Signed pair update               | 1                |
+| Signed single update             | 1                |
+| **Max segments per transaction** | **16**           |
+
+This means:
+
+- **Up to 15 proof-based account updates** per transaction (previously ~5)
+- **Up to 16 signed-single account updates** per transaction (including fee payer)
+- **Up to 32 signature-based account updates** if all are paired (16 pairs, one including the fee payer)
+- Any combination where `proof_segments + signed_single_segments + signed_pair_segments <= 16`
+
+This enables fitting more account updates into one transaction, whether by multiple calls or interactions with zkApps, or more logic in your zkApp including cross-calls with other zkApps within one zkApp method.
+
+:::note
+
+In practice, each zkApp method call generates one proof-based account update. The highest total number of account updates in a single transaction would be 31: 1 proof segment for the method call plus 15 signed-pair segments (each containing 2 updates = 30 signed updates).
+
+The actual number of max account updates varies depending on the combination of segments used.
+
+:::
+
+For more details on account updates, see [Tutorial 10: Account Updates](/zkapps/tutorials/account-updates).
 
 ---
 url: /mina-protocol/block-producers
@@ -753,15 +1215,15 @@ With each subsequent block, a recipient has a higher degree of confidence that t
 
 In the Bitcoin network, a transaction is confirmed after [6 blocks](https://en.bitcoin.it/wiki/Confirmation) (60 mins) with an assumption that an attacker is unlikely to amass more than 10% of the hashrate.
 
-With a slot duration of 3 mins and assuming 90% honest stake, the following table shows the finality in blocks, the average time it takes to produce the corresponding number of blocks, and the confidence that payment will be confirmed.
+With a slot duration of 90 seconds and assuming 90% honest stake, the following table shows the finality in blocks, the average time it takes to produce the corresponding number of blocks, and the confidence that payment will be confirmed.
 
 | Finality (in blocks) | Average time for finality | Finality confidence (%) |
 | -------------------- | ------------------------- | ----------------------- |
-| 8                    | 33 mins                   | 98.6709                 |
-| 15                   | 60 mins                   | 99.9231                 |
-| 23                   | 1hr 32mins                | 99.9965                 |
-| 30                   | 2hrs                      | 99.9998                 |
-| 38                   | 2hrs 32mins               | 100                     |
+| 8                    | 16 mins                   | 98.6709                 |
+| 15                   | 30 mins                   | 99.9231                 |
+| 23                   | 46 mins                   | 99.9965                 |
+| 30                   | 60 mins                   | 99.9998                 |
+| 38                   | 1hr 16mins                | 100                     |
 
 Average time is calculated based on consensus constants that determine the number of slots filled per epoch. This is currently set to 75%.
 
@@ -1338,7 +1800,7 @@ If you'd like to expose liquid balances for vesting accounts at some particular 
 
 ```
 (*
- *  uint32 global_slot -- the "clock" it starts at 0 at the genesis block and ticks up every 3minutes.
+ *  uint32 global_slot -- the "clock" it starts at 0 at the genesis block and ticks up every 90 seconds.
  *  uint32 cliff_time -- the slot where the cliff is (similar to startup equity vesting)
  *  uint32 cliff_amount -- the amount that unlocks at the cliff
  *  amount vesting_increment -- unlock this amount every "period"
@@ -7614,7 +8076,7 @@ Export these ledgers using the mina cli command:
 
     mina ledger export [current-staged-ledger|staking-epoch-ledger|next-epoch-ledger]
 
-Epoch ledger transition happens once every 14 days (given slot-time = 3mins and slots-per-epoch = 7140). 
+Epoch ledger transition happens once every 7 days (given slot-time = 90 seconds and slots-per-epoch = 7140).
 
 The window to backup a staking ledger is ~27 days considering "next" staking ledger is finalized after k (currently 290) blocks in the current epoch and therefore is available for the rest of the current epoch and the entire next epoch.
 
@@ -8788,7 +9250,7 @@ This document aims to explain the different components that you should think abo
 
 ## Staking Rewards
 
-The coinbase reward for producing a block is 720 tokens. 
+The coinbase reward for producing a block is 360 MINA. 
 
 ## Dumping Staking Ledgers
 
@@ -8836,7 +9298,7 @@ It requires an argument to identifier of the ledger you wish to export. The tabl
 <br />
 
 
-In order to ensure you always have each staking ledger available for use after epochs have expired, we recommend exporting the staking-epoch-ledger every (7140 × 3) ÷ 60 = 357 hours (there are 7140 slots in an epoch, and each slot is 3 minutes long).
+In order to ensure you always have each staking ledger available for use after epochs have expired, we recommend exporting the staking-epoch-ledger every (7140 × 1.5) ÷ 60 = 178.5 hours (there are 7140 slots in an epoch, and each slot is 90 seconds long).
 
 By default, ledgers are exported as json data. See `mina ledger export -help` for documentation of flags which will enable other formats. When output as json, the ledger will be represented as an array of account objects. Below is an example of what an account object in json looks like.
 
@@ -8916,6 +9378,169 @@ You can optionally run an [archive node](/node-operators/archive-node/getting-st
 - [Rosetta API](/node-operators/data-and-history/rosetta) - A standardized API for blockchain integration, exchange support, and historical data queries.
 
 For querying data from a running node via GraphQL, see [Querying Data](/node-operators/validator-node/querying-data).
+
+---
+url: /node-operators/data-and-history/querying-data
+---
+
+# Querying Data
+
+
+
+<Subhead>Data querying for node operators.</Subhead>
+
+Some node operators don't wish to participate in block production or SNARK work creation, but just want to sit on the network and passively aggregate information for querying or submit signed transactions. These nodes don't require an account key pair themselves to run successfully.
+
+## Preparation
+
+In addition to [installing the Mina daemon on your machine](/node-operators/block-producer-node/getting-started), you may also want to have some system set up to archive historical information on your machine. To do so you can setup an [archive node](/node-operators/archive-node/getting-started), archive by using [other redundant means](/node-operators/archive-node/archive-redundancy), or both.
+
+## Running a node
+
+The best way to learn how to run a node is to follow the [Connect to the Mina Network](../block-producer-node/connecting-to-the-network) instructions.
+
+To prevent this node from starting as a block producer, remove the `MINA_PRIVKEY_PASS` and `-block-producer-key ...` flags.
+
+To expose recent information of the blockchain, expose the GraphQL REST server.
+
+You can provide `-rest-server-port XXXX` if the default port of 0xc0d or 3085 does not work for you.
+
+To make the REST server accessible from outside of `localhost`, provide `-insecure-rest-server`. Make sure you set your firewall up properly. See [GraphQL API](/node-developers/graphql-api) for more information.
+
+## Querying information
+
+Presented here are examples about querying for _recent_ information on the chain -- around 290 blocks, in practice around 10 hours of recent activity.
+
+The best way to explore all the specific details available for each of the GraphQL objects is to visit your favorite web browser pointing to the REST server running from within a Mina daemon that hosts a GraphQL sandbox. Visit the [GraphQL API page](/node-developers/graphql-api) to learn more. Documentation is also present on most of the individual fields, you can learn more about each field by hovering over the entries in the sandbox or by visiting the hosted schema (coming soon).
+
+### Block data
+
+```javascript
+query BlockData {
+  bestChain(maxLength: 10) {
+    stateHash
+    creatorAccount {
+      balance {
+        total
+      }
+    }
+  }
+}
+```
+
+### Current Balance
+
+The following is a query for accessing the current balance of a public key. Note that you can also ask for the blockHeight and stateHash of the block that this balance is inspected within.
+
+```javascript
+query CurrentBalance {
+  account(publicKey: "B62qmyjqEtUEZrsBpUaiz18DCkwh1ovCrJboiHbDhpvH8JEoaag5fUP") {
+    balance {
+      blockHeight
+      total
+      stateHash
+    }
+  }
+}
+```
+
+### Staking Information
+
+In Mina, accounts are either staked or delegated completely. There is no alternative state. The following is a way to query this information that is present in the current ledger.
+
+```javascript
+query StakingInfo {
+  account(publicKey: "B62qmyjqEtUEZrsBpUaiz18DCkwh1ovCrJboiHbDhpvH8JEoaag5fUP") {
+    balance {
+      blockHeight
+      total
+      stateHash
+    }
+    delegateAccount {
+      publicKey
+    }
+  }
+}
+```
+
+If the delegateAccount.publicKey is null, then this account is "staking directly" and this private key should be used for block production directly.
+
+Note that the actual staking and delegating in the current "epoch" is drawn from the "staking ledger". We are currently implementing a mechanism for accessing this staking ledger directly, but for now you'll need to periodically query for this information and store it internally and then refer to it when it becomes active. On epoch transitions, a new staking ledger is selected by promoting the SNARKed ledger of the last block two epochs prior. In practice, this is between 1-2 weeks.
+
+### Get Transaction Details
+
+Via GraphQL, you can lookup transactions within blocks on the bestChain as follows:
+
+```javascript
+query TransactionDetails {
+  bestChain(maxLength: 10) {
+    stateHash
+    creatorAccount {
+      balance {
+        total
+      }
+    }
+    transactions {
+      coinbase
+      userCommands {
+        amount
+        fee
+        feePayer {
+          publicKey
+        }
+        hash
+        isDelegation
+        kind
+        memo
+        nonce
+        receiver {
+          publicKey
+        }
+        source {
+          publicKey
+        }
+      }
+    }
+  }
+}
+```
+
+## Submit a Signed Transaction
+
+You can send a signed transaction using the following GraphQL mutation. You can get information about the payment returned back to you as a sanity check.
+
+```javascript
+mutation SubmitSignedTransaction {
+  __typename
+  sendPayment(input: {
+    fee: "3000000",
+    amount: "42",
+    to: "B62qrcFstkpqXww1EkSGrqMCwCNho86kuqBd4FrAAUsPxNKdiPzAUsy",
+    from: "B62qiy32p8kAKnny8ZFwoMhYpBppM1DWVCqAPBYNcXnsAHhnfAAuXgg",
+    nonce: "0",
+    memo: "This is a memo",
+    validUntil: "50000"
+  }, signature: {
+      field: "26393275544831950408026742662950427846842308902199169146789849923161392179806",
+      scalar: "28530962508461835801829592060779431956054746814505059654319465133050504973404"
+   }) {
+    payment {
+      amount
+      fee
+      kind
+      memo
+      nonce
+      source {
+        publicKey
+      }
+      receiver {
+        publicKey
+      }
+      isDelegation
+    }
+  }
+}
+```
 
 ---
 url: /node-operators/data-and-history/rosetta
@@ -9246,7 +9871,7 @@ You must return rewards to the address specified in the [Mina Delegation Program
 
 Rewards must be distributed at least once for a given epoch. You must send one payment in the amount of your obligation to the correct address specified in the [Mina Delegation Program Return Addresses](https://docs.google.com/spreadsheets/d/1Fm4XSS9Xu4eWAhpM06sdySUKvLClR5SculXfP5o5sSc/edit?usp=sharing) mapping document and if applicable, send the correct amount to the burn address. Both payments should have a memo field with the md5 hash value of your block producer public key. This is the easiest method to avoid confusion in tracking payments and will reduce the likelihood you will be incorrectly flagged as delinquent.
 
-All the rewards for epoch N must be delivered (ie. accepted in a block, not just sent) no later than slot number 3,500 of the next epoch. This gives you about a week to sort out these payments.
+All the rewards for epoch N must be delivered (ie. accepted in a block, not just sent) no later than slot number 3,500 of the next epoch. This gives you about half a week to sort out these payments.
 
 
 ### How do I calculate the reward payout?
@@ -9266,9 +9891,9 @@ At the end of each epoch, do <u>all</u> of the following:
 
 2. Compute the share of stake from the token provider (from both accounts) by dividing the token provider delegation by the total stake. (i.e. `provider_share = provider_delegation / total_stake`). The resulting share should be between 0 and 1.
 
-3. For each block produced that has a non-zero block-reward on the canonical chain rewards must be calculated based on 720 MINA.
+3. For each block produced that has a non-zero block-reward on the canonical chain rewards must be calculated based on 360 MINA.
 
-4. Calculate the Mina Foundation payout by multiplying the coinbase reward (equal to `720 MINA` ) by the provider share calculated in the previous step minus an 8% percent fee. (i.e. `payout = (provider_share * 0.92) * 720)`.
+4. Calculate the Mina Foundation payout by multiplying the coinbase reward (equal to `360 MINA` ) by the provider share calculated in the previous step minus an 8% percent fee. (i.e. `payout = (provider_share * 0.92) * 360)`.
 
 5.  Send a transaction to the token provider accounts with the appropriate payout and memo - please follow the rules in the "Payout Attribution" section with your transaction.
   More details in the following source code parts: [PayoutCalculatorIsolateSuperCharge.ts](https://github.com/jrwashburn/mina-pool-payout/blob/7f00dbd9e693f76ea6a950c29862120a170625a9/src/core/payoutCalculator/PayoutCalculatorIsolateSuperCharge.ts#L126) and [ConfigurationManager.ts](https://github.com/jrwashburn/mina-pool-payout/blob/7f00dbd9e693f76ea6a950c29862120a170625a9/src/configuration/ConfigurationManager.ts#L21C15-L21C15).
@@ -9295,11 +9920,11 @@ Now let's consider Epoch 5. The share of the stake from the Foundation is `6 mil
 
 3 blocks are produced in this epoch that end up on the canonical chain. The blocks were won by Account A.
 
-1. Account A retains, 0.2 x 720 MINA x 3 blocks = 432 MINA.
-2. Mina Foundation, Account B, payout would be: (0.6 x 0.92) x 720 MINA x 3 blocks = 1,192.32 MINA.
-3. Account A retains 8%, (0.6 x 0.08) x 720 MINA x 3 blocks = 103.68 MINA.
-3. Account C payout would be: (0.2 x 0.92) x 720 MINA x 3 blocks = 397.44 MINA.
-4. Account A retains 8%, (0.2 x 0.08) x 720 MINA x 3 blocks = 34.56 MINA
+1. Account A retains, 0.2 x 360 MINA x 3 blocks = 216 MINA.
+2. Mina Foundation, Account B, payout would be: (0.6 x 0.92) x 360 MINA x 3 blocks = 596.16 MINA.
+3. Account A retains 8%, (0.6 x 0.08) x 360 MINA x 3 blocks = 51.84 MINA.
+3. Account C payout would be: (0.2 x 0.92) x 360 MINA x 3 blocks = 198.72 MINA.
+4. Account A retains 8%, (0.2 x 0.08) x 360 MINA x 3 blocks = 17.28 MINA
 
 
 ### Relevant Links
@@ -13335,6 +13960,219 @@ Deep knowledge of zk-SNARKs is not required to run a SNARK worker, but for backg
 - [FAQ: SNARKs and SNARK Workers](/node-operators/faq#snarks-and-snark-workers) — Common questions about SNARK pricing, fees, and performance
 
 ---
+url: /node-operators/staking-and-snarking
+---
+
+# Staking and Snarking
+
+You can interact with the Mina network by participating in consensus to produce a cryptographic proof for the data by generating [zk-SNARKs](https://docs.minaprotocol.com/glossary#zk-snark). By operating a node that helps secure the network, you can receive MINA for your efforts. See [Staking Rewards on Mina](https://minaprotocol.com/blog/staking-rewards-on-mina).
+
+## Participating in Consensus
+
+The Mina network is secured by [proof of stake (PoS)](/glossary#proof-of-stake-pos) consensus. With this model of consensus, you don't need to have complex equipment like in Bitcoin mining. By simply having MINA in your wallet, you can choose to stake your MINA and run a node or delegate it to another node. When you delegate your tokens, you are staking your MINA tokens with block producers who operate nodes, sometimes known as a staking pools. The staking pool will share the earned block rewards, minus a small fee, with those who have delegated their MINA.
+
+Mina is a public and decentralized blockchain that is open for anyone in the world to participate in actively or passively. You can help increase the security of the network by becoming nodes or block producers, or you can help lower the cost of transactions by becoming SNARK producers, or you can be both.
+
+## Staking MINA
+
+You can earn block rewards by participating in block production through staking. 
+
+- Your new stake delegation comes into effect after a latency period of 1-2 weeks.
+- You can undelegate at any time with no penalty. Submit a delegation transaction with the new staking service or back to yourself if you want to be a block producer. Updates are made after a delay of 1-2 epochs.
+
+### Requirements
+
+To properly remain synced to the network and participate in consensus, your server must run a [clock synchronization protocol](https://en.wikipedia.org/wiki/Clock_synchronization).
+
+Network Time Protocol [(NTP)](https://en.wikipedia.org/wiki/Network_Time_Protocol) is the most common method for synchronizing computer clocks over a network. 
+
+To synchronize your server software clock with internet time servers, be sure to set up NTP. Many popular Linux distributions include NTP as a default service.
+
+## Set or change the block producer key
+
+Use the `mina client delegate-stake` subcommand to set or change the delegation of the block producer key. See
+ [Delegating MINA](#delegating-mina).
+
+Alternatively, to stake with your own node, start the daemon with the `-block-producer-pubkey` flag:
+
+```
+args={["-block-producer-pubkey $MINA_PUBLIC_KEY"]} />
+```
+
+To check which accounts you are staking with:
+
+```sh
+mina client status
+```
+
+The expected output is like:
+
+```text
+Mina daemon status
+-----------------------------------
+
+Global number of accounts:                     327371
+Block height:                                  32494
+Max observed block height:                     32494
+Max observed unvalidated block height:         32494
+Local uptime:                                  2d5h11m5s
+Ledger Merkle root:                            ...
+Protocol state hash:                           ...
+Chain id:                                      ...
+Git SHA-1:                                     ...
+Configuration directory:                       /root/.mina-config
+Peers:                                         77
+User_commands sent:                            0
+SNARK worker:                                  None
+SNARK work fee:                                1
+Sync status:                                   Synced
+Catchup status:                                
+	To build breadcrumb:           0
+	To initial validate:           0
+	Finished:                      388
+	To download:                   0
+	Waiting for parent to finish:  0
+	To verify:                     0
+
+Block producers running:                       1 (...)
+Coinbase receiver:                             Block producer
+Best tip consensus time:                       epoch=6, slot=4505
+Best tip global slot (across all hard-forks):  47345
+Next block will be produced in:                in 7.077h for slot: 47487 slot-since-genesis: 47487 (Generated from consensus at slot: 46403 slot-since-genesis: 46403)
+Consensus time now:                            epoch=6, slot=4505
+Consensus mechanism:                           proof_of_stake
+Consensus configuration:                       
+	Delta:                     0
+	k:                         290
+	Slots per epoch:           7140
+	Slot duration:             1m30s
+	Epoch duration:            7d10h30m
+	Chain start timestamp:     2023-10-17 16:01:01.000000Z
+	Acceptable network delay:  3m
+
+Addresses and ports:                           
+	External IP:    ...
+	Bind IP:        ...
+	Libp2p PeerID:  ...
+	Libp2p port:    10801
+	Client port:    8301
+
+Metrics:                                       
+	block_production_delay:             7 (0 0 0 0 0 0 1)
+	transaction_pool_diff_received:     0
+	transaction_pool_diff_broadcasted:  0
+	transactions_added_to_pool:         1075
+	transaction_pool_size:              0
+	snark_pool_diff_received:           2
+	snark_pool_diff_broadcasted:        0
+	pending_snark_work:                 0
+	snark_pool_size:                    1967
+```
+
+where:
+
+- The `Block producers running` field returns the number of accounts currently staking, with the associated key.
+
+When you are staking independently with funds in an account, you must run a node and remain connected to the network at all times to successfully produce blocks. If you need to go offline frequently, it might be better to delegate your stake to another node operator.
+
+If you want to send your coinbase to an account other than the one that is staking, use the `-coinbase-receiver` flag when you start your daemon. You can even point the coinbase at a cold wallet.
+
+### Delegating MINA
+
+Delegating MINA has the benefit of not having to maintain a node that is always connected to the network. See [Mina Foundation Delegation Program](/node-operators/delegation-program/foundation-delegation-program).
+
+First, make sure you've unlocked your account:
+
+```sh
+mina account unlock --public-key $MINA_PUBLIC_KEY
+```
+
+To delegate your stake:
+
+```
+mina client delegate-stake \
+    --receiver <DELEGATE-PUBLIC-KEY> \
+    --sender $MINA_PUBLIC_KEY \
+    --fee 0.1
+```
+
+where:
+
+- `receiver` is the public key of the receiver of your stake delegation
+- `sender` is the public key of the account you want to delegate from
+- `fee` is the cost to send your transaction, the fee is paid to the network’s block producers
+
+There is no _amount_ parameter. Your full MINA balance is delegated automatically.
+
+This command looks like a [payment](/mina-protocol/sending-a-payment) transaction, because a stake delegation is also a transaction, which is why you have to pay a small transaction fee.
+
+Delegating your stake might be useful if you're interested in:
+
+- Running your own staking node that uses funds from a cold wallet
+- Delegating to a staking pool that periodically provides token payouts
+
+You might decide to stake your MINA if you don't have enough MINA tokens to make managing a block producer full-time worthwhile.
+
+## Compressing data in the Mina network
+
+The Mina protocol is unique because nodes are not required to maintain the full history of the blockchain like other cryptocurrency protocols. By recursively using cryptographic proofs, the Mina protocol effectively compresses the blockchain to constant size. This compression reduces terabytes of data to a few kilobytes.
+
+However, this isn't data encoding or compression in the traditional sense. Mina nodes _compress_ data in the network by generating cryptographic proofs. Node operators play a crucial role in this process by designating themselves as [SNARK-workers](/glossary#snark-worker) that generate [zk-SNARKs](/glossary#zk-snark) for transactions that have been added to blocks.
+
+To start a SNARK-worker, run these commands:
+
+```sh
+mina client set-snark-work-fee <FEE>
+mina client set-snark-worker --address $MINA_PUBLIC_KEY
+```
+
+If your daemon is already running, restart the daemon with these flags:
+
+```
+args={["-run-snark-worker $MINA_PUBLIC_KEY", "-snark-worker-fee <fee>"]}
+```
+
+As a SNARK worker, you get to share some of the block rewards for each block that include your compressed transactions. The block producer is responsible for gathering compressed transactions before including them into a block and is incentivized by the protocol to reward SNARK workers.
+
+SNARK workers can be fairly compute-intensive. If you need to limit their CPU usage, specify the number of threads that SNARK workers use with the `-snark-worker-parallelism` flag when running a `mina daemon` as a SNARK worker. This can be especially useful if you're trying to run a block producer and SNARK worker on the same machine and are having issues producing blocks in time.
+
+The roles and responsibilities of a Mina node operator offer you incentives to participate in block production through staking or delegation. Mina is a permissionless peer-to-peer network, so everything is managed and run in a decentralized manner by nodes all over the world. 
+
+### Configure your mina daemon in daemon.json
+
+By creating a file at `~/.mina-config/daemon.json`, you can configure your mina daemon without providing options on the command line. This can be useful for running mina as a service and to avoiding repetitive typing.
+
+Most of the options that can be passed to `mina daemon` on the command line can also be provided as options in the config file. See `mina daemon -help` for more details. 
+
+The following example file includes usage of the configuration parameters:
+
+```json
+{
+  "daemon": {
+    "client-port": 1000,
+    "external-port": 1001,
+    "rest-port": 1002,
+    "block-producer-key": "/path/to/privkey-file",
+    "block-producer-password": "mypassword",
+    "block-producer-pubkey": "<MY PUBLICKEY>",
+    "coinbase-receiver": "<MY PUBLICKEY>",
+    "log-block-creation": false,
+    "log-received-blocks": false,
+    "log-snark-work-gossip": false,
+    "log-txn-pool-gossip": false,
+    "peers": ["seed-one.o1test.net", "seed-two.o1test.net"],
+    "run-snark-worker": "<MY PUBLICKEY>",
+    "snark-worker-fee": 10,
+    "snark-worker-parallelism": 1,
+    "work-reassignment-wait": 420000,
+    "work-selection": "seq"
+  }
+}
+```
+
+In the `~/.mina-config/daemon.json` file, include only the options you want to change.
+
+---
 url: /node-operators/troubleshooting
 ---
 
@@ -13634,7 +14472,7 @@ It is also possible to produce a block in catchup, and this block will also be q
 
 There are a few reasons why you could miss a slot / not successfully produce a block, for example, the node restarting and being in bootstrap at the time of producing a slot.
 
-Also, you must produce a block within the slot time (3 mins). If you are on less powerful hardware or the daemon is competing for resources, it may not produce the block in time. In this instance, you should find in your logs:
+Also, you must produce a block within the slot time (90 seconds). If you are on less powerful hardware or the daemon is competing for resources, it may not produce the block in time. In this instance, you should find in your logs:
 
 `Internally generated block $state_hash cannot be rebroadcast because it's not a valid time to do so ($timing)`
 
@@ -13642,7 +14480,7 @@ It is not recommended to run a SNARK worker on the same machine at the same time
 
 ### Why is the block rate so low / how often should there be a block?
 
-A slot on the current network is every 3 mins, though not all slots should have a block produced, so on average, we would expect a block every 4 mins. However, not all the stake is online and active in producing blocks, and so not all slots will have a block, and sometimes there can be long delays between blocks. As more of the stake is online and staking, this situation improves.
+A slot on the current network is every 90 seconds, though not all slots should have a block produced, so on average, we would expect a block every 2 mins. However, not all the stake is online and active in producing blocks, and so not all slots will have a block, and sometimes there can be long delays between blocks. As more of the stake is online and staking, this situation improves.
 
 ### Why does o1Labs win most of the blocks?
 
@@ -14711,14 +15549,14 @@ When you delegate MINA to a validator:
 
 1. Your tokens **never leave your wallet** - you maintain full control
 2. The validator uses your stake weight to increase their chances of producing blocks
-3. When the validator wins a block (720 MINA reward), they distribute rewards proportionally to all delegators
+3. When the validator wins a block (360 MINA reward), they distribute rewards proportionally to all delegators
 4. The validator takes a commission fee and you receive your share of the remaining rewards
-5. It takes **2-4 weeks** for your delegation to become active on the network
+5. It takes **1-2 weeks** for your delegation to become active on the network
 6. You can change validators anytime with no penalties
 
 :::note
 
-Values like staking rewards, epoch duration, and APY are subject to change with network upgrades. After the upcoming Mesa upgrade, block rewards will decrease from 720 to 360 MINA per block, and epoch duration will reduce from 2-4 weeks to 1-2 weeks.
+Values like staking rewards, epoch duration, and APY are subject to change with network upgrades. For example, after the latest Mesa upgrade, block rewards decreased from 720 to 360 MINA per block, and epoch duration was reduced from 2-4 weeks to 1-2 weeks.
 
 :::
 
@@ -14788,7 +15626,7 @@ When selecting a validator to delegate to, consider these factors:
 
 ### Choosing a Validator
 
-Your delegation will become active after **2-4 weeks** (1-2 epochs). Here are some extra things to note:
+Your delegation will become active after **1-2 weeks** (1-2 epochs). Here are some extra things to note:
 
 - **Checking Your Status:** Most wallets show your current delegation status, including:
     - Which validator you're delegated to
@@ -15389,7 +16227,7 @@ url: /zkapps/front-end-integration-guides/angular
 <br />
 
 - Fund your wallet using the [Mina Faucet](https://faucet.minaprotocol.com/).
-    - You'll need to wait one block (~3 minutes) to see the change in balance reflected on chain. You can use [Minascan](https://minascan.io/devnet) to track the status of your transaction.
+    - You'll need to wait one block (~90 seconds) to see the change in balance reflected on chain. You can use [Minascan](https://minascan.io/devnet) to track the status of your transaction.
 
 <figure
   style={{ display: "flex", height:"30rem" }}>
@@ -16558,6 +17396,261 @@ You can follow the instructions about linking your repo to Vercel and deploying 
 #### Build Failure
 
 Make sure that running `npm run build` locally works before deploying.  If it doesn't, fix the error locally, then push your changes to git, and they will be automatically redeployed.
+
+---
+url: /zkapps/o1js-reference/interfaces/Permissions
+---
+
+Permissions specify how specific aspects of the zkapp account are allowed
+to be modified. All fields are denominated by a Permission.
+
+## Extends
+
+- `Permissions_`
+
+## Properties
+
+### access
+
+```ts
+access: AuthRequired;
+```
+
+Permission to control the ability to include _any_ account update for this
+account in a transaction. Note that this is more restrictive than all other
+permissions combined. For normal accounts it can safely be set to `none`,
+but for token contracts this has to be more restrictive, to prevent
+unauthorized token interactions -- for example, it could be
+`proofOrSignature`.
+
+#### Overrides
+
+`Permissions_.access`
+
+#### Source
+
+[lib/mina/account-update.ts:397](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L397)
+
+---
+
+### editActionState
+
+```ts
+editActionState: AuthRequired;
+```
+
+The Permission corresponding to the ability to emit actions to the account.
+
+#### Overrides
+
+`Permissions_.editActionState`
+
+#### Source
+
+[lib/mina/account-update.ts:376](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L376)
+
+---
+
+### editState
+
+```ts
+editState: AuthRequired;
+```
+
+The Permission corresponding to the 32 state fields associated with
+an account.
+
+#### Overrides
+
+`Permissions_.editState`
+
+#### Source
+
+[lib/mina/account-update.ts:332](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L332)
+
+---
+
+### incrementNonce
+
+```ts
+incrementNonce: AuthRequired;
+```
+
+#### Overrides
+
+`Permissions_.incrementNonce`
+
+#### Source
+
+[lib/mina/account-update.ts:385](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L385)
+
+---
+
+### receive
+
+```ts
+receive: AuthRequired;
+```
+
+The Permission corresponding to the ability to receive transactions
+to this account.
+
+#### Overrides
+
+`Permissions_.receive`
+
+#### Source
+
+[lib/mina/account-update.ts:344](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L344)
+
+---
+
+### send
+
+```ts
+send: AuthRequired;
+```
+
+The Permission corresponding to the ability to send transactions
+from this account.
+
+#### Overrides
+
+`Permissions_.send`
+
+#### Source
+
+[lib/mina/account-update.ts:338](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L338)
+
+---
+
+### setDelegate
+
+```ts
+setDelegate: AuthRequired;
+```
+
+The Permission corresponding to the ability to set the delegate
+field of the account.
+
+#### Overrides
+
+`Permissions_.setDelegate`
+
+#### Source
+
+[lib/mina/account-update.ts:350](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L350)
+
+---
+
+### setPermissions
+
+```ts
+setPermissions: AuthRequired;
+```
+
+The Permission corresponding to the ability to set the permissions
+field of the account.
+
+#### Overrides
+
+`Permissions_.setPermissions`
+
+#### Source
+
+[lib/mina/account-update.ts:356](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L356)
+
+---
+
+### setTiming
+
+```ts
+setTiming: AuthRequired;
+```
+
+#### Overrides
+
+`Permissions_.setTiming`
+
+#### Source
+
+[lib/mina/account-update.ts:387](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L387)
+
+---
+
+### setTokenSymbol
+
+```ts
+setTokenSymbol: AuthRequired;
+```
+
+The Permission corresponding to the ability to set the token symbol
+for this account.
+
+#### Overrides
+
+`Permissions_.setTokenSymbol`
+
+#### Source
+
+[lib/mina/account-update.ts:382](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L382)
+
+---
+
+### setVerificationKey
+
+```ts
+setVerificationKey: VerificationKeyPermission;
+```
+
+The Permission corresponding to the ability to set the verification
+key associated with the circuit tied to this account. Effectively
+"upgradeability" of the smart contract.
+
+#### Overrides
+
+`Permissions_.setVerificationKey`
+
+#### Source
+
+[lib/mina/account-update.ts:363](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L363)
+
+---
+
+### setVotingFor
+
+```ts
+setVotingFor: AuthRequired;
+```
+
+#### Overrides
+
+`Permissions_.setVotingFor`
+
+#### Source
+
+[lib/mina/account-update.ts:386](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L386)
+
+---
+
+### setZkappUri
+
+```ts
+setZkappUri: AuthRequired;
+```
+
+The Permission corresponding to the ability to set the zkapp uri
+typically pointing to the source code of the smart contract. Usually this
+should be changed whenever the [Permissions.setVerificationKey](Permissions.mdx#setverificationkey) is
+changed. Effectively "upgradeability" of the smart contract.
+
+#### Overrides
+
+`Permissions_.setZkappUri`
+
+#### Source
+
+[lib/mina/account-update.ts:371](https://github.com/o1-labs/o1js/blob/6ebbc23710f6de023fea6d83dc93c5a914c571f2/src/lib/mina/account-update.ts#L371)
 
 ---
 url: /zkapps/o1js/basic-concepts
@@ -18019,6 +19112,192 @@ For more details and examples, please refer to the following GitHub resources:
 - [Mastermind zkApp Example Using Indexed Merkle Map](https://github.com/o1-labs-XT/mastermind-zkApp/tree/level3)
 
 ---
+url: /zkapps/o1js/merkle-tree
+---
+
+# Merkle Tree
+
+zkApp accounts can store only a limited amount of data on chain so that Mina's chain remains succinct and does not become bloated.
+But some zkApps might require you to access more than what you can store on-chain in a zkApp account.
+
+## Referencing off-chain data
+
+But how can you achieve that? The answer is a Merkle tree! Merkle trees (or similar structures such as Verkle trees) allow you to _reference_ off-chain data by storing only a single hash on-chain.
+
+## How does that work?
+
+Merkle trees are special binary trees in which every leaf (the nodes at the very bottom of the tree!) are cryptographic hashes of the underlying pieces of data, and the internal nodes are labeled with the cryptographic hash of the concatenated labels (hashes) of its child nodes.
+
+By following this algorithm to the very top, you end up with one single node (the root node) that stores the root hash of the tree. The root hash is a reference to all pieces of data that were included in the tree's leaves, so you can reference large amounts of data by using one small hash.
+
+Another benefit of Merkle trees is the witness, also known as a Merkle proof or Merkle path. The witness is the path from one specific leaf node to the very top of the tree (the root). Merkle witnesses are proofs of inclusion that prove that one specific piece of data (for example, an account in the ledger or the scores on a leaderboard) exists within the entire tree.
+
+#### How are Merkle trees useful for zkApps?
+
+You can reference large amounts of off-chain data and prove inclusion of very specific parts of that data with only a small hash - the root - and a witness.
+
+To use Merkle trees and reference off-chain data in your zkApps on Mina, store the root of the tree on-chain and voilà,
+you now have access to more data off-chain.
+
+Imagine a zkApp that manages a game with a leaderboard. The zkApp has a method to update a player's score if the player guesses a number correctly.
+After a player reaches a threshold score, the player can invoke another method to get a reward. Because you want many players to participate in the game,
+you are drastically limited by how much data can be stored on-chain. You will quickly run out of on-chain space with 32 or more participants.
+
+A possible solution to that problem is to use the power of Merkle trees, store the public keys of each player and their corresponding scores off-chain, and reference the keys in the smart contract.
+
+Look at the data structure first. For example, to map a player's id to score points:
+
+```sh
+0: 5 points
+1: 3 points
+2: 0 points
+3: 8 points
+... : ...
+7: 2 points
+```
+
+#### Implementing the smart contract
+
+Now it's time to look at what a leaderboard zkApp might look like. To have on-chain state that points to the off-chain Merkle tree, call this variable the `root`.
+
+:::info
+
+Sometimes the variable `root` is called commitment, because it commits to something.
+
+:::
+
+Additionally, you want to store a variable `z` that is the hash of the value a player has to guess: `H(guess) = z`
+
+:::info
+
+Guessing a simple hash like this example can easily be brute forced, especially if the preimage is simple (like a 5-letter word or a small number with only a few digits).
+
+Ensure that your zkApps are always secure, especially when dealing with funds.
+
+:::
+
+The first method allows a player to make a guess; if the guess is correct, the player gains one point.
+The method takes the player's guess and hashes it, then checks if the hash `H(guess)` equals the on-chain state `z`, and if that's the case, then the player gains one point on the scoreboard.
+
+A second method is required to take care of the reward. It checks if the player's score is over a threshold and pays out a reward if that's the case.
+This method must also verify the Merkle witness and check if it matches the on-chain stored Merkle root.
+
+:::note
+
+The `examples` folder in the o1js repository includes a working [Merkle tree](https://github.com/o1-labs/o1js/tree/main/src/examples/zkapps/merkle-tree) example with all of the required boilerplate code.
+
+:::
+
+```ts
+class Leaderboard extends SmartContract {
+  // the root is the root hash of our off-chain Merkle tree
+  @state(Field) root = State<Field>();
+
+  // z is the hashed number we want to guess!
+  @state(Field) z = State<Field>();
+
+  init() {
+    super.init();
+
+    // this is our hash we want to guess! its the hash of the preimage "22", but keep it a secret!
+    this.z.set(
+      Field(
+        '17057234437185175411792943285768571642343179330449434169483610110583519635705'
+      )
+    );
+  }
+
+  @method async guessPreimage(
+    guess: Field,
+    account: Account,
+    path: MerkleWitness
+  ) {
+    // we fetch z from the chain
+    const z = this.z.get();
+    this.z.requireEquals(z);
+
+    // if our guess preimage hashes to our target, we won a point!
+    Poseidon.hash([guess]).assertEquals(z);
+
+    // we fetch the on-chain commitment/root
+    const root = this.root.get();
+    this.root.requireEquals(root);
+
+    // we check that the account is within the committed Merkle Tree
+    path.calculateRoot(account.hash()).assertEquals(root);
+
+    // we update the account and grant one point!
+    let newAccount = account.addPoints(1);
+
+    // we calculate the new Merkle Root, based on the account changes
+    const newRoot = path.calculateRoot(newAccount.hash());
+
+    this.root.set(newRoot);
+  }
+
+  @method async claimReward(account: Account, path: MerkleWitness) {
+    // we fetch the on-chain commitment
+    const root = this.root.get();
+    this.root.requireEquals(root);
+
+    // we check that the account is within the committed Merkle Tree
+    path.calculateRoot(account.hash()).assertEquals(root);
+
+    // we check that the account has at least 10 score points in order to claim the reward
+    account.score.assertGte(UInt32.from(10));
+
+    // finally, we send the player a reward
+    this.send({
+      to: account.address,
+      amount: 100_000_000,
+    });
+  }
+}
+```
+
+Merkle trees allow you to reference off-chain data easily by only adding a couple of lines of code.
+However, it is your responsibility as the developer of the zkApp to make sure that the Merkle tree that is referenced on-chain is always in sync with the actual off-chain data structure.
+
+You can look at the [Merkle tree example](https://github.com/o1-labs/o1js/tree/main/src/examples/zkapps/merkle-tree) in the o1js repository to get a better understanding of how you can leverage the power of Merkle trees.
+
+:::info
+
+Merkle trees are great for _referencing_ off-chain state, but you must also store this off-chain state somewhere.
+
+Where and how to store the data off-chain storage is left up to you, the developer. Tell us how you are using Merkle trees in the [#zkapps-developers](https://discord.com/channels/484437221055922177/915745847692636181) channel in Mina Protocol Discord.
+
+:::
+
+### Merkle Tree - API reference
+
+```ts
+const treeHeight = 8;
+
+// creates a tree of height 8
+const Tree = new MerkleTree(treeHeight);
+
+// creates the corresponding MerkleWitness class that is circuit-compatible
+class MyMerkleWitness extends MerkleWitness(treeHeight) {}
+
+// sets a value at position 0n
+Tree.setLeaf(0n, Field(123));
+
+// gets the current root of the tree
+const root = Tree.getRoot();
+
+// gets a plain witness for leaf at index 0n
+const witness = Tree.getWitness(0n);
+
+// creates a circuit-compatible witness
+const circuitWitness = new MyMerkleWitness(witness);
+
+// calculates the root of the witness
+const calculatedRoot = circuitWitness.calculateRoot(Field(123));
+
+calculatedRoot.assertEquals(root);
+```
+
+---
 url: /zkapps/protokit
 ---
 
@@ -18317,7 +19596,7 @@ The smart contract called `Square` has one element of on-chain state named `num`
 12 }
 ```
 
-zkApps can have up to eight fields of on-chain state. Each field stores up to 32 bytes (technically, 31.875 bytes or 255 bits) of arbitrary data. A later tutorial covers options for off-chain state.
+zkApps can have up to 32 fields of on-chain state. Each field stores up to 32 bytes (technically, 31.875 bytes or 255 bits) of arbitrary data. A later tutorial covers options for off-chain state.
 
 Now, this code adds the `init` method to set up the initial state of the smart contract on deployment:
 
@@ -21966,7 +23245,18 @@ url: /zkapps/tutorials/10-account-updates
 
 The fundamental data structure that Mina transactions are built from is called an _account update_. Account updates are a flexible and powerful data structure that can express all kinds of updates, events, and preconditions you use to develop smart contracts.
 
+<<<<<<< HEAD
+:::info Mesa Upgrade
+
+The account updates limit has been increased from ~6 to **16 segments per transaction**. See the [Mesa upgrade overview](/mesa-upgrade/mesa-upgrade-overview#mip-9-increased-account-update-limits) for more details.
+
+:::
+
+# Each zkApp transaction constructed by o1js is composed of one or more [AccountUpdate](../o1js-reference/classes/AccountUpdate) classes, which are a set of instructions for the Mina network to perform, such as altering on-chain state, emitting an event, and so on.
+
 Each zkApp transaction constructed by o1js is composed of one or more [AccountUpdate](https://docs.o1labs.org/o1js/api-reference/classes/AccountUpdate) classes, which are a set of instructions for the Mina network to perform, such as altering on-chain state, emitting an event, and so on.
+
+> > > > > > > main
 
 Each `AccountUpdate` can make assertions about its account, apply updates to its account, and make assertions about its child `AccountUpdates`.
 
@@ -22039,104 +23329,104 @@ This zkApp has methods that call other methods to let you explore the impacts to
 
 1. Start by adding the main contents of the zkApp:
 
-  ```ts
-  export class ProofsOnlyZkApp extends SmartContract {
-    @state(Field) num = State<Field>();
-    @state(Field) calls = State<Field>();
+```ts
+export class ProofsOnlyZkApp extends SmartContract {
+  @state(Field) num = State<Field>();
+  @state(Field) calls = State<Field>();
 
-    async deploy() {
-      await super.deploy();
-      this.account.permissions.set({
-        ...Permissions.default(),
-        setDelegate: Permissions.proof(),
-        setPermissions: Permissions.proof(),
-        setVerificationKey: {
-          auth: Permissions.proof(),
-          txnVersion: TransactionVersion.current(),
-        },
-        setZkappUri: Permissions.proof(),
-        setTokenSymbol: Permissions.proof(),
-        incrementNonce: Permissions.proof(),
-        setVotingFor: Permissions.proof(),
-        setTiming: Permissions.proof(),
-      });
-    }
+  async deploy() {
+    await super.deploy();
+    this.account.permissions.set({
+      ...Permissions.default(),
+      setDelegate: Permissions.proof(),
+      setPermissions: Permissions.proof(),
+      setVerificationKey: {
+        auth: Permissions.proof(),
+        txnVersion: TransactionVersion.current(),
+      },
+      setZkappUri: Permissions.proof(),
+      setTokenSymbol: Permissions.proof(),
+      incrementNonce: Permissions.proof(),
+      setVotingFor: Permissions.proof(),
+      setTiming: Permissions.proof(),
+    });
+  }
 
-    @method async init() {
-      this.account.provedState.getAndRequireEquals();
-      this.account.provedState.get().assertFalse();
+  @method async init() {
+    this.account.provedState.getAndRequireEquals();
+    this.account.provedState.get().assertFalse();
 
-      super.init();
-      this.num.set(Field(1));
-      this.calls.set(Field(0));
-    }
+    super.init();
+    this.num.set(Field(1));
+    this.calls.set(Field(0));
+  }
 
-    ...
-  ```
+  ...
+```
 
-  This code configures the zkApp as described and initializes the zkApp with the values you want.
+This code configures the zkApp as described and initializes the zkApp with the values you want.
 
-  By asserting that `provedState` is `false` in `init()`, you ensure that `init()` cannot be called again after the zkApp is set up during the initial deployment. Without this assertion, your zkApp could be reset by anyone calling the `init()` method on your zkApp.
+By asserting that `provedState` is `false` in `init()`, you ensure that `init()` cannot be called again after the zkApp is set up during the initial deployment. Without this assertion, your zkApp could be reset by anyone calling the `init()` method on your zkApp.
 
-  :::tip
-  This assertion is a recommended best practice for most zkApps.
-  :::
+:::tip
+This assertion is a recommended best practice for most zkApps.
+:::
 
 1. Next, add two functions:
 
-  ```ts
-    ...
-    @method async add(incrementBy: Field) {
-      this.account.provedState.getAndRequireEquals();
-      this.account.provedState.get().assertTrue();
+```ts
+  ...
+  @method async add(incrementBy: Field) {
+    this.account.provedState.getAndRequireEquals();
+    this.account.provedState.get().assertTrue();
 
-      const num = this.num.getAndRequireEquals();
-      this.num.set(num.add(incrementBy));
+    const num = this.num.getAndRequireEquals();
+    this.num.set(num.add(incrementBy));
 
-      await this.incrementCalls();
-    }
+    await this.incrementCalls();
+  }
 
-    @method async incrementCalls() {
-      this.account.provedState.getAndRequireEquals();
-      this.account.provedState.get().assertTrue();
+  @method async incrementCalls() {
+    this.account.provedState.getAndRequireEquals();
+    this.account.provedState.get().assertTrue();
 
-      const calls = this.calls.getAndRequireEquals();
-      this.calls.set(calls.add(Field(1)));
-    }
-    ...
-  ```
+    const calls = this.calls.getAndRequireEquals();
+    this.calls.set(calls.add(Field(1)));
+  }
+  ...
+```
 
-  These methods also assert `provedState` is `true` to ensure the zkApp was initialized as expected because `provedState` becomes true after `init()` is invoked.
+These methods also assert `provedState` is `true` to ensure the zkApp was initialized as expected because `provedState` becomes true after `init()` is invoked.
 
-  :::tip
-  This assertion is a recommended best practice for most zkApps.
-  :::
+:::tip
+This assertion is a recommended best practice for most zkApps.
+:::
 
-  The `add()` method calls the `incrementCalls()` method. You can see how this is reflected in the `add()` transaction's `AccountUpdate` structure.
+The `add()` method calls the `incrementCalls()` method. You can see how this is reflected in the `add()` transaction's `AccountUpdate` structure.
 
 1. Finally, add one more function, `callSecondary()`, that calls a different zkApp:
 
-  ```ts
-    ...
+```ts
+  ...
 
-    @method async callSecondary(secondaryAddr: PublicKey) {
-      this.account.provedState.getAndRequireEquals();
-      this.account.provedState.get().assertTrue();
+  @method async callSecondary(secondaryAddr: PublicKey) {
+    this.account.provedState.getAndRequireEquals();
+    this.account.provedState.get().assertTrue();
 
-      const secondaryContract = new SecondaryZkApp(secondaryAddr);
-      const num = this.num.getAndRequireEquals();
+    const secondaryContract = new SecondaryZkApp(secondaryAddr);
+    const num = this.num.getAndRequireEquals();
 
-      await secondaryContract.add(num);
+    await secondaryContract.add(num);
 
-      // NOTE this gets the state at the start of the transaction
-      this.num.set(secondaryContract.num.get());
+    // NOTE this gets the state at the start of the transaction
+    this.num.set(secondaryContract.num.get());
 
-      await this.incrementCalls();
-    }
+    await this.incrementCalls();
   }
-  ```
+}
+```
 
-  The `callSecondary()` method takes the address of the other zkApp, `SecondaryZkApp`, and calls a method on it. Note that the impact of calling that method occurs after this set of AccountUpdates—so when you call `secondaryContract.num.get()`, it gets the value before this transaction is applied.
+The `callSecondary()` method takes the address of the other zkApp, `SecondaryZkApp`, and calls a method on it. Note that the impact of calling that method occurs after this set of AccountUpdates—so when you call `secondaryContract.num.get()`, it gets the value before this transaction is applied.
 
 Finally, look briefly at [SecondaryZkApp.ts](https://github.com/o1-labs/docs2/tree/main/examples/zkapps/10-account-updates/src/SecondaryZkApp.ts) that contains:
 
@@ -22177,54 +23467,54 @@ Now it's time to learn about the [main.ts](https://github.com/o1-labs/docs2/tree
 
 1. Import the transaction visualizer:
 
-  ```ts
-  ...
-  import { showTxn, saveTxn, printTxn } from 'mina-transaction-visualizer';
-  ...
-  ```
+```ts
+...
 
-  This provides three functions:
+...
+```
 
-  ```ts
-  // creates a png file of a transaction, and opens it in a local image viewer
-  async showTxn(txn: Mina.Transaction, name: string, legend: Legend)
+This provides three functions:
 
-  // creates a png file of a transaction, and saves it to a path
-  saveTxn(txn: Mina.Transaction, name: string, legend: Legend, path: string)
+```ts
+// creates a png file of a transaction, and opens it in a local image viewer
+async showTxn(txn: Mina.Transaction, name: string, legend: Legend)
 
-  // prints a nicely formatted view of a transaction
-  printTxn(txn: Mina.Transaction, name: string, legend: Legend)
+// creates a png file of a transaction, and saves it to a path
+saveTxn(txn: Mina.Transaction, name: string, legend: Legend, path: string)
 
-  // with legend type, to replace public keys with human readable strings:
-  type Legend = { [pk: string]: string };
-  ```
+// prints a nicely formatted view of a transaction
+printTxn(txn: Mina.Transaction, name: string, legend: Legend)
+
+// with legend type, to replace public keys with human readable strings:
+type Legend = { [pk: string]: string };
+```
 
 1. Next, define the legend as follows:
 
-  ```ts
-  const legend = {
-    [proofsOnlyAddr.toBase58()]: 'proofsOnlyZkApp',
-    [secondaryAddr.toBase58()]: 'secondaryZkApp',
-    [deployerAccount.toBase58()]: 'deployer',
-  };
-  ```
+```ts
+const legend = {
+  [proofsOnlyAddr.toBase58()]: 'proofsOnlyZkApp',
+  [secondaryAddr.toBase58()]: 'secondaryZkApp',
+  [deployerAccount.toBase58()]: 'deployer',
+};
+```
 
 1. Create and send a deploy transaction, then visualize it:
 
-  ```ts
-  const deployTxn = await Mina.transaction(deployerAccount, async () => {
-    AccountUpdate.fundNewAccount(deployerAccount, 2);
-    await proofsOnlyInstance.deploy();
-    await secondaryInstance.deploy();
-  });
+```ts
+const deployTxn = await Mina.transaction(deployerAccount, async () => {
+  AccountUpdate.fundNewAccount(deployerAccount, 2);
+  await proofsOnlyInstance.deploy();
+  await secondaryInstance.deploy();
+});
 
-  await deployTxn.prove();
-  deployTxn.sign([deployerKey, proofsOnlySk, secondarySk]);
+await deployTxn.prove();
+deployTxn.sign([deployerKey, proofsOnlySk, secondarySk]);
 
-  await showTxn(deployTxn, 'deploy_txn', legend);
+await showTxn(deployTxn, 'deploy_txn', legend);
 
-  await deployTxn.send();
-  ```
+await deployTxn.send();
+```
 
 This yields the following visualization of `deployTxn`.
 
@@ -22250,17 +23540,17 @@ When the transaction is run on chain, these account updates are checked by the M
 
 1. Call `add()` on your instance of `proofsOnlyZkApp`:
 
-  ```ts
-  const txn1 = await Mina.transaction(deployerAccount, async () => {
-    await proofsOnlyInstance.add(Field(4));
-  });
+```ts
+const txn1 = await Mina.transaction(deployerAccount, async () => {
+  await proofsOnlyInstance.add(Field(4));
+});
 
-  await txn1.prove();
+await txn1.prove();
 
-  await showTxn(txn1, 'txn1', legend);
+await showTxn(txn1, 'txn1', legend);
 
-  await txn1.send();
-  ```
+await txn1.send();
+```
 
 This returns the following visualization of `txn1`:
 
@@ -22518,7 +23808,7 @@ This code serves as the scaffolding for the rest of the tutorial and contains a 
 
 ### Define on-chain state
 
-Every Mina smart contract includes eight on-chain state variables that each store almost 256 bits of information. In more complex smart contracts, these state variables can store commitments to off-chain storage (for example, commitments for the hash of a file, the root of a Merkle tree, and so on).
+Every Mina smart contract includes 32 on-chain state variables that each store almost 256 bits of information. In more complex smart contracts, these state variables can store commitments to off-chain storage (for example, commitments for the hash of a file, the root of a Merkle tree, and so on).
 
 For simplicity, this tutorial stores everything on-chain.
 
@@ -23012,6 +24302,144 @@ You have finished writing a script to initialize the state and interact with it!
 Check out other tutorials and documentation to keep going!
 
 ---
+url: /zkapps/writing-a-zkapp/feature-overview/actions-and-reducer
+---
+
+:::caution Warning
+The reducer API in o1js is currently not safe to use in production applications. The `reduce()` method breaks if more than the hard-coded number (default: 32) of actions are pending. Work is actively in progress to mitigate this limitation.
+
+When creating updates to unknown accounts in a reducer function, care should be taken to avoid introducing security vulnerabilities.
+
+Please follow the guidelines [**here**](/zkapps/writing-a-zkapp/introduction-to-zkapps/secure-zkapps#best-practices-for-zkapp-security).
+
+:::
+
+:::info Mesa Upgrade
+
+With the [Mesa upgrade](/mesa-upgrade/mesa-upgrade-overview), the per-transaction capacity for actions has been increased from 100 to **1,024 field elements**. This allows zkApps to dispatch richer, more complex actions within a single transaction.
+
+:::
+
+# Actions & Reducer
+
+Like events, **actions** are _public_ arbitrary information that are passed along with a zkApp transaction. However, actions give you additional power: you can process previous actions in a smart contract! Under the hood, this is possible because a commitment is stored to the history of dispatched actions on every account -- the **actionState**. It allows you to prove that the actions you process are, in fact, the actions that were dispatched to the same smart contract.
+
+Using actions and a "lagging state" pattern, you can write zkApps that can _process concurrent state updates by multiple users_. With this capability, you can imagine all kinds of use cases where actions act as a built-in, "append-only" off-chain storage layer.
+
+To use actions, you first have to declare their type on the smart contract. The object to declare is called a **reducer** -- because it can take a list of actions and reduce them:
+
+```ts
+
+
+class MyContract extends SmartContract {
+  reducer = Reducer({ actionType: Field });
+}
+```
+
+Contrary to events, actions have only one type per smart contract. This type doesn't have a name. The `actionType` in this example is `Field`.
+
+On a `reducer`, you have two functions: `reducer.dispatch()` and `reducer.reduce()`.
+
+- "Dispatch" is simple -- like emitting events, it pushes one additional action to your account's action history:
+
+  ```ts
+  this.reducer.dispatch(Field(1000));
+  ```
+
+- "Reduce" is more involved, but it gives you full power to process actions however it suits your application. It might be easiest to grasp from an example where you have a list of actions and want to find out if one of actions is equal to `1000`.
+
+In JavaScript, a built-in function on `Array` does this:
+
+```ts
+let has1000 = array.some((x) => x === 1000);
+```
+
+However, you can also implement this with `Array.reduce`:
+
+```ts
+let has1000 = array.reduce((acc, x) => acc || x === 1000, false);
+```
+
+In fact, `Array.reduce` is powerful enough to let you do pretty much all of the array processing you can think of.
+
+With `Reducer.reduce`, an in-SNARK operation is just as powerful:
+
+```ts
+// type for the "accumulated output" of reduce -- the `stateType`
+let stateType = Bool;
+
+// example actions data
+let actions = [[Field(1000)], [Field(2)], [Field(100)]];
+
+// state before applying actions
+let initial = {
+  state: Bool(false),
+};
+
+let newState = this.reducer.reduce(
+  actions,
+  stateType,
+  (state: Bool, action: Field) => state.or(action.equals(1000)),
+  initial
+);
+```
+
+The `acc` shown earlier is now `state`; you must pass in the state's type as a parameter and pass in an `actionState` which refers to one particular point in the action's history.
+
+Like `Array.reduce`, `Reducer.reduce` takes a callback that has the signature `(state: State, action: Action) => State`, where `State` is the `stateType` and `Action` is the `actionType`. It returns the result of applying all the actions, in order, to the initial `state`. In this example, the returned `state` is `Bool(true)` because one of the actions in the list is `Field(1000)`. One last difference to JavaScript `reduce` is that it takes a _list of lists_ of actions, instead of a flat list. Each of the sublists are the actions that were dispatched in one account update (for example, while running one smart contract method).
+
+As an astute reader, you might have noticed that this use of `state` is eerily similar to a standard "Elm architecture" that scans over an implicit infinite stream of actions (though here they are aggregated in chunks). This problem is familiar to web developers through its instantiation by using the Redux library or by using the `useReducer` hook in React.
+
+There is one interesting nuance here when compared to traditional Elm Architecture/Redux/useReducer instantiations: Because multiple actions are handled concurrently in an undefined order, it is important that actions [commute](https://en.wikipedia.org/wiki/Commutative_property) against any possible state to prevent race conditions in your zkApp. Given any two actions a1 and a2 applying to some state s, `s * a1 * a2` means the same as `s * a2 * a1`.
+
+A zkApp can retrieve events and actions from one or more Mina archive nodes. If your smart contract needs to fetch events and actions from an archive node, see [How to Fetch Events and Actions](fetch-events-and-actions).
+
+### Reducer - API reference
+
+```ts
+reducer = Reducer({ actionType: FlexibleProvablePure<Action> });
+
+this.reducer.dispatch(action: Action): void;
+
+this.reducer.reduce<State>(
+  actions: MerkleList<MerkleList<Action>>,
+  stateType: Provable<State>,
+  reduce: (state: State, action: Action) => State,
+  initial: State,
+  options?: {
+    maxUpdatesWithActions?: number;
+    maxActionsPerUpdate?: number;
+    skipActionStatePrecondition?: boolean;
+}
+):  State;
+
+
+```
+
+The `getActions` function retrieves a list of previously emitted actions:
+
+```ts
+let pendingActions = this.reducer.getActions({ fromActionState?: Field, endActionState?: Field }): MerkleList<MerkleList<Action>>;
+```
+
+The final action state can be accessed on `pendingActions.hash`.
+
+```ts
+let endActionState = pendingActions.hash;
+```
+
+If the optional `endActionState` parameter is provided, the list of actions will be fetched up to that state.
+In that case, `pendingActions.hash` is guaranteed to equal `endActionState`.
+
+Use `getActions` for testing with a simulated `LocalBlockchain`. See [Testing zkApps Locally](/zkapps/writing-a-zkapp/introduction-to-zkapps/testing-zkapps-locally).
+
+### Actions for concurrent state updates
+
+One of the most important use cases for actions is to enable concurrent state updates. This enablement is also why actions were originally added to the protocol.
+
+You can see a full code example in [reducer-composite.ts](https://github.com/o1-labs/o1js/blob/main/src/examples/zkapps/reducer/reducer-composite.ts) that demonstrates this pattern. Leveraging `Reducer.reduce()`, it takes only about 30 lines of code to build a zkApp that handles concurrent state updates.
+
+---
 url: /zkapps/writing-a-zkapp/feature-overview/custom-tokens
 ---
 
@@ -23205,6 +24633,74 @@ A token owner is an zkApp account that creates, facilitates, and governs how a c
 - Approve sending tokens between two accounts
 
 ---
+url: /zkapps/writing-a-zkapp/feature-overview/events
+---
+
+# Events
+
+Events are _public_ arbitrary information that can be passed along with a transaction. If your zkApp allows users to publish a message, for example, those messages could be events.
+
+Another use case for events are zkApps that keep some large internal state and only store a commitment to that internal state on-chain. For example, a Merkle tree where only the root is stored in on-chain state. Events could be used to attach state changes to the transactions in full. In the Merkle tree example, this could mean sending any Merkle leaves that are changed by the transaction as events. An observer of these transactions can follow along and keep track of the full Merkle tree on their side.
+
+To use events, you must declare an `events` field at the top level of your smart contract. The `events` field contains the _names_ and _types_ of your events. Here's an example:
+
+```ts
+class MyContract extends SmartContract {
+  events = {
+    'add-merkle-leaf': Field,
+    'update-merkle-leaf': Field,
+  };
+}
+```
+
+This example declares events called `"add-merkle-leaf"` and `"update-merkle-leaf"`, both with a type of `Field`. Instead of `Field`, you can also use other built-in o1js types as well as any `Struct`. In fact, a custom `Struct` is probably better-suited to encode leaves of a Merkle tree -- we just use `Field` for simplicity here.
+
+After declaring your events, you can use `this.emitEvent(name, event)` in any smart contract method, where `event` has to have the type you declared for that `name`. Example:
+
+```ts
+class MyContract extends SmartContract {
+  events = {
+    "add-merkle-leaf": Field,
+    "update-merkle-leaf": Field,
+  }
+
+  @method async updateMerkleTree(leaf: Field, ...) {
+    this.emitEvent("update-merkle-leaf", leaf);
+    // ...
+  }
+}
+```
+
+Some important facts about events:
+
+- Events are not stored on-chain. Only events from the most recent couple of transactions are retained by consensus nodes. After that, the events are discarded, but are still accessible on archive nodes.
+- You can't refer to previously emitted events in a smart contract, because there is no way of proving that the events you refer to are actually the events emitted by that contract.
+
+:::tip
+
+A zkApp can retrieve events and actions from one or more Mina archive nodes. If your smart contract needs to fetch events and actions from an archive node, see [How to Fetch Events and Actions](fetch-events-and-actions).
+
+:::
+
+:::info Mesa Upgrade
+
+With the [Mesa upgrade](/mesa-upgrade/mesa-upgrade-overview), the per-transaction capacity for events has been increased from 100 to **1,024 field elements**. This allows zkApps to emit richer, more detailed events within a single transaction.
+
+:::
+
+This is all you need to know about events! Think of them as a convenience feature -- a lightweight way of attaching information about your smart contract execution to expose the event to the outside world,  such as your UI. Don't treat events as fully-fledged storage that can be safely accessed in smart contracts.
+
+### Events: API reference
+
+```ts
+class SmartContract {
+  static events?: Record<string, any>;
+
+  emitEvent(name: string, event: any): void;
+}
+```
+
+---
 url: /zkapps/writing-a-zkapp/feature-overview/fetch-events-and-actions
 ---
 
@@ -23317,7 +24813,7 @@ Offchain storage is currently an experimental feature and is subject to change i
 
 One of Mina's unique features is its succinctness, both in computation and storage. To prevent state bloat and maintain Mina's efficiency and verifiability, we use offchain storage solutions for handling large volumes of data.
 
-In a previous section, we introduced the concept of on-chain Values. Since Mina currently only supports a total of 8 on-chain Field elements, we need to leverage offchain storage to extend that capacity.
+In a previous section, we introduced the concept of on-chain Values. Since Mina currently only supports a total of 32 on-chain Field elements, we need to leverage offchain storage to extend that capacity.
 This approach maintains a provably secure connection between the on-chain smart contract and the off-chain data, such as that stored in an archive node.
 
 ## Design
@@ -23484,6 +24980,607 @@ This feature remains experimental, indicating that it is currently under active 
 - [An end-to-end example utilizing Offchain storage](https://github.com/o1-labs/o1js/blob/main/src/lib/mina/v1/actions/offchain-contract-tests/ExampleContract.ts)
 
 ---
+url: /zkapps/writing-a-zkapp/feature-overview/on-chain-values
+---
+
+# On-Chain Values
+
+In a zkApp, you can access the current [on-chain state](/zkapps/writing-a-zkapp/introduction-to-zkapps/how-to-write-a-zkapp#on-chain-state) and many other on-chain values of the account.
+
+The zkApp account's on-chain state can be updated by account updates included in a transaction (see [Tutorial 10: Account Updates](/zkapps/tutorials/account-updates)). On the Mina blockchain, each zkApp account provides 32 fields of ~32 bytes each of arbitrary storage for the on-chain state.
+
+Two possible use cases:
+
+- You want to let users vote on a proposal, but only within a specific timespan. To restrict the dates, your zkApp can require that the current timestamp lies in a certain range.
+- In DeFi, you want to compute amounts relative to a balance. For example, paying a yield of `0.001` times the account balance requires the current on-chain balance.
+
+There are two categories of on-chain values:
+
+- **Network**: includes the current timestamp, block height, total Mina in circulation, and other network state
+- **Account**: includes fields and properties of the zkApp account, such as balance, nonce, and delegate
+
+In a smart contract, the subfields are accessible on `this.network` and `this.account`.
+For example, the timestamp on `this.network.timestamp` has four methods:
+
+```ts
+this.network.timestamp.get();
+this.network.timestamp.requireEquals(timestamp);
+this.network.timestamp.requireBetween(lower, upper);
+```
+
+- The familiar on-chain state has the same `get()` and `requireEquals()` methods.
+- The `requireBetween()` method has even more power: it allows you to make assertions that the timestamp is between `lower` and `upper` (inclusive).
+
+### Example: Restricting timestamps
+
+To use the `requireBetween()` method in a voting example, you can allow voting throughout September 2024. Timestamps are represented as a `UInt64` in milliseconds since the [UNIX epoch](https://en.wikipedia.org/wiki/Unix_time). You can use the JS `Date` object to easily convert to this representation. In the simplest case, a zkApp could just hard-code the dates:
+
+```ts
+const startDate = UInt64.from(Date.UTC(2024, 9, 1));
+const endDate = UInt64.from(Date.UTC(2024, 10, 1));
+
+class VotingApp extends SmartContract {
+  // ...
+
+  @method async vote(...) {
+    this.network.timestamp.requireBetween(startDate, endDate);
+    // ...
+  }
+}
+```
+
+A more refined example could store the current start date in an on-chain state variable, which can then be reset by some process that is also encoded by the zkApp.
+
+### Network reference
+
+For completeness, here is the list of network states you can use and make assertions about in your zkApp.
+
+All of these fields have a `get()` and an `requireEquals()` method. The subset that represents "ordered values" (those that are `UInt32` or `UInt64`) also have `requireBetween()`.
+
+```ts
+// current UNIX time in milliseconds, as measured by the block producer
+this.network.timestamp.get(): UInt64;
+// length of the blockchain, also known as block height
+this.network.blockchainLength.get(): UInt32;
+// total minted currency measured in units of 1e-9 MINA
+this.network.totalCurrency.get(): UInt64;
+// slots since genesis / hardfork -- a "slot" is the Mina-native time unit of 90 seconds
+this.network.globalSlotSinceGenesis.get(): UInt32;
+this.network.globalSlotSinceHardFork.get(): UInt32;
+// hash of the snarked ledger -- i.e., the state of Mina included in the blockchain proof
+this.network.snarkedLedgerHash.get(): Field;
+// minimum window density in our consensus algorithm
+this.network.minWindowDensity.get(): UInt32;
+// consensus data relevant to the current staking epoch
+this.network.stakingEpochData.ledger.hash.get(): Field;
+this.network.stakingEpochData.ledger.totalCurrency.get(): UInt64;
+this.network.stakingEpochData.epochLength.get(): UInt32;
+this.network.stakingEpochData.seed.get(): Field;
+this.network.stakingEpochData.lockCheckpoint.get(): Field;
+this.network.stakingEpochData.startCheckpoint.get(): Field;
+// consensus data relevant to the next, upcoming staking epoch
+this.network.nextEpochData.ledger.hash.get(): Field;
+this.network.nextEpochData.ledger.totalCurrency.get(): UInt64;
+this.network.nextEpochData.epochLength.get(): UInt32;
+this.network.nextEpochData.seed.get(): Field;
+this.network.nextEpochData.lockCheckpoint.get(): Field;
+this.network.nextEpochData.startCheckpoint.get(): Field;
+```
+
+You don't have to remember this, just type `this.network.` and let the intelligent code complete guide you.
+
+### Account reference
+
+Here's the full list of values you can access on the zkApp account. Like the network states, these values have `get()` and `requireEquals()`. Balance and nonce also have `requireBetween()`.
+
+```ts
+// the account balance; this might be nanoMINA or a custom token
+this.account.balance.get(): UInt64;
+// account nonce -- increases by 0 or 1 in every transaction
+this.account.nonce.get(): UInt32;
+// the account the zkApp delegates its stake to (default: its own address)
+this.account.delegate.get(): PublicKey;
+// boolean indicating whether an account is new (= didn't exist before the transaction)
+this.account.isNew.get(): Bool;
+// boolean indicating whether all 32 on-chain state fields were last changed by a transaction
+// authorized by a zkApp proof (as opposed to a signature)
+this.account.provedState.get(): Bool;
+// hash receipt which includes all prior transaction to an account
+this.account.receiptChainHash.get(): Field;
+```
+
+### Bailing out
+
+In some rare cases, you might, for whatever reason, want to `get()` an on-chain value _without_ constraining it to any value.
+However, if you try this, o1js throws a helpful error reminding you to use `requireEquals()` and `requireBetween()`.
+As an escape hatch, if you want to `get()` a value and are really sure you do not want to constrain the on-chain value in any way,
+you can use `requireNothing()` on all of these fields (including on-chain state). **Use `requireNothing()` at your own risk.**
+
+:::danger
+
+`requireNothing()` should be rarely used and could cause security issues through unexpected behavior if used improperly. Be certain you know what you're doing before using this.
+
+:::
+
+### Setting account fields
+
+Just like on-chain state, some account fields can be written to. Again, the API is consistent with state: `this.account.<field>.set(newValue)`.
+
+For example, here's how to change permissions on an account:
+
+```ts
+this.account.permissions.set({
+  ...Permissions.default(),
+  setVerificationKey: {
+    auth: Permissions.proof(),
+    txnVersion: TransactionVersion.current(),
+  },
+});
+```
+
+To set the delegate (the account that your smart contract delegates its stake to):
+
+```ts
+this.account.delegate.set(delegatePublicKey);
+```
+
+The fields that you can set are not the same as the fields that you can make assertions about.
+
+Here is the full list of fields that have a `.set()`:
+
+```ts
+// the account that this account delegates its MINA stake to
+this.account.delegate.set(value: PublicKey);
+// the verification key
+this.account.verificationKey.set(value: VerificationKey);
+// account permissions, to control authorization for performing actions on the account
+this.account.permissions.set(value: Permissions);
+// currently unused - could become URL holding zkApp metadata
+this.account.zkappUri.set(value: string);
+// token symbol of the token owned by this account — only relevant for token contracts!
+this.account.tokenSymbol.set(value: string);
+// parameters to control a vesting schedule, used in time-locked accounts
+this.account.timing.set(value: Timing);
+```
+
+### Accessing accounts other than the zkApp's account
+
+The API described in this section (get / set / assertEquals / ...) can be used to access the zkApp account itself, but also any other account. Account updates are a flexible and powerful data structure that can express all kinds of updates, events, and preconditions you use to develop smart contracts. See [Tutorial 10: Account Updates](/zkapps/tutorials/account-updates).
+
+To create an account update to find the same `account` and `network` fields:
+
+```ts
+let accountUpdate = AccountUpdate.create(address);
+
+// use the balance of this account
+let balance = accountUpdate.account.balance.get();
+accountUpdate.account.balance.assertEquals(balance);
+
+// assert that this account is new
+accountUpdate.account.isNew.assertEquals(Bool(true));
+
+// set permissions this account
+accountUpdate.account.permissions.set(permissions);
+```
+
+When setting fields on an account update, you must ensure that this _same_ account update has the correct authorization to perform those actions.
+
+For example, to initially set the verification key, the update requires a signature from the account owner:
+
+```ts
+// use createSigned to require a signature
+let accountUpdate = AccountUpdate.createSigned(address);
+
+// set the verification key on the account; could be used to deploy a zkApp from a zkApp
+accountUpdate.account.verificationKey.set(vk);
+```
+
+---
+url: /zkapps/writing-a-zkapp/feature-overview/permissions
+---
+
+# Permissions
+
+Permissions are an integral part of zkApp development because they determine who has the authority to interact and make changes to a specific part of a smart contract.
+
+Naturally, every smart contract must have proper permissions to prevent attacks or security holes.
+Permissions live on-chain, which means they are a part of the account representation on the network. Permissions are checked every time an account update tries to interact with an account.
+
+## Types of Permissions
+
+There are 13 different types of permissions that you can access and adjust to guard a zkApp account:
+
+- `editState`: The permission describing how the zkApp account's 32 on-chain state fields are allowed to be manipulated.
+
+- `send`: The permission corresponding to the ability to send transactions from this account. For example, this permission determines whether someone can send a transaction to transfer MINA from this particular account.
+
+- `receive`: Similar to `send`, the `receive` permission determines whether a particular account can receive transactions, for example, depositing MINA.
+
+- `setDelegate`: The permission corresponding to the ability to set the delegate field of the account. The delegate field is the address of another account that this account is delegating its MINA for staking.
+
+- `setPermissions`: The permission corresponding to the ability to change the permissions of the account. As the name suggests, this type of permission describes how already set permissions can be changed.
+
+- `setVerificationKey`: The permission corresponding to the ability to change the verification key of the account. Every smart contract has a verification key stored on-chain. The verification key is used to verify off-chain proofs. This permission essentially describes if the verification key can be changed; you can also think of it as the "upgradeability" of smart contracts.
+
+- `setZkappUri`: The permission corresponding to the ability to change the `zkappUri` field of the account that stores metadata about the smart contract, for example, link to the source code.
+
+- `editActionsState`: The permission that corresponds to the ability to change the actions state of the associated account. Every smart contract can dispatch actions that are committed on-chain. This type of permission describes who can change the actions state.
+
+- `setTokenSymbol`: The permission corresponding to the ability to set the token symbol for this account. The `tokenSymbol` field stores the symbol of a token.
+
+- `incrementNonce`: The permission that determines whether to increment the nonce with an account update and who can increment the nonce on this account with a transaction.
+
+- `setVotingFor`: The permission corresponding to the ability to set the chain hash for this account. The `votingFor` field is an on-chain mechanism to set the chain hash of the hard fork this account is voting for.
+
+- `access`: This permission is more restrictive than all the other permissions combined! It corresponds to the ability to include any account update for this account in a transaction, even no-op account updates. Usually, the access permission is set to require no authorization. However, for token manager contracts [(custom tokens)](custom-tokens), `access` requires at least proof authorization so that token interactions are approved by calling one of the token manager's methods.
+
+- `setTiming`: The permission corresponding to the ability to control the vesting schedule of time-locked accounts.
+
+## Authorization
+
+Authorization determines what resources can be accessed, while permissions just describe who has the ability to execute an action.
+
+A transaction consists of multiple account updates (sort of like instructions to the network) - and each account update must be authorized in one way or another.
+When you inspect an account update directly in o1js or using an explorer, you see the `authorization` field.
+
+- If the `authorization` field has a proof attached, it means the transaction is authorized by a proof that is checked against the verification key of the account.
+- If the `authorization` field has a signature, it means the account update is authorized by a signature.
+
+### Types of Authorizations
+
+The types of authorizations are:
+
+- `none`: Everyone has access to fields with permission set to `none` - and therefore can manipulate the fields as they please.
+
+- `impossible`: If a field permission is set to `impossible`, nothing can ever change this field!
+
+- `signature`: Fields that have their permission set to `signature` can only be manipulated by account updates that are accompanied and authorized by a valid signature.
+
+- `proof`: Fields that have their permission set to `proof` can be manipulated only by account updates that are accompanied and authorized by a valid proof. Proofs are generated by proving the execution of a smart contract method. A proof is checked against the verification key of the account to ensure that state is changed only if the user generated a valid proof by executing a smart contract method correctly.
+
+- `proofOrSignature`: As the name might suggest, permissions with authorization set to `proofOrSignature` accept either a valid signature or a valid proof.
+
+This example account update is authorized by a signature:
+
+```json
+{
+  "authorization": {
+    "proof": null,
+    "signature": "7mXAcTFeybdZkFmYmfoRYRzVeMxQsGU5Uxq1RpRpGSkHEa5ZEraTRJ4cNKMnAS1n3NCmVqDnHUyraJs131dcdFi3sZH1Qzos"
+  },
+  // ...
+  "body": {
+    // ...
+    "update": {
+      "appState": ["1", "0", "0", "0", "0", "0", "0", "0"]
+      // ...
+    }
+    // ...
+  }
+}
+```
+
+This example account update has an authorization with a `signature` provided. You can also see it's trying to update the app state of the smart contract.
+
+However, imagine if a smart contract had the the permission `editState` set to the authorization `none`.
+When authorization is `none`, everyone can freely change the state of the smart contract as they please! Obviously, this is not a safe practice. To allow state changes only when a valid proof accompanies the account update that wants to access the state, set your authorization to `proof` so that the transaction is authorized by a proof that is checked against the verification key of the account. Using a `proof` authorization ensures that state is changed only if the user generated a valid proof by executing a smart contract method correctly.
+
+## Default Permissions
+
+Smart contracts, when first deployed, always start with this default set of permissions:
+
+`editState`: `proof`
+
+`send`: `proof`
+
+`receive`: `none`
+
+`setDelegate`: `signature`
+
+`setPermissions`: `signature`
+
+`setVerificationKey`: `signature`
+
+`setZkappUri`: `signature`
+
+`editActionsState`: `proof`
+
+`setTokenSymbol`: `signature`
+
+To better understand how to leverage permissions to make your smart contract more secure, look at these examples.
+
+## Example: UnsecureContract
+
+Some smart contracts manage state and token, such as the native MINA token. To prevent malicious actors from withdrawing all funds, use permissions to secure them.
+
+Consider the following `UnsecureContract` smart contract. A similar [simple-zkapp-payment.ts](https://github.com/o1-labs/o1js/blob/main/src/examples/zkapps/simple-zkapp-payment.ts) contract is also provided in the `examples` folder:
+
+```ts
+class UnsecureContract extends SmartContract {
+  init() {
+    super.init();
+    this.account.permissions.set({
+      ...Permissions.default(),
+      send: Permissions.none(),
+    });
+  }
+
+  @method async withdraw(amount: UInt64) {
+    this.send({ to: this.sender, amount });
+  }
+}
+```
+
+This `UnsecureContract` has only the `withdraw()` method for withdrawing funds from the smart contract account.
+
+But first, notice that the permissions specified in the `init()` method have set the `send` permission to `Permissions.none()`. Because `none` means you don't have to provide _any_ form of authorization, a malicious actor can easily drain all funds from the smart contract.
+
+Take a look at the following malicious transaction that abuses this permission:
+
+```ts
+tx = await Mina.transaction(account1Address, async () => {
+  let withdrawal = AccountUpdate.create(zkappAddress);
+  await withdrawal.send({ to: account1Address, amount: 1e9 });
+});
+await tx.sign([account1Key]).send();
+```
+
+This transaction creates a new account update for the smart contract address. Right after that, the new account update sends 1 MINA to the address of the fee payer (`account1Address`).
+At the end of the transaction block, the transaction is signed only with the private key of the fee payer -- not the private key of the smart contract.
+
+Because the permissions for sending funds away from a smart contract are set to `none`, this transaction succeeds and drains 1 MINA from the smart contract.
+
+Now, change the `send` permission to `signature` instead:
+
+```diff
+-      send: Permissions.none(),
++      send: Permissions.signature(),
+```
+
+If you try to run the same transaction as before, the manual account update fails with `Update_not_permitted_balance`. This check prevents withdrawing funds from the smart contract, since the authorization does not fit the permission for `send` that now requires a valid signature.
+
+You can slightly modify the withdraw transaction to include a valid signature by adding `.requireSignature()` on the withdrawal account update and providing the private key of the smart contract account to `tx.send([zkappKey])`:
+
+```ts
+tx = await Mina.transaction(account1Address, async () => {
+  let withdrawal = AccountUpdate.create(zkappAddress);
+  await withdrawal.send({ to: account1Address, amount: 1e9 });
+  withdrawal.requireSignature();
+});
+await tx.sign([account1Key, zkappKey]).send();
+```
+
+Now that you have provided a valid signature, the transaction succeeds.
+
+However, this way of authorizing a transaction is not what you expect from a smart contract. If you set a permission to `signature`, only the owner of the zkApp's private key (`zkappKey`) is able to perform the interaction. However, the point of a smart contract is to let anyone interact by trustlessly executing the smart contract code.
+
+For enabling a trustless execution, use `Permissions.proof()`.
+
+Now, to make `UnsecureContract` a proper smart contract, set the `send` permission to `proof`:
+
+```diff
+-      send: Permissions.signature(),
++      send: Permissions.proof(),
+```
+
+Alternatively, you can just delete the entire `init()` method, since a `send` permission of `proof` is already the default:
+
+```diff
+-  init() {
+-    super.init();
+-    this.account.permissions.set({
+-      ...Permissions.default(),
+-      send: Permissions.signature(),
+-    });
+-  }
+-
+```
+
+If you try running one of the two transactions from before, which created account updates manually, you'll find that they both fail with `Update_not_permitted_balance`.
+
+Setting the `send` permission to `proof` means that, to send MINA from this account, you need to execute one of the contract's `@method`.
+
+The contract already has an `@method` that you can use: `withdraw()`.
+
+To create a withdrawal transaction that contains a valid proof:
+
+```ts
+tx = await Mina.transaction(account1Address, async () => {
+  let zkapp = new UnsecureContract(zkappAddress);
+  await zkapp.withdraw(UInt64.from(1e9));
+});
+await tx.prove();
+await tx.sign([account1Key, zkappKey]).send();
+```
+
+In contrast to the other examples, you don't explicitly create an `AccountUpdate`. Instead, you instantiate `UnsecureContract` and call its `withdraw()` method. Each method call is automatically associated with an account update, for which it creates a valid proof. You can access and modify this account update by using `this` inside the method.
+
+In this example, use `this.send(...)` to send MINA. By calling the method and doing `tx.prove()`, you satisfy the `proof` authorization requirement for sending MINA.
+
+You might have noticed that the contract is still not very secure: Anyone can call the `withdraw()` method to drain any amount of MINA from the contract. That's why the example is called `UnsecureContract`.
+
+In a real contract, you would add some conditions to the `withdraw()` code to restrict which users can successfully call the method.
+
+<!-- TODO: commented until we add the signature page -->
+<!-- To learn about signatures in zkApps, see [Signatures in a smart contract](./signatures-in-zkapps) for a continuation of this example that adds user authorization to the smart contract code. -->
+
+## Upgradeability of smart contracts
+
+Another important part of smart contract development is upgradeability.
+
+By using permissions, you can make a smart contract upgradeable or not upgradeable.
+On Mina, when you deploy a smart contract you generate a verification key from the contract source code. The verification key and the smart contract are stored on-chain and used to verify proofs that belong to that smart contract.
+
+Remember the permission called `setVerificationKey`? Modify the authorization for this permission to set the upgradability of the smart contract.
+
+### Upgrading after an update to the Mina Protocol
+
+At some point, Mina Protocol will undergo an update that is not backwards compatible. When this happens,
+existing zkApps will need to upgrade their verification key to be compatible with the new protocol. If the zkApp does not upgrade,
+the existing verification key will not be able to verify proofs and the zkApp will be unable to interact with the network, effectively rendering it useless.
+To ensure that zkApps can upgrade their verification key after a protocol update, there are special rules in place for the `Impossible` and `Proof` permissions on a verification key.
+Recall that the `Impossible` permission prevents the verification key from being changed, while the `Proof` permission requires a valid proof to do so.
+
+Internally, verification key permissions are represented as a tuple of two fields: the mechanism that controls verification key changes (e.g. `Impossible`, `Signature`, `Proof`),
+and a transaction version field (denoted by an integer). The transaction version field specifies the version of a transaction that was supported by the protocol when the zkApp's verification key was
+deployed. This allows the protocol to appropriately enforce permissions when a zkApps was deployed on an earlier version that may no longer be supported.
+
+To allow zkApps to upgrade their verification key after a protocol upgrade, the `Impossible` and `Proof` verification key permissions are automatically treated as `Signature` permissions when the zkApp's transaction version is lower than the current one on Mina Protocol.
+This allows zkApps to upgrade their verification key after a protocol upgrade, even if the permission was originally set to `Impossible` or `Proof`.
+
+Thus, `setVerificationKey` field behaves slightly different and requires two properties.
+
+```ts
+setVerificationKey: {
+  auth: Permission,
+  txnVersion: TransactionVersion
+},
+```
+
+The first property, `auth`, is one of the previously introduced authentication types - `none`, `impossible`, `proof`, `signature` or `signatureOrProof`.
+The `txnVersion` property on the other hand is the newly introduce transction version, which specifies the version of a transaction that was supported by the protocol when the zkApp verification key was last changed.
+
+o1js exposes a function `TransactionVersion.current()` which returns the current transaction version of the protocol.
+
+For example, consider a zkApp that was deployed with the following permissions:
+
+```ts
+this.account.permissions.set({
+  ...Permissions.default(),
+  setVerificationKey: {
+    auth: Permissions.impossible(),
+    txnVersion: TransactionVersion.current(),
+  },
+});
+```
+
+After a protocol upgrade, the zkApp will still be able to upgrade its verification key by providing a valid signature. This allows the zkApp to upgrade its verification key to be compatible with the new protocol.
+Once the verification key is upgraded, the permission will revert back to `Impossible`. When it comes to upgrading your zkApp after a protocol upgrade, you can simply provide a valid signature to upgrade the verification key.
+
+Most of the time, you will not have to manually specify the transaction version because o1js exposes a set of predefined authentication types for `setVerificationKey` under the `Permission.VerificationKey` namespace.
+Mainly, this special set of permissions replaces normal permissions such as `Permission.proof` or `Permission.impossible` by less restrictive permissions - `impossibleDuringCurrentVersion` and `proofDuringCurrentVersion`.
+
+Here's a detailed overview of the new permissions:
+
+```ts
+VerificationKey: {
+  /*
+  * Modification is impossible, as long as the network accepts the current {@link TransactionVersion}.
+  *
+  * After a hardfork that increments the transaction version, the permission is treated as `signature`.
+  */
+  impossibleDuringCurrentVersion: () => VerificationKeyPermission,
+
+  /*
+  * Modification is always permitted
+  */
+  none: () => VerificationKeyPermission,
+
+  /*
+  * Modification is permitted by zkapp proofs only; as long as the network accepts the current {@link TransactionVersion}.
+  *
+  * After a hardfork that increments the transaction version, the permission is treated as `signature`.
+  */
+  proofDuringCurrentVersion: () => VerificationKeyPermission,
+
+  /*
+  * Modification is permitted by signatures only, using the private key of the zkapp account
+  */
+  signature: () => VerificationKeyPermission,
+
+  /*
+  * Modification is permitted by zkapp proofs or signatures
+  */
+  proofOrSignature: () => VerificationKeyPermission,
+},
+```
+
+For more information on how this mechanism works, see the [Verification Key Permissions RFC](https://github.com/MinaProtocol/mina/blob/9577ad689a8e4d4f97e1d0fc3d26e20219f4abd1/rfcs/0051-verification-key-permissions.md).
+
+### Example: Impossible to upgrade
+
+This simple example ensures that the smart contract is not upgradeable during the current transaction version of the protocol. After a verification key is deployed, it cannot be changed until the next backwards incompatible hardfork.
+
+```ts
+class UpgradeabilityImpossible extends SmartContract {
+  init() {
+    super.init();
+    this.account.permissions.set({
+      ...Permissions.default(),
+      setVerificationKey:
+        Permissions.VerificationKey.impossibleDuringCurrentVersion(),
+    });
+  }
+
+  @method async updateVerificationKey(vk: VerificationKey) {
+    this.account.verificationKey.set(vk);
+  }
+}
+```
+
+The `UpgradeabilityImpossible` smart contract has only one method: `updateVerificationKey`. By invoking this method and providing a new verification key, the verification key on-chain is expected to change.
+But since `setVerificationKey` permission is specified to be `impossibleDuringCurrentVersion`, invoking that method fails - essentially making the smart contract not upgradeable.
+
+```ts
+console.log('try upgrading vk');
+tx = await Mina.transaction(feePayer, async () => {
+  await zkapp.updateVerificationKey(newVerificationKey);
+});
+await tx.prove();
+await tx.sign([feePayerKey, zkappKey]).send();
+```
+
+This transaction tries to replace the existing verification key with a new one, `newVerificationKey`. To can prevent that, set the permissions for a verification key change to `impossible` so the transaction fails.
+
+Using the `LocalBlockchain`, you get the following (expected) error:
+
+`Error: Transaction verification failed: Cannot update field 'verificationKey' because permission for this field is 'Impossible'`
+
+For the sake of security, it is important to note that you must also set the `setPermissions` permission to `impossible` to make the smart contract truly impossible to upgrade. This permission prevents a zkApp developer from changing the permission `setVerificationKey` to, for example, `signature` - which allows them to manipulate the verification key again.
+
+### Example: Upgradeable with a proof
+
+There are situations where you might want the smart contract to be upgradeable.
+Modify the method `updateVerificationKey` to do some checks before you can update the verification key. For example, as the result of a vote or other conditions.
+
+For now, just check that you can provide an `x` that is greater than or equal to 5. If this check succeeds, then update the verification key.
+
+```ts
+@method async updateVerificationKey(vk: VerificationKey, x: Field) {
+  let y = Field(5);
+  x.gte(y).assertTrue();
+
+  this.account.verificationKey.set(vk);
+}
+```
+
+You must update the permissions from `setVerificationKey`: `impossibleDuringCurrentVersion` to `proofDuringCurrentVersion` because you want to change the verification key only if a valid proof is provided.
+
+```ts
+this.account.permissions.set({
+  ...Permissions.default(),
+  setVerificationKey: Permissions.VerificationKey.proofDuringCurrentVersion(),
+});
+```
+
+Now when you invoke the `updateVerificationKey` method, the transaction generates a valid smart contract execution proof to succeed and upgrade the verification key to a new one.
+
+```ts
+console.log('try upgrading vk');
+tx = await Mina.transaction(feePayer, async () => {
+  await zkapp.updateVerificationKey(newVerificationKey);
+});
+await tx.prove();
+await tx.sign([feePayerKey, zkappKey]).send();
+```
+
+## Where to learn more
+
+Integration tests exercise the behavior of different permissions, including upgradeability.
+
+Check out the [voting integration test](https://github.com/o1-labs/o1js/blob/main/src/examples/zkapps/voting/test.ts#L50) and the [DEX integration test](https://github.com/o1-labs/o1js/blob/main/src/examples/zkapps/dex/upgradability.ts) examples.
+
+---
 url: /zkapps/writing-a-zkapp/feature-overview/time-locked-accounts
 ---
 
@@ -23531,7 +25628,7 @@ As shown, the maximum amount of unlocked tokens is defined by the `initialMinimu
 
 The other timing-related properties are:
 
-- `cliffTime`: The initial time period during which all tokens are locked (should be from the current slot onwards). Note that 'time' is measured in Mina by 'slots', where 1 slot is 3min.
+- `cliffTime`: The initial time period during which all tokens are locked (should be from the current slot onwards). Note that 'time' is measured in Mina by 'slots', where 1 slot is 90 seconds.
 - `cliffAmount`: The quantity of tokens to be unlocked when the cliff time has elapsed. If this amount is greater or equal the 'initial minimum balance', all tokens are unlocked after the cliff time elapses.
 - `vestingPeriod`: After the cliff time elapses, tokens can be set to unlock periodically at a fixed interval, by a fixed quantity. The vesting period is the length of that interval.
 - `vestingIncrement`: The quantity of tokens that are unlocked after each vesting period elapses.
@@ -24494,7 +26591,7 @@ Examples are based on the standard project structure and provide additional file
 
 1. Fund the fee payer account. After you fund the fee payer account, you can use to to pay fees across multiple zkApps.
 
-    Follow the prompts to request tMINA to fund your fee payer account. For this example, your MINA address is populated on the Testnet Faucet. tMINA arrives at your address when the next block is produced (~3 minutes).
+    Follow the prompts to request tMINA to fund your fee payer account. For this example, your MINA address is populated on the Testnet Faucet. tMINA arrives at your address when the next block is produced (~90 seconds).
 
 1. Deploy to Testnet:
 
@@ -24618,6 +26715,171 @@ For comprehensive details about the o1js API, see the [o1js reference](https://d
 ## Next Steps
 
 Now that you've learned how to write and operate a basic smart contract, you can learn about [Testing zkApps Locally](https://docs.o1labs.org/o1js/zkapps/local-development).
+
+---
+url: /zkapps/writing-a-zkapp/introduction-to-zkapps/how-zkapps-work
+---
+
+# How zkApps Work
+
+zkApps run in the latest versions of [Chrome](https://www.google.com/chrome/index.html), [Firefox](https://www.mozilla.org/en-US/firefox/new/), [Edge](https://microsoft.com/edge), and [Brave](https://brave.com/) web browsers.
+
+zkApps are written in TypeScript using the zkApp CLI.
+
+A zkApp consists of two parts:
+
+- A smart contract
+
+- A user interface (UI) for users to interact with the zkApp
+  <figure>
+    <img
+      src="/img/3_zkApps_Structure.jpg"
+      width="100%"
+      alt="Diagram showing two parts of a zkApp"
+    />
+  </figure>
+- The term _smart contract_ refers to the code written with o1js.
+
+- The term _zkApp_ refers to the UI + the smart contract.
+
+## Zero knowledge-based smart contracts
+
+zkApps are based on zero knowledge proofs (zk-SNARKs). As a zkApp developer, you use the zkApp CLI to scaffold and deploy your project.
+
+Provable code is written using o1js and generates a prover function and a corresponding verifier function that are derived during the build process.
+
+The prover function is the function that executes a smart contract's custom logic and runs in an end user's web browser as part of the zkApp. The prover function generates a proof of the executed code.
+
+When interacting with a zkApp UI, users enter any data (for example, buy ABC for y price) that is required as input to the prover function, which then generates a zero knowledge proof.
+
+<figure>
+  <img
+    src="/img/4_zkApps_Prover_Function.jpg"
+    width="90%"
+    alt="Diagram showing private and public inputs to prover function to create zero knowledge proof"
+  />
+</figure>
+
+Private and public inputs represent data that must be provided to the prover function when it runs in the end user's web browser.
+
+Private inputs are not required again. Because public inputs must also be provided to the verifier function when it runs on the Mina network, public inputs are not used for data that you want to remain private.
+
+The verifier function validates whether a zero knowledge proof successfully passes all the constraints defined in the prover function. The verifier function _always_ runs quickly and efficiently, irrespective of the prover function's complexity.
+
+Within the Mina network, Mina acts as the verifier and runs the verifier function.
+
+<figure>
+  <img
+    src="/img/5_zkApps_Verifier_Function.jpg"
+    width="90%"
+    alt="Diagram showing verifier function validation"
+  />
+</figure>
+
+## Prover Function and Verification Key
+
+After you write a smart contract, build it by running the `npm run build` command. The build process compiles the TypeScript code into JavaScript and outputs the `smart_contract.js` file.
+
+From this file, you can:
+
+- Run a prover function to run your smart contract
+- Generate a verification key to deploy your smart contract
+
+While the prover function runs in an end user's web browser, the verification key lives on-chain for a given zkApp account and is used by the Mina network to verify that a zero knowledge proof has met all constraints defined in the prover. A verification key is required to create a zkApp account.
+
+You can also use the verifier function or verification key to verify proofs off-chain.
+
+## Deploy a smart contract
+
+zkApp developers use the zkApp CLI to deploy smart contracts to the Mina network. The deployment process sends a transaction that contains the verification key that is an output of the verifier function to an address on the Mina blockchain.
+
+<figure>
+  <img
+    src="/img/6_zkApps_DeploySmartContract.jpg"
+    width="75%"
+    alt="Diagram showing deployment of a Mina zkApp smart contract"
+  />
+</figure>
+When a Mina address contains a verification key, it acts as a zkApp account.
+
+A regular Mina account can receive any transactions.
+
+You can specify [permissions](/zkapps/writing-a-zkapp/feature-overview/permissions) so a zkApp account can successfully receive only the transactions that satisfy the verifier function.
+
+The Mina network rejects any transactions that do not pass the verifier function.
+
+When you deploy a zkApp to a new Mina address, the Mina Protocol charges a 1 MINA fee for account creation. This fee is unrelated to zkApps and helps to prevent Sybil or denial of service attacks.
+
+## Deploy a zkApp UI
+
+A zkApp consists of a smart contract and a UI to interact with it.
+
+To enable users to interact with your smart contract in a web browser, you build a website UI and then deploy this interactive UI as a static website. Choosing a host that offers a global content delivery network (CDN) ensures the best experience for all users.
+
+<img
+  src="/img/7_zkApps_DeploySmartContract.jpg"
+  width="95%"
+  alt="Diagram of a zkApp that includes JavaScript and the UI"
+/>
+
+Your website must contain the JavaScript `smart_contract.js` file that you generated with the `npm run build` command. To learn more, see [How to Write a zkApp](/zkapps/writing-a-zkapp/introduction-to-zkapps/how-to-write-a-zkapp).
+
+## How users interact with a zkApp
+
+To use a zkApp, end users must [Install a Wallet](/using-mina/install-a-wallet) that supports interactions with zkApps.
+
+After a zkApp is deployed to a host (for example, mycoolzkapp.com), end users can interact with it:
+
+1. The user visits mycoolzkapp.com.
+1. The user interacts with the zkApp and enters the required data. For example, if this were an automated market maker, the user might specify to buy x amount of ABC at y price.
+1. The prover function in the zkApp generates a zero knowledge proof locally using the data entered by the user. This data can be either:
+
+   - Private, the data is never seen by the blockchain.
+   - Public, the data is stored on-chain or off-chain, depending on what the zkApp specified as required for a given use case.
+
+A list of state updates (called account updates) to be created by the transaction is generated. The account updates are associated with this proof.
+
+1. The user selects **Submit to chain** in the zkApp UI.
+
+   - The user confirms the transaction on their wallet.
+   - The wallet signs the transaction containing the proof and the associated description of state to update.
+   - The wallet sends the transaction to the Mina network.
+
+1. The Mina network receives this transaction and verifies that the proof successfully passes the verifier method listed on the zkApp account. If the network accepts this transaction, this proof and the requested state changes are valid and are allowed to update the zkApp state.
+
+The end user's privacy is maintained because their interaction occurs locally in a web browser using JavaScript on the client.
+
+### How state is updated on-chain
+
+The zkApp account gets updated on-chain.
+
+When the prover function runs in a web browser, the smart contract outputs a proof and some associated data called "account updates" that are sent to a zkApp address as part of the transaction. The account updates are a JSON plain text description that describes how to update the state on a zkApp account.
+
+The integrity of these account updates is ensured by passing a hash of the account updates as a public input to the smart contract. The account updates must be present and unmodified for the verification function to pass successfully when it runs on Mina. In this way, the Mina network can confirm the integrity of both the proof and the associated account updates that describe how to update the zkApp account state.
+
+### zkApp state
+
+- On-chain state describes state that lives on the Mina blockchain.
+
+- Off-chain state describes state stored anywhere else.
+
+### On-chain state
+
+Each zkApp account provides 32 fields of 32 bytes each of arbitrary storage. You may store anything here as long as it fits in the size provided.
+
+If you anticipate your state to be larger, or if the state accumulates per user with your zkApp, then use off-chain state instead.
+
+### Off-chain state
+
+For larger data, you might want to consider storing the root of a [Merkle tree](/zkapps/o1js/merkle-tree) or a similar data structure within your zkApp's on-chain storage that references self-hosted off-chain state stored elsewhere. Mina doesn't offer an out-of-the-box solution for off-chain storage.
+
+When the zkApp runs in a user's web browser, it can insert state to an external storage, such as IPFS. When the transaction is sent to the Mina network, if it accepts this zkApp transaction then proof and state are known to be valid so the updates are allowed, then the zkApp transaction can update the root of the Merkle tree that is stored on chain.
+
+<img src="/img/9_zkApps_Off-Chain_State.jpg" width="95%" />
+
+### Keep going
+
+See [zkApps Getting Started](/zkapps/writing-a-zkapp/introduction-to-zkapps/getting-started-zkapps).
 
 ---
 url: /zkapps/writing-a-zkapp/introduction-to-zkapps/install-zkapp-cli
@@ -24777,8 +27039,8 @@ The second account update has the `'MyContract.myMethod()'` label. The update co
 Other fields in this account update are:
 
 - `publicKey` – the zkApp address (like other non-human-readable strings, this is truncated by `tx.toPretty()`)
-- `update: { appState: [...] }` – shows how the method updates the on-chain state, using `this.<state>.set()`. The names and pretty types defined using `@state` are removed in this representation, showing a raw list of 8 field elements or `null` for state fields that aren't updated.
-- `preconditions: { account: { state: [...] } }` – similar to the `update`, one entry per field of on-chain state for the preconditions created with `this.<state>.requireEquals()`. This example accepts transactions only if the first of the 8 state fields equals 0. The `null` values mean that no condition is set on the other 7 state fields.
+- `update: { appState: [...] }` – shows how the method updates the on-chain state, using `this.<state>.set()`. The names and pretty types defined using `@state` are removed in this representation, showing a raw list of 32 field elements or `null` for state fields that aren't updated.
+- `preconditions: { account: { state: [...] } }` – similar to the `update`, one entry per field of on-chain state for the preconditions created with `this.<state>.requireEquals()`. This example accepts transactions only if the first of the 32 state fields equals 0. The `null` values mean that no condition is set on the other 31 state fields.
 - `authorizationKind: 'Proof'` – indicates this account update must be authorized with a proof. Proof authorization is the default when calling a zkApp method, but not necessarily for other account updates.
 - `authorization: undefined` – the proof needed on this update isn't there yet. You learn how to add it in a minute.
 
@@ -25507,6 +27769,369 @@ Ideas for this section:
  -->
 
 ---
+url: /zkapps/writing-a-zkapp/introduction-to-zkapps/smart-contracts
+---
+
+# Smart Contracts
+
+You write smart contracts by extending the base class `SmartContract`:
+
+```ts
+class HelloWorld extends SmartContract {}
+```
+
+The `constructor` of a `SmartContract` is inherited from the base class and cannot be overriden.
+
+The zkApp account address (a public key) is its only argument:
+
+```ts
+let zkAppKey = PrivateKey.random();
+let zkAppAddress = PublicKey.fromPrivateKey(zkAppKey);
+
+let zkApp = new HelloWorld(zkAppAddress);
+```
+
+## zkApp Accounts
+
+On Mina, there is no strong distinction between normal "user accounts" and
+"zkApp accounts". A zkApp account:
+
+- Is an account on the Mina blockchain where a zkApp smart contract is deployed.
+
+- Has a verification key associated with it.
+
+The verification key stored on the zkApp account can verify zero knowledge proofs generated with the smart contract. The verification key lives on-chain for a given zkApp account and is used by the Mina network to verify that a zero knowledge proof has met all constraints defined in the prover. See [Prover Function and Verification Key](/zkapps/writing-a-zkapp/introduction-to-zkapps/how-zkapps-work#prover-function-and-verification-key).
+
+## Methods
+
+Interaction with a smart contract happens by calling one or more of its _methods_. You declare methods using the `@method` decorator:
+
+```ts
+class HelloWorld extends SmartContract {
+  @method async myMethod(x: Field) {
+    x.mul(2).assertEquals(5);
+  }
+}
+```
+
+Within a method, you can use o1js data types and methods to define your custom logic.
+
+To understand what successful execution means, look at this line in the example:
+
+```ts
+x.mul(2).assertEquals(5);
+```
+
+Creating a proof for this method is possible only if the input `x` satisfies the equation `x * 2 === 5`. This is called a "constraint".
+Magically, the proof can be checked without seeing `x` because it's a _private input_.
+
+The method has one input parameter, `x` of type `Field`. In general, arguments can be any of the built-in o1js types: `Bool`, `UInt64`, `PrivateKey`, and so on. These types are referred to as [structs`](#custom-data-types).
+
+## zk-SNARK circuits
+
+Internally, every `@method` defines a zk-SNARK circuit. From the cryptography standpoint, a smart contract is a collection of circuits, all of which are compiled into a single prover and a verification key. The proof says something to the effect of "I ran one of these methods, with some private input, and it produced this particular set of account updates". In zero knowledge proof terms, the account updates are the _public input_. The proof is accepted on the network only if it verifies against the verification key stored in the account. This verification requirement ensures that the same zkApp code also ran on the end user's device and that the account updates conform to the smart contract's rules.
+
+### @method
+
+Inside a `@method`, things sometimes behave a little differently.
+
+To construct a circuit which can then be proven, o1js calls into SnarkyML, a language that builds circuits and connects variables and constraints. As a zkApp developer, you must use the methods, functions, and types provided by o1js. Plain JavaScript code does not call into SnarkyML and therefore is not able to construct circuits.
+
+When `SmartContract` is compiled into prover and verification keys, methods are in an environment where the method inputs don't have any concrete values attached to them. Instead, they are like mathematical variables `x`, `y`, `z` that are used to build up abstract computations like `x^2 + y^2` by running the method code.
+
+In contrast, all the variables _have_ actual values attached to them (cryptographers call them "witnesses") during proof generation.
+To log these values for debugging, use a special function for logging from inside your method:
+
+```ts
+Provable.log(x);
+```
+
+The API is like `console.log`, but it automatically handles printing o1js data types in a readable format. However, the `Provable.log(x)` function does not have any effect while `SmartContract` is being compiled.
+
+## On-chain state
+
+A smart contract can contain [on-chain state](/glossary#on-chain-state). Declare it as a property on the class with the `@state` decorator:
+
+```ts
+class HelloWorld extends SmartContract {
+  @state(Field) x = State<Field>();
+
+  // ...
+}
+```
+
+Here, `x` is of type `Field`. Like with method inputs, only o1js structs can be used for state variables. The state can consist of at most 32 fields of 32 bytes each. These states are stored on the zkApp account.
+
+Some structs take up more than one `Field`. For example, a `PublicKey` needs two of the 32 fields.
+
+States are initialized with the `State()` function.
+
+A method can modify on-chain state by using `this.<state>.set()`:
+
+```ts
+class HelloWorld extends SmartContract {
+  @state(Field) x = State<Field>();
+
+  @method async setX(x: Field) {
+    this.x.set(x);
+  }
+}
+```
+
+As a zkApp developer, if you add this method to your smart contract, you are saying: "Anyone can call this method to set `x` on the account to any value they want."
+
+## Reading state
+
+This example _reads_ state:
+
+```ts
+class HelloWorld extends SmartContract {
+  @state(Field) x = State<Field>();
+
+  @method async increment() {
+    // read state
+    const x = this.x.get();
+    this.x.requireEquals(x);
+
+    // write state
+    this.x.set(x.add(1));
+  }
+}
+```
+
+The `@increment()` method fetches the current on-chain state `x` with `this.x.get()`.
+Later, it sets the new state to `x + 1` using `this.x.set()`. Simple!
+
+Another line might looks weird at first:
+
+```ts
+this.x.requireEquals(x);
+```
+
+Here's what it means to "use an on-chain value" during off-chain execution.
+
+When you use an on-chain value, you have to _prove_ that this value is the on-chain value. Verification has to fail if it's a different value. Otherwise, a malicious user could modify o1js and make it just use any other value than the current on-chain state – breaking the zkApp.
+
+You must link "`x` at proving time" to be the same as "`x` at verification time". This is a _precondition_, a condition that is checked by the verifier (a Mina node) when it receives the proof in a transaction:
+
+```ts
+this.x.requireEquals(x);
+```
+
+This code adds the precondition that `this.x` – the on-chain state at verification time – must equal `x` – the value fetched from the chain on the client side. In zkSNARK language, `x` becomes part of the public input.
+
+Using `this.<state>.requireEquals` is more flexible than equating with the current value. For example, `this.x.requireEquals(10)` fixes the on-chain `x` to the number `10`.
+
+Why not use `this.x.get()` to add the precondition automatically, instead of writing `this.x.requireEquals(x)`?
+To keep things explicit. The assertion reminds you to add logic which makes the proof fail: If `x` isn't the same at verification time, the transaction will be rejected.
+
+So, you must use care to read on-chain values if many users are expected to read and update state concurrently. It is applicable in some situations, but might cause race conditions or call for workarounds, in some situations.
+One workaround is to use actions. See [Actions and Reducer](/zkapps/writing-a-zkapp/feature-overview/actions-and-reducer).
+
+## Assertions
+
+Assertions can be incredibly useful to constrain state updates.
+
+Common assertions you can use are:
+
+<!-- prettier-ignore -->
+```ts
+x.assertEquals(y); // x = y
+x.assertBoolean(); // x = 0 or x = 1
+x.assertLt(y);     // x < y
+x.assertLte(y);    // x <= y
+x.assertGt(y);     // x > y
+x.assertGte(y);    // x >= y
+```
+
+For a full list, see the [o1js reference](/zkapps/o1js-reference).
+
+To modify the `increment()` method to accept a parameter:
+
+```ts
+class HelloWorld extends SmartContract {
+  @state(Field) x = State<Field>();
+
+  @method async increment(xPlus1: Field) {
+    const x = this.x.get();
+    this.x.requireEquals(x);
+
+    x.add(1).assertEquals(xPlus1);
+
+    this.x.set(xPlus1);
+  }
+}
+```
+
+Here, after obtaining the current state `x` and asserting that it equals the on-chain value, make another assertion:
+
+```ts
+x.add(1).assertEquals(xPlus1);
+```
+
+If the assertion fails, o1js throws an error and does not submit the transaction.
+If the assertion succeeds, it becomes part of the proof that is verified on-chain.
+
+Because of this, the new version of `increment()` is _guaranteed_ to behave like the previous version: It can only ever update the state `x` to `x + 1`.
+
+### Debugging
+
+Add optional failure messages to assertions to make debugging easier. For example, write the previous example as:
+
+```ts
+x.add(1).assertEquals(xPlus1, 'x + 1 should equal xPlus1');
+```
+
+## Public and private inputs
+
+While the state of a zkApp is **public**, method parameters are **private**.
+
+When a smart contract method is called, the proof it produces uses zero knowledge to hide inputs and details of the computation.
+
+The only way method parameters can be exposed is when the computation explicitly exposes them. For example, in the last example the input was directly stored in the public state: `this.x.set(xPlus1);`
+
+If this were not the case, define a new method called `incrementSecret()`:
+
+```ts
+class HelloWorld extends SmartContract {
+  @state(Field) x = State<Field>();
+
+  // ...
+
+  @method async incrementSecret(secret: Field) {
+    const x = this.x.get();
+    this.x.requireEquals(x);
+
+    Poseidon.hash(secret).assertEquals(x);
+    this.x.set(Poseidon.hash(secret.add(1)));
+  }
+}
+```
+
+This time, the input is called `secret`. Check that the hash of the secret is equal to the current state `x`.
+If this is the case, add `1` to the secret and set `x` to the hash of that.
+
+When this code is run successfully, it just proves that the code was run with _some_ input `secret` whose hash is `x` and that the new `x` is set to `hash(secret + 1)`.
+However, the secret itself remains private, because it can't be deduced from its hash.
+
+## Initializing state
+
+To initialize on-chain state, use the `init()` method.
+
+Like the constructor, `init()` is predefined on the base `SmartContract` class.
+
+- It is called when you deploy your zkApp with the zkApp CLI for the first time.
+- It is not called if you upgrade your contract and deploy a second time.
+
+You can override this method to add initialization of your on-chain state:
+
+```ts
+class HelloWorld extends SmartContract {
+  @state(Field) x = State<Field>();
+
+  init() {
+    super.init();
+    this.x.set(Field(10)); // initial state
+  }
+}
+```
+
+You must call `super.init()` to set your entire state to 0.
+
+If you don't have any state to initialize to values other than 0, then there's no need to override `init()`, you can just leave it out.
+The previous example set the state `x` to `Field(10)`.
+
+## Composing zkApps
+
+A powerful feature of zkApps is that they are composable, just like Ethereum smart contracts. You can simply call smart contract methods from other smart contract methods:
+
+```ts
+class HelloWorld extends SmartContract {
+  @method async myMethod(otherAddress: PublicKey) {
+    const calledContract = new OtherContract(otherAddress);
+    calledContract.otherMethod();
+  }
+}
+
+class OtherContract extends SmartContract {
+  @method async otherMethod() {}
+}
+```
+
+When a zkApp user calls `HelloWorld.myMethod()`, o1js creates two separate proofs:
+
+- One proof for the execution of `myMethod()` as usual
+- A _separate_ proof for the execution of `OtherContract.otherMethod()`
+
+The `myMethod()` proof:
+
+- Computes an appropriate hash of the function signature of `otherMethod()` plus any arguments and return values of that function call.
+- Guarantees that this hash matches the `callData` field on the account update produced by `otherMethod()` that is made part of `myMethod()`'s public input.
+
+Therefore, when you call another zkApp method, you effectively prove: "I called a method with this name, on this zkApp account, with this particular arguments and return value."
+
+To return a value from the method, you have to explicitly declare the return type using the `method.returns` decorator:
+
+Here's an example of returning a `Bool` called `isSuccess`:
+
+```ts
+@method.returns(Bool) async otherMethod(): Promise<Bool> { // annotated return type
+  // ...
+  return isSuccess;
+}
+```
+
+## Custom data types
+
+Smart contract method arguments can be any of the built-in [o1js types](/zkapps/o1js/basic-concepts#built-in-data-types).
+
+However, what if you want to define your own data type?
+
+You can create a custom data type for your smart contract using the `Struct` function that o1js exposes:
+
+1. Create a class that extends `Struct({ })`.
+1. Then, inside the object `{ }`, define the fields that you want to use in your custom data type.
+
+For example, you can create a custom data type called `Point` to represent a 2D point on a grid. The `Point` struct has no instance methods and is used only to hold information about the `x` and `y` points.
+
+To create the `Point` class, extend the `Struct` class:
+
+```ts
+class Point extends Struct({
+  x: Field,
+  y: Field,
+}) {}
+```
+
+Now that `Struct` is defined, you can use it in your smart contract for any o1js built-in types.
+
+For example, the following smart contract uses the `Point` struct defined earlier as state and as a method argument:
+
+```ts
+export class Grid extends SmartContract {
+  @state(Point) p = State<Point>();
+
+  @method async init() {
+    this.p.set(new Point({ x: Field(1), y: Field(2) }));
+  }
+
+  @method async move(newPoint: Point) {
+    const point = this.p.get();
+    this.p.requireEquals(point);
+
+    const newX = point.x.add(newPoint.x);
+    const newY = point.y.add(newPoint.y);
+
+    this.p.set(new Point({ x: newX, y: newY }));
+  }
+}
+```
+
+Note that your `Struct` classes can contain o1js built-in types like `Field`, `Bool`, `UInt64`, and so on, or even other custom types that you've defined that are based on the `Struct` class.
+
+This flexibility allows for great composability and reusability of structs.
+
+---
 url: /zkapps/writing-a-zkapp/introduction-to-zkapps/testing-zkapps-lightnet
 ---
 
@@ -25854,7 +28479,7 @@ There are some key considerations when choosing to build a zkApp with o1js on Mi
 
 - zkApps are subject to protocol throughput limitations.
 - At present, zkApps that require support for multiple concurrent users require specific architecture to avoid race conditions:
-  - Where more than the eight on-chain field elements are required to manage state, and access to that state is not shared between users, the experimental [Offchain Storage API](/zkapps/writing-a-zkapp/feature-overview/offchain-storage) offers a solution.
+  - Where more than the 32 on-chain field elements are required to manage state, and access to that state is not shared between users, the experimental [Offchain Storage API](/zkapps/writing-a-zkapp/feature-overview/offchain-storage) offers a solution.
   - Where concurrent access to _shared global state_ is required, the required architecture is available **out of the box** when using the Protokit framework to build your zkApp as an zkApp-chain (L2). There is currently no easy-to-use equivalent for shared state in o1js L1 contracts.
 
 Start here:
