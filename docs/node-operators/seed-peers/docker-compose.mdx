@@ -1,7 +1,7 @@
 ---
 title: Docker Compose Seed Peers
 sidebar_label: Docker Compose example
-description: Example of how to run a Mina Seed node using Docker Compose.
+description: Run a Mina Seed node using Docker Compose.
 keywords:
   - mina seed node
   - docker compose
@@ -9,72 +9,129 @@ keywords:
 
 # Docker Compose Seed Peer
 
-This example demonstrates how to run a Mina Seed node using Docker Compose for the Mainnet network. This Docker Compose setup includes a Mina seed node, and a script to generate a libp2p key.
+Run a Mina seed node — a publicly reachable peer that bootstraps newcomers into the network.
 
-Copy and paste the provided configuration into a `docker-compose.yml` file. Then run `docker compose up -d` to start the services, and use `docker compose logs -f` to monitor the logs.
+The full Docker Compose configuration — including `docker-compose.yml`, example environment files for mainnet and devnet, a `Makefile`, and a `README` — is maintained in the Mina repository:
 
-```yaml
-services:
-  generate_libp2p_key:
-    image: 'minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet'
-    environment:
-      MINA_LIBP2P_PASS: PssW0rD
-    entrypoint: []
-    command: >
-      bash -c '
-        mina libp2p generate-keypair -privkey-path /root/.mina-config/keys/libp2p-key
-        chmod -R 0700 /root/.mina-config/keys
-        chmod -R 0600 /root/.mina-config/keys/libp2p-key
-      '
-    volumes:
-      - './node/mina-config:/root/.mina-config'
-  mina_node:
-    image: 'minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet'
-    # image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet' # Use this image for Devnet
-    restart: always
-    environment:
-      MINA_LIBP2P_PASS: PssW0rD
-    entrypoint: []
-    command: >
-      bash -c '
-        mina daemon \
-             --peer-list-url https://bootnodes.minaprotocol.com/networks/mainnet.txt \
-             --libp2p-keypair /root/.mina-config/keys/libp2p-key \
-             --seed
-      '
-    # use  --peer-list-url https://bootnodes.minaprotocol.com/networks/devnet.txt for Devnet
-    volumes:
-      - './node/mina-config:/root/.mina-config'
-    ports:
-      - '8302:8302'
-    depends_on:
-      generate_libp2p_key:
-        condition: service_completed_successfully
+**[`mina/src/app/cli/docker-compose/seed-peer/`](https://github.com/MinaProtocol/mina/tree/develop/src/app/cli/docker-compose/seed-peer)**
+
+## Quick start
+
+:::tip
+Before running the commands below, review the [Configuration](#configuration) section.
+:::
+
+```bash
+git clone https://github.com/MinaProtocol/mina.git
+cd mina/src/app/cli/docker-compose/seed-peer
+
+# For mainnet
+cp example.mainnet.env .env
+
+# For devnet
+cp example.devnet.env .env
+
+# Edit .env — set MINA_LIBP2P_PASS (required)
+vi .env
+
+# Start services
+docker compose up -d
+
+# Or use make shortcuts
+make mainnet
+make devnet
 ```
 
-To retrieve the status of the Mina Node, run `docker compose exec mina_node mina client status`
+## Services overview
 
-In the client status, you should also see the _Adresses and ports_ section.
+| Service | Description | Default Port |
+|---------|-------------|--------------|
+| **generate_libp2p_key** | One-shot: generates the libp2p keypair | — |
+| **mina_seed** | Mina daemon running with `--seed` and `--libp2p-keypair` | 3085 (GraphQL), 8302 (P2P) |
 
-```shell
-Addresses and ports:
-	External IP:    35.197.32.58
-	Bind IP:        0.0.0.0
-	Libp2p PeerID:  12D3KooW9wsoTH3RvWJntT8CnQAMKAYgd1DztxumTaeH3TikQ6b3
-	Libp2p port:    8302
-	Client port:    8301
+## Configuration
+
+### Docker image
+
+| Variable | Description |
+|----------|-------------|
+| `MINA_DAEMON_IMAGE` | Mina daemon Docker image |
+
+For mainnet, the image is pulled from [Docker Hub](https://hub.docker.com/u/minaprotocol).
+For devnet, the image is pulled from the o1Labs GCR registry.
+
+### Network
+
+| Variable | Description |
+|----------|-------------|
+| `MINA_NETWORK` | `mainnet` or `devnet` |
+| `MINA_PEERLIST_URL` | Bootstrap peers URL |
+| `MINA_LIBP2P_PASS` | Passphrase for the libp2p key (required) |
+
+### Ports
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `MINA_REST_PORT` | `3085` | GraphQL API port |
+| `MINA_P2P_PORT` | `8302` | P2P networking port (must be reachable from the internet) |
+
+## Building the relay-circuit address
+
+Once the seed has its libp2p peer ID, build a multiaddr that other nodes can use as a `--peer`:
+
+```bash
+make peer-id
 ```
 
-Base on the above output, you can build you "relay circuit" address as follows:
-
-```shell
-/ip4/35.197.32.58/tcp/8302/p2p/12D3KooW9wsoTH3RvWJntT8CnQAMKAYgd1DztxumTaeH3TikQ6b3
+```
+/ip4/<external-ip>/tcp/<libp2p-port>/p2p/<peer-id>
 ```
 
-If you prefer using a DNS instead of an IP address, you can use the following format:
+or with DNS:
 
-```shell
-/dns4/seed.example.com/tcp/8302/p2p/12D3KooW9wsoTH3RvWJntT8CnQAMKAYgd1DztxumTaeH3TikQ6b3
+```
+/dns4/seed.example.com/tcp/8302/p2p/12D3Koo...
 ```
 
-Finally, you can add the relay circuit address the official Mina Seed Peers list by submitting a pull request to the [MinaFoundation/seeds](https://github.com/MinaFoundation/seeds) repository
+You can submit a PR to [`MinaFoundation/seeds`](https://github.com/MinaFoundation/seeds) to be listed in the official seed peer list.
+
+## Data persistence
+
+| Host path | Container path | Contents |
+|-----------|---------------|----------|
+| `./mina_node/.mina-config` | `/root/.mina-config` | Daemon config, libp2p key, peers |
+
+## Make targets
+
+| Command | Description |
+|---------|-------------|
+| `make devnet` | Copy devnet env and start services |
+| `make mainnet` | Copy mainnet env and start services |
+| `make stop` | Stop services |
+| `make clean` | Stop services, remove volumes and `.mina-config` |
+| `make logs` | Follow logs |
+| `make status` | Show container status |
+| `make peer-id` | Print this seed's libp2p peer ID |
+| `make health` | Check GraphQL endpoint, peer ID, addresses, and container summary |
+
+## Verifying the deployment
+
+```bash
+make health
+
+docker compose exec mina_seed mina client status
+
+curl -s http://localhost:3085/graphql -H 'Content-Type: application/json' \
+  -d '{"query":"{ daemonStatus { peers { peerId } } }"}' | jq .
+```
+
+## Clean start
+
+```bash
+make clean
+docker compose up -d
+```
+
+:::warning
+`make clean` removes `./mina_node/.mina-config`, including your **libp2p key**. Your seed's multiaddr will change after a clean restart. Back up `./mina_node/.mina-config/keys/libp2p-key*` if you've published the multiaddr anywhere.
+:::
