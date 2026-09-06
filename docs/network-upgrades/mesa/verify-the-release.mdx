@@ -199,7 +199,7 @@ The Mesa Docker images carry the same programs, so you can verify without instal
 ```bash
 docker run --rm -it \
   -v "$PWD:/workdir" \
-  gcr.io/o1labs-192920/mina-daemon:<mesa-tag> \
+  minaprotocol/mina-daemon:<mesa-tag> \
   bash -c 'FORKING_FROM_CONFIG_JSON=/var/lib/coda/<network>.old.json \
     mina-verify-packaged-fork-config \
       --network <network> \

@@ -2397,7 +2397,7 @@ apt-get install --allow-downgrades -y "mina-archive-migration=$VERSION"
 To get the Docker image:
 
 ```
-docker pull gcr.io/o1labs-192920/mina-archive-migration:3.0.1-e848ecb-{codename}
+docker pull minaprotocol/mina-archive-migration:3.0.1-e848ecb-{codename}
 ```
 
 Where supported codenames are:
@@ -6642,7 +6642,7 @@ The Mesa Docker images carry the same programs, so you can verify without instal
 ```bash
 docker run --rm -it \
   -v "$PWD:/workdir" \
-  gcr.io/o1labs-192920/mina-daemon:<mesa-tag> \
+  minaprotocol/mina-daemon:<mesa-tag> \
   bash -c 'FORKING_FROM_CONFIG_JSON=/var/lib/coda/<network>.old.json \
     mina-verify-packaged-fork-config \
       --network <network> \
@@ -7803,7 +7803,7 @@ services:
       - '5432:5432'
   bootstrap_db:
     image: 'minaprotocol/mina-archive:3.3.0-8c0c2e6-bullseye-mainnet'
-    # image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet' # Use this image for Devnet
+    # image: 'minaprotocol/mina-daemon:4.0.0-6965b50-bullseye-devnet' # Use this image for Devnet
     command: >
       bash -c '
       curl -O https://storage.googleapis.com/mina-archive-dumps/mainnet-archive-dump-$(date +%F_0000).sql.tar.gz;
@@ -7822,7 +7822,7 @@ services:
         condition: service_healthy
   missing_blocks_guardian:
     image: 'minaprotocol/mina-archive:3.3.0-8c0c2e6-bullseye-mainnet'
-    # image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet' # Use this image for Devnet
+    # image: 'minaprotocol/mina-daemon:4.0.0-6965b50-bullseye-devnet' # Use this image for Devnet
     command: >
       bash -c '
       curl -O https://raw.githubusercontent.com/MinaFoundation/helm-charts/main/mina-archive/scripts/missing-blocks-guardian-command.sh;
@@ -7852,7 +7852,7 @@ services:
         condition: service_completed_successfully
   mina_node:
     image: 'minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet'
-    # image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet' # Use this image for Devnet
+    # image: 'minaprotocol/mina-daemon:4.0.0-6965b50-bullseye-devnet' # Use this image for Devnet
     restart: always
     entrypoint: []
     command: >
@@ -8612,7 +8612,7 @@ Copy and paste the provided configuration into a `docker-compose.yml` file. Then
 services:
   generate_wallet_key:
     image: 'minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet'
-    # image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet' # Use this image for Devnet
+    # image: 'minaprotocol/mina-daemon:4.0.0-6965b50-bullseye-devnet' # Use this image for Devnet
     environment:
       MINA_PRIVKEY_PASS: PssW0rD
     entrypoint: []
@@ -8626,7 +8626,7 @@ services:
       - './node/mina-config:/root/.mina-config'
   mina_block_producer:
     image: 'minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet'
-    # image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet' # Use this image for Devnet
+    # image: 'minaprotocol/mina-daemon:4.0.0-6965b50-bullseye-devnet' # Use this image for Devnet
     restart: always
     environment:
       MINA_PRIVKEY_PASS: PssW0rD
@@ -12882,7 +12882,7 @@ services:
       - './node/mina-config:/root/.mina-config'
   mina_node:
     image: 'minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet'
-    # image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet' # Use this image for Devnet
+    # image: 'minaprotocol/mina-daemon:4.0.0-6965b50-bullseye-devnet' # Use this image for Devnet
     restart: always
     environment:
       MINA_LIBP2P_PASS: PssW0rD
@@ -13169,7 +13169,7 @@ services:
 ```yaml
 services:
   generate_wallet_key:
-    image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet'
+    image: 'minaprotocol/mina-daemon:4.0.0-6965b50-bullseye-devnet'
     environment:
       MINA_PRIVKEY_PASS: PssW0rD
     entrypoint: []
@@ -13182,7 +13182,7 @@ services:
     volumes:
       - './node/mina-config:/root/.mina-config'
   mina_snark_coordinator:
-    image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet'
+    image: 'minaprotocol/mina-daemon:4.0.0-6965b50-bullseye-devnet'
     restart: always
     environment:
       MINA_PRIVKEY_PASS: PssW0rD
@@ -13209,7 +13209,7 @@ services:
       generate_wallet_key:
         condition: service_completed_successfully
   mina_snark_worker:
-    image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet'
+    image: 'minaprotocol/mina-daemon:4.0.0-6965b50-bullseye-devnet'
     restart: always
     entrypoint: []
     command: >
@@ -13848,7 +13848,7 @@ docker run --name mina-node -d \
 -v $(pwd)/.mina-env:/entrypoint.d/mina-env:ro \
 -v $(pwd)/keys:/keys:ro \
 -v $(pwd)/.mina-config:/root/.mina-config \
-gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet \
+minaprotocol/mina-daemon:4.0.0-6965b50-bullseye-devnet \
 daemon
 ```
 
