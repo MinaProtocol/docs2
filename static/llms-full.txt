@@ -17278,199 +17278,6 @@ These sources heavily influenced the preceding article and go into more depth ab
 - Read Yunus' article ["Let's Prove"](https://docs.google.com/document/d/1JQPypqNc7nIRbY0c_5zHFI5TbvbCTe1neiSTPxfLmWA/edit?tab=t.0), a complete guide to o1js.
 
 ---
-url: /zkapps/o1js/custom-tokens
----
-
-# Custom Token API
-
-You can use o1js to perform common token operations, such as minting, burning, and sending tokens.
-
-## Minting
-
-Minting generates new tokens whereby the zkApp updates the balance of an account by adding the newly created tokens to it. Minted tokens can be sent to any existing account in the ledger.
-
-To mint new tokens using a zkApp, this example of the `this.token` property on the `SmartContract` class shows how a zkApp can mint tokens to another account:
-
-```ts
-class MintExample extends SmartContract {
-...
-@method mintNewTokens(receiverAddress: PublicKey) {
-    this.token.mint({
-      address: receiverAddress,
-      amount: 100_000,
-    });
-  }
-}
-```
-
-This example snippet defines a smart contract called `MintExample` with a method called `mintNewTokens`. Using `this.token`, the smart contract specifies the address to mint new tokens for as well as the amount.
-
-## Burning
-
-Burning tokens is the opposite of minting. Burning tokens deducts the balance of a certain address by the specified amount. The following examples show how a zkApp can burn tokens of another account:
-
-```ts
-class BurnExample extends SmartContract {
-...
-@method burnTokens(addressToDecrease: PublicKey) {
-    this.token.burn({
-      address: addressToDecrease,
-      amount: 100_000,
-    });
-  }
-}
-```
-
-This example snippet defines a smart contract called `BurnExample` with a method called `burnTokens`. Similar to minting, the `this.token` property calls the `burn()` method. This specifies the amount of tokens to burn for the specified address.
-
-A zkApp cannot burn more tokens than the specified account has. An error is thrown and no such transaction is made.
-
-## Sending
-
-To send a custom token, use the `send()` method available on `this.token`. This example shows how a zkApp can approve sending tokens between two accounts:
-
-```ts
-class SendExample extends SmartContract {
-...
-@method sendTokens(
-    senderAddress: PublicKey,
-    receiverAddress: PublicKey,
-    amount: UInt64
-  ) {
-    this.token.send({
-      to: receiverAddress,
-      from: senderAddress,
-      amount,
-    });
-  }
-}
-```
-
-This example snippet defines a smart contract called `SendExample` with a method called `sendTokens()`. Then, in the same fashion, as minting and burning, the `this.token` property calls the `send()` method.
-
-For a comprehensive example of how to use custom tokens with a zkApp, see the custom token example provided in [token.test.ts](https://github.com/o1-labs/o1js/blob/main/src/lib/token.test.ts).
-
-## Proof Authorization
-
-When a zkApp interacts with a custom token that it did not originally create, the calling zkApp must get authorization from the [token owner](#token-owner).
-
-A token owner approves a transaction using a **proof**.
-
-### Proof Authorization
-
-Proof authorization is a more flexible way for a token owner to approve a custom token transfer. If two separate accounts want to trade a specific custom token, the token owner can provide a proof that the transaction is valid. This allows the token owner to approve a transaction without signing it.
-
-To allow for proof authorization by the token owner, the child zkApp that is requesting authorization must provide a way for the token owner to inspect the changes it wants to make and verify that they are valid. Token owner contracts have the power to inspect child account updates to enforce custom token rules. For example, a token owner contract could enforce that a child zkApp can send tokens only to a specific address.
-
-Token owner contracts can inspect the updates that a child zkApp wants to make by using a combination of `Experimental.Callback` and `this.approve`. The first thing that a token contract must do is generate the account updates that a child zkApp wants to make. The child zkApp wraps a function around `Experimental.Callback` which contains the changes it wants to make. The token owner can then execute that function with `this.approve` and inspect the changes that the child zkApp wants to make.
-
-This example shows how a zkApp can approve a transaction between two accounts by calling a specified `SmartContract` method:
-
-```ts
-/**
- * This TokenContract class is used to create a custom token
- * and acts as the token owner of the custom token
- */
-class TokenContract extends SmartContract {
-  ...
-
-  /**
-   * 'sendTokens()' sends tokens from `senderAddress` to `receiverAddress`.
-   *
-   * It does so by deducting the amount of tokens from `senderAddress` by
-   * authorizing the deduction with a proof. It then creates the receiver
-   * from `receiverAddress` and sends the amount.
-   */
-  @method sendTokens(
-    senderAddress: PublicKey,
-    receiverAddress: PublicKey,
-    amount: UInt64,
-    callback: Experimental.Callback<any>
-  ) {
-    // approves the callback which deductes the amount of tokens from the sender
-    let senderAccountUpdate = this.approve(callback);
-
-    // Create constraints for the sender account update and amount
-    let negativeAmount = Int64.fromObject(
-      senderAccountUpdate.body.balanceChange
-    );
-    negativeAmount.assertEquals(Int64.from(amount).neg());
-    let tokenId = this.token.id;
-
-    // Create receiver accountUpdate
-    let receiverAccountUpdate = Experimental.createChildAccountUpdate(
-      this.self,
-      receiverAddress,
-      tokenId
-    );
-    receiverAccountUpdate.balance.addInPlace(amount);
-  }
-}
-
-class ZkAppB extends SmartContract {
-  /*
-  * This method is used to get authorization from the token owner. Remember,
-  * the token owner is the one who created the custom token. To debit their
-  * balance, we must get authorization from the token owner
-  */
-  @method approveSend(amount: UInt64) {
-    this.balance.subInPlace(amount);
-  }
-}
-
-let tx = await Local.transaction(feePayer, () => {
-  let amount = UInt64.from(1_000)
-  // Create a callback inside the transaction that calls the approveSend method.
-  // This will be executed by the token owner to get authorization.
-  let approveSendingCallback = Experimental.Callback.create(
-    zkAppB,
-    'approveSend',
-    [amount]
-  );
-  // Here, we call the token contract with the callback
-  tokenZkApp.sendTokens(zkAppBAddress, account1Address, amount, approveSendingCallback);
-});
-await tx.prove();
-tx.sign([zkAppBKey]);
-await tx.send();
-```
-
-The result of this example is `zkAppB` sending tokens to `account1Address` and `account1Address` receiving tokens from `zkAppB`. The transaction is approved by the token owner without the token owner having to sign the transaction.
-
-For another example of how to approve a transaction with a zkApp, see this [authorization example](https://github.com/o1-labs/o1js/blob/main/src/examples/zkapps/token_with_proofs.ts) provided.
-
-## Understanding Important Terms
-
-If your zkApp interacts with custom tokens, be sure you understand the following essential terms:
-
-### Token id
-
-Token ids are unique identifiers that are used to distinguish between different types of custom tokens. Custom token identifiers are globally unique across the entire network.
-
-Token ids are derived from a zkApp. To check the token id of a zkApp, use the `this.token.id` property.
-
-### Token Accounts
-
-Token accounts are like regular accounts, but they hold a balance of a specific custom token instead of MINA. A token account is created from an existing account but is specified by a public key _and_ a token id.
-If an existing account receives a transaction that is specified by a custom token, a token account for that public key and token id is created if it does not exist.
-
-Token accounts are specific for each type of custom token, meaning that a single public key can have many different types of token accounts.
-
-A token account is automatically created for a public key whenever an existing account receives a transaction denoted with a custom token.
-
-When a token account is created for the first time, an account creation fee must be paid the same as creating a new standard account.
-
-In addition to sending custom tokens, a **token owner account** can mint and burn custom tokens. A token owner account is the governing zkApp account for a specific custom token.
-
-### Token Owner
-
-A token owner is an account that creates, facilitates, and governs how a custom token is to be used. Concretely, the token owner is the account that created the custom token and is the only account that can mint and burn tokens.
-
-In addition to being the only account that can mint and burn tokens, the token owner is the only account that can approve sending tokens between two accounts.
-If two accounts want to send tokens to each other, the token owner must approve the transaction. The token owner generates the changes the two accounts want to make and can then make assertions about those changes.
-The token owner can approve the transaction with a proof.
-
----
 url: /zkapps/o1js/ecdsa
 ---
 
@@ -23023,18 +22830,17 @@ url: /zkapps/writing-a-zkapp/feature-overview/custom-tokens
 
 :::info
 
-If you want to create a fungible token you can use the 
-[fungible token standard](https://github.com/MinaFoundation/mina-fungible-token/blob/main/documentation/SUMMARY.md) which is built on top of the `TokenContract` class.  
+If you want to create a fungible token you can use the
+[fungible token standard](https://github.com/MinaFoundation/mina-fungible-token/blob/main/documentation/SUMMARY.md) which is built on top of the `TokenContract` class.
 
-
-:::info
+:::
 
 # Custom Tokens
 
 Blockchain applications have various use cases for custom tokens, including a real-world financial asset, stake in an on-chain protocol, or even skill points in a game.
 
 Most blockchains, like Ethereum, do not natively support custom tokens. You implement custom tokens as smart contracts on top of the execution layer of the underlying protocol.
-Token standards ensure the interoperability of applications on Etherum, these standardisations are agree upon in ERCs, Ethereum Request for customElements, such as the fungible token standard [ERC-20](https://ethereum.org/en/developers/docs/standards/tokens/erc-20/).
+Token standards ensure the interoperability of applications on Ethereum. These standardisations are agreed upon in ERCs, Ethereum Requests for Comments, such as the fungible token standard [ERC-20](https://ethereum.org/en/developers/docs/standards/tokens/erc-20/).
 The Ethereum community has created and agreed upon other reference implementations and standardisation that are audited and easy to configure, such as [ERC-721](https://ethereum.org/en/developers/docs/standards/tokens/erc-721/) for NFTs.
 
 Mina supports custom token functionality at a low level in the tech stack. Mina treats custom tokens almost the same way as the native MINA token. This approach offers the following benefits:
@@ -23059,7 +22865,7 @@ A token manager smart contract sets the rules around minting, burning, and sendi
 
 Use the `TokenContract` class to perform common token operations, such as minting, burning, and sending tokens. In o1js, the `TokenContract` class is your blueprint for custom token implementations.
 
-As shown in this [example code](https://github.com/o1-labs/o1js/blob/main/src/lib/mina/token/token-contract.unit-test.ts#L13), you inherit from the `TokenContract` class:
+As shown in this [example code](https://github.com/o1-labs/o1js/blob/main/src/lib/mina/v1/token/token-contract.unit-test.ts), you inherit from the `TokenContract` class:
 
 ```ts
 class ExampleTokenContract extends TokenContract {
@@ -23068,6 +22874,10 @@ class ExampleTokenContract extends TokenContract {
 ```
 
 ## TokenContract API
+
+For the full signature of every method below, see the
+[`TokenContract` API reference](https://docs.o1labs.org/o1js/api-reference/classes/TokenContract)
+on the o1Labs docs.
 
 The `TokenContract` comes with a set of prebuilt methods and helpers to get you started in your token journey. The base token smart contract implements the following two APIs:
 
@@ -23178,7 +22988,16 @@ abstract class TokenContract extends SmartContract {
 }
 ```
 
-Which utlizses the `Approvable` API to send token from an account to another one.
+Which utilizes the `Approvable` API to send tokens from one account to another.
+
+### Further examples
+
+The o1js repository is the most reliable source of working token code, since
+its examples are compiled and tested with the library:
+
+- [`token-contract.ts`](https://github.com/o1-labs/o1js/blob/main/src/lib/mina/v1/token/token-contract.ts) — the `TokenContract` implementation itself.
+- [`token-methods.ts`](https://github.com/o1-labs/o1js/blob/main/src/lib/mina/v1/token/token-methods.ts) — the underlying mint, burn and send methods.
+- [`token-with-proofs.ts`](https://github.com/o1-labs/o1js/blob/main/src/examples/zkapps/token-with-proofs.ts) — approving a token transfer with a proof rather than a signature.
 
 ## Custom Token Terminology
 
