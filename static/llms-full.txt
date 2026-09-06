@@ -4823,10 +4823,10 @@ This documentation uses terms like _automode_, _stop-slot_, _trustless upgrade_,
 
 Mesa bundles four Mina Improvement Proposals (MIPs) that change protocol behavior, plus two operational improvements to the upgrade flow itself. See the **[Glossary](/network-upgrades/mesa/glossary)** for detailed descriptions of each MIP and the canonical specs in the [MinaProtocol/MIPs](https://github.com/MinaProtocol/MIPs/tree/main/MIPS) repository.
 
-- **[Faster Blocks — MIP6](/network-upgrades/mesa/glossary#faster-blocks)** — Halves slot time to 90 seconds, halves coinbase reward, halves epoch duration.
-- **[Expanded zkApp State — MIP7](/network-upgrades/mesa/glossary#expanded-zkapp-state)** — Raises on-chain state from 8 to 32 field elements per zkApp account.
-- **[Larger Events and Actions — MIP8](/network-upgrades/mesa/glossary#larger-events-and-actions)** — Increases per-transaction event/action limit from 100 to 1024 field elements.
-- **[Larger zkApp Transactions — MIP9](/network-upgrades/mesa/glossary#larger-zkapp-transactions)** — Triples the max account updates per zkApp transaction.
+- **[Faster Blocks — MIP6](/network-upgrades/mesa/glossary#faster-blocks--mip6)** — Halves slot time to 90 seconds, halves coinbase reward, halves epoch duration.
+- **[Expanded zkApp State — MIP7](/network-upgrades/mesa/glossary#expanded-zkapp-state--mip7)** — Raises on-chain state from 8 to 32 field elements per zkApp account.
+- **[Larger Events and Actions — MIP8](/network-upgrades/mesa/glossary#larger-events-and-actions--mip8)** — Increases per-transaction event/action limit from 100 to 1024 field elements.
+- **[Larger zkApp Transactions — MIP9](/network-upgrades/mesa/glossary#larger-zkapp-transactions--mip9)** — Triples the max account updates per zkApp transaction.
 
 ### Automode Upgrades
 
@@ -21968,7 +21968,7 @@ The fundamental data structure that Mina transactions are built from is called a
 
 :::info Mesa Upgrade
 
-The account updates limit has been increased from ~6 to **16 segments per transaction**. See the [Mesa upgrade overview](/network-upgrades/mesa/glossary#larger-zkapp-transactions) for more details.
+The account updates limit has been increased from ~6 to **16 segments per transaction**. See the [Mesa upgrade overview](/network-upgrades/mesa/glossary#larger-zkapp-transactions--mip9) for more details.
 
 :::
 
