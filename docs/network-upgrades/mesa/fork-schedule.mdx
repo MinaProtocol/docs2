@@ -25,34 +25,44 @@ The relevant moments are:
 
 ## Mainnet
 
-:::warning Values not yet published
-The mainnet Mesa fork schedule has not been announced. The values below are placeholders. They will be filled in once o1Labs publishes the stop-slot release and the Mesa genesis timestamp.
+:::info Upgrade day is 2026-09-03
+The mainnet stop-slot schedule is published and is compiled into the releases below. Announced in the [3.5.0 Mainnet Stop Slot Release](https://github.com/MinaProtocol/mina/releases/tag/3.5.0-mainnet-stop-slot) and the [4.0.0 Mainnet Automode Upgrade Release](https://github.com/MinaProtocol/mina/releases/tag/4.0.0-mainnet).
 :::
 
-| Field                                   | Value                                                                          |
-| --------------------------------------- | ------------------------------------------------------------------------------ |
-| Pre-fork (stop-slot) release            | _TBD — will be a `3.x.x` tag_                                                  |
-| Mesa release                            | _TBD — will be a `4.x.x` tag_                                                  |
-| `stop-transaction-slot` (`slot_tx_end`) | _TBD_                                                                          |
-| `stop-network-slot` (`slot_chain_end`)  | _TBD_                                                                          |
-| Mesa genesis timestamp (UTC)            | _TBD — exactly 3 hours after the stop-network-slot_                            |
-| State Finalization window               | Exactly 100 slots = exactly 5 hours between `slot_tx_end` and `slot_chain_end` |
+| Field                                   | Value                                                                                                                                                   |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Pre-fork (stop-slot) release            | [`3.5.0-mainnet-stop-slot`](https://github.com/MinaProtocol/mina/releases/tag/3.5.0-mainnet-stop-slot) — `mina-mainnet=3.5.0-mainnet-stop-slot-5e100ee` |
+| Automode release                        | [`4.0.0-mainnet`](https://github.com/MinaProtocol/mina/releases/tag/4.0.0-mainnet) — `mina-mainnet-automode=4.0.0-mainnet-893c877`                      |
+| Mesa release (manual mode only)         | _Published after the stop-network-slot_                                                                                                                 |
+| `stop-transaction-slot` (`slot_tx_end`) | Slot **393800** — 2026-09-03 10:00 UTC                                                                                                                  |
+| `stop-network-slot` (`slot_chain_end`)  | Slot **393900** — 2026-09-03 15:00 UTC                                                                                                                  |
+| Mesa genesis timestamp (UTC)            | 2026-09-03 18:00 (`hard_fork_genesis_slot_delta` = 60 slots = 3 hours)                                                                                  |
+| State Finalization window               | Exactly 100 slots = exactly 5 hours between `slot_tx_end` and `slot_chain_end`                                                                          |
 
-Subscribe to the [MinaProtocol/mina releases](https://github.com/MinaProtocol/mina/releases?q=mesa) and watch the [Mina Foundation announcements channel](https://discord.gg/minaprotocol) for the schedule publication.
+Both mainnet packages come from the `stable` channel on `packages.o1test.net`. Run **one** of the two releases:
+
+- **Automode** — install `mina-mainnet-automode=4.0.0-mainnet-893c877` before the stop-transaction-slot. The dispatcher swaps to the Mesa binary by itself. No second upgrade.
+- **Manual** — install `mina-mainnet=3.5.0-mainnet-stop-slot-5e100ee` before the stop-transaction-slot, keep it running until the stop-network-slot, then install the Mesa release when it is published. See [Upgrade Modes](/network-upgrades/mesa/upgrade-modes).
+
+The archive package for both paths is `mina-archive=3.5.0-mainnet-stop-slot-5e100ee`.
 
 ## Devnet
 
-:::warning Values not yet published
-Devnet typically forks ahead of mainnet to give integrators a final dress rehearsal. Schedule will be posted here once announced.
+:::note Devnet forked on 2026-08-19
+Devnet is on Mesa. The values below are historical; they will not change.
 :::
 
-| Field                                   | Value |
-| --------------------------------------- | ----- |
-| Pre-fork (stop-slot) release            | _TBD_ |
-| Mesa release                            | _TBD_ |
-| `stop-transaction-slot` (`slot_tx_end`) | _TBD_ |
-| `stop-network-slot` (`slot_chain_end`)  | _TBD_ |
-| Mesa genesis timestamp (UTC)            | _TBD_ |
+| Field                                   | Value                                                                                                                                               |
+| --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Pre-fork (stop-slot) release            | [`3.5.0-devnet-stop-slot`](https://github.com/MinaProtocol/mina/releases/tag/3.5.0-devnet-stop-slot) — `mina-devnet=3.5.0-devnet-stop-slot-849edfa` |
+| Automode release                        | [`4.0.0-devnet`](https://github.com/MinaProtocol/mina/releases/tag/4.0.0-devnet) — `mina-devnet-automode=4.0.0-devnet-2dc9218`                      |
+| Mesa release (manual mode only)         | [`4.0.0-devnet-mesa`](https://github.com/MinaProtocol/mina/releases/tag/4.0.0-devnet-mesa) — `mina-devnet=4.0.0-6965b50`                            |
+| `stop-transaction-slot` (`slot_tx_end`) | Slot **413540** — 2026-08-19 10:00 UTC                                                                                                              |
+| `stop-network-slot` (`slot_chain_end`)  | Slot **413640** — 2026-08-19 15:00 UTC                                                                                                              |
+| Mesa genesis timestamp (UTC)            | 2026-08-19 18:00                                                                                                                                    |
+| State Finalization window               | Exactly 100 slots = exactly 5 hours between `slot_tx_end` and `slot_chain_end`                                                                      |
+
+Devnet packages come from the `alpha` channel on `packages.o1test.net`. A node that joins devnet now must use `mina-devnet=4.0.0-6965b50`; the two pre-fork releases can no longer connect.
 
 ## Preflight (archived)
 

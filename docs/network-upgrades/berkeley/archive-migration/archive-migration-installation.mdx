@@ -20,7 +20,7 @@ To mitigate these limitations, the archive node maintenance package is available
 
 ## Install with Google Cloud SDK
 
-The Google Cloud SDK installer does not always register a `google-cloud-sdk` apt package. The best way to install gsutil is using the apt repostory:
+The Google Cloud SDK installer does not always register a `google-cloud-sdk` apt package. The best way to install the Google Cloud CLI is using the apt repostory:
 
 ```sh
 curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg
@@ -32,7 +32,7 @@ sudo apt-get update && sudo apt-get install google-cloud-sdk
 
 We strongly encourage you to perform the migration on your own data to preserve the benefits of decentralization. However, if you want to use the archive data that o1labs runs (for example, to bootstrap a new archive from SQL without waiting all day for the chain to download and replay), you can use the following steps:
 
-1. Download the Devnet/Mainnet archive data using cURL or gsutil:
+1. Download the Devnet/Mainnet archive data using cURL or gcloud storage:
 
     - cURL:
 
@@ -50,10 +50,10 @@ We strongly encourage you to perform the migration on your own data to preserve 
 
      :warning: The majority of backups have the `0000` suffix. If a download with that name suffix is not available, try incrementing it. For example, `0001`, `0002`, and so on.
 
-    - gsutil:
+    - gcloud storage:
 
        ```sh
-       gsutil cp gs://mina-archive-dumps/mainnet-archive-dump-2024-01-15* .
+       gcloud storage cp gs://mina-archive-dumps/mainnet-archive-dump-2024-01-15* .
        ```
 
 2. Extract the tar package.
@@ -78,7 +78,7 @@ We strongly encourage you to perform the migration on your own data to preserve 
 
 The recommended method is to perform migration on your own data to preserve the benefits of decentralization.
 
-`gsutil cp gs://mina_network_block_data/{network}-*.json .`
+`gcloud storage cp gs://mina_network_block_data/{network}-*.json .`
 
 :warning: Precomputed blocks for the Mainnet network take ~800 GB of disk space. Plan for adequate time to download these blocks. The Berkeley migration app downloads them incrementally only when needed.
 
@@ -115,7 +115,7 @@ apt-get install --allow-downgrades -y "mina-archive-migration=$VERSION"
 To get the Docker image:
 
 ```
-docker pull gcr.io/o1labs-192920/mina-archive-migration:3.0.1-e848ecb-{codename}
+docker pull minaprotocol/mina-archive-migration:3.0.1-e848ecb-{codename}
 ```
 
 Where supported codenames are:

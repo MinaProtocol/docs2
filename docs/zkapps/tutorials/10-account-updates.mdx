@@ -21,6 +21,12 @@ keywords:
 
 The fundamental data structure that Mina transactions are built from is called an _account update_. Account updates are a flexible and powerful data structure that can express all kinds of updates, events, and preconditions you use to develop smart contracts.
 
+:::info Mesa Upgrade
+
+The account updates limit has been increased from ~6 to **16 segments per transaction**. See the [Mesa upgrade overview](/network-upgrades/mesa/glossary#larger-zkapp-transactions--mip9) for more details.
+
+:::
+
 Each zkApp transaction constructed by o1js is composed of one or more [AccountUpdate](https://docs.o1labs.org/o1js/api-reference/classes/AccountUpdate) classes, which are a set of instructions for the Mina network to perform, such as altering on-chain state, emitting an event, and so on.
 
 Each `AccountUpdate` can make assertions about its account, apply updates to its account, and make assertions about its child `AccountUpdates`.
@@ -52,7 +58,7 @@ Each [AccountUpdate](https://docs.o1labs.org/o1js/api-reference/classes/AccountU
 - `Preconditions`: Conditions that must be true for the account update to be applied. Corresponds to assertions in an o1js method.
 - `Updates`: Things changed by the account update, such as including the zkApp state, permissions, and verification key.
 - `BalanceChange`: Any changes to the balance
-- `Authorization`: How the zkApp is authorized; must be a proof (corresponding to the verification key on the account), a signature, or none. See [Interacting With Mina](/zkapps/writing-a-zkapp/introduction-to-zkapps/interact-with-mina).
+- `Authorization`: How the zkApp is authorized; must be a proof (corresponding to the verification key on the account), a signature, or none. See [Authorizations](/zkapps/writing-a-zkapp/introduction-to-zkapps/interact-with-mina).
 
 Other `AccountUpdate` components are available to use, but are not covered in this tutorial:
 

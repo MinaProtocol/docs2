@@ -7,7 +7,7 @@ url: /glossary
 [A](#a) [B](#b) [C](#c) [D](#d) [E](#e) [F](#f) G [H](#h) [I](#i) J [K](#k) [L](#l) [M](#m) [N](#n) [O](#o)
 [P](#p) Q [R](#r) [S](#s) [T](#t) [U](#u) [V](#v) W X Y [Z](#z)
 
-Are you looking for a zero knowledge, o1js, zkApp, or Mina term that isn't here yet? To let us know, please [create an issue](https://github.com/o1-labs/docs2/issues) or click **EDIT THIS PAGE** to submit a PR.
+Are you looking for a zero knowledge or Mina term that isn't here yet? To let us know, please [create an issue](https://github.com/o1-labs/docs2/issues) or click **EDIT THIS PAGE** to submit a PR.
 
 ## A
 
@@ -92,7 +92,7 @@ Full history is not available in Mina, so a newly connected node to the network 
 
 ### cold wallet
 
-A wallet is "cold" if the private key is not, and never has been, available on the internet. Cold storage is preferred for wallets associated with meaningful stake as it is harder to hack into cold wallet systems if they never have been on the internet. This could be as easy as generating a key pair on a laptop with the internet turned off or using a hardware wallet, like a [Ledger](https://shop.ledger.com/) device.
+A cold wallet is not, and never has been, available on the internet. Cold storage is safer for wallets associated with meaningful stake.
 
 ### compressing
 
@@ -134,7 +134,7 @@ Created with the zkApp CLI, a [deploy alias](/zkapps/tutorials/deploying-to-a-ne
 
 ### Devnet
 
-Dedicated for developers building on top of the Mina protocol, Devnet is designed for testing and experimentation so you can test tooling and integrations before going live on [Mainnet](#mainnet). See [Connect to Mainnet or Devnet](/node-operators/validator-node/connecting-to-the-network).
+Dedicated for developers building on top of the Mina protocol, Devnet is designed for testing and experimentation so you can test tooling and integrations before going live on [Mainnet](#mainnet). See [Connect to Devnet](/node-operators/validator-node/connecting-to-the-network).
 
 ### distributed ledger technology (DLT)
 
@@ -156,7 +156,7 @@ An approach to public key cryptography based on the algebraic structure of ellip
 
 ### epoch
 
-A unit of time equal to 7140 slots at Mainnet. An epoch is divided into [slots](#slot) of 3 minutes each.
+A unit of time equal to 7140 slots at Mainnet. An epoch is divided into [slots](#slot) of 90 seconds each.
 
 ### extensional blocks
 
@@ -206,7 +206,7 @@ A mathematical cryptographic function that converts an input of arbitrary length
 
 ### hot wallet
 
-A wallet is "hot" if the private key is available on a machine that is connected to the internet. To mitigate risk in the case of hackers breaking into their systems, careful block producers avoid having hot wallets with substantial stake on them.
+A hot wallet has a private key that is available on a machine that is connected to the internet. To mitigate risk, avoid having hot wallets with substantial stake.
 
 ## I
 
@@ -262,7 +262,7 @@ Changes to the network that make the old chain incompatible with the new chain. 
 
 ### Mainnet
 
-The live version of the Mina blockchain network that is fully operational. On the Mina Mainnet public blockchain, real-world transactions are performed. See [Connect to the Mina Network](node-operators/validator-node/connecting-to-the-network). A Mainnet is different from a [Testnet](#testnet) and [Devnet](#devnet) which are used for development and testing.
+The live version of the Mina blockchain network that is fully operational. On the Mina Mainnet public blockchain, real-world transactions are performed. See [Connect to the Mina Network](/node-operators/validator-node/connecting-to-the-network). A Mainnet is different from a [Testnet](#testnet) and [Devnet](#devnet) which are used for development and testing.
 
 ### MINA
 
@@ -298,7 +298,7 @@ A [full node](#full-node) in the Mina protocol that does not participate in cons
 
 ### non-upgradeable
 
-If the verification key cannot be changed, a zkApp smart contract is considered non-upgradeable. You can make a smart contract upgradeable or not upgradeable using [permissions](https://docs.o1labs.org/o1js/zkapps/permissions).
+If the verification key cannot be changed, a zkApp smart contract is considered non-upgradeable. You can make a smart contract upgradeable or not upgradeable using [permissions](https://docs.o1labs.org/o1js/zkapps/permissions#upgradeability-of-smart-contracts).
 
 ### nonce
 
@@ -324,7 +324,7 @@ A transfer of value or data, including transactions, that exist on and have been
 
 ### on-chain state
 
-State that lives on the Mina blockchain. Each zkApp account provides eight fields of 32 bytes each of arbitrary storage for the on-chain state.
+State that lives on the Mina blockchain. Each zkApp account provides 32 fields of 32 bytes each of arbitrary storage for the on-chain state.
 
 ### oracle
 
@@ -462,7 +462,7 @@ The local testing blockchain you use in the first phase of testing. Using a simu
 
 ### slot
 
-A unit of time in the Mina network. As of Mainnet launch, a slot in Mina is 3minutes long. An [epoch](#epoch) is divided into slots. Block producers can find eligible slots to produce blocks in to earn rewards.
+A unit of time in the Mina network. A slot in Mina is 90 seconds long. An [epoch](#epoch) is divided into slots. Block producers can find eligible slots to produce blocks in to earn rewards.
 
 ### smart contract
 
@@ -592,7 +592,7 @@ A command line tool that zkApp developers use to scaffold and deploy smart contr
 
 ### zkApp account
 
-A zkApp account is an account on the Mina blockchain where a zkApp smart contract is deployed. Each zkApp account provides 8 fields of 32 bytes each of arbitrary storage. When a Mina address contains a verification key, it acts as a zkApp account.
+A smart contract account. Each zkApp account provides 32 fields of 32 bytes each of arbitrary storage. When a Mina address contains a verification key, it acts as a zkApp account.
 
 ### zkApp manager account
 
@@ -753,15 +753,15 @@ With each subsequent block, a recipient has a higher degree of confidence that t
 
 In the Bitcoin network, a transaction is confirmed after [6 blocks](https://en.bitcoin.it/wiki/Confirmation) (60 mins) with an assumption that an attacker is unlikely to amass more than 10% of the hashrate.
 
-With a slot duration of 3 mins and assuming 90% honest stake, the following table shows the finality in blocks, the average time it takes to produce the corresponding number of blocks, and the confidence that payment will be confirmed.
+With a slot duration of 90 seconds and assuming 90% honest stake, the following table shows the finality in blocks, the average time it takes to produce the corresponding number of blocks, and the confidence that payment will be confirmed.
 
 | Finality (in blocks) | Average time for finality | Finality confidence (%) |
 | -------------------- | ------------------------- | ----------------------- |
-| 8                    | 33 mins                   | 98.6709                 |
-| 15                   | 60 mins                   | 99.9231                 |
-| 23                   | 1hr 32mins                | 99.9965                 |
-| 30                   | 2hrs                      | 99.9998                 |
-| 38                   | 2hrs 32mins               | 100                     |
+| 8                    | 16 mins                   | 98.6709                 |
+| 15                   | 30 mins                   | 99.9231                 |
+| 23                   | 46 mins                   | 99.9965                 |
+| 30                   | 60 mins                   | 99.9998                 |
+| 38                   | 1hr 16mins                | 100                     |
 
 Average time is calculated based on consensus constants that determine the number of slots filled per epoch. This is currently set to 75%.
 
@@ -1338,7 +1338,7 @@ If you'd like to expose liquid balances for vesting accounts at some particular 
 
 ```
 (*
- *  uint32 global_slot -- the "clock" it starts at 0 at the genesis block and ticks up every 3minutes.
+ *  uint32 global_slot -- the "clock" it starts at 0 at the genesis block and ticks up every 90 seconds.
  *  uint32 cliff_time -- the slot where the cliff is (similar to startup equity vesting)
  *  uint32 cliff_amount -- the amount that unlocks at the cliff
  *  amount vesting_increment -- unlock this amount every "period"
@@ -2302,7 +2302,7 @@ To mitigate these limitations, the archive node maintenance package is available
 
 ## Install with Google Cloud SDK
 
-The Google Cloud SDK installer does not always register a `google-cloud-sdk` apt package. The best way to install gsutil is using the apt repostory:
+The Google Cloud SDK installer does not always register a `google-cloud-sdk` apt package. The best way to install the Google Cloud CLI is using the apt repostory:
 
 ```sh
 curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg
@@ -2314,7 +2314,7 @@ sudo apt-get update && sudo apt-get install google-cloud-sdk
 
 We strongly encourage you to perform the migration on your own data to preserve the benefits of decentralization. However, if you want to use the archive data that o1labs runs (for example, to bootstrap a new archive from SQL without waiting all day for the chain to download and replay), you can use the following steps:
 
-1. Download the Devnet/Mainnet archive data using cURL or gsutil:
+1. Download the Devnet/Mainnet archive data using cURL or gcloud storage:
 
     - cURL:
 
@@ -2332,10 +2332,10 @@ We strongly encourage you to perform the migration on your own data to preserve 
 
      :warning: The majority of backups have the `0000` suffix. If a download with that name suffix is not available, try incrementing it. For example, `0001`, `0002`, and so on.
 
-    - gsutil:
+    - gcloud storage:
 
        ```sh
-       gsutil cp gs://mina-archive-dumps/mainnet-archive-dump-2024-01-15* .
+       gcloud storage cp gs://mina-archive-dumps/mainnet-archive-dump-2024-01-15* .
        ```
 
 2. Extract the tar package.
@@ -2360,7 +2360,7 @@ We strongly encourage you to perform the migration on your own data to preserve 
 
 The recommended method is to perform migration on your own data to preserve the benefits of decentralization.
 
-`gsutil cp gs://mina_network_block_data/{network}-*.json .`
+`gcloud storage cp gs://mina_network_block_data/{network}-*.json .`
 
 :warning: Precomputed blocks for the Mainnet network take ~800 GB of disk space. Plan for adequate time to download these blocks. The Berkeley migration app downloads them incrementally only when needed.
 
@@ -2397,7 +2397,7 @@ apt-get install --allow-downgrades -y "mina-archive-migration=$VERSION"
 To get the Docker image:
 
 ```
-docker pull gcr.io/o1labs-192920/mina-archive-migration:3.0.1-e848ecb-{codename}
+docker pull minaprotocol/mina-archive-migration:3.0.1-e848ecb-{codename}
 ```
 
 Where supported codenames are:
@@ -2442,7 +2442,7 @@ To successfully migrate the archive database into the Berkeley version of the Mi
 
 - PostgreSQL database for database server
 - If you use Docker, then any of the supported OS by Mina (bullseye, focal, or buster) with at least 32 GB of RAM
-- gsutil application from Google Cloud Suite in version 5 or later
+- Google Cloud CLI (`gcloud`), which provides the `gcloud storage` commands
 - (Optional) Docker in version 23.0 or later
 
 ## (Optional) Devnet/Mainnet database 
@@ -2463,25 +2463,37 @@ However, it is strongly recommended that you perform migration on your own data 
 For Devnet blocks:
 
 ```sh
-gsutil cp gs://mina_network_block_data/devnet-*.json .
+gcloud storage cp gs://mina_network_block_data/devnet-*.json .
 ```
 
 For Mainnet blocks:
 
 ```sh
-gsutil cp gs://mina_network_block_data/mainnet-*.json .
+gcloud storage cp gs://mina_network_block_data/mainnet-*.json .
 ```
 
 :warning: Precomputed blocks for the Mainnet network take ~800 GB of disk space. Plan for adequate time to download these blocks. The Berkeley migration app downloads them incrementally only when needed. You can instead download a 100 GB bundle of only the canonical Mainnet blocks that unpacks into ~220 GB: 
 
 ```sh
-gsutil cp gs://mina_network_block_data/mainnet-bundle-2024-03-20.tar.zst . ; tar -xf mainnet-bundle-2024-03-20.tar.zst
+gcloud storage cp gs://mina_network_block_data/mainnet-bundle-2024-03-20.tar.zst . ; tar -xf mainnet-bundle-2024-03-20.tar.zst
+```
+
+Or, without the Google Cloud CLI, over HTTPS:
+
+```sh
+wget https://storage.googleapis.com/mina_network_block_data/mainnet-bundle-2024-03-20.tar.zst ; tar -xf mainnet-bundle-2024-03-20.tar.zst
 ```
 
 :warning: Precomputed blocks for the Devnet network take several hundred GBs. Plan for adequate time to download these blocks. Instead, you can download a ~50 GB bundle of only the canonical Devnet blocks that unpacks into ~90 GB:
 
 ```sh
-gsutil cp gs://mina_network_block_data/devnet-bundle-3NKRsRWBzmPR8Z8ZmJb4u8FLpnSkjRitUpKZzVkHp11QuwP5i839.tar.gz . ; tar -xf devnet-bundle-3NKRsRWBzmPR8Z8ZmJb4u8FLpnSkjRitUpKZzVkHp11QuwP5i839.tar.gz
+gcloud storage cp gs://mina_network_block_data/devnet-bundle-3NKRsRWBzmPR8Z8ZmJb4u8FLpnSkjRitUpKZzVkHp11QuwP5i839.tar.gz . ; tar -xf devnet-bundle-3NKRsRWBzmPR8Z8ZmJb4u8FLpnSkjRitUpKZzVkHp11QuwP5i839.tar.gz
+```
+
+Or, without the Google Cloud CLI, over HTTPS:
+
+```sh
+wget https://storage.googleapis.com/mina_network_block_data/devnet-bundle-3NKRsRWBzmPR8Z8ZmJb4u8FLpnSkjRitUpKZzVkHp11QuwP5i839.tar.gz ; tar -xf devnet-bundle-3NKRsRWBzmPR8Z8ZmJb4u8FLpnSkjRitUpKZzVkHp11QuwP5i839.tar.gz
 ```
 
 These bundles are partial. Updated documentation with the new links and final data will be provided _after_ the Berkeley major upgrade is completed.
@@ -2498,6 +2510,8 @@ You can follow these steps that can be copy-pasted directly into a fresh Debian 
 
 This example uses an altered two-step version of the [full simplified workflow](/network-upgrades/berkeley/archive-migration/migrating-archive-database-to-berkeley#simplified-approach).
 
+If you would rather not install the Google Cloud CLI, every `gcloud storage cp gs://<bucket>/<object> .` below can be replaced with `wget https://storage.googleapis.com/<bucket>/<object>`.
+
 ```sh
 apt update && apt install lsb-release sudo postgresql curl wget gpg # debian:11 is surprisingly light
 
@@ -2512,7 +2526,7 @@ sudo apt-get update && sudo apt-get install --allow-downgrades -y mina-archive-m
 mkdir -p mina-migration-workdir
 cd mina-migration-workdir
 
-gsutil cp gs://mina_network_block_data/devnet-bundle-3NKRsRWBzmPR8Z8ZmJb4u8FLpnSkjRitUpKZzVkHp11QuwP5i839.tar.gz .
+gcloud storage cp gs://mina_network_block_data/devnet-bundle-3NKRsRWBzmPR8Z8ZmJb4u8FLpnSkjRitUpKZzVkHp11QuwP5i839.tar.gz .
 tar -xf devnet-bundle-3NKRsRWBzmPR8Z8ZmJb4u8FLpnSkjRitUpKZzVkHp11QuwP5i839.tar.gz
 
 wget https://raw.githubusercontent.com/MinaProtocol/mina/berkeley/src/app/archive/create_schema.sql
@@ -2524,7 +2538,7 @@ createdb devnet_really_migrated
 
 psql -d devnet_really_migrated -f create_schema.sql
 
-gsutil cp gs://mina-archive-dumps/devnet-archive-dump-2024-03-22_0000.sql.tar.gz .
+gcloud storage cp gs://mina-archive-dumps/devnet-archive-dump-2024-03-22_0000.sql.tar.gz .
 tar -xf devnet-archive-dump-2024-03-22_0000.sql.tar.gz
 # the next step ensures you don't accidentally merge mainnet and devnet data
 sed -i -e s/archive_balances_migrated/devnet_balances_migrated/g devnet-archive-dump-2024-03-22_0000.sql
@@ -2539,7 +2553,7 @@ mina-berkeley-migration-script initial \
 
 # now, do a final migration
 
-gsutil cp gs://mina-archive-dumps/devnet-archive-dump-2024-03-22_2050.sql.tar.gz .
+gcloud storage cp gs://mina-archive-dumps/devnet-archive-dump-2024-03-22_2050.sql.tar.gz .
 tar -xf devnet-archive-dump-2024-03-22_2050.sql.tar.gz
 # the next step ensures you don't accidentally merge mainnet and devnet data
 sed -i -e s/archive_balances_migrated/devnet_balances_migrated/g devnet-archive-dump-2024-03-22_2050.sql
@@ -4280,7 +4294,7 @@ To successfully upgrade the archive database to Mesa, you must ensure that your 
 
 - PostgreSQL database for database server
 - If you use Docker, then any of the supported OS by Mina (bullseye, focal, noble, bookworm or jammy) with at least 32 GB of RAM
-- gsutil application from Google Cloud Suite in version 5 or later
+- Google Cloud CLI (`gcloud`), which provides the `gcloud storage` commands
 - (Optional) Docker in version 23.0 or later
 
 ## Archive database
@@ -4583,34 +4597,44 @@ The relevant moments are:
 
 ## Mainnet
 
-:::warning Values not yet published
-The mainnet Mesa fork schedule has not been announced. The values below are placeholders. They will be filled in once o1Labs publishes the stop-slot release and the Mesa genesis timestamp.
+:::info Upgrade day is 2026-09-03
+The mainnet stop-slot schedule is published and is compiled into the releases below. Announced in the [3.5.0 Mainnet Stop Slot Release](https://github.com/MinaProtocol/mina/releases/tag/3.5.0-mainnet-stop-slot) and the [4.0.0 Mainnet Automode Upgrade Release](https://github.com/MinaProtocol/mina/releases/tag/4.0.0-mainnet).
 :::
 
-| Field                                   | Value                                                                          |
-| --------------------------------------- | ------------------------------------------------------------------------------ |
-| Pre-fork (stop-slot) release            | _TBD — will be a `3.x.x` tag_                                                  |
-| Mesa release                            | _TBD — will be a `4.x.x` tag_                                                  |
-| `stop-transaction-slot` (`slot_tx_end`) | _TBD_                                                                          |
-| `stop-network-slot` (`slot_chain_end`)  | _TBD_                                                                          |
-| Mesa genesis timestamp (UTC)            | _TBD — exactly 3 hours after the stop-network-slot_                            |
-| State Finalization window               | Exactly 100 slots = exactly 5 hours between `slot_tx_end` and `slot_chain_end` |
+| Field                                   | Value                                                                                                                                                   |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Pre-fork (stop-slot) release            | [`3.5.0-mainnet-stop-slot`](https://github.com/MinaProtocol/mina/releases/tag/3.5.0-mainnet-stop-slot) — `mina-mainnet=3.5.0-mainnet-stop-slot-5e100ee` |
+| Automode release                        | [`4.0.0-mainnet`](https://github.com/MinaProtocol/mina/releases/tag/4.0.0-mainnet) — `mina-mainnet-automode=4.0.0-mainnet-893c877`                      |
+| Mesa release (manual mode only)         | _Published after the stop-network-slot_                                                                                                                 |
+| `stop-transaction-slot` (`slot_tx_end`) | Slot **393800** — 2026-09-03 10:00 UTC                                                                                                                  |
+| `stop-network-slot` (`slot_chain_end`)  | Slot **393900** — 2026-09-03 15:00 UTC                                                                                                                  |
+| Mesa genesis timestamp (UTC)            | 2026-09-03 18:00 (`hard_fork_genesis_slot_delta` = 60 slots = 3 hours)                                                                                  |
+| State Finalization window               | Exactly 100 slots = exactly 5 hours between `slot_tx_end` and `slot_chain_end`                                                                          |
 
-Subscribe to the [MinaProtocol/mina releases](https://github.com/MinaProtocol/mina/releases?q=mesa) and watch the [Mina Foundation announcements channel](https://discord.gg/minaprotocol) for the schedule publication.
+Both mainnet packages come from the `stable` channel on `packages.o1test.net`. Run **one** of the two releases:
+
+- **Automode** — install `mina-mainnet-automode=4.0.0-mainnet-893c877` before the stop-transaction-slot. The dispatcher swaps to the Mesa binary by itself. No second upgrade.
+- **Manual** — install `mina-mainnet=3.5.0-mainnet-stop-slot-5e100ee` before the stop-transaction-slot, keep it running until the stop-network-slot, then install the Mesa release when it is published. See [Upgrade Modes](/network-upgrades/mesa/upgrade-modes).
+
+The archive package for both paths is `mina-archive=3.5.0-mainnet-stop-slot-5e100ee`.
 
 ## Devnet
 
-:::warning Values not yet published
-Devnet typically forks ahead of mainnet to give integrators a final dress rehearsal. Schedule will be posted here once announced.
+:::note Devnet forked on 2026-08-19
+Devnet is on Mesa. The values below are historical; they will not change.
 :::
 
-| Field                                   | Value |
-| --------------------------------------- | ----- |
-| Pre-fork (stop-slot) release            | _TBD_ |
-| Mesa release                            | _TBD_ |
-| `stop-transaction-slot` (`slot_tx_end`) | _TBD_ |
-| `stop-network-slot` (`slot_chain_end`)  | _TBD_ |
-| Mesa genesis timestamp (UTC)            | _TBD_ |
+| Field                                   | Value                                                                                                                                               |
+| --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Pre-fork (stop-slot) release            | [`3.5.0-devnet-stop-slot`](https://github.com/MinaProtocol/mina/releases/tag/3.5.0-devnet-stop-slot) — `mina-devnet=3.5.0-devnet-stop-slot-849edfa` |
+| Automode release                        | [`4.0.0-devnet`](https://github.com/MinaProtocol/mina/releases/tag/4.0.0-devnet) — `mina-devnet-automode=4.0.0-devnet-2dc9218`                      |
+| Mesa release (manual mode only)         | [`4.0.0-devnet-mesa`](https://github.com/MinaProtocol/mina/releases/tag/4.0.0-devnet-mesa) — `mina-devnet=4.0.0-6965b50`                            |
+| `stop-transaction-slot` (`slot_tx_end`) | Slot **413540** — 2026-08-19 10:00 UTC                                                                                                              |
+| `stop-network-slot` (`slot_chain_end`)  | Slot **413640** — 2026-08-19 15:00 UTC                                                                                                              |
+| Mesa genesis timestamp (UTC)            | 2026-08-19 18:00                                                                                                                                    |
+| State Finalization window               | Exactly 100 slots = exactly 5 hours between `slot_tx_end` and `slot_chain_end`                                                                      |
+
+Devnet packages come from the `alpha` channel on `packages.o1test.net`. A node that joins devnet now must use `mina-devnet=4.0.0-6965b50`; the two pre-fork releases can no longer connect.
 
 ## Preflight (archived)
 
@@ -4781,7 +4805,7 @@ The [automode](#automode) Debian package is published as `mina-{network}-automod
 
 ### Node Status Service
 
-A telemetry feature that reports non-sensitive node data (e.g., version, sync status) to help monitor the amount of upgraded active stake during the upgrade. Enabled by default on the Mesa daemon; pass `--simplified-node-stats` to keep the report minimal, or `--disable-node-status` to opt out entirely. See [Help Monitor the Network](/network-upgrades/mesa/upgrade-steps/post-upgrade#help-monitor-the-network) for the full flag set.
+A telemetry feature that reports non-sensitive node data (e.g., version, sync status) to help monitor the amount of upgraded active stake during the upgrade. **Off by default on the Mesa daemon** — it runs only when you pass `--node-status-url`, which is both the collector address and the on/off control. `--simplified-node-stats` (a boolean, default `true`) selects how much the report contains, not whether one is sent. `--disable-node-status` is an unrelated flag that controls whether your node answers node-status queries from other peers. See [Help Monitor the Network](/network-upgrades/mesa/upgrade-steps/post-upgrade#help-monitor-the-network) for the full flag set.
 
 ---
 url: /network-upgrades/mesa
@@ -4799,10 +4823,10 @@ This documentation uses terms like _automode_, _stop-slot_, _trustless upgrade_,
 
 Mesa bundles four Mina Improvement Proposals (MIPs) that change protocol behavior, plus two operational improvements to the upgrade flow itself. See the **[Glossary](/network-upgrades/mesa/glossary)** for detailed descriptions of each MIP and the canonical specs in the [MinaProtocol/MIPs](https://github.com/MinaProtocol/MIPs/tree/main/MIPS) repository.
 
-- **[Faster Blocks — MIP6](/network-upgrades/mesa/glossary#faster-blocks)** — Halves slot time to 90 seconds, halves coinbase reward, halves epoch duration.
-- **[Expanded zkApp State — MIP7](/network-upgrades/mesa/glossary#expanded-zkapp-state)** — Raises on-chain state from 8 to 32 field elements per zkApp account.
-- **[Larger Events and Actions — MIP8](/network-upgrades/mesa/glossary#larger-events-and-actions)** — Increases per-transaction event/action limit from 100 to 1024 field elements.
-- **[Larger zkApp Transactions — MIP9](/network-upgrades/mesa/glossary#larger-zkapp-transactions)** — Triples the max account updates per zkApp transaction.
+- **[Faster Blocks — MIP6](/network-upgrades/mesa/glossary#faster-blocks--mip6)** — Halves slot time to 90 seconds, halves coinbase reward, halves epoch duration.
+- **[Expanded zkApp State — MIP7](/network-upgrades/mesa/glossary#expanded-zkapp-state--mip7)** — Raises on-chain state from 8 to 32 field elements per zkApp account.
+- **[Larger Events and Actions — MIP8](/network-upgrades/mesa/glossary#larger-events-and-actions--mip8)** — Increases per-transaction event/action limit from 100 to 1024 field elements.
+- **[Larger zkApp Transactions — MIP9](/network-upgrades/mesa/glossary#larger-zkapp-transactions--mip9)** — Triples the max account updates per zkApp transaction.
 
 ### Automode Upgrades
 
@@ -5127,9 +5151,9 @@ Precomputed blocks are published to the `mesa-rc-precomputed-blocks` bucket, one
 
 ```bash
 # List recent blocks
-gsutil ls gs://mesa-rc-precomputed-blocks/ | tail
+gcloud storage ls gs://mesa-rc-precomputed-blocks/ | tail
 
-# Fetch a single block over HTTPS (no gsutil required)
+# Fetch a single block over HTTPS (no Google Cloud CLI required)
 curl -O https://storage.googleapis.com/mesa-rc-precomputed-blocks/mina-mesa-rc-1-<height>-<state-hash>.json
 ```
 
@@ -5141,7 +5165,7 @@ Hourly archive dumps are published to the `mina-archive-dumps` bucket with the p
 
 ```bash
 # List available dumps
-gsutil ls gs://mina-archive-dumps/mina-mesa-rc-1-archive-dump-*
+gcloud storage ls gs://mina-archive-dumps/mina-mesa-rc-1-archive-dump-*
 
 # Download and restore the latest dump
 curl -O https://storage.googleapis.com/mina-archive-dumps/mina-mesa-rc-1-archive-dump-<YYYY-MM-DD>_<HHMM>.sql.tar.gz
@@ -5177,9 +5201,9 @@ Please note the following are the hardware requirements for each node type after
 
 | Node Type | Memory | CPU | Storage | Network |
 |--|--|--|--|--|
-| Mina Daemon Node | 32 GB RAM | 8 core processor with BMI2 and AVX CPU instruction set are required | 16 GB | 1 Mbps Internet Connection |
+| Mina Daemon Node | 32 GB RAM | 8 core processor with BMI2, ADX and AVX CPU instruction sets are required | 16 GB | 1 Mbps Internet Connection |
 | SNARK Coordinator | 32 GB RAM | 8 core processor | 16 GB | 1 Mbps Internet Connection |
-| SNARK Worker (per worker) | 8 GB RAM | 6 core/12 threads with BMI2 and AVX CPU instruction set are required | 1 GB | 1 Mbps Internet Connection |
+| SNARK Worker (per worker) | 8 GB RAM | 6 core/12 threads with BMI2, ADX and AVX CPU instruction sets are required | 1 GB | 1 Mbps Internet Connection |
 | Archive Node | 32 GB RAM | 8 core processor | 64 GB | 1 Mbps Internet Connection |
 | Rosetta API standalone Docker image | 8 GB RAM | 2 core processor | 16 GB | 1 Mbps Internet Connection |
 | Rosetta API + Archive Node | 32 GB RAM | 8 core processor | 64 GB | 1 Mbps Internet Connection |
@@ -5198,8 +5222,9 @@ The hardware table above is Mesa-specific; everything else lives once in the Val
 
 ### Generation of libp2p keypair
 
-To ensure connectivity across the network, it is essential that all seed nodes start with the **same** `libp2p` keypair.
-This consistency allows other nodes in the network to reliably connect.
+To ensure connectivity across the network, it is essential that each seed node starts with its own **stable** `libp2p` keypair.
+A keypair determines the peer ID of the node, so each seed node needs a different keypair, and that keypair must stay the same across restarts.
+This stability allows other nodes in the network to reliably connect to the addresses in the published seed list.
 Although the same libp2p keys can be reused from before the upgrade, if you need to manually generate new libp2p keys, use the following command:
 
 ```
@@ -5214,7 +5239,7 @@ Before the fork, each actor type must complete specific preparations. Complete t
 
 ### All operators
 
-- Verify your hardware meets the [requirements](#hardware-requirements) above (32 GB RAM, 8-core CPU with AVX/BMI2).
+- Verify your hardware meets the [requirements](#hardware-requirements) above (32 GB RAM, 8-core CPU with BMI2, ADX and AVX).
 - Back up your keys and configuration before installing any new packages.
 
 ### Block Producers
@@ -5249,7 +5274,8 @@ Before the fork, each actor type must complete specific preparations. Complete t
 
 - Update to the Mesa-compatible o1js version (`o1js@3.0.0-mesa.rc2` for the Mesa Trail chain).
 - Recompile your contracts and verify them on the [Mesa Trail test network](/network-upgrades/mesa/mesa-trail).
-- Plan to redeploy every zkApp on Mesa — each must be redeployed because the protocol version bump changes the verification key. {/* TODO(PR #1133): Link to the official o1js Mesa upgrade guide once published (cjjdespres #3220525842). */}
+- Plan to redeploy every zkApp on Mesa — each must be redeployed because the protocol version bump changes the verification key.
+  Your zkApp account and its on-chain state carry over to Mesa automatically, including the state fields at indexes `0-7`. The redeploy replaces the verification key; it does not reset your state. {/* TODO(PR #1133): Link to the official o1js Mesa upgrade guide once published (cjjdespres #3220525842). */}
 
 ---
 url: /network-upgrades/mesa/troubleshooting
@@ -6025,6 +6051,10 @@ Only re-enable MINA deposits and withdrawals after:
 
 The checks in the tabs above cover basic health. This section provides deeper validation procedures for operators who want thorough verification.
 
+:::tip Verify the packaged state itself
+The checks below confirm that your node and archive database are healthy. To prove that the Mesa packages were built from the final pre-fork chain state, and to reproduce the genesis ledgers yourself, see [Verify the Release](/network-upgrades/mesa/verify-the-release).
+:::
+
 <Tabs groupId="indepth-validation">
 <TabItem value="daemon" label="Daemon" default>
 
@@ -6148,19 +6178,23 @@ In rare cases a non-empty block can appear after the _stop-transaction-slot_ —
 
 ## Help Monitor the Network
 
-The Node Status reporting service is **enabled by default** on the Mesa daemon. If you want to keep it on and point it at the o1Labs collection endpoints, pass:
+The Node Status reporting service is **off by default** on the Mesa daemon. The daemon sends nothing until you give it a collector address. To switch reporting on and point it at the o1Labs collection endpoints, pass:
 
 ```bash
---simplified-node-stats
 --node-status-url https://nodestats.minaprotocol.com/submit/stats
 --node-error-url https://nodestats.minaprotocol.com/submit/stats
+--simplified-node-stats true
 ```
 
-- `--simplified-node-stats` (no value) makes the reported payload a minimal, non-sensitive subset (version, sync status, peer count).
-- `--node-status-url` is the endpoint that receives status reports.
-- `--node-error-url` is the endpoint that receives crash reports the daemon emits just before terminating.
+- `--node-status-url` is the endpoint that receives status reports. It is also the on/off control: leave it out and the daemon starts no reporting service.
+- `--node-error-url` is the endpoint that receives crash reports the daemon emits just before terminating. It is a separate service with its own address.
+- `--simplified-node-stats` takes a boolean value and defaults to `true`. It selects the size of the report, not whether a report is sent. `true` sends a minimal, non-sensitive subset (version, sync status, peer count). `false` sends the full report, which contains more data, not less.
 
-To opt out of the Node Status service entirely, pass `--disable-node-status` (no value). Note: the previously-documented `--node-stats-type full|none` argument was never accepted by the daemon — `--simplified-node-stats` and `--disable-node-status` are the actual flag names in the Mesa release.
+:::caution `--disable-node-status` is a different feature
+`--disable-node-status` does **not** switch the reporting service off. It stops your node answering node-status queries from **other peers** on the network, which is a separate behavior and is enabled by default. To send nothing to a collector, simply leave `--node-status-url` unset.
+
+The `--node-stats-type` argument does not exist on the Mesa daemon.
+:::
 
 ## Flag and Configuration Reference
 
@@ -6384,7 +6418,7 @@ url: /network-upgrades/mesa/upgrade-steps/upgrade
 
 Starting at the _stop-network-slot_ the network will not produce nor accept new blocks, resulting in halting the network. During the upgrade period, o1Labs will use automated tooling to export the network state based on the block at the slot just before the _stop-transaction-slot_. The exported state will then be baked into the new Mesa build, which will be used to initiate the upgraded network. It is during the upgrade window that the Mesa network infrastructure will be bootstrapped, and seed nodes will become available. o1Labs will also finalize the archive node upgrade and publish the PostgreSQL database dumps for import by the archive node operators who wish to bootstrap their archives in a trustful manner.
 
-There is a tool available to validate that the Mesa node was built from the pre-upgrade network state. See [In-Depth Validation](/network-upgrades/mesa/upgrade-steps/post-upgrade#in-depth-validation) for the `mina-archive-hardfork-toolbox` commands (`validate-fork`, `fork-candidate no-commands-after`) used to verify fork-block integrity. {/* TODO(PR #1133): If/when an authoritative `upgrading-to-mesa.md` lands in MinaProtocol/mina, link to it here. The previous link to `mina/blob/mesa/docs/upgrading-to-mesa.md` returned 404 — the `mesa` branch does not exist on the main repo. */}
+There are tools available to validate that the Mesa node was built from the pre-upgrade network state. To reproduce the packaged genesis ledgers and runtime configuration from the exported fork configuration, see [Verify the Release](/network-upgrades/mesa/verify-the-release). To check fork-block integrity in the archive database, see [In-Depth Validation](/network-upgrades/mesa/upgrade-steps/post-upgrade#in-depth-validation) for the `mina-archive-hardfork-toolbox` commands (`validate-fork`, `fork-candidate no-commands-after`).
 
 ## Per-actor summary
 
@@ -6419,6 +6453,217 @@ If you are using **Manual mode**:
    - _Trustful_
      - Operators shall import the SQL dump file provided by o1Labs to a freshly created database.
      - Operators should direct their Mesa archive process to the newly created database.
+
+---
+url: /network-upgrades/mesa/verify-the-release
+---
+
+# Verify the Release
+
+The Mesa packages contain a genesis ledger and a runtime configuration that o1Labs generated from the state of the pre-fork chain. This page shows how to prove, on your own machine, that the packages you install were made from that state and from nothing else.
+
+This procedure is optional. It is written for exchanges, custodians, and node operators who must not take the contents of a package on trust.
+
+:::info This is not part of the upgrade path
+You do not have to run these checks to upgrade. For the upgrade itself, see [Upgrade Steps](/network-upgrades/mesa/upgrade-steps). For health checks on a node that is already running Mesa, see [Post-Upgrade](/network-upgrades/mesa/upgrade-steps/post-upgrade#in-depth-validation).
+:::
+
+## What the checks prove
+
+The verification tool compares three independent things:
+
+| Check | What it compares | What a pass means |
+| --- | --- | --- |
+| `config` | The ledger hashes in the fork configuration against the hashes in the precomputed fork block | The fork configuration describes the same chain state as the last block of the pre-fork chain |
+| `ledgers` | The ledgers a node exports from the packaged configuration against the ledgers exported from a configuration you build yourself | The packaged runtime configuration produces the same accounts as the fork configuration |
+| `tarballs` | The RocksDB contents of the packaged ledger tarballs against tarballs you generate, and against the copies published on S3 | The shipped ledger databases are byte-for-byte what the fork configuration produces |
+
+Together they show that the accounts, balances, and epoch ledgers in the Mesa release come from the pre-fork chain.
+
+**The checks do not prove** that the fork block itself is the correct one, or that the pre-fork chain was honest. To check the fork block and the archive database, use `mina-archive-hardfork-toolbox`, described in [Post-Upgrade](/network-upgrades/mesa/upgrade-steps/post-upgrade#in-depth-validation) and [Archive Upgrade](/network-upgrades/mesa/archive-upgrade#verification-with-the-archive-hardfork-toolbox).
+
+## Before you start
+
+### Machine
+
+Use a Debian or Ubuntu machine on x86-64. The node needs AVX instructions, which Intel emulation on macOS does not provide.
+
+Allow for the cost: the `ledgers` and `tarballs` checks each start a node and rehash every account. Together they take more than 20 minutes on mainnet-sized data, and they need enough free disk for three copies of the genesis ledgers.
+
+### Packages
+
+Two packages supply the programs. Versions carry a release tag and a commit suffix, so copy them exactly instead of substituting a plain version number. Replace `<network>` with the network you forked from, and the versions below with the ones published for your release.
+
+```bash
+# The Mesa daemon, which also carries the verification tooling
+sudo apt-get install mina-<network>=4.0.0-devnet-2dc9218
+
+# The pre-fork genesis generator, used to build the reference ledgers
+sudo apt-get install mina-create-<network>-prefork-genesis-ledger=3.5.0-devnet-stop-slot-7a60364
+```
+
+The two versions differ because the packages come from different branches: the Mesa side is built from the post-fork release, and the pre-fork generator from the `compatible` branch that the chain runs before the fork.
+
+The first package installs the verification script and every program it calls, except one:
+
+| Program | Package |
+| --- | --- |
+| `mina-verify-packaged-fork-config` | `mina-<network>` |
+| `mina` | `mina-<network>` |
+| `mina-create-genesis` | `mina-<network>` |
+| `mina-hf-create-runtime-config` | `mina-<network>` |
+| `mina-rocksdb-scanner` | `mina-<network>` |
+| `mina-create-prefork-genesis` | `mina-create-<network>-prefork-genesis-ledger` |
+
+The pre-fork generator is a separate package because it is built from the pre-fork release, not from Mesa. Install the one whose `<network>` matches the chain you forked from: `mina-create-mainnet-prefork-genesis-ledger` for a mainnet fork, `mina-create-devnet-prefork-genesis-ledger` for a devnet fork. The same `<network>` value goes in `--network` and in the `<network>.old.json` path used below.
+
+:::note Reference ledgers instead of the pre-fork package
+If you already hold a directory of reference ledgers and a `legacy_hashes.json`, pass `--reference-data-dir <dir>`. The tool then skips the pre-fork generation step, and you do not need `mina-create-<network>-prefork-genesis-ledger` at all.
+:::
+
+### Other tools
+
+- `jq`
+- `curl`
+- `gsutil`, unless you supply the precomputed fork block yourself through `PRECOMPUTED_FORK_BLOCK`
+
+## Inputs
+
+| Input | Default | What it is |
+| --- | --- | --- |
+| Fork configuration | none, you must supply it | The full configuration exported from the pre-fork chain, with all accounts |
+| Packaged configuration | `/var/lib/coda/config_*.json` | The runtime configuration the Mesa package installed |
+| Genesis ledger directory | `/var/lib/coda` | Where the packaged ledger tarballs are |
+| Pre-fork configuration | `/var/lib/coda/<network>.old.json` | The genesis ledger of the chain you forked from |
+| Precomputed fork block | fetched with `gsutil` | The last block of the pre-fork chain |
+
+### Getting the fork configuration
+
+o1Labs publishes the fork configuration with the release. To export it yourself, query a node that is still on the pre-fork chain and is synchronized, before the network halts:
+
+```bash
+curl --location "http://localhost:3085/graphql" \
+  --header "Content-Type: application/json" \
+  --data '{"query":"query { fork_config }"}' \
+  | jq '.data.fork_config' > fork_config.json
+```
+
+The file is large, because it holds every account.
+
+## Run the checks
+
+Run the three checks separately. Each one can fail on its own, and running them apart makes a failure easier to read. Set `FORKING_FROM_CONFIG_JSON` to the pre-fork genesis ledger that the package installed.
+
+<Tabs groupId="verify-checks">
+<TabItem value="config" label="1. Config" default>
+
+The quickest check. It fetches the precomputed fork block and compares hashes. It takes minutes, not hours.
+
+```bash
+FORKING_FROM_CONFIG_JSON=/var/lib/coda/<network>.old.json \
+mina-verify-packaged-fork-config \
+  --network <network> \
+  --fork-config fork_config.json \
+  --working-dir /tmp/mina-verification \
+  --checks config
+```
+
+Run this one first. If the hashes do not agree, the other two checks cannot pass either.
+
+</TabItem>
+<TabItem value="ledgers" label="2. Ledgers">
+
+This check starts a node three times and exports the staged ledger, the staking epoch ledger, and the next epoch ledger from each configuration. It is slow.
+
+```bash
+FORKING_FROM_CONFIG_JSON=/var/lib/coda/<network>.old.json \
+mina-verify-packaged-fork-config \
+  --network <network> \
+  --fork-config fork_config.json \
+  --working-dir /tmp/mina-verification \
+  --checks ledgers
+```
+
+The check also removes the tarballs from the genesis ledger directory once, to confirm that the node can download the same ledgers from S3 and that they agree. To skip that download, set `NO_TEST_LEDGER_DOWNLOAD=1`.
+
+</TabItem>
+<TabItem value="tarballs" label="3. Tarballs">
+
+This check compares the RocksDB contents of three copies of each ledger tarball: the packaged one, one it generates, and the one published on S3.
+
+```bash
+FORKING_FROM_CONFIG_JSON=/var/lib/coda/<network>.old.json \
+mina-verify-packaged-fork-config \
+  --network <network> \
+  --fork-config fork_config.json \
+  --working-dir /tmp/mina-verification \
+  --checks tarballs
+```
+
+</TabItem>
+</Tabs>
+
+To run all three in one command, leave `--checks` out. Its default is `config,tarballs,ledgers`.
+
+### Result
+
+The tool writes `Validation successful` and exits with code 0 when every comparison agrees. On any mismatch it writes the file that differs and exits with code 1. Treat a non-zero exit as a failure to reproduce the package, and report it before you upgrade.
+
+## Options
+
+| Flag | Meaning |
+| --- | --- |
+| `--network` | Name of the network, used to build the precomputed block path |
+| `--fork-config` | Path to the exported fork configuration |
+| `--working-dir` | Directory for the generated ledgers and configurations |
+| `--checks` | Comma-separated list from `config`, `ledgers`, `tarballs`. Default: all three |
+| `--precomputed-block-prefix` | Overrides the bucket prefix for the fork block, for example `gs://mina_network_block_data/devnet` |
+| `--reference-data-dir` | Directory of pre-generated reference ledgers. Skips pre-fork generation |
+| `--cached-hardfork-data` | Directory of already generated ledgers and `hashes.json`, to save a rehash |
+
+The tool also reads these environment variables:
+
+| Variable | Default | Use |
+| --- | --- | --- |
+| `FORKING_FROM_CONFIG_JSON` | `/var/lib/coda/mainnet.json` | The pre-fork genesis ledger. Set this to `<network>.old.json` for a Mesa package |
+| `PACKAGED_DAEMON_CONFIG` | `/var/lib/coda/config_*.json` | The configuration to verify |
+| `GENESIS_LEDGER_DIR` | `/var/lib/coda` | Where the packaged tarballs are |
+| `PRECOMPUTED_FORK_BLOCK` | fetched with `gsutil` | A local copy of the fork block |
+| `NO_TEST_LEDGER_DOWNLOAD` | unset | Set it to skip the S3 download comparison |
+| `MINA_LEDGER_S3_BUCKET` | `https://s3-us-west-2.amazonaws.com/snark-keys-ro.o1test.net` | Where the published tarballs are |
+| `SECONDS_PER_SLOT` | `180` | Slot length of the network |
+| `MINA_LOG_LEVEL` | `info` | Log level of the node used for the exports |
+| `MINA_EXE`, `MINA_GENESIS_EXE`, `MINA_LEGACY_GENESIS_EXE`, `CREATE_RUNTIME_CONFIG`, `MINA_ROCKSDB_SCANNER` | the installed programs | Override any program, for example when you build from source |
+
+## Verify from a container
+
+The Mesa Docker images carry the same programs, so you can verify without installing packages on the host. Replace the tag with the published Mesa tag for your distribution.
+
+```bash
+docker run --rm -it \
+  -v "$PWD:/workdir" \
+  minaprotocol/mina-daemon:<mesa-tag> \
+  bash -c 'FORKING_FROM_CONFIG_JSON=/var/lib/coda/<network>.old.json \
+    mina-verify-packaged-fork-config \
+      --network <network> \
+      --fork-config /workdir/fork_config.json \
+      --working-dir /workdir/verification \
+      --checks config'
+```
+
+The image does not contain `mina-create-prefork-genesis`. For the `ledgers` and `tarballs` checks from a container, mount a reference directory and pass `--reference-data-dir`.
+
+## If a check fails
+
+| Symptom | Likely cause |
+| --- | --- |
+| `Hashes in config ... don't match hashes from the precomputed block` | The fork configuration and the fork block are from different blocks. Confirm you exported the configuration from the correct chain, and that `--network` and `--precomputed-block-prefix` point at the right bucket |
+| `Error: program not found in PATH` | A package is missing. Check the program table above |
+| `Error: gsutil is required when PRECOMPUTED_FORK_BLOCK is nonexistent path` | Install `gsutil`, or give a local fork block through `PRECOMPUTED_FORK_BLOCK` |
+| `daemon died before exporting ledgers` | The node could not start. Read the node log in the working directory. Not enough memory is the usual cause |
+| `kvdb contents mismatch` | A ledger tarball does not agree with the reference. This is a real failure. Report it |
+
+For other problems, see [Troubleshooting](/network-upgrades/mesa/troubleshooting).
 
 ---
 url: /node-developers/bip44
@@ -7369,7 +7614,7 @@ Export these ledgers using the mina cli command:
 
     mina ledger export [current-staged-ledger|staking-epoch-ledger|next-epoch-ledger]
 
-Epoch ledger transition happens once every 14 days (given slot-time = 3mins and slots-per-epoch = 7140). 
+Epoch ledger transition happens once every 7 days (given slot-time = 90 seconds and slots-per-epoch = 7140).
 
 The window to backup a staking ledger is ~27 days considering "next" staking ledger is finalized after k (currently 290) blocks in the current epoch and therefore is available for the rest of the current epoch and the entire next epoch.
 
@@ -7558,7 +7803,7 @@ services:
       - '5432:5432'
   bootstrap_db:
     image: 'minaprotocol/mina-archive:3.3.0-8c0c2e6-bullseye-mainnet'
-    # image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet' # Use this image for Devnet
+    # image: 'minaprotocol/mina-daemon:4.0.0-6965b50-bullseye-devnet' # Use this image for Devnet
     command: >
       bash -c '
       curl -O https://storage.googleapis.com/mina-archive-dumps/mainnet-archive-dump-$(date +%F_0000).sql.tar.gz;
@@ -7577,7 +7822,7 @@ services:
         condition: service_healthy
   missing_blocks_guardian:
     image: 'minaprotocol/mina-archive:3.3.0-8c0c2e6-bullseye-mainnet'
-    # image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet' # Use this image for Devnet
+    # image: 'minaprotocol/mina-daemon:4.0.0-6965b50-bullseye-devnet' # Use this image for Devnet
     command: >
       bash -c '
       curl -O https://raw.githubusercontent.com/MinaFoundation/helm-charts/main/mina-archive/scripts/missing-blocks-guardian-command.sh;
@@ -7607,7 +7852,7 @@ services:
         condition: service_completed_successfully
   mina_node:
     image: 'minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet'
-    # image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet' # Use this image for Devnet
+    # image: 'minaprotocol/mina-daemon:4.0.0-6965b50-bullseye-devnet' # Use this image for Devnet
     restart: always
     entrypoint: []
     command: >
@@ -8367,7 +8612,7 @@ Copy and paste the provided configuration into a `docker-compose.yml` file. Then
 services:
   generate_wallet_key:
     image: 'minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet'
-    # image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet' # Use this image for Devnet
+    # image: 'minaprotocol/mina-daemon:4.0.0-6965b50-bullseye-devnet' # Use this image for Devnet
     environment:
       MINA_PRIVKEY_PASS: PssW0rD
     entrypoint: []
@@ -8381,7 +8626,7 @@ services:
       - './node/mina-config:/root/.mina-config'
   mina_block_producer:
     image: 'minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet'
-    # image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet' # Use this image for Devnet
+    # image: 'minaprotocol/mina-daemon:4.0.0-6965b50-bullseye-devnet' # Use this image for Devnet
     restart: always
     environment:
       MINA_PRIVKEY_PASS: PssW0rD
@@ -8543,7 +8788,7 @@ This document aims to explain the different components that you should think abo
 
 ## Staking Rewards
 
-The coinbase reward for producing a block is 720 tokens. 
+The coinbase reward for producing a block is 360 MINA. 
 
 ## Dumping Staking Ledgers
 
@@ -8591,7 +8836,7 @@ It requires an argument to identifier of the ledger you wish to export. The tabl
 <br />
 
 
-In order to ensure you always have each staking ledger available for use after epochs have expired, we recommend exporting the staking-epoch-ledger every (7140 × 3) ÷ 60 = 357 hours (there are 7140 slots in an epoch, and each slot is 3 minutes long).
+In order to ensure you always have each staking ledger available for use after epochs have expired, we recommend exporting the staking-epoch-ledger every (7140 × 1.5) ÷ 60 = 178.5 hours (there are 7140 slots in an epoch, and each slot is 90 seconds long).
 
 By default, ledgers are exported as json data. See `mina ledger export -help` for documentation of flags which will enable other formats. When output as json, the ledger will be represented as an array of account objects. Below is an example of what an account object in json looks like.
 
@@ -9001,7 +9246,7 @@ You must return rewards to the address specified in the [Mina Delegation Program
 
 Rewards must be distributed at least once for a given epoch. You must send one payment in the amount of your obligation to the correct address specified in the [Mina Delegation Program Return Addresses](https://docs.google.com/spreadsheets/d/1Fm4XSS9Xu4eWAhpM06sdySUKvLClR5SculXfP5o5sSc/edit?usp=sharing) mapping document and if applicable, send the correct amount to the burn address. Both payments should have a memo field with the md5 hash value of your block producer public key. This is the easiest method to avoid confusion in tracking payments and will reduce the likelihood you will be incorrectly flagged as delinquent.
 
-All the rewards for epoch N must be delivered (ie. accepted in a block, not just sent) no later than slot number 3,500 of the next epoch. This gives you about a week to sort out these payments.
+All the rewards for epoch N must be delivered (ie. accepted in a block, not just sent) no later than slot number 3,500 of the next epoch. This gives you about half a week to sort out these payments.
 
 
 ### How do I calculate the reward payout?
@@ -9021,9 +9266,9 @@ At the end of each epoch, do <u>all</u> of the following:
 
 2. Compute the share of stake from the token provider (from both accounts) by dividing the token provider delegation by the total stake. (i.e. `provider_share = provider_delegation / total_stake`). The resulting share should be between 0 and 1.
 
-3. For each block produced that has a non-zero block-reward on the canonical chain rewards must be calculated based on 720 MINA.
+3. For each block produced that has a non-zero block-reward on the canonical chain rewards must be calculated based on 360 MINA.
 
-4. Calculate the Mina Foundation payout by multiplying the coinbase reward (equal to `720 MINA` ) by the provider share calculated in the previous step minus an 8% percent fee. (i.e. `payout = (provider_share * 0.92) * 720)`.
+4. Calculate the Mina Foundation payout by multiplying the coinbase reward (equal to `360 MINA` ) by the provider share calculated in the previous step minus an 8% percent fee. (i.e. `payout = (provider_share * 0.92) * 360)`.
 
 5.  Send a transaction to the token provider accounts with the appropriate payout and memo - please follow the rules in the "Payout Attribution" section with your transaction.
   More details in the following source code parts: [PayoutCalculatorIsolateSuperCharge.ts](https://github.com/jrwashburn/mina-pool-payout/blob/7f00dbd9e693f76ea6a950c29862120a170625a9/src/core/payoutCalculator/PayoutCalculatorIsolateSuperCharge.ts#L126) and [ConfigurationManager.ts](https://github.com/jrwashburn/mina-pool-payout/blob/7f00dbd9e693f76ea6a950c29862120a170625a9/src/configuration/ConfigurationManager.ts#L21C15-L21C15).
@@ -9050,11 +9295,11 @@ Now let's consider Epoch 5. The share of the stake from the Foundation is `6 mil
 
 3 blocks are produced in this epoch that end up on the canonical chain. The blocks were won by Account A.
 
-1. Account A retains, 0.2 x 720 MINA x 3 blocks = 432 MINA.
-2. Mina Foundation, Account B, payout would be: (0.6 x 0.92) x 720 MINA x 3 blocks = 1,192.32 MINA.
-3. Account A retains 8%, (0.6 x 0.08) x 720 MINA x 3 blocks = 103.68 MINA.
-3. Account C payout would be: (0.2 x 0.92) x 720 MINA x 3 blocks = 397.44 MINA.
-4. Account A retains 8%, (0.2 x 0.08) x 720 MINA x 3 blocks = 34.56 MINA
+1. Account A retains, 0.2 x 360 MINA x 3 blocks = 216 MINA.
+2. Mina Foundation, Account B, payout would be: (0.6 x 0.92) x 360 MINA x 3 blocks = 596.16 MINA.
+3. Account A retains 8%, (0.6 x 0.08) x 360 MINA x 3 blocks = 51.84 MINA.
+3. Account C payout would be: (0.2 x 0.92) x 360 MINA x 3 blocks = 198.72 MINA.
+4. Account A retains 8%, (0.2 x 0.08) x 360 MINA x 3 blocks = 17.28 MINA
 
 
 ### Relevant Links
@@ -12637,7 +12882,7 @@ services:
       - './node/mina-config:/root/.mina-config'
   mina_node:
     image: 'minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet'
-    # image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet' # Use this image for Devnet
+    # image: 'minaprotocol/mina-daemon:4.0.0-6965b50-bullseye-devnet' # Use this image for Devnet
     restart: always
     environment:
       MINA_LIBP2P_PASS: PssW0rD
@@ -12924,7 +13169,7 @@ services:
 ```yaml
 services:
   generate_wallet_key:
-    image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet'
+    image: 'minaprotocol/mina-daemon:4.0.0-6965b50-bullseye-devnet'
     environment:
       MINA_PRIVKEY_PASS: PssW0rD
     entrypoint: []
@@ -12937,7 +13182,7 @@ services:
     volumes:
       - './node/mina-config:/root/.mina-config'
   mina_snark_coordinator:
-    image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet'
+    image: 'minaprotocol/mina-daemon:4.0.0-6965b50-bullseye-devnet'
     restart: always
     environment:
       MINA_PRIVKEY_PASS: PssW0rD
@@ -12964,7 +13209,7 @@ services:
       generate_wallet_key:
         condition: service_completed_successfully
   mina_snark_worker:
-    image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet'
+    image: 'minaprotocol/mina-daemon:4.0.0-6965b50-bullseye-devnet'
     restart: always
     entrypoint: []
     command: >
@@ -13389,7 +13634,7 @@ It is also possible to produce a block in catchup, and this block will also be q
 
 There are a few reasons why you could miss a slot / not successfully produce a block, for example, the node restarting and being in bootstrap at the time of producing a slot.
 
-Also, you must produce a block within the slot time (3 mins). If you are on less powerful hardware or the daemon is competing for resources, it may not produce the block in time. In this instance, you should find in your logs:
+Also, you must produce a block within the slot time (90 seconds). If you are on less powerful hardware or the daemon is competing for resources, it may not produce the block in time. In this instance, you should find in your logs:
 
 `Internally generated block $state_hash cannot be rebroadcast because it's not a valid time to do so ($timing)`
 
@@ -13397,7 +13642,7 @@ It is not recommended to run a SNARK worker on the same machine at the same time
 
 ### Why is the block rate so low / how often should there be a block?
 
-A slot on the current network is every 3 mins, though not all slots should have a block produced, so on average, we would expect a block every 4 mins. However, not all the stake is online and active in producing blocks, and so not all slots will have a block, and sometimes there can be long delays between blocks. As more of the stake is online and staking, this situation improves.
+A slot on the current network is every 90 seconds, though not all slots should have a block produced, so on average, we would expect a block every 2 mins. However, not all the stake is online and active in producing blocks, and so not all slots will have a block, and sometimes there can be long delays between blocks. As more of the stake is online and staking, this situation improves.
 
 ### Why does o1Labs win most of the blocks?
 
@@ -13603,7 +13848,7 @@ docker run --name mina-node -d \
 -v $(pwd)/.mina-env:/entrypoint.d/mina-env:ro \
 -v $(pwd)/keys:/keys:ro \
 -v $(pwd)/.mina-config:/root/.mina-config \
-gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet \
+minaprotocol/mina-daemon:4.0.0-6965b50-bullseye-devnet \
 daemon
 ```
 
@@ -14466,14 +14711,14 @@ When you delegate MINA to a validator:
 
 1. Your tokens **never leave your wallet** - you maintain full control
 2. The validator uses your stake weight to increase their chances of producing blocks
-3. When the validator wins a block (720 MINA reward), they distribute rewards proportionally to all delegators
+3. When the validator wins a block (360 MINA reward), they distribute rewards proportionally to all delegators
 4. The validator takes a commission fee and you receive your share of the remaining rewards
-5. It takes **2-4 weeks** for your delegation to become active on the network
+5. It takes **1-2 weeks** for your delegation to become active on the network
 6. You can change validators anytime with no penalties
 
 :::note
 
-Values like staking rewards, epoch duration, and APY are subject to change with network upgrades. After the upcoming Mesa upgrade, block rewards will decrease from 720 to 360 MINA per block, and epoch duration will reduce from 2-4 weeks to 1-2 weeks.
+Values like staking rewards, epoch duration, and APY are subject to change with network upgrades. For example, after the latest Mesa upgrade, block rewards decreased from 720 to 360 MINA per block, and epoch duration was reduced from 2-4 weeks to 1-2 weeks.
 
 :::
 
@@ -14543,7 +14788,7 @@ When selecting a validator to delegate to, consider these factors:
 
 ### Choosing a Validator
 
-Your delegation will become active after **2-4 weeks** (1-2 epochs). Here are some extra things to note:
+Your delegation will become active after **1-2 weeks** (1-2 epochs). Here are some extra things to note:
 
 - **Checking Your Status:** Most wallets show your current delegation status, including:
     - Which validator you're delegated to
@@ -15144,7 +15389,7 @@ url: /zkapps/front-end-integration-guides/angular
 <br />
 
 - Fund your wallet using the [Mina Faucet](https://faucet.minaprotocol.com/).
-    - You'll need to wait one block (~3 minutes) to see the change in balance reflected on chain. You can use [Minascan](https://minascan.io/devnet) to track the status of your transaction.
+    - You'll need to wait one block (~90 seconds) to see the change in balance reflected on chain. You can use [Minascan](https://minascan.io/devnet) to track the status of your transaction.
 
 <figure
   style={{ display: "flex", height:"30rem" }}>
@@ -18072,7 +18317,7 @@ The smart contract called `Square` has one element of on-chain state named `num`
 12 }
 ```
 
-zkApps can have up to eight fields of on-chain state. Each field stores up to 32 bytes (technically, 31.875 bytes or 255 bits) of arbitrary data. A later tutorial covers options for off-chain state.
+zkApps can have up to 32 fields of on-chain state. Each field stores up to 32 bytes (technically, 31.875 bytes or 255 bits) of arbitrary data. A later tutorial covers options for off-chain state.
 
 Now, this code adds the `init` method to set up the initial state of the smart contract on deployment:
 
@@ -21721,6 +21966,12 @@ url: /zkapps/tutorials/10-account-updates
 
 The fundamental data structure that Mina transactions are built from is called an _account update_. Account updates are a flexible and powerful data structure that can express all kinds of updates, events, and preconditions you use to develop smart contracts.
 
+:::info Mesa Upgrade
+
+The account updates limit has been increased from ~6 to **16 segments per transaction**. See the [Mesa upgrade overview](/network-upgrades/mesa/glossary#larger-zkapp-transactions--mip9) for more details.
+
+:::
+
 Each zkApp transaction constructed by o1js is composed of one or more [AccountUpdate](https://docs.o1labs.org/o1js/api-reference/classes/AccountUpdate) classes, which are a set of instructions for the Mina network to perform, such as altering on-chain state, emitting an event, and so on.
 
 Each `AccountUpdate` can make assertions about its account, apply updates to its account, and make assertions about its child `AccountUpdates`.
@@ -21752,7 +22003,7 @@ Each [AccountUpdate](https://docs.o1labs.org/o1js/api-reference/classes/AccountU
 - `Preconditions`: Conditions that must be true for the account update to be applied. Corresponds to assertions in an o1js method.
 - `Updates`: Things changed by the account update, such as including the zkApp state, permissions, and verification key.
 - `BalanceChange`: Any changes to the balance
-- `Authorization`: How the zkApp is authorized; must be a proof (corresponding to the verification key on the account), a signature, or none. See [Interacting With Mina](/zkapps/writing-a-zkapp/introduction-to-zkapps/interact-with-mina).
+- `Authorization`: How the zkApp is authorized; must be a proof (corresponding to the verification key on the account), a signature, or none. See [Authorizations](/zkapps/writing-a-zkapp/introduction-to-zkapps/interact-with-mina).
 
 Other `AccountUpdate` components are available to use, but are not covered in this tutorial:
 
@@ -22273,7 +22524,7 @@ This code serves as the scaffolding for the rest of the tutorial and contains a 
 
 ### Define on-chain state
 
-Every Mina smart contract includes eight on-chain state variables that each store almost 256 bits of information. In more complex smart contracts, these state variables can store commitments to off-chain storage (for example, commitments for the hash of a file, the root of a Merkle tree, and so on).
+Every Mina smart contract includes 32 on-chain state variables that each store almost 256 bits of information. In more complex smart contracts, these state variables can store commitments to off-chain storage (for example, commitments for the hash of a file, the root of a Merkle tree, and so on).
 
 For simplicity, this tutorial stores everything on-chain.
 
@@ -23072,7 +23323,7 @@ Offchain storage is currently an experimental feature and is subject to change i
 
 One of Mina's unique features is its succinctness, both in computation and storage. To prevent state bloat and maintain Mina's efficiency and verifiability, we use offchain storage solutions for handling large volumes of data.
 
-In a previous section, we introduced the concept of on-chain Values. Since Mina currently only supports a total of 8 on-chain Field elements, we need to leverage offchain storage to extend that capacity.
+In a previous section, we introduced the concept of on-chain Values. Since Mina currently only supports a total of 32 on-chain Field elements, we need to leverage offchain storage to extend that capacity.
 This approach maintains a provably secure connection between the on-chain smart contract and the off-chain data, such as that stored in an archive node.
 
 ## Design
@@ -23286,7 +23537,7 @@ As shown, the maximum amount of unlocked tokens is defined by the `initialMinimu
 
 The other timing-related properties are:
 
-- `cliffTime`: The initial time period during which all tokens are locked (should be from the current slot onwards). Note that 'time' is measured in Mina by 'slots', where 1 slot is 3min.
+- `cliffTime`: The initial time period during which all tokens are locked (should be from the current slot onwards). Note that 'time' is measured in Mina by 'slots', where 1 slot is 90 seconds.
 - `cliffAmount`: The quantity of tokens to be unlocked when the cliff time has elapsed. If this amount is greater or equal the 'initial minimum balance', all tokens are unlocked after the cliff time elapses.
 - `vestingPeriod`: After the cliff time elapses, tokens can be set to unlock periodically at a fixed interval, by a fixed quantity. The vesting period is the length of that interval.
 - `vestingIncrement`: The quantity of tokens that are unlocked after each vesting period elapses.
@@ -24249,7 +24500,7 @@ Examples are based on the standard project structure and provide additional file
 
 1. Fund the fee payer account. After you fund the fee payer account, you can use to to pay fees across multiple zkApps.
 
-    Follow the prompts to request tMINA to fund your fee payer account. For this example, your MINA address is populated on the Testnet Faucet. tMINA arrives at your address when the next block is produced (~3 minutes).
+    Follow the prompts to request tMINA to fund your fee payer account. For this example, your MINA address is populated on the Testnet Faucet. tMINA arrives at your address when the next block is produced (~90 seconds).
 
 1. Deploy to Testnet:
 
@@ -24532,8 +24783,8 @@ The second account update has the `'MyContract.myMethod()'` label. The update co
 Other fields in this account update are:
 
 - `publicKey` – the zkApp address (like other non-human-readable strings, this is truncated by `tx.toPretty()`)
-- `update: { appState: [...] }` – shows how the method updates the on-chain state, using `this.<state>.set()`. The names and pretty types defined using `@state` are removed in this representation, showing a raw list of 8 field elements or `null` for state fields that aren't updated.
-- `preconditions: { account: { state: [...] } }` – similar to the `update`, one entry per field of on-chain state for the preconditions created with `this.<state>.requireEquals()`. This example accepts transactions only if the first of the 8 state fields equals 0. The `null` values mean that no condition is set on the other 7 state fields.
+- `update: { appState: [...] }` – shows how the method updates the on-chain state, using `this.<state>.set()`. The names and pretty types defined using `@state` are removed in this representation, showing a raw list of 32 field elements or `null` for state fields that aren't updated.
+- `preconditions: { account: { state: [...] } }` – similar to the `update`, one entry per field of on-chain state for the preconditions created with `this.<state>.requireEquals()`. This example accepts transactions only if the first of the 32 state fields equals 0. The `null` values mean that no condition is set on the other 31 state fields.
 - `authorizationKind: 'Proof'` – indicates this account update must be authorized with a proof. Proof authorization is the default when calling a zkApp method, but not necessarily for other account updates.
 - `authorization: undefined` – the proof needed on this update isn't there yet. You learn how to add it in a minute.
 
@@ -25609,7 +25860,7 @@ There are some key considerations when choosing to build a zkApp with o1js on Mi
 
 - zkApps are subject to protocol throughput limitations.
 - At present, zkApps that require support for multiple concurrent users require specific architecture to avoid race conditions:
-  - Where more than the eight on-chain field elements are required to manage state, and access to that state is not shared between users, the experimental [Offchain Storage API](/zkapps/writing-a-zkapp/feature-overview/offchain-storage) offers a solution.
+  - Where more than the 32 on-chain field elements are required to manage state, and access to that state is not shared between users, the experimental [Offchain Storage API](/zkapps/writing-a-zkapp/feature-overview/offchain-storage) offers a solution.
   - Where concurrent access to _shared global state_ is required, the required architecture is available **out of the box** when using the Protokit framework to build your zkApp as an zkApp-chain (L2). There is currently no easy-to-use equivalent for shared state in o1js L1 contracts.
 
 Start here:

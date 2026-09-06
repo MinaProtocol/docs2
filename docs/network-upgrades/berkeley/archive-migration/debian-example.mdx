@@ -17,6 +17,8 @@ You can follow these steps that can be copy-pasted directly into a fresh Debian 
 
 This example uses an altered two-step version of the [full simplified workflow](/network-upgrades/berkeley/archive-migration/migrating-archive-database-to-berkeley#simplified-approach).
 
+If you would rather not install the Google Cloud CLI, every `gcloud storage cp gs://<bucket>/<object> .` below can be replaced with `wget https://storage.googleapis.com/<bucket>/<object>`.
+
 ```sh
 apt update && apt install lsb-release sudo postgresql curl wget gpg # debian:11 is surprisingly light
 
@@ -31,7 +33,7 @@ sudo apt-get update && sudo apt-get install --allow-downgrades -y mina-archive-m
 mkdir -p mina-migration-workdir
 cd mina-migration-workdir
 
-gsutil cp gs://mina_network_block_data/devnet-bundle-3NKRsRWBzmPR8Z8ZmJb4u8FLpnSkjRitUpKZzVkHp11QuwP5i839.tar.gz .
+gcloud storage cp gs://mina_network_block_data/devnet-bundle-3NKRsRWBzmPR8Z8ZmJb4u8FLpnSkjRitUpKZzVkHp11QuwP5i839.tar.gz .
 tar -xf devnet-bundle-3NKRsRWBzmPR8Z8ZmJb4u8FLpnSkjRitUpKZzVkHp11QuwP5i839.tar.gz
 
 wget https://raw.githubusercontent.com/MinaProtocol/mina/berkeley/src/app/archive/create_schema.sql
@@ -43,7 +45,7 @@ createdb devnet_really_migrated
 
 psql -d devnet_really_migrated -f create_schema.sql
 
-gsutil cp gs://mina-archive-dumps/devnet-archive-dump-2024-03-22_0000.sql.tar.gz .
+gcloud storage cp gs://mina-archive-dumps/devnet-archive-dump-2024-03-22_0000.sql.tar.gz .
 tar -xf devnet-archive-dump-2024-03-22_0000.sql.tar.gz
 # the next step ensures you don't accidentally merge mainnet and devnet data
 sed -i -e s/archive_balances_migrated/devnet_balances_migrated/g devnet-archive-dump-2024-03-22_0000.sql
@@ -58,7 +60,7 @@ mina-berkeley-migration-script initial \
 
 # now, do a final migration
 
-gsutil cp gs://mina-archive-dumps/devnet-archive-dump-2024-03-22_2050.sql.tar.gz .
+gcloud storage cp gs://mina-archive-dumps/devnet-archive-dump-2024-03-22_2050.sql.tar.gz .
 tar -xf devnet-archive-dump-2024-03-22_2050.sql.tar.gz
 # the next step ensures you don't accidentally merge mainnet and devnet data
 sed -i -e s/archive_balances_migrated/devnet_balances_migrated/g devnet-archive-dump-2024-03-22_2050.sql
