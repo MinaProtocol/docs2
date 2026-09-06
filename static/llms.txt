@@ -122,6 +122,7 @@ This file is auto-generated from `sidebars.js` and the frontmatter of each docum
 - [Generating a libp2p Key Pair](https://docs.minaprotocol.com/node-operators/seed-peers/generating-a-libp2p-keypair): Generate a libp2p key pair for seed node identity on the Mina gossip network.
 - [Docker Compose Seed Peers](https://docs.minaprotocol.com/node-operators/seed-peers/docker-compose): Example of how to run a Mina Seed node using Docker Compose.
 - [Blockchain Data and History](https://docs.minaprotocol.com/node-operators/data-and-history): How to find blockchain data and history
+- [Archive Node API](https://docs.minaprotocol.com/node-operators/data-and-history/archive-node-api): Run and integrate the Archive Node API, a GraphQL service that exposes blocks, events, actions, and transactions from an archive node Postgres database for zkApps, explorers, and indexers.
 - [Rosetta API](https://docs.minaprotocol.com/node-operators/data-and-history/rosetta): Install and run Mina's implementation of the Rosetta API for blockchain integration, historical data queries, and exchange support.
 - [Running with Docker](https://docs.minaprotocol.com/node-operators/rosetta/run-with-docker): Run Mina’s implementation of Rosetta API with Docker.
 - [Docker Compose Rosetta](https://docs.minaprotocol.com/node-operators/rosetta/docker-compose): Example of how to run Mina Rosetta node using Docker Compose.

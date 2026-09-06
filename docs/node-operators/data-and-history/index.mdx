@@ -19,8 +19,13 @@ While prior transaction history is not required to prove the current state is va
 
 You can optionally run an [archive node](/node-operators/archive-node/getting-started) to access historic data. The archive node process stores a summary of each block in a Postgres database. The archive node requires a running mina-archive daemon that connects to a running mina daemon and a [PostgreSQL](https://www.postgresql.org/) database.
 
+An archive database on its own is not an integration surface — it has no API, and exposing Postgres to applications is not an option. Two services read that database and serve it over the network. Which one you want depends on what you are building.
+
 ## In This Section
 
+- [Archive Node API](/node-operators/data-and-history/archive-node-api) - A GraphQL service over the archive database. Serves blocks, events, actions, and transactions, and is the path o1js and zkApps use to read history.
 - [Rosetta API](/node-operators/data-and-history/rosetta) - A standardized API for blockchain integration, exchange support, and historical data queries.
+
+Both read the same archive database, and running both against one database is normal. Choose the Archive Node API for zkApp, explorer, and indexer work; choose Rosetta when you need the cross-chain interface exchanges already support.
 
 For querying data from a running node via GraphQL, see [Querying Data](/node-operators/validator-node/querying-data).

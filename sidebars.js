@@ -329,7 +329,10 @@ module.exports = {
             type: 'doc',
             id: 'node-operators/data-and-history/index',
           },
-          items: ['node-operators/data-and-history/rosetta'],
+          items: [
+            'node-operators/data-and-history/archive-node-api',
+            'node-operators/data-and-history/rosetta',
+          ],
         },
         {
           type: 'category',
