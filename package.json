@@ -17,6 +17,7 @@
     "typecheck": "tsc",
     "update-sidebar": "node scripts/update-sidebars-o1js-api.js && npx prettier --config .prettierrc --write sidebars.js",
     "validate-docker-images": "node scripts/validate-docker-images.js",
+    "check-o1labs-links": "node scripts/check-o1labs-links.js",
     "generate-llms-txt": "node scripts/generate-llms-txt.mjs",
     "generate-llms-index": "node scripts/generate-llms-index.mjs",
     "check-llms-txt": "node scripts/generate-llms-txt.mjs && node scripts/generate-llms-index.mjs && git diff --exit-code static/llms-full.txt static/llms.txt"
