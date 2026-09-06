@@ -8,7 +8,7 @@ keywords:
   - mina ecosystem
   - zkp
   - mina
-  - zero knowledge proofs
+  - zero-knowledge proofs
 ---
 
 # Glossary
@@ -16,7 +16,7 @@ keywords:
 [A](#a) [B](#b) [C](#c) [D](#d) [E](#e) [F](#f) G [H](#h) [I](#i) J [K](#k) [L](#l) [M](#m) [N](#n) [O](#o)
 [P](#p) Q [R](#r) [S](#s) [T](#t) [U](#u) [V](#v) W X Y [Z](#z)
 
-Are you looking for a zero knowledge, o1js, zkApp, or Mina term that isn't here yet? To let us know, please [create an issue](https://github.com/o1-labs/docs2/issues) or click **EDIT THIS PAGE** to submit a PR.
+Are you looking for a zero knowledge or Mina term that isn't here yet? To let us know, please [create an issue](https://github.com/o1-labs/docs2/issues) or click **EDIT THIS PAGE** to submit a PR.
 
 ## A
 
@@ -101,7 +101,7 @@ Full history is not available in Mina, so a newly connected node to the network 
 
 ### cold wallet
 
-A wallet is "cold" if the private key is not, and never has been, available on the internet. Cold storage is preferred for wallets associated with meaningful stake as it is harder to hack into cold wallet systems if they never have been on the internet. This could be as easy as generating a key pair on a laptop with the internet turned off or using a hardware wallet, like a [Ledger](https://shop.ledger.com/) device.
+A cold wallet is not, and never has been, available on the internet. Cold storage is safer for wallets associated with meaningful stake.
 
 ### compressing
 
@@ -143,7 +143,7 @@ Created with the zkApp CLI, a [deploy alias](/zkapps/tutorials/deploying-to-a-ne
 
 ### Devnet
 
-Dedicated for developers building on top of the Mina protocol, Devnet is designed for testing and experimentation so you can test tooling and integrations before going live on [Mainnet](#mainnet). See [Connect to Mainnet or Devnet](/node-operators/validator-node/connecting-to-the-network).
+Dedicated for developers building on top of the Mina protocol, Devnet is designed for testing and experimentation so you can test tooling and integrations before going live on [Mainnet](#mainnet). See [Connect to Devnet](/node-operators/validator-node/connecting-to-the-network).
 
 ### distributed ledger technology (DLT)
 
@@ -165,7 +165,7 @@ An approach to public key cryptography based on the algebraic structure of ellip
 
 ### epoch
 
-A unit of time equal to 7140 slots at Mainnet. An epoch is divided into [slots](#slot) of 3 minutes each.
+A unit of time equal to 7140 slots at Mainnet. An epoch is divided into [slots](#slot) of 90 seconds each.
 
 ### extensional blocks
 
@@ -215,7 +215,7 @@ A mathematical cryptographic function that converts an input of arbitrary length
 
 ### hot wallet
 
-A wallet is "hot" if the private key is available on a machine that is connected to the internet. To mitigate risk in the case of hackers breaking into their systems, careful block producers avoid having hot wallets with substantial stake on them.
+A hot wallet has a private key that is available on a machine that is connected to the internet. To mitigate risk, avoid having hot wallets with substantial stake.
 
 ## I
 
@@ -271,7 +271,7 @@ Changes to the network that make the old chain incompatible with the new chain. 
 
 ### Mainnet
 
-The live version of the Mina blockchain network that is fully operational. On the Mina Mainnet public blockchain, real-world transactions are performed. See [Connect to the Mina Network](node-operators/validator-node/connecting-to-the-network). A Mainnet is different from a [Testnet](#testnet) and [Devnet](#devnet) which are used for development and testing.
+The live version of the Mina blockchain network that is fully operational. On the Mina Mainnet public blockchain, real-world transactions are performed. See [Connect to the Mina Network](/node-operators/validator-node/connecting-to-the-network). A Mainnet is different from a [Testnet](#testnet) and [Devnet](#devnet) which are used for development and testing.
 
 ### MINA
 
@@ -307,7 +307,7 @@ A [full node](#full-node) in the Mina protocol that does not participate in cons
 
 ### non-upgradeable
 
-If the verification key cannot be changed, a zkApp smart contract is considered non-upgradeable. You can make a smart contract upgradeable or not upgradeable using [permissions](https://docs.o1labs.org/o1js/zkapps/permissions).
+If the verification key cannot be changed, a zkApp smart contract is considered non-upgradeable. You can make a smart contract upgradeable or not upgradeable using [permissions](https://docs.o1labs.org/o1js/zkapps/permissions#upgradeability-of-smart-contracts).
 
 ### nonce
 
@@ -333,7 +333,7 @@ A transfer of value or data, including transactions, that exist on and have been
 
 ### on-chain state
 
-State that lives on the Mina blockchain. Each zkApp account provides eight fields of 32 bytes each of arbitrary storage for the on-chain state.
+State that lives on the Mina blockchain. Each zkApp account provides 32 fields of 32 bytes each of arbitrary storage for the on-chain state.
 
 ### oracle
 
@@ -471,7 +471,7 @@ The local testing blockchain you use in the first phase of testing. Using a simu
 
 ### slot
 
-A unit of time in the Mina network. As of Mainnet launch, a slot in Mina is 3minutes long. An [epoch](#epoch) is divided into slots. Block producers can find eligible slots to produce blocks in to earn rewards.
+A unit of time in the Mina network. A slot in Mina is 90 seconds long. An [epoch](#epoch) is divided into slots. Block producers can find eligible slots to produce blocks in to earn rewards.
 
 ### smart contract
 
@@ -601,7 +601,7 @@ A command line tool that zkApp developers use to scaffold and deploy smart contr
 
 ### zkApp account
 
-A zkApp account is an account on the Mina blockchain where a zkApp smart contract is deployed. Each zkApp account provides 8 fields of 32 bytes each of arbitrary storage. When a Mina address contains a verification key, it acts as a zkApp account.
+A smart contract account. Each zkApp account provides 32 fields of 32 bytes each of arbitrary storage. When a Mina address contains a verification key, it acts as a zkApp account.
 
 ### zkApp manager account
 

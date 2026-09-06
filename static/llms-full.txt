@@ -7,7 +7,7 @@ url: /glossary
 [A](#a) [B](#b) [C](#c) [D](#d) [E](#e) [F](#f) G [H](#h) [I](#i) J [K](#k) [L](#l) [M](#m) [N](#n) [O](#o)
 [P](#p) Q [R](#r) [S](#s) [T](#t) [U](#u) [V](#v) W X Y [Z](#z)
 
-Are you looking for a zero knowledge, o1js, zkApp, or Mina term that isn't here yet? To let us know, please [create an issue](https://github.com/o1-labs/docs2/issues) or click **EDIT THIS PAGE** to submit a PR.
+Are you looking for a zero knowledge or Mina term that isn't here yet? To let us know, please [create an issue](https://github.com/o1-labs/docs2/issues) or click **EDIT THIS PAGE** to submit a PR.
 
 ## A
 
@@ -92,7 +92,7 @@ Full history is not available in Mina, so a newly connected node to the network 
 
 ### cold wallet
 
-A wallet is "cold" if the private key is not, and never has been, available on the internet. Cold storage is preferred for wallets associated with meaningful stake as it is harder to hack into cold wallet systems if they never have been on the internet. This could be as easy as generating a key pair on a laptop with the internet turned off or using a hardware wallet, like a [Ledger](https://shop.ledger.com/) device.
+A cold wallet is not, and never has been, available on the internet. Cold storage is safer for wallets associated with meaningful stake.
 
 ### compressing
 
@@ -134,7 +134,7 @@ Created with the zkApp CLI, a [deploy alias](/zkapps/tutorials/deploying-to-a-ne
 
 ### Devnet
 
-Dedicated for developers building on top of the Mina protocol, Devnet is designed for testing and experimentation so you can test tooling and integrations before going live on [Mainnet](#mainnet). See [Connect to Mainnet or Devnet](/node-operators/validator-node/connecting-to-the-network).
+Dedicated for developers building on top of the Mina protocol, Devnet is designed for testing and experimentation so you can test tooling and integrations before going live on [Mainnet](#mainnet). See [Connect to Devnet](/node-operators/validator-node/connecting-to-the-network).
 
 ### distributed ledger technology (DLT)
 
@@ -156,7 +156,7 @@ An approach to public key cryptography based on the algebraic structure of ellip
 
 ### epoch
 
-A unit of time equal to 7140 slots at Mainnet. An epoch is divided into [slots](#slot) of 3 minutes each.
+A unit of time equal to 7140 slots at Mainnet. An epoch is divided into [slots](#slot) of 90 seconds each.
 
 ### extensional blocks
 
@@ -206,7 +206,7 @@ A mathematical cryptographic function that converts an input of arbitrary length
 
 ### hot wallet
 
-A wallet is "hot" if the private key is available on a machine that is connected to the internet. To mitigate risk in the case of hackers breaking into their systems, careful block producers avoid having hot wallets with substantial stake on them.
+A hot wallet has a private key that is available on a machine that is connected to the internet. To mitigate risk, avoid having hot wallets with substantial stake.
 
 ## I
 
@@ -262,7 +262,7 @@ Changes to the network that make the old chain incompatible with the new chain. 
 
 ### Mainnet
 
-The live version of the Mina blockchain network that is fully operational. On the Mina Mainnet public blockchain, real-world transactions are performed. See [Connect to the Mina Network](node-operators/validator-node/connecting-to-the-network). A Mainnet is different from a [Testnet](#testnet) and [Devnet](#devnet) which are used for development and testing.
+The live version of the Mina blockchain network that is fully operational. On the Mina Mainnet public blockchain, real-world transactions are performed. See [Connect to the Mina Network](/node-operators/validator-node/connecting-to-the-network). A Mainnet is different from a [Testnet](#testnet) and [Devnet](#devnet) which are used for development and testing.
 
 ### MINA
 
@@ -298,7 +298,7 @@ A [full node](#full-node) in the Mina protocol that does not participate in cons
 
 ### non-upgradeable
 
-If the verification key cannot be changed, a zkApp smart contract is considered non-upgradeable. You can make a smart contract upgradeable or not upgradeable using [permissions](https://docs.o1labs.org/o1js/zkapps/permissions).
+If the verification key cannot be changed, a zkApp smart contract is considered non-upgradeable. You can make a smart contract upgradeable or not upgradeable using [permissions](https://docs.o1labs.org/o1js/zkapps/permissions#upgradeability-of-smart-contracts).
 
 ### nonce
 
@@ -324,7 +324,7 @@ A transfer of value or data, including transactions, that exist on and have been
 
 ### on-chain state
 
-State that lives on the Mina blockchain. Each zkApp account provides eight fields of 32 bytes each of arbitrary storage for the on-chain state.
+State that lives on the Mina blockchain. Each zkApp account provides 32 fields of 32 bytes each of arbitrary storage for the on-chain state.
 
 ### oracle
 
@@ -462,7 +462,7 @@ The local testing blockchain you use in the first phase of testing. Using a simu
 
 ### slot
 
-A unit of time in the Mina network. As of Mainnet launch, a slot in Mina is 3minutes long. An [epoch](#epoch) is divided into slots. Block producers can find eligible slots to produce blocks in to earn rewards.
+A unit of time in the Mina network. A slot in Mina is 90 seconds long. An [epoch](#epoch) is divided into slots. Block producers can find eligible slots to produce blocks in to earn rewards.
 
 ### smart contract
 
@@ -592,7 +592,7 @@ A command line tool that zkApp developers use to scaffold and deploy smart contr
 
 ### zkApp account
 
-A zkApp account is an account on the Mina blockchain where a zkApp smart contract is deployed. Each zkApp account provides 8 fields of 32 bytes each of arbitrary storage. When a Mina address contains a verification key, it acts as a zkApp account.
+A smart contract account. Each zkApp account provides 32 fields of 32 bytes each of arbitrary storage. When a Mina address contains a verification key, it acts as a zkApp account.
 
 ### zkApp manager account
 
@@ -753,15 +753,15 @@ With each subsequent block, a recipient has a higher degree of confidence that t
 
 In the Bitcoin network, a transaction is confirmed after [6 blocks](https://en.bitcoin.it/wiki/Confirmation) (60 mins) with an assumption that an attacker is unlikely to amass more than 10% of the hashrate.
 
-With a slot duration of 3 mins and assuming 90% honest stake, the following table shows the finality in blocks, the average time it takes to produce the corresponding number of blocks, and the confidence that payment will be confirmed.
+With a slot duration of 90 seconds and assuming 90% honest stake, the following table shows the finality in blocks, the average time it takes to produce the corresponding number of blocks, and the confidence that payment will be confirmed.
 
 | Finality (in blocks) | Average time for finality | Finality confidence (%) |
 | -------------------- | ------------------------- | ----------------------- |
-| 8                    | 33 mins                   | 98.6709                 |
-| 15                   | 60 mins                   | 99.9231                 |
-| 23                   | 1hr 32mins                | 99.9965                 |
-| 30                   | 2hrs                      | 99.9998                 |
-| 38                   | 2hrs 32mins               | 100                     |
+| 8                    | 16 mins                   | 98.6709                 |
+| 15                   | 30 mins                   | 99.9231                 |
+| 23                   | 46 mins                   | 99.9965                 |
+| 30                   | 60 mins                   | 99.9998                 |
+| 38                   | 1hr 16mins                | 100                     |
 
 Average time is calculated based on consensus constants that determine the number of slots filled per epoch. This is currently set to 75%.
 
@@ -1338,7 +1338,7 @@ If you'd like to expose liquid balances for vesting accounts at some particular 
 
 ```
 (*
- *  uint32 global_slot -- the "clock" it starts at 0 at the genesis block and ticks up every 3minutes.
+ *  uint32 global_slot -- the "clock" it starts at 0 at the genesis block and ticks up every 90 seconds.
  *  uint32 cliff_time -- the slot where the cliff is (similar to startup equity vesting)
  *  uint32 cliff_amount -- the amount that unlocks at the cliff
  *  amount vesting_increment -- unlock this amount every "period"
@@ -2397,7 +2397,7 @@ apt-get install --allow-downgrades -y "mina-archive-migration=$VERSION"
 To get the Docker image:
 
 ```
-docker pull gcr.io/o1labs-192920/mina-archive-migration:3.0.1-e848ecb-{codename}
+docker pull minaprotocol/mina-archive-migration:3.0.1-e848ecb-{codename}
 ```
 
 Where supported codenames are:
@@ -4823,10 +4823,10 @@ This documentation uses terms like _automode_, _stop-slot_, _trustless upgrade_,
 
 Mesa bundles four Mina Improvement Proposals (MIPs) that change protocol behavior, plus two operational improvements to the upgrade flow itself. See the **[Glossary](/network-upgrades/mesa/glossary)** for detailed descriptions of each MIP and the canonical specs in the [MinaProtocol/MIPs](https://github.com/MinaProtocol/MIPs/tree/main/MIPS) repository.
 
-- **[Faster Blocks — MIP6](/network-upgrades/mesa/glossary#faster-blocks)** — Halves slot time to 90 seconds, halves coinbase reward, halves epoch duration.
-- **[Expanded zkApp State — MIP7](/network-upgrades/mesa/glossary#expanded-zkapp-state)** — Raises on-chain state from 8 to 32 field elements per zkApp account.
-- **[Larger Events and Actions — MIP8](/network-upgrades/mesa/glossary#larger-events-and-actions)** — Increases per-transaction event/action limit from 100 to 1024 field elements.
-- **[Larger zkApp Transactions — MIP9](/network-upgrades/mesa/glossary#larger-zkapp-transactions)** — Triples the max account updates per zkApp transaction.
+- **[Faster Blocks — MIP6](/network-upgrades/mesa/glossary#faster-blocks--mip6)** — Halves slot time to 90 seconds, halves coinbase reward, halves epoch duration.
+- **[Expanded zkApp State — MIP7](/network-upgrades/mesa/glossary#expanded-zkapp-state--mip7)** — Raises on-chain state from 8 to 32 field elements per zkApp account.
+- **[Larger Events and Actions — MIP8](/network-upgrades/mesa/glossary#larger-events-and-actions--mip8)** — Increases per-transaction event/action limit from 100 to 1024 field elements.
+- **[Larger zkApp Transactions — MIP9](/network-upgrades/mesa/glossary#larger-zkapp-transactions--mip9)** — Triples the max account updates per zkApp transaction.
 
 ### Automode Upgrades
 
@@ -6642,7 +6642,7 @@ The Mesa Docker images carry the same programs, so you can verify without instal
 ```bash
 docker run --rm -it \
   -v "$PWD:/workdir" \
-  gcr.io/o1labs-192920/mina-daemon:<mesa-tag> \
+  minaprotocol/mina-daemon:<mesa-tag> \
   bash -c 'FORKING_FROM_CONFIG_JSON=/var/lib/coda/<network>.old.json \
     mina-verify-packaged-fork-config \
       --network <network> \
@@ -7614,7 +7614,7 @@ Export these ledgers using the mina cli command:
 
     mina ledger export [current-staged-ledger|staking-epoch-ledger|next-epoch-ledger]
 
-Epoch ledger transition happens once every 14 days (given slot-time = 3mins and slots-per-epoch = 7140). 
+Epoch ledger transition happens once every 7 days (given slot-time = 90 seconds and slots-per-epoch = 7140).
 
 The window to backup a staking ledger is ~27 days considering "next" staking ledger is finalized after k (currently 290) blocks in the current epoch and therefore is available for the rest of the current epoch and the entire next epoch.
 
@@ -7803,7 +7803,7 @@ services:
       - '5432:5432'
   bootstrap_db:
     image: 'minaprotocol/mina-archive:3.3.0-8c0c2e6-bullseye-mainnet'
-    # image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet' # Use this image for Devnet
+    # image: 'minaprotocol/mina-daemon:4.0.0-6965b50-bullseye-devnet' # Use this image for Devnet
     command: >
       bash -c '
       curl -O https://storage.googleapis.com/mina-archive-dumps/mainnet-archive-dump-$(date +%F_0000).sql.tar.gz;
@@ -7822,7 +7822,7 @@ services:
         condition: service_healthy
   missing_blocks_guardian:
     image: 'minaprotocol/mina-archive:3.3.0-8c0c2e6-bullseye-mainnet'
-    # image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet' # Use this image for Devnet
+    # image: 'minaprotocol/mina-daemon:4.0.0-6965b50-bullseye-devnet' # Use this image for Devnet
     command: >
       bash -c '
       curl -O https://raw.githubusercontent.com/MinaFoundation/helm-charts/main/mina-archive/scripts/missing-blocks-guardian-command.sh;
@@ -7852,7 +7852,7 @@ services:
         condition: service_completed_successfully
   mina_node:
     image: 'minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet'
-    # image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet' # Use this image for Devnet
+    # image: 'minaprotocol/mina-daemon:4.0.0-6965b50-bullseye-devnet' # Use this image for Devnet
     restart: always
     entrypoint: []
     command: >
@@ -8612,7 +8612,7 @@ Copy and paste the provided configuration into a `docker-compose.yml` file. Then
 services:
   generate_wallet_key:
     image: 'minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet'
-    # image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet' # Use this image for Devnet
+    # image: 'minaprotocol/mina-daemon:4.0.0-6965b50-bullseye-devnet' # Use this image for Devnet
     environment:
       MINA_PRIVKEY_PASS: PssW0rD
     entrypoint: []
@@ -8626,7 +8626,7 @@ services:
       - './node/mina-config:/root/.mina-config'
   mina_block_producer:
     image: 'minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet'
-    # image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet' # Use this image for Devnet
+    # image: 'minaprotocol/mina-daemon:4.0.0-6965b50-bullseye-devnet' # Use this image for Devnet
     restart: always
     environment:
       MINA_PRIVKEY_PASS: PssW0rD
@@ -8788,7 +8788,7 @@ This document aims to explain the different components that you should think abo
 
 ## Staking Rewards
 
-The coinbase reward for producing a block is 720 tokens. 
+The coinbase reward for producing a block is 360 MINA. 
 
 ## Dumping Staking Ledgers
 
@@ -8836,7 +8836,7 @@ It requires an argument to identifier of the ledger you wish to export. The tabl
 <br />
 
 
-In order to ensure you always have each staking ledger available for use after epochs have expired, we recommend exporting the staking-epoch-ledger every (7140 × 3) ÷ 60 = 357 hours (there are 7140 slots in an epoch, and each slot is 3 minutes long).
+In order to ensure you always have each staking ledger available for use after epochs have expired, we recommend exporting the staking-epoch-ledger every (7140 × 1.5) ÷ 60 = 178.5 hours (there are 7140 slots in an epoch, and each slot is 90 seconds long).
 
 By default, ledgers are exported as json data. See `mina ledger export -help` for documentation of flags which will enable other formats. When output as json, the ledger will be represented as an array of account objects. Below is an example of what an account object in json looks like.
 
@@ -9246,7 +9246,7 @@ You must return rewards to the address specified in the [Mina Delegation Program
 
 Rewards must be distributed at least once for a given epoch. You must send one payment in the amount of your obligation to the correct address specified in the [Mina Delegation Program Return Addresses](https://docs.google.com/spreadsheets/d/1Fm4XSS9Xu4eWAhpM06sdySUKvLClR5SculXfP5o5sSc/edit?usp=sharing) mapping document and if applicable, send the correct amount to the burn address. Both payments should have a memo field with the md5 hash value of your block producer public key. This is the easiest method to avoid confusion in tracking payments and will reduce the likelihood you will be incorrectly flagged as delinquent.
 
-All the rewards for epoch N must be delivered (ie. accepted in a block, not just sent) no later than slot number 3,500 of the next epoch. This gives you about a week to sort out these payments.
+All the rewards for epoch N must be delivered (ie. accepted in a block, not just sent) no later than slot number 3,500 of the next epoch. This gives you about half a week to sort out these payments.
 
 
 ### How do I calculate the reward payout?
@@ -9266,9 +9266,9 @@ At the end of each epoch, do <u>all</u> of the following:
 
 2. Compute the share of stake from the token provider (from both accounts) by dividing the token provider delegation by the total stake. (i.e. `provider_share = provider_delegation / total_stake`). The resulting share should be between 0 and 1.
 
-3. For each block produced that has a non-zero block-reward on the canonical chain rewards must be calculated based on 720 MINA.
+3. For each block produced that has a non-zero block-reward on the canonical chain rewards must be calculated based on 360 MINA.
 
-4. Calculate the Mina Foundation payout by multiplying the coinbase reward (equal to `720 MINA` ) by the provider share calculated in the previous step minus an 8% percent fee. (i.e. `payout = (provider_share * 0.92) * 720)`.
+4. Calculate the Mina Foundation payout by multiplying the coinbase reward (equal to `360 MINA` ) by the provider share calculated in the previous step minus an 8% percent fee. (i.e. `payout = (provider_share * 0.92) * 360)`.
 
 5.  Send a transaction to the token provider accounts with the appropriate payout and memo - please follow the rules in the "Payout Attribution" section with your transaction.
   More details in the following source code parts: [PayoutCalculatorIsolateSuperCharge.ts](https://github.com/jrwashburn/mina-pool-payout/blob/7f00dbd9e693f76ea6a950c29862120a170625a9/src/core/payoutCalculator/PayoutCalculatorIsolateSuperCharge.ts#L126) and [ConfigurationManager.ts](https://github.com/jrwashburn/mina-pool-payout/blob/7f00dbd9e693f76ea6a950c29862120a170625a9/src/configuration/ConfigurationManager.ts#L21C15-L21C15).
@@ -9295,11 +9295,11 @@ Now let's consider Epoch 5. The share of the stake from the Foundation is `6 mil
 
 3 blocks are produced in this epoch that end up on the canonical chain. The blocks were won by Account A.
 
-1. Account A retains, 0.2 x 720 MINA x 3 blocks = 432 MINA.
-2. Mina Foundation, Account B, payout would be: (0.6 x 0.92) x 720 MINA x 3 blocks = 1,192.32 MINA.
-3. Account A retains 8%, (0.6 x 0.08) x 720 MINA x 3 blocks = 103.68 MINA.
-3. Account C payout would be: (0.2 x 0.92) x 720 MINA x 3 blocks = 397.44 MINA.
-4. Account A retains 8%, (0.2 x 0.08) x 720 MINA x 3 blocks = 34.56 MINA
+1. Account A retains, 0.2 x 360 MINA x 3 blocks = 216 MINA.
+2. Mina Foundation, Account B, payout would be: (0.6 x 0.92) x 360 MINA x 3 blocks = 596.16 MINA.
+3. Account A retains 8%, (0.6 x 0.08) x 360 MINA x 3 blocks = 51.84 MINA.
+3. Account C payout would be: (0.2 x 0.92) x 360 MINA x 3 blocks = 198.72 MINA.
+4. Account A retains 8%, (0.2 x 0.08) x 360 MINA x 3 blocks = 17.28 MINA
 
 
 ### Relevant Links
@@ -12882,7 +12882,7 @@ services:
       - './node/mina-config:/root/.mina-config'
   mina_node:
     image: 'minaprotocol/mina-daemon:3.3.0-8c0c2e6-bullseye-mainnet'
-    # image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet' # Use this image for Devnet
+    # image: 'minaprotocol/mina-daemon:4.0.0-6965b50-bullseye-devnet' # Use this image for Devnet
     restart: always
     environment:
       MINA_LIBP2P_PASS: PssW0rD
@@ -13169,7 +13169,7 @@ services:
 ```yaml
 services:
   generate_wallet_key:
-    image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet'
+    image: 'minaprotocol/mina-daemon:4.0.0-6965b50-bullseye-devnet'
     environment:
       MINA_PRIVKEY_PASS: PssW0rD
     entrypoint: []
@@ -13182,7 +13182,7 @@ services:
     volumes:
       - './node/mina-config:/root/.mina-config'
   mina_snark_coordinator:
-    image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet'
+    image: 'minaprotocol/mina-daemon:4.0.0-6965b50-bullseye-devnet'
     restart: always
     environment:
       MINA_PRIVKEY_PASS: PssW0rD
@@ -13209,7 +13209,7 @@ services:
       generate_wallet_key:
         condition: service_completed_successfully
   mina_snark_worker:
-    image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet'
+    image: 'minaprotocol/mina-daemon:4.0.0-6965b50-bullseye-devnet'
     restart: always
     entrypoint: []
     command: >
@@ -13634,7 +13634,7 @@ It is also possible to produce a block in catchup, and this block will also be q
 
 There are a few reasons why you could miss a slot / not successfully produce a block, for example, the node restarting and being in bootstrap at the time of producing a slot.
 
-Also, you must produce a block within the slot time (3 mins). If you are on less powerful hardware or the daemon is competing for resources, it may not produce the block in time. In this instance, you should find in your logs:
+Also, you must produce a block within the slot time (90 seconds). If you are on less powerful hardware or the daemon is competing for resources, it may not produce the block in time. In this instance, you should find in your logs:
 
 `Internally generated block $state_hash cannot be rebroadcast because it's not a valid time to do so ($timing)`
 
@@ -13642,7 +13642,7 @@ It is not recommended to run a SNARK worker on the same machine at the same time
 
 ### Why is the block rate so low / how often should there be a block?
 
-A slot on the current network is every 3 mins, though not all slots should have a block produced, so on average, we would expect a block every 4 mins. However, not all the stake is online and active in producing blocks, and so not all slots will have a block, and sometimes there can be long delays between blocks. As more of the stake is online and staking, this situation improves.
+A slot on the current network is every 90 seconds, though not all slots should have a block produced, so on average, we would expect a block every 2 mins. However, not all the stake is online and active in producing blocks, and so not all slots will have a block, and sometimes there can be long delays between blocks. As more of the stake is online and staking, this situation improves.
 
 ### Why does o1Labs win most of the blocks?
 
@@ -13848,7 +13848,7 @@ docker run --name mina-node -d \
 -v $(pwd)/.mina-env:/entrypoint.d/mina-env:ro \
 -v $(pwd)/keys:/keys:ro \
 -v $(pwd)/.mina-config:/root/.mina-config \
-gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet \
+minaprotocol/mina-daemon:4.0.0-6965b50-bullseye-devnet \
 daemon
 ```
 
@@ -14711,14 +14711,14 @@ When you delegate MINA to a validator:
 
 1. Your tokens **never leave your wallet** - you maintain full control
 2. The validator uses your stake weight to increase their chances of producing blocks
-3. When the validator wins a block (720 MINA reward), they distribute rewards proportionally to all delegators
+3. When the validator wins a block (360 MINA reward), they distribute rewards proportionally to all delegators
 4. The validator takes a commission fee and you receive your share of the remaining rewards
-5. It takes **2-4 weeks** for your delegation to become active on the network
+5. It takes **1-2 weeks** for your delegation to become active on the network
 6. You can change validators anytime with no penalties
 
 :::note
 
-Values like staking rewards, epoch duration, and APY are subject to change with network upgrades. After the upcoming Mesa upgrade, block rewards will decrease from 720 to 360 MINA per block, and epoch duration will reduce from 2-4 weeks to 1-2 weeks.
+Values like staking rewards, epoch duration, and APY are subject to change with network upgrades. For example, after the latest Mesa upgrade, block rewards decreased from 720 to 360 MINA per block, and epoch duration was reduced from 2-4 weeks to 1-2 weeks.
 
 :::
 
@@ -14788,7 +14788,7 @@ When selecting a validator to delegate to, consider these factors:
 
 ### Choosing a Validator
 
-Your delegation will become active after **2-4 weeks** (1-2 epochs). Here are some extra things to note:
+Your delegation will become active after **1-2 weeks** (1-2 epochs). Here are some extra things to note:
 
 - **Checking Your Status:** Most wallets show your current delegation status, including:
     - Which validator you're delegated to
@@ -15389,7 +15389,7 @@ url: /zkapps/front-end-integration-guides/angular
 <br />
 
 - Fund your wallet using the [Mina Faucet](https://faucet.minaprotocol.com/).
-    - You'll need to wait one block (~3 minutes) to see the change in balance reflected on chain. You can use [Minascan](https://minascan.io/devnet) to track the status of your transaction.
+    - You'll need to wait one block (~90 seconds) to see the change in balance reflected on chain. You can use [Minascan](https://minascan.io/devnet) to track the status of your transaction.
 
 <figure
   style={{ display: "flex", height:"30rem" }}>
@@ -18317,7 +18317,7 @@ The smart contract called `Square` has one element of on-chain state named `num`
 12 }
 ```
 
-zkApps can have up to eight fields of on-chain state. Each field stores up to 32 bytes (technically, 31.875 bytes or 255 bits) of arbitrary data. A later tutorial covers options for off-chain state.
+zkApps can have up to 32 fields of on-chain state. Each field stores up to 32 bytes (technically, 31.875 bytes or 255 bits) of arbitrary data. A later tutorial covers options for off-chain state.
 
 Now, this code adds the `init` method to set up the initial state of the smart contract on deployment:
 
@@ -21966,6 +21966,12 @@ url: /zkapps/tutorials/10-account-updates
 
 The fundamental data structure that Mina transactions are built from is called an _account update_. Account updates are a flexible and powerful data structure that can express all kinds of updates, events, and preconditions you use to develop smart contracts.
 
+:::info Mesa Upgrade
+
+The account updates limit has been increased from ~6 to **16 segments per transaction**. See the [Mesa upgrade overview](/network-upgrades/mesa/glossary#larger-zkapp-transactions--mip9) for more details.
+
+:::
+
 Each zkApp transaction constructed by o1js is composed of one or more [AccountUpdate](https://docs.o1labs.org/o1js/api-reference/classes/AccountUpdate) classes, which are a set of instructions for the Mina network to perform, such as altering on-chain state, emitting an event, and so on.
 
 Each `AccountUpdate` can make assertions about its account, apply updates to its account, and make assertions about its child `AccountUpdates`.
@@ -21997,7 +22003,7 @@ Each [AccountUpdate](https://docs.o1labs.org/o1js/api-reference/classes/AccountU
 - `Preconditions`: Conditions that must be true for the account update to be applied. Corresponds to assertions in an o1js method.
 - `Updates`: Things changed by the account update, such as including the zkApp state, permissions, and verification key.
 - `BalanceChange`: Any changes to the balance
-- `Authorization`: How the zkApp is authorized; must be a proof (corresponding to the verification key on the account), a signature, or none. See [Interacting With Mina](/zkapps/writing-a-zkapp/introduction-to-zkapps/interact-with-mina).
+- `Authorization`: How the zkApp is authorized; must be a proof (corresponding to the verification key on the account), a signature, or none. See [Authorizations](/zkapps/writing-a-zkapp/introduction-to-zkapps/interact-with-mina).
 
 Other `AccountUpdate` components are available to use, but are not covered in this tutorial:
 
@@ -22518,7 +22524,7 @@ This code serves as the scaffolding for the rest of the tutorial and contains a 
 
 ### Define on-chain state
 
-Every Mina smart contract includes eight on-chain state variables that each store almost 256 bits of information. In more complex smart contracts, these state variables can store commitments to off-chain storage (for example, commitments for the hash of a file, the root of a Merkle tree, and so on).
+Every Mina smart contract includes 32 on-chain state variables that each store almost 256 bits of information. In more complex smart contracts, these state variables can store commitments to off-chain storage (for example, commitments for the hash of a file, the root of a Merkle tree, and so on).
 
 For simplicity, this tutorial stores everything on-chain.
 
@@ -23317,7 +23323,7 @@ Offchain storage is currently an experimental feature and is subject to change i
 
 One of Mina's unique features is its succinctness, both in computation and storage. To prevent state bloat and maintain Mina's efficiency and verifiability, we use offchain storage solutions for handling large volumes of data.
 
-In a previous section, we introduced the concept of on-chain Values. Since Mina currently only supports a total of 8 on-chain Field elements, we need to leverage offchain storage to extend that capacity.
+In a previous section, we introduced the concept of on-chain Values. Since Mina currently only supports a total of 32 on-chain Field elements, we need to leverage offchain storage to extend that capacity.
 This approach maintains a provably secure connection between the on-chain smart contract and the off-chain data, such as that stored in an archive node.
 
 ## Design
@@ -23531,7 +23537,7 @@ As shown, the maximum amount of unlocked tokens is defined by the `initialMinimu
 
 The other timing-related properties are:
 
-- `cliffTime`: The initial time period during which all tokens are locked (should be from the current slot onwards). Note that 'time' is measured in Mina by 'slots', where 1 slot is 3min.
+- `cliffTime`: The initial time period during which all tokens are locked (should be from the current slot onwards). Note that 'time' is measured in Mina by 'slots', where 1 slot is 90 seconds.
 - `cliffAmount`: The quantity of tokens to be unlocked when the cliff time has elapsed. If this amount is greater or equal the 'initial minimum balance', all tokens are unlocked after the cliff time elapses.
 - `vestingPeriod`: After the cliff time elapses, tokens can be set to unlock periodically at a fixed interval, by a fixed quantity. The vesting period is the length of that interval.
 - `vestingIncrement`: The quantity of tokens that are unlocked after each vesting period elapses.
@@ -24494,7 +24500,7 @@ Examples are based on the standard project structure and provide additional file
 
 1. Fund the fee payer account. After you fund the fee payer account, you can use to to pay fees across multiple zkApps.
 
-    Follow the prompts to request tMINA to fund your fee payer account. For this example, your MINA address is populated on the Testnet Faucet. tMINA arrives at your address when the next block is produced (~3 minutes).
+    Follow the prompts to request tMINA to fund your fee payer account. For this example, your MINA address is populated on the Testnet Faucet. tMINA arrives at your address when the next block is produced (~90 seconds).
 
 1. Deploy to Testnet:
 
@@ -24777,8 +24783,8 @@ The second account update has the `'MyContract.myMethod()'` label. The update co
 Other fields in this account update are:
 
 - `publicKey` – the zkApp address (like other non-human-readable strings, this is truncated by `tx.toPretty()`)
-- `update: { appState: [...] }` – shows how the method updates the on-chain state, using `this.<state>.set()`. The names and pretty types defined using `@state` are removed in this representation, showing a raw list of 8 field elements or `null` for state fields that aren't updated.
-- `preconditions: { account: { state: [...] } }` – similar to the `update`, one entry per field of on-chain state for the preconditions created with `this.<state>.requireEquals()`. This example accepts transactions only if the first of the 8 state fields equals 0. The `null` values mean that no condition is set on the other 7 state fields.
+- `update: { appState: [...] }` – shows how the method updates the on-chain state, using `this.<state>.set()`. The names and pretty types defined using `@state` are removed in this representation, showing a raw list of 32 field elements or `null` for state fields that aren't updated.
+- `preconditions: { account: { state: [...] } }` – similar to the `update`, one entry per field of on-chain state for the preconditions created with `this.<state>.requireEquals()`. This example accepts transactions only if the first of the 32 state fields equals 0. The `null` values mean that no condition is set on the other 31 state fields.
 - `authorizationKind: 'Proof'` – indicates this account update must be authorized with a proof. Proof authorization is the default when calling a zkApp method, but not necessarily for other account updates.
 - `authorization: undefined` – the proof needed on this update isn't there yet. You learn how to add it in a minute.
 
@@ -25854,7 +25860,7 @@ There are some key considerations when choosing to build a zkApp with o1js on Mi
 
 - zkApps are subject to protocol throughput limitations.
 - At present, zkApps that require support for multiple concurrent users require specific architecture to avoid race conditions:
-  - Where more than the eight on-chain field elements are required to manage state, and access to that state is not shared between users, the experimental [Offchain Storage API](/zkapps/writing-a-zkapp/feature-overview/offchain-storage) offers a solution.
+  - Where more than the 32 on-chain field elements are required to manage state, and access to that state is not shared between users, the experimental [Offchain Storage API](/zkapps/writing-a-zkapp/feature-overview/offchain-storage) offers a solution.
   - Where concurrent access to _shared global state_ is required, the required architecture is available **out of the box** when using the Protokit framework to build your zkApp as an zkApp-chain (L2). There is currently no easy-to-use equivalent for shared state in o1js L1 contracts.
 
 Start here:

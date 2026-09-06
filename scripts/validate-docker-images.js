@@ -179,8 +179,13 @@ async function checkGcrImage(imagePath, tag) {
       }
     });
 
+    // GCR may require authentication even when the historical image still
+    // exists. Treat that as unverifiable rather than as a confirmed 404.
     return {
       exists: response.statusCode === 200 || response.statusCode === 307,
+      error: response.statusCode === 401 || response.statusCode === 403
+        ? `Registry authentication required (${response.statusCode})`
+        : undefined,
       statusCode: response.statusCode,
       registry: 'GCR'
     };

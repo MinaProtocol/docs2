@@ -87,7 +87,7 @@ services:
 ```yaml
 services:
   generate_wallet_key:
-    image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet'
+    image: 'minaprotocol/mina-daemon:4.0.0-6965b50-bullseye-devnet'
     environment:
       MINA_PRIVKEY_PASS: PssW0rD
     entrypoint: []
@@ -100,7 +100,7 @@ services:
     volumes:
       - './node/mina-config:/root/.mina-config'
   mina_snark_coordinator:
-    image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet'
+    image: 'minaprotocol/mina-daemon:4.0.0-6965b50-bullseye-devnet'
     restart: always
     environment:
       MINA_PRIVKEY_PASS: PssW0rD
@@ -127,7 +127,7 @@ services:
       generate_wallet_key:
         condition: service_completed_successfully
   mina_snark_worker:
-    image: 'gcr.io/o1labs-192920/mina-daemon:3.3.0-alpha1-6929a7e-bullseye-devnet'
+    image: 'minaprotocol/mina-daemon:4.0.0-6965b50-bullseye-devnet'
     restart: always
     entrypoint: []
     command: >
