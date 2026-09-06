@@ -28,6 +28,17 @@ import MigrateBanner from '@site/src/components/snippets/migrate-banner.mdx';
 
 o1js is a TypeScript (TS) library for writing general-purpose zero knowledge (zk) programs and writing zk smart contracts for Mina.
 
+For a reference-level treatment of each primitive, see the o1Labs
+[basic types](https://docs.o1labs.org/o1js/basic-types/field) section:
+[Field](https://docs.o1labs.org/o1js/basic-types/field),
+[integers](https://docs.o1labs.org/o1js/basic-types/int),
+[arrays](https://docs.o1labs.org/o1js/basic-types/arrays),
+[structs](https://docs.o1labs.org/o1js/basic-types/structs),
+[keypairs and signatures](https://docs.o1labs.org/o1js/basic-types/keypairs-and-signatures) and
+[hashing](https://docs.o1labs.org/o1js/basic-types/hashing).
+For the constraint-system background to the rules below, see
+[what is a zk constraint system](https://docs.o1labs.org/o1js/getting-started/what-is-a-zk-constraint-system).
+
 ## Field
 
 Field elements are the basic unit of data in zero knowledge proof programming. Each field element can store a number up to almost 256 bits in size. You can think of a field element as a `uint256` in Solidity.
@@ -78,6 +89,8 @@ let b = Bool(true);
 ```
 
 ## Conditionals
+
+See also [conditional logic](https://docs.o1labs.org/o1js/writing-constraint-systems/conditional-logic) on the o1Labs docs.
 
 Traditional conditional statements are not supported by o1js:
 
