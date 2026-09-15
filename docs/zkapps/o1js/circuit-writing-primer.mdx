@@ -18,6 +18,13 @@ import MigrateBanner from '@site/src/components/snippets/migrate-banner.mdx';
 
 o1js is a library for writing zk circuits in TypeScript.  While many high-level features are abstracted away from the circuit level, this article will focus specifically on the tools that are specific to the unique nature of writing circuits.
 
+o1Labs maintains a dedicated set of constraint-system pages that go deeper on
+each topic covered here:
+[what is a zk constraint system](https://docs.o1labs.org/o1js/getting-started/what-is-a-zk-constraint-system),
+[conditional logic](https://docs.o1labs.org/o1js/writing-constraint-systems/conditional-logic),
+[witnesses](https://docs.o1labs.org/o1js/writing-constraint-systems/witnesses) and
+[analyzing constraint systems](https://docs.o1labs.org/o1js/writing-constraint-systems/analyzing-constraint-systems).
+
 ## What even is a zk circuit?
 
 For our purposes, you can think of a zk circuit as a set of gates, which we can give an input and produce a deterministic output.  We can prove the correct output of the circuit without revealing the inputs.
@@ -281,3 +288,5 @@ These sources heavily influenced the preceding article and go into more depth ab
 
 - Check out [Mastermind at 5 Levels](https://github.com/o1-labs-XT/mastermind-zkApp) for a practical example of how to implement thees concepts to build a game.
 - Read Yunus' article ["Let's Prove"](https://docs.google.com/document/d/1JQPypqNc7nIRbY0c_5zHFI5TbvbCTe1neiSTPxfLmWA/edit?tab=t.0), a complete guide to o1js.
+- The o1Labs [writing constraint systems](https://docs.o1labs.org/o1js/writing-constraint-systems/conditional-logic)
+  section, maintained alongside the library.
