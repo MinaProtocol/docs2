@@ -1,0 +1,23 @@
+{
+  "name": "06-offchain-storage",
+  "version": "0.1.0",
+  "description": "Worked example for zkApp tutorial 6: offchain state with Experimental.OffchainState",
+  "type": "module",
+  "main": "build/src/index.js",
+  "license": "Apache-2.0",
+  "scripts": {
+    "build": "tsc",
+    "test": "npm run build && node --test build/src/*.test.js",
+    "start": "npm run build && node build/src/main.js"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.5",
+    "typescript": "^5.4.5"
+  },
+  "peerDependencies": {
+    "o1js": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=22.19.5"
+  }
+}
