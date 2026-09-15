@@ -46,13 +46,23 @@ Prior to users accessing published state, it must first undergo settlement. Than
 
 ### Prerequisites
 
-The `OffchainState` API is accessible within the `Experimental` namespace. To use `OffchainState`, import `Experimental` from o1js version 1.9.1 or higher.
+The [`OffchainState`](https://docs.o1labs.org/o1js/api-reference/namespaces/Experimental/variables/OffchainState) API and [`OffchainStateCommitments`](https://docs.o1labs.org/o1js/api-reference/namespaces/Experimental/classes/OffchainStateCommitments) are accessible within the `Experimental` namespace. To use them, import `Experimental` from o1js. The examples on this page are verified against o1js 2.15.0.
 
 ```ts
 import { Experimental } from 'o1js';
 
 const { OffchainState, OffchainStateCommitments } = Experimental;
 ```
+
+:::caution
+
+`OffchainState` lives in the `Experimental` namespace, so its import path is not
+covered by the o1js stability guarantee. o1js 2.15.0 also ships an
+[`Experimental.V2`](https://docs.o1labs.org/o1js/api-reference/namespaces/Experimental/namespaces/V2/)
+namespace. Check the import path against the
+[o1js changelog](https://docs.o1labs.org/o1js/changelog) when you upgrade.
+
+:::
 
 ### Setting up Offchain Storage
 
