@@ -1,0 +1,27 @@
+name: Check o1Labs documentation links
+
+# Scheduled rather than per-PR on purpose: these URLs are owned by
+# o1-labs/o1js-documentation-site, so they break through upstream edits
+# rather than through anything in a Mina docs pull request. Blocking
+# unrelated PRs on someone else's rename helps nobody.
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'
+  workflow_dispatch: {}
+
+jobs:
+  check-o1labs-links:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Check outbound o1Labs links and anchors
+        run: npm run check-o1labs-links
