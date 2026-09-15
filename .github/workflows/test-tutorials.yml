@@ -26,6 +26,7 @@ jobs:
         example-path:
           - examples/zkapps/01-hello-world
           - examples/zkapps/02-private-inputs-and-hash-functions
+          - examples/zkapps/03-deploying-to-a-network
           - examples/zkapps/05-common-types-and-functions
           - examples/zkapps/09-recursion
           - examples/zkapps/10-account-updates
@@ -67,6 +68,7 @@ jobs:
         node-version: [22, 24]
         example-path:
           - examples/zkapps/feature-overview
+          - examples/zkapps/03-deploying-to-a-network
           - examples/zkapps/04-zkapp-browser-ui/contracts
           - examples/zkapps/07-oracles/contracts
 
@@ -140,6 +142,7 @@ jobs:
         example-path:
           - examples/zkapps/01-hello-world
           - examples/zkapps/02-private-inputs-and-hash-functions
+          - examples/zkapps/03-deploying-to-a-network
           - examples/zkapps/05-common-types-and-functions
           - examples/zkapps/09-recursion
           - examples/zkapps/10-account-updates

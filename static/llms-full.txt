@@ -18891,7 +18891,7 @@ Start by deleting the default files that come with the new project.
   $ rm src/interact.ts
   ```
 
-1. Copy the `src/Square.ts` and `src/index.ts` files from the files of the first tutorial [01-hello-world/src](https://github.com/o1-labs/docs2/tree/main/examples/zkapps/01-hello-world/src) to your local `03-deploying-to-a-live-network/src` directory. If prompted, replace existing files.
+1. Copy the `src/Square.ts` and `src/index.ts` files from the files of the first tutorial [01-hello-world/src](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/01-hello-world/src) to your local `03-deploying-to-a-live-network/src` directory. If prompted, replace existing files.
 
 Now that your smart contract is in place, you are ready to deploy your zkApp to Devnet.
 
@@ -19088,6 +19088,39 @@ You ran the `zk deploy` command to:
 Congratulations!
 
 To test, configure, and deploy your zkApp on a local representation of the Mina blockchain, see [Testing zkApps with Lightnet](/zkapps/writing-a-zkapp/introduction-to-zkapps/testing-zkapps-lightnet).
+
+## The same deployment, locally
+
+Deploying to Devnet needs a funded fee payer and tMINA from the faucet. The
+mechanics do not change on a local blockchain, where nothing has to be funded
+and every step is visible.
+
+The [03-deploying-to-a-network](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/03-deploying-to-a-network)
+example performs the same deployment against `Mina.LocalBlockchain`. Run it with
+`npm start`:
+
+```
+compiling, which produces the verification key...
+verification key hash: 20021371132375169602207214090137759500284758560498520816669802639450232755426
+
+deploying...
+
+the zkApp account now holds:
+  verification key hash: 20021371132375169602207214090137759500284758560498520816669802639450232755426
+  editState permission:  Proof
+  initial state num:     3
+
+fee payer paid: 1100000000 nanomina (1 MINA account creation + the transaction fee)
+```
+
+Three things to note, because they are the same on Devnet:
+
+- **A new account costs 1 MINA.** `AccountUpdate.fundNewAccount(feePayer)` in the
+  deployment transaction is what the faucet funds pay for on a live network.
+- **The verification key written to the account is the one compilation
+  produced.** That is the key every later proof is checked against.
+- **`init()` runs as part of the deployment**, so the state is set before anyone
+  interacts with the contract.
 
 ## About the Smart Contract Transactions
 
