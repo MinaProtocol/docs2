@@ -27,7 +27,7 @@ The manager account may also set a token symbol for its token, such as in this e
 
 In this tutorial, you review smart contract code that creates and manages new tokens.
 
-The full example code is provided in the [08-custom-tokens/src/](https://github.com/o1-labs/docs2/tree/main/examples/zkapps/08-custom-tokens/src) example files.
+The full example code is provided in the [08-custom-tokens/src/](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/08-custom-tokens/src) example files.
 
 For reference, a more extensive example, including all the ways to interact with token smart contracts, is provided in [token.test.ts](https://github.com/o1-labs/o1js/blob/main/src/lib/token.test.ts).
 
@@ -130,7 +130,7 @@ This tutorial has been tested with:
 
 To create a token manager smart contract, create a normal smart contract whose methods call special functions that manipulate tokens.
 
-A full copy of the [BasicTokenContract.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/08-custom-tokens/src/BasicTokenContract.ts) is provided.
+A full copy of the [BasicTokenContract.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/08-custom-tokens/src/BasicTokenContract.ts) is provided.
 
 
 ### Imports and smart contract structure
@@ -141,24 +141,25 @@ The single state variable `totalAmountInCirculation` tracks how many tokens exis
 
 ```ts
 import {
-  SmartContract,
-  state,
-  State,
-  method,
+  AccountUpdateForest,
   DeployArgs,
+  method,
   Permissions,
-  UInt64,
   PublicKey,
   Signature,
+  State,
+  state,
+  TokenContract,
+  UInt64,
 } from 'o1js';
 
 const tokenSymbol = 'MYTKN';
 
-export class BasicTokenContract extends SmartContract {
+export class BasicTokenContract extends TokenContract {
   @state(UInt64) totalAmountInCirculation = State<UInt64>();
 
-  deploy(args: DeployArgs) {
-    super.deploy(args);
+  async deploy(args?: DeployArgs) {
+    await super.deploy(args);
 
     const permissionToEdit = Permissions.proof();
 
@@ -171,6 +172,12 @@ export class BasicTokenContract extends SmartContract {
     });
   }
 ```
+
+The contract extends `TokenContract`, not `SmartContract`. `TokenContract` is the
+o1js base class for a token manager: it supplies the `this.internal` helpers used
+below, sets the `access` permission so that nobody can bypass this contract and
+mint the token themselves, and requires one method that says which account
+updates the contract approves.
 
 ### init() and mint() methods
 
@@ -186,9 +193,13 @@ Next, add an init method and a method that mints tokens.
 
   ```ts
     @method async init() {
-      super.init();
+      await super.init();
       this.account.tokenSymbol.set(tokenSymbol);
       this.totalAmountInCirculation.set(UInt64.zero);
+    }
+
+    async approveBase(forest: AccountUpdateForest) {
+      this.checkZeroBalanceChange(forest);
     }
 
     @method async mint(
@@ -196,10 +207,9 @@ Next, add an init method and a method that mints tokens.
       amount: UInt64,
       adminSignature: Signature
     ) {
-      let totalAmountInCirculation = this.totalAmountInCirculation.get();
-      this.totalAmountInCirculation.requireEquals(totalAmountInCirculation);
-
-      let newTotalAmountInCirculation = totalAmountInCirculation.add(amount);
+      const totalAmountInCirculation =
+        this.totalAmountInCirculation.getAndRequireEquals();
+      const newTotalAmountInCirculation = totalAmountInCirculation.add(amount);
 
       adminSignature
         .verify(
@@ -208,7 +218,7 @@ Next, add an init method and a method that mints tokens.
         )
         .assertTrue();
 
-      this.token.mint({
+      this.internal.mint({
         address: receiverAddress,
         amount,
       });
@@ -216,6 +226,12 @@ Next, add an init method and a method that mints tokens.
       this.totalAmountInCirculation.set(newTotalAmountInCirculation);
     }
   ```
+
+`approveBase()` is the method `TokenContract` leaves for you to define: it decides
+which account updates this contract approves. `checkZeroBalanceChange()` proves
+that the balance changes of the approved updates sum to zero, so a transaction
+cannot create tokens out of nothing. `mint()` is the only method that raises the
+supply, and it is gated by the admin signature.
 
 ### Send function
 
@@ -229,7 +245,7 @@ Finally, write a send function.
       receiverAddress: PublicKey,
       amount: UInt64
     ) {
-      this.token.send({
+      this.internal.send({
         from: senderAddress,
         to: receiverAddress,
         amount,
@@ -238,13 +254,16 @@ Finally, write a send function.
   }
   ```
 
+A transfer moves tokens between accounts, so it does not change
+`totalAmountInCirculation`.
+
 That completes a review of a basic token.
 
 ## Examples
 
-To see an example of interacting with this contract, see [main.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/08-custom-tokens/src/main.ts).
+To see an example of interacting with this contract, see [main.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/08-custom-tokens/src/main.ts).
 
-To see an example of putting rules around a token, see this [example](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/08-custom-tokens/src/WhitelistedTokenContract.ts) of a token with whitelist gating so that public keys can interact with it.
+To see an example of putting rules around a token, see this [example](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/08-custom-tokens/src/WhitelistedTokenContract.ts) of a token with whitelist gating so that public keys can interact with it.
 
 ## Building zkApps that interact with Tokens
 
