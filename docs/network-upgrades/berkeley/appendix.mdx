@@ -44,7 +44,7 @@ const signedPayment = client.signPayment(payment, senderPrivateKey);
 
 // send payment to graphql endpoint
 
-const url = 'https://qanet.minaprotocol.network/graphql';
+const url = 'https://devnet-plain-1.gcp.o1test.net/graphql';
 
 const sendPaymentMutationQuery = `
 mutation SendPayment($input: SendPaymentInput!, $signature: SignatureInput!) {

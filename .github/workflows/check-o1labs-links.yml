@@ -1,4 +1,4 @@
-name: Check o1Labs documentation links
+name: Check o1Labs documentation links and GraphQL endpoints
 
 # Scheduled rather than per-PR on purpose: these URLs are owned by
 # o1-labs/o1js-documentation-site, so they break through upstream edits
@@ -28,3 +28,21 @@ jobs:
 
       - name: Check outbound o1Labs links and anchors
         run: npm run check-o1labs-links
+
+  # The endpoints a reader types into a config file or Mina.Network(...).
+  # Nothing in the build notices when one stops answering: the page still
+  # renders and the reader is left with a client that hangs.
+  check-graphql-endpoints:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Check the GraphQL endpoints the docs recommend
+        run: node scripts/check-graphql-endpoints.js

@@ -2126,7 +2126,7 @@ const signedPayment = client.signPayment(payment, senderPrivateKey);
 
 // send payment to graphql endpoint
 
-const url = 'https://qanet.minaprotocol.network/graphql';
+const url = 'https://devnet-plain-1.gcp.o1test.net/graphql';
 
 const sendPaymentMutationQuery = `
 mutation SendPayment($input: SendPaymentInput!, $signature: SignatureInput!) {
@@ -15386,7 +15386,7 @@ export class AppComponent {
       const {Mina, PublicKey, fetchAccount} = await import('o1js');
       const {Add} = await import('../../../add');
       // connect the Mina instance to testnet
-      Mina.setActiveInstance(Mina.Network('https://api.minascan.io/node/devnet/v1/graphql'));
+      Mina.setActiveInstance(Mina.Network('https://devnet-plain-1.gcp.o1test.net/graphql'));
       // we've already deployed the Add contract on testnet at this address
       // https://minascan.io/devnet/account/B62qnTDEeYtBHBePA4yhCt4TCgDtA4L2CGvK7PirbJyX4pKH8bmtWe5
       const zkAppAddress = `B62qnTDEeYtBHBePA4yhCt4TCgDtA4L2CGvK7PirbJyX4pKH8bmtWe5`;
@@ -18787,7 +18787,7 @@ A deploy alias consists of:
 
     - Target network kind: `Testnet`
 
-    - Mina GraphQL API URL: `https://api.minascan.io/node/devnet/v1/graphql`
+    - Mina GraphQL API URL: `https://devnet-plain-1.gcp.o1test.net/graphql`
 
     - Transaction fee to use when deploying (in MINA): `0.1`
 
@@ -18884,7 +18884,7 @@ A deploy alias consists of:
     |-----------------|-------------------------------------------------|
     | Network kind    | testnet                                         |
     |-----------------|-------------------------------------------------|
-    | URL             | https://api.minascan.io/node/devnet/v1/graphql  |
+    | URL             | https://devnet-plain-1.gcp.o1test.net/graphql  |
     |-----------------|-------------------------------------------------|
     | Fee payer       | Alias         : 03-deploy                       |
     |                 | Account       : B62...                          |
@@ -19182,7 +19182,7 @@ These functions perform tasks such as setting up the network instance, loading a
 ```ts ignore
 export const api = {
   async setActiveInstanceToDevnet() {
-    const Network = Mina.Network('https://api.minascan.io/node/devnet/v1/graphql');
+    const Network = Mina.Network('https://devnet-plain-1.gcp.o1test.net/graphql');
     console.log('Devnet network instance configured');
     Mina.setActiveInstance(Network);
   },
@@ -19306,7 +19306,7 @@ async setActiveInstanceToDevnet() {
 
   ```ts ignore
   async setActiveInstanceToDevnet() {
-    const Network = Mina.Network('https://api.minascan.io/node/devnet/v1/graphql');
+    const Network = Mina.Network('https://devnet-plain-1.gcp.o1test.net/graphql');
     console.log('Devnet network instance configured');
     Mina.setActiveInstance(Network);
   },
@@ -22430,7 +22430,7 @@ To make this more script convenient to write, use the provided helper functions.
   ```ts
   ...
   const Network = Mina.Network(
-    'https://api.minascan.io/node/devnet/v1/graphql'
+    'https://devnet-plain-1.gcp.o1test.net/graphql'
   );
   Mina.setActiveInstance(Network);
   ...
@@ -22446,7 +22446,7 @@ To make this more script convenient to write, use the provided helper functions.
   ...
   ```
 
-This example connects to a remote RPC served by `minascan.io`. You could also run a Mina node locally and instead use its GraphQL endpoint. In other blockchains a local Mina node would be very heavyweight, but because Mina is succinct this is actually a reasonable option. See the Node Operator [Getting Started](/node-operators/block-producer-node/getting-started) docs.
+This example connects to a remote RPC served by `devnet-plain-1.gcp.o1test.net`. You could also run a Mina node locally and instead use its GraphQL endpoint. In other blockchains a local Mina node would be very heavyweight, but because Mina is succinct this is actually a reasonable option. See the Node Operator [Getting Started](/node-operators/block-producer-node/getting-started) docs.
 
 ### Public/private key pair
 
@@ -23040,8 +23040,8 @@ For example:
 
 ```ts
 const Network = Mina.Network({
-  mina: 'https://api.minascan.io/node/devnet/v1/graphql',
-  archive: 'https://api.minascan.io/archive/devnet/v1/graphql',
+  mina: 'https://devnet-plain-1.gcp.o1test.net/graphql',
+  archive: 'https://devnet-archive-node-api.gcp.o1test.net',
 });
 Mina.setActiveInstance(Network);
 ```
@@ -23649,7 +23649,7 @@ To deploy the smart contract to the Testnet, run the `zk` commands from the dire
 
     - Deploy alias name: `devnet`
 
-    - Mina GraphQL API URL: `https://api.minascan.io/node/devnet/v1/graphql`
+    - Mina GraphQL API URL: `https://devnet-plain-1.gcp.o1test.net/graphql`
 
     - Transaction fee to use when deploying: `0.1`
 
@@ -23764,7 +23764,7 @@ $ zk config
 Add a new network:
 ✔ Create a name (can be anything): · devnet
 ✔ Choose the target network: · Testnet
-✔ Set the Mina GraphQL API URL to deploy to: · https://api.minascan.io/node/devnet/v1/graphql
+✔ Set the Mina GraphQL API URL to deploy to: · https://devnet-plain-1.gcp.o1test.net/graphql
 ✔ Set transaction fee to use when deploying (in MINA): · 0.1
 ✔ Choose an account to pay transaction fees: · Use stored account MyFeePayer (public key: B62...)
 ✔ Use stored fee payer MyFeePayer (public key: B62...)
@@ -23822,7 +23822,7 @@ $ zk deploy devnet
   |-----------------|-------------------------------------------------|
   | Network kind    | testnet                                         |
   |-----------------|-------------------------------------------------|
-  | URL             | https://api.minascan.io/node/devnet/v1/graphql  |
+  | URL             | https://devnet-plain-1.gcp.o1test.net/graphql  |
   |-----------------|-------------------------------------------------|
   | Fee payer       | Alias         : MyFeePayer                      |
   |                 | Account       : B62...                          |
@@ -24256,7 +24256,7 @@ Examples are based on the standard project structure and provide additional file
  1. Set the Mina GraphQL API URL to deploy to:
 
     ```text
-    https://api.minascan.io/node/devnet/v1/graphql
+    https://devnet-plain-1.gcp.o1test.net/graphql
     ```
 
 1. Set the transaction fee to use when deploying:
@@ -24377,7 +24377,7 @@ Instead of using a provided example, you can follow these steps to create your o
 
     - Create a (deploy alias) name: _yourprojecttestnet_
     - Choose the target network: `Testnet`
-    - Set the Mina GraphQL API URL: `https://api.minascan.io/node/devnet/v1/graphql`
+    - Set the Mina GraphQL API URL: `https://devnet-plain-1.gcp.o1test.net/graphql`
     - Set transaction fee to use when deploying (in MINA): `0.1`
     - Choose an account to pay transaction fees:
       - `Create a new fee payer key pair`

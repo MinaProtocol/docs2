@@ -124,7 +124,7 @@ export class AppComponent {
       const {Mina, PublicKey, fetchAccount} = await import('o1js');
       const {Add} = await import('../../../add');
       // connect the Mina instance to testnet
-      Mina.setActiveInstance(Mina.Network('https://api.minascan.io/node/devnet/v1/graphql'));
+      Mina.setActiveInstance(Mina.Network('https://devnet-plain-1.gcp.o1test.net/graphql'));
       // we've already deployed the Add contract on testnet at this address
       // https://minascan.io/devnet/account/B62qnTDEeYtBHBePA4yhCt4TCgDtA4L2CGvK7PirbJyX4pKH8bmtWe5
       const zkAppAddress = `B62qnTDEeYtBHBePA4yhCt4TCgDtA4L2CGvK7PirbJyX4pKH8bmtWe5`;

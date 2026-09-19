@@ -76,7 +76,7 @@ To make this more script convenient to write, use the provided helper functions.
   ```ts
   ...
   const Network = Mina.Network(
-    'https://api.minascan.io/node/devnet/v1/graphql'
+    'https://devnet-plain-1.gcp.o1test.net/graphql'
   );
   Mina.setActiveInstance(Network);
   ...
@@ -92,7 +92,7 @@ To make this more script convenient to write, use the provided helper functions.
   ...
   ```
 
-This example connects to a remote RPC served by `minascan.io`. You could also run a Mina node locally and instead use its GraphQL endpoint. In other blockchains a local Mina node would be very heavyweight, but because Mina is succinct this is actually a reasonable option. See the Node Operator [Getting Started](/node-operators/block-producer-node/getting-started) docs.
+This example connects to a remote RPC served by `devnet-plain-1.gcp.o1test.net`. You could also run a Mina node locally and instead use its GraphQL endpoint. In other blockchains a local Mina node would be very heavyweight, but because Mina is succinct this is actually a reasonable option. See the Node Operator [Getting Started](/node-operators/block-producer-node/getting-started) docs.
 
 ### Public/private key pair
 

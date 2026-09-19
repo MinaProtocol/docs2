@@ -12,7 +12,7 @@ const state = {
 
 export const api = {
   async setActiveInstanceToDevnet() {
-    const Network = Mina.Network('https://api.minascan.io/node/devnet/v1/graphql');
+    const Network = Mina.Network('https://devnet-plain-1.gcp.o1test.net/graphql');
     console.log('Devnet network instance configured');
     Mina.setActiveInstance(Network);
   },

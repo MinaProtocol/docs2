@@ -2,7 +2,7 @@
   "version": 1,
   "networks": {
     "devnet": {
-      "url": "https://api.minascan.io/node/devnet/v1/graphql",
+      "url": "https://devnet-plain-1.gcp.o1test.net/graphql",
       "keyPath": "keys/devnet.json",
       "fee": "0.1",
       "smartContract": "Square"
