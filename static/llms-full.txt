@@ -21252,7 +21252,8 @@ These items are:
 - `Field`: The native number type in o1js. You can think of `Field` elements as unsigned integers. Field elements are the most basic type in o1js. All other o1js-compatible types are built on top of `Field` elements.
 - `SelfProof`: The class in o1js that extends the `Proof` class and allows you to pass in a proof of a circuit in one of its own methods.
 - `ZkProgram`: The o1js general purpose API for creating zero knowledge proofs. A ZkProgram is similar to zkApp smart contracts but isn't tied to an on-chain account.
-- `verify`: Verifies the signature using a message and the corresponding `PublicKey`.
+
+The `src/main.ts` file that runs the ZkProgram also imports `verify`. The `verify()` function verifies a proof against the verification key that `compile()` returns.
 
 ### ZkProgram
 
@@ -21319,7 +21320,10 @@ Use recursion to combine two proofs:
 
 To use ZkProgram, compile it and then call methods on it:
 
-```ts
+```ts src/main.ts
+
+
+
 async function main() {
   console.log('compiling...');
 
@@ -21418,9 +21422,9 @@ To consume these proofs in a smart contract (`SmartContract`) that uses the recu
 class RollupContract extends SmartContract {
   @state(Field) state = State<Field>();
 
-  deploy(args: DeployArgs) {
-    super.deploy(args);
-    this.setPermissions({
+  async deploy(args: DeployArgs) {
+    await super.deploy(args);
+    this.account.permissions.set({
       ...Permissions.default(),
       editState: Permissions.proofOrSignature(),
     });
@@ -21482,14 +21486,14 @@ class RollupState extends Struct({
 }
 
 const Rollup = ZkProgram({
-  name: "rollup-example",
-  publicInput: Field,
+  name: "rollup",
+  publicInput: RollupState,
 
   methods: {
 	oneStep: {
   	privateInputs: [ Field, Field, Field, Field, Field, MerkleMapWitness ],
 
-  	method(
+  	async method(
       state: RollupState,
       initialRoot: Field,
       latestRoot: Field,
@@ -21512,7 +21516,7 @@ const Rollup = ZkProgram({
 
 ```
 
-The `createOneStep()` method returns a proof that acts as the leaf in a tree of recursive proofs.
+The `oneStep()` method returns a proof that acts as the leaf in a tree of recursive proofs. (`createOneStep()` returns the `RollupState` that the proof is about.)
 
 To use this rollup, first you construct all of the leafs in parallel then recursively merge these leafs until you get a proof for the entire sequence. This parallel merging gives the high throughput properties for the rollup.
 
@@ -21522,6 +21526,56 @@ You can reimplement the example code for more substantial functionality, just by
 - Execute those buy/sell orders
 - Add a queue of tokens to move to the app chain in the smart contract
 - Add a queue of tokens to move out of the app chain in the ZkProgram
+
+## Test it
+
+When you run `main.ts`, it prints:
+
+```
+compiling...
+making proof 0
+making proof 1
+making proof 2
+verifying proof 2
+proof 2 data 4
+ok true
+```
+
+The example project in this repository carries a test suite for the code on
+this page:
+
+```sh
+cd examples/zkapps/09-recursion
+npm install
+npm test
+```
+
+It asserts what this page claims:
+
+- `Add` makes real proofs. Proof 0 is for `0`, proof 1 adds `4` to proof 0,
+  and proof 2 combines proof 1 and proof 0 into `4`. Proof 2 verifies with
+  `verify()`, so `main()` prints `ok true`.
+- A proof of `4` that claims `5` does **not** verify, and neither does a dummy
+  proof.
+- `init` **rejects** a state that is not `0`. `addNumber` and `add` **reject**
+  a new state that is not the sum. After a rejection, the earlier proofs still
+  verify.
+- `Rollup` merges one proof per transition into one proof that goes from the
+  root of the empty map to the latest root. It **rejects** a step with a wrong
+  increment or a wrong key, two proofs in the wrong order, and a merge that
+  claims a different latest root.
+- `RollupContract` moves its state to the latest root of a rollup proof. It
+  **rejects** a proof that does not start at the stored root, and the same
+  proof a second time. The state does not change.
+- `Vote` counts one vote for and one vote against. It **rejects** a second
+  vote from the same voter, a voter who is not in the voters tree, and a new
+  state that counts a vote twice.
+
+A ZkProgram with proofs off makes dummy proofs, and `earlierProof.verify()`
+checks nothing, so the `Add` tests make real proofs. They compile the
+ZkProgram once and make the three proofs once, which takes several minutes.
+The `Rollup` and `Vote` tests turn proofs off: every assertion still runs, and
+each of these test files takes about one minute.
 
 ## Conclusion
 

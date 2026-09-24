@@ -15,6 +15,7 @@ import {
   Permissions,
   ZkProgram,
 } from 'o1js';
+import { fileURLToPath } from 'url';
 
 class MerkleWitness20 extends MerkleWitness(20) {}
 
@@ -127,7 +128,7 @@ async function main() {
 
 // ===============================================================
 
-class RollupState extends Struct({
+export class RollupState extends Struct({
   initialRoot: Field,
   latestRoot: Field,
 }) {
@@ -172,7 +173,7 @@ class RollupState extends Struct({
 
 // ===============================================================
 
-const Rollup = ZkProgram({
+export const Rollup = ZkProgram({
   name: 'rollup',
   publicInput: RollupState,
 
@@ -227,7 +228,7 @@ export class RollupProof extends RollupProof_ {}
 
 // ===============================================================
 
-class RollupContract extends SmartContract {
+export class RollupContract extends SmartContract {
   @state(Field) state = State<Field>();
 
   async deploy(args: DeployArgs) {
@@ -256,4 +257,6 @@ class RollupContract extends SmartContract {
 
 // ===============================================================
 
-main();
+// Run the example when this file is the entry point
+// (`node build/src/rollup.js`), but not when the test suite imports it.
+if (process.argv[1] === fileURLToPath(import.meta.url)) main();

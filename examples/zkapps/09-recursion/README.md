@@ -30,11 +30,18 @@ For the step-by-step tutorial, see [Tutorial 9: Recursion](https://docs.minaprot
 
 5. Run the compiled code:
     ```sh
-    node build/src/add.js
+    node build/src/main.js
     ```
     To run and build the compiled code with a single command:
     ```sh
-    npm run build && node build/src/add.js
+    npm run build && node build/src/main.js
+    ```
+    The voting and rollup examples run the same way, with
+    `node build/src/vote.js` and `node build/src/rollup.js`.
+
+6. Run the tests:
+    ```sh
+    npm test
     ```
 
 ## License
