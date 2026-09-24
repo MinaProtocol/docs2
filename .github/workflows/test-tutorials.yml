@@ -78,6 +78,8 @@ jobs:
         example-path:
           - examples/zkapps/feature-overview
           - examples/zkapps/01-hello-world
+          - examples/zkapps/02-private-inputs-and-hash-functions
+          - examples/zkapps/05-common-types-and-functions
           - examples/zkapps/13-anonymous-message-board
           - examples/zkapps/03-deploying-to-a-network
           - examples/zkapps/06-offchain-storage
