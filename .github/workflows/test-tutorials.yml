@@ -82,6 +82,7 @@ jobs:
           - examples/zkapps/03-deploying-to-a-network
           - examples/zkapps/06-offchain-storage
           - examples/zkapps/08-custom-tokens
+          - examples/zkapps/09-recursion
           - examples/zkapps/04-zkapp-browser-ui/contracts
           - examples/zkapps/07-oracles/contracts
           - examples/zkapps/interacting-with-zkApps-server-side
