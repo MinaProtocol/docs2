@@ -131,6 +131,7 @@ module.exports = {
             'zkapps/o1js/ecdsa',
           ],
         },
+        'zkapps/protokit',
         {
           type: 'category',
           label: 'zkApps',
@@ -369,7 +370,15 @@ module.exports = {
           ],
         },
         'node-operators/mina-signer',
-        'node-operators/reference/mina-cli-reference',
+        {
+          type: 'category',
+          label: 'Reference',
+          link: {
+            type: 'doc',
+            id: 'node-operators/reference/index',
+          },
+          items: ['node-operators/reference/mina-cli-reference'],
+        },
         'node-operators/downgrading-to-older-versions',
         'node-operators/troubleshooting',
         'node-operators/faq',

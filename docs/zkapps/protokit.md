@@ -1,3 +1,8 @@
+---
+title: Protokit
+description: Protokit is a framework built on o1js for zkApps that need shared state, with an off-chain sequencer that settles to Mina L1.
+---
+
 # Protokit
 
 ## Introduction to Protokit 

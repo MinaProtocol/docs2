@@ -50,6 +50,7 @@ This file is auto-generated from `sidebars.js` and the frontmatter of each docum
 - [Bitwise Operations](https://docs.minaprotocol.com/zkapps/o1js/bitwise-operations): Bitwise operations in o1js are implemented as gadgets.
 - [Foreign Field Arithmetic](https://docs.minaprotocol.com/zkapps/o1js/foreign-fields): Foreign field arithmetic in o1js.
 - [ECDSA](https://docs.minaprotocol.com/zkapps/o1js/ecdsa): ECDSA in o1js.
+- [Protokit](https://docs.minaprotocol.com/zkapps/protokit): Protokit is a framework built on o1js for zkApps that need shared state, with an off-chain sequencer that settles to Mina L1.
 - [zkApps Overview](https://docs.minaprotocol.com/zkapps/writing-a-zkapp): zkApps (zero knowledge apps) are Mina Protocol smart contracts powered by zero knowledge proofs, specifically using zk-SNARKs. Use this quickstart guide to deploy zkApps and resources for learning TypeScript.
 - [zkApps Overview](https://docs.minaprotocol.com/zkapps/writing-a-zkapp): zkApps (zero knowledge apps) are Mina Protocol smart contracts powered by zero knowledge proofs, specifically using zk-SNARKs. Use this quickstart guide to deploy zkApps and resources for learning TypeScript.
 - [zkApps Getting Started](https://docs.minaprotocol.com/zkapps/writing-a-zkapp/introduction-to-zkapps/getting-started-zkapps): How to get started writing zkApps (zero knowledge apps).
@@ -145,6 +146,7 @@ This file is auto-generated from `sidebars.js` and the frontmatter of each docum
 - [Mina Foundation Delegation Program](https://docs.minaprotocol.com/node-operators/delegation-program/foundation-delegation-program): How to Participate in the Mina Foundation Delegation Program.
 - [Uptime Tracking System](https://docs.minaprotocol.com/node-operators/delegation-program/uptime-tracking-system): Learn how to set up the uptime tracking system for the Mina Foundation Delegation Program.
 - [Mina Signer](https://docs.minaprotocol.com/node-operators/mina-signer): Key generation and transaction signing for node operators using mina-signer and the Rosetta offline signer CLI.
+- [Reference](https://docs.minaprotocol.com/node-operators/reference): Reference documentation for Mina node operators.
 - [Mina CLI Reference](https://docs.minaprotocol.com/node-operators/reference/mina-cli-reference): Reference for the Mina CLI (command line interface) which is the primary way to interact with the Mina network.
 - [Downgrading to Older Versions](https://docs.minaprotocol.com/node-operators/downgrading-to-older-versions): How to downgrade your Mina node from versions above 3.3.0 to 3.3.0 or below by converting on-disk state, avoiding a full rebootstrap.
 - [Troubleshooting](https://docs.minaprotocol.com/node-operators/troubleshooting): Answers to common problems when setting up a Mina daemon
