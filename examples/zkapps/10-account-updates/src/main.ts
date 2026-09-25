@@ -53,7 +53,7 @@ import { Field, Mina, PrivateKey, AccountUpdate } from 'o1js';
 
   await txn1.prove();
 
-  await txn1.sign([deployerKey]);
+  await txn1.sign([deployerKey]).send();
 
   // ----------------------------------------------------
 

@@ -305,7 +305,7 @@ The deploy transaction includes 5 accountUpdates represented as ovals. Described
    Note the permissions here are set to default values, in contrast to the deployment in the `proofsOnlyZkApp` example.
 5. Initializes the `secondaryZkApp` instance.
 
-When the transaction is run on chain, these account updates are checked by the Mina network and applied if valid. Each `AccountUpdate` class includes either a proof corresponding to the verification key in the zkApp account on-chain or a signature corresponding to the zkApp address. In this case, only proof authorization is allowed.
+When the transaction is run on chain, these account updates are checked by the Mina network and applied if valid. Each `AccountUpdate` class includes either a proof corresponding to the verification key in the zkApp account on-chain or a signature corresponding to the zkApp address. In this transaction, the fee update and the two deploy updates are authorized by signatures, and the two init updates by proofs. After deployment, `proofsOnlyZkApp` accepts only proof authorization.
 
 ### Call `add()` on `proofsOnlyZkApp`
 
@@ -320,7 +320,7 @@ When the transaction is run on chain, these account updates are checked by the M
 
   await showTxn(txn1, 'txn1', legend);
 
-  await txn1.send();
+  await txn1.sign([deployerKey]).send();
   ```
 
 This returns the following visualization of `txn1`:
@@ -362,7 +362,7 @@ As a reminder, this update corresponds to code:
   ...
 ```
 
-View the [account updates visualization](/img/tutorial-10-deploy_txn.png) again.
+View the [account updates visualization](/img/tutorial-10-txn1.png) again.
 
 - The first AccountUpdate sets the state of `appState[0]` to `5` — corresponding to the value passed to `this.num.set()` in the `add()` method.
 - In the second AccountUpdate, `appState[1]` is set to `1`—corresponding to the value passed to `this.calls.set()` in the `incrementCalls()` contract.
@@ -377,9 +377,9 @@ const txn2 = await Mina.transaction(deployerAccount, async () => {
 await txn2.prove();
 
 await showTxn(txn2, 'txn2', legend);
-await saveTxn(deploy_txn, 'deploy_txn', legend, './txn2.png');
+await saveTxn(txn2, 'txn2', legend, './txn2.png');
 
-await txn2.send();
+await txn2.sign([deployerKey]).send();
 ```
 
 This returns the following visualization of `txn2`:
@@ -414,6 +414,43 @@ This call produces three accountUpdates:
 - `incrementCalls()` (the right child)
 
 As described in the code comment, `callSecondary` sets `this.num` to `12` which is the value of `secondaryContract` at the "start" of the transaction.
+
+## Test it
+
+The example project in this repository carries a test suite for the code on
+this page:
+
+```sh
+cd examples/zkapps/10-account-updates
+npm install
+npm test
+```
+
+It asserts the account update structure that the visualizations on this page
+show:
+
+- The deploy transaction has the 5 account updates in the order that this page
+  lists. The fee update takes 2 MINA from the deployer. Each deploy update has
+  a nonce precondition, and each init update has a `provedState: false`
+  precondition. `proofsOnlyZkApp` gets proof-only permissions and
+  `secondaryZkApp` gets the default permissions.
+- `add(4)` is a parent update that sets `appState[0]` to `5`, with a child
+  `incrementCalls()` update that sets `appState[1]` to `1`.
+- `callSecondary()` is a parent update with two children, in this order:
+  `secondaryZkApp.add()` and `incrementCalls()`. It sets `num` to `12`, and
+  the secondary `num` becomes `17`.
+
+It also checks that the network **rejects** these transactions, and that the
+state and the balances do not change:
+
+- A second call to `init()`.
+- An update that is signed with the private key of `proofsOnlyZkApp`. The same
+  update on `secondaryZkApp` is accepted.
+- An `add()` transaction whose state precondition is no longer true.
+- A proved transaction that the fee payer did not sign.
+
+`main.ts` compiles both contracts when proofs are on. The test suite turns
+proofs off.
 
 ## Conclusion
 
