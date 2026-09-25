@@ -12,12 +12,12 @@ jobs:
           node-version: 22
 
       - name: Checkout Docs repo
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           path: docs
 
       - name: Checkout o1js repo
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           repository: o1-labs/o1js
           path: o1js
