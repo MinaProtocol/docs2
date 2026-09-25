@@ -127,7 +127,7 @@ Start by deleting the default files that come with the new project.
   ```
 
     - The `zk file` command created the `src/IncrementSecret.ts` file and the `src/IncrementSecret.test.ts` test file.
-    - However, this tutorial does not include writing tests, so you just use the `main.ts` file as a script to interact with the smart contract and observe how it works.
+    - This tutorial does not walk you through writing tests, so you use the `main.ts` file as a script to interact with the smart contract and observe how it works. The finished example project has a test suite; see [Test it](#test-it).
 
 1. Now, open `src/index.ts` in a text editor and change it to look like:
 
@@ -290,6 +290,32 @@ state after txn1: 15333363135506653312218020664441564145350761288169575380089681
 ```
 
 The `state` strings are different because `Field.random()` generates the salt.
+
+## Test it
+
+The two `state` lines that `main` prints are hashes, and they are different on
+each run. You cannot check them by reading them. A test suite can. The example
+project in this repository carries one:
+
+```sh
+cd examples/zkapps/02-private-inputs-and-hash-functions
+npm install
+npm test
+```
+
+It asserts what this page claims:
+
+- After `initState()`, `x` is `Poseidon.hash([ salt, Field(750) ])`, not `750`
+  and not the salt.
+- After `incrementSecret(salt, Field(750))`, `x` is
+  `Poseidon.hash([ salt, Field(750).add(1) ])`.
+- The transaction contains the new value of `x`, but not the salt.
+- A wrong secret is **rejected**, and so is the right secret with a wrong
+  salt. The state does not change.
+- After an increment, the secret is `751`. The old secret `750` is rejected.
+
+The rejections are the point of the contract. A contract that accepted any
+secret would still print two hashes and still look like it worked.
 
 ## Conclusion
 

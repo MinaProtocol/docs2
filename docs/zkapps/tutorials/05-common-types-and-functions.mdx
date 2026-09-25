@@ -157,7 +157,7 @@ Fields in signature: 3
 
 Observe and follow best practices for your key security. Make sure that you never use the private key in this example output, or any private key that's publicly accessible, in a real application.
 
-There are 255 Fields in a private key and 256 Fields in a signature. If you are curious about the reason for this, the answer is cryptographic in nature: Elliptic curve scalars are most efficiently represented in a SNARK as an array of bits, and the bit length of these scalars is 255.
+`toFields()` gives 2 Fields for a private key and 3 Fields for a signature, as the output shows. Inside a circuit, the elliptic curve scalars in a private key and a signature are most efficiently represented as an array of bits, and the bit length of these scalars is 255.
 
 ## Struct
 
@@ -201,7 +201,7 @@ The console output:
 
 ```
 pointSum Fields: 11,6
-points8 Fields: {"points":[{"x":"0","y":"0"},{"x":"1","y":"10"},{"x":"2","y":"20"},{"x":"3","y":"30"},{"x":"4","y":"40"},{"x":"5","y":"50"},{"x":"6","y":"60"},{"x":"7","y":"70"}]}
+points8 JSON: {"points":[{"x":"0","y":"0"},{"x":"1","y":"10"},{"x":"2","y":"20"},{"x":"3","y":"30"},{"x":"4","y":"40"},{"x":"5","y":"50"},{"x":"6","y":"60"},{"x":"7","y":"70"}]}
 ```
 
 ## Control Flow
@@ -329,7 +329,7 @@ For example, to put a condition on a leaf update, the `update` function checks t
     const initialRoot = this.treeRoot.get();
     this.treeRoot.requireEquals(initialRoot);
 
-    incrementAmount.assertLt(Field(10));
+    incrementAmount.assertLessThan(Field(10));
 
     // check the initial state matches what we expect
     const rootBefore = leafWitness.calculateRoot(numberBefore);
@@ -425,7 +425,7 @@ const value = Field(50);
 
 map.set(key, value);
 
-console.log('value for key', key.toString() + ':', map.get(key));
+console.log(`value for key ${key}: ${map.get(key)}`);
 ```
 
 Which prints:
@@ -452,7 +452,7 @@ It can be used inside smart contracts with a witness, similar to merkle trees
     const initialRoot = this.mapRoot.get();
     this.mapRoot.requireEquals(initialRoot);
 
-    incrementAmount.assertLt(Field(10));
+    incrementAmount.assertLessThan(Field(10));
 
     // check the initial state matches what we expect
     const [ rootBefore, key ] = keyWitness.computeRootAndKey(valueBefore);
@@ -464,7 +464,7 @@ It can be used inside smart contracts with a witness, similar to merkle trees
     const [ rootAfter, _ ] = keyWitness.computeRootAndKey(valueBefore.add(incrementAmount));
 
     // set the new root
-    this.treeRoot.set(rootAfter);
+    this.mapRoot.set(rootAfter);
   }
 ```
 
@@ -482,12 +482,10 @@ const witness = map.getWitness(key);
 // update the smart contract
 const txn1 = await Mina.transaction(deployerAccount, async () => {
   await zkapp.update(
-    contract.update(
-      witness,
-      key,
-      Field(50),
-      Field(5)
-    );
+    witness,
+    key,
+    Field(0), // keys in a new map start at a value of 0
+    Field(5)
   );
 });
 ...
@@ -497,6 +495,31 @@ You use [MerkleMaps](https://docs.o1labs.org/o1js/api-reference/classes/MerkleMa
 
 - A key value store from public keys to booleans, of token accounts to whether they've participated in a voted yet.
 - A nullifier that privately tracks if an input was used, without revealing it.
+
+## Test it
+
+The example project in this repository carries a test suite for the code on
+this page:
+
+```sh
+cd examples/zkapps/05-common-types-and-functions
+npm install
+npm test
+```
+
+It asserts each value that the console-output blocks on this page print, from
+`num1 === num2: true` to `value for key 100: 50`. It also runs both contracts
+on a local blockchain:
+
+- `BasicMerkleTreeContract` accepts an increment of `9` and **rejects** an
+  increment of `10`. After an update, the contract root and the local tree
+  root are equal.
+- `LedgerContract` moves `12` to an existing recipient and to a new recipient.
+  It **rejects** a transfer signed by a different key, a transfer of the full
+  balance, and a new recipient that claims a balance that is not `0`.
+
+`main.ts` compiles both contracts and takes about two minutes. The test suite
+turns proofs off and takes about 20 seconds.
 
 ## Conclusion
 
