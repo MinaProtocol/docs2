@@ -1,21 +1,45 @@
 ---
 title: Code Samples
-description: Curl-based examples for common Rosetta API operations
+description: TypeScript and shell examples for common Mina Rosetta API operations
 ---
 
 # Code Samples
 
-These samples use `curl` and [`jq`](https://jqlang.github.io/jq/) to interact with the Rosetta API. They assume a running Rosetta instance on `localhost:3087`.
+This section covers the Mina-specific bits of integrating with Rosetta. For each common task there is a short narrative page on what the pattern does and which Mina-specific objects are involved, plus a link to a runnable script in the mina repo that you can copy into your own integration.
 
-Set these shell variables before running the examples:
+## Runnable examples
+
+Working TypeScript scripts live in the mina repo under [`src/app/rosetta/examples/ts`](https://github.com/MinaProtocol/mina/tree/develop/src/app/rosetta/examples/ts). They use [`@o1-labs/mina-rosetta-sdk`](https://www.npmjs.com/package/@o1-labs/mina-rosetta-sdk) for the typed Rosetta HTTP surface and [`mina-signer`](https://www.npmjs.com/package/mina-signer) for transaction signing. The SDK is a light wrapper — typed endpoints Mina actually exposes plus the Mina-specific operation-builder helpers (`buildTransferOperations`, `buildDelegationOperations`).
+
+Quickstart:
 
 ```bash
-ROSETTA_URL="http://localhost:3087"
-NETWORK='{"blockchain":"mina","network":"mainnet"}'
+git clone https://github.com/MinaProtocol/mina.git
+cd mina/src/app/rosetta/examples/ts
+npm install
+cp env.example .env  # fill in ROSETTA_URL, NETWORK, addresses
+npm run account-balance
 ```
 
-All endpoints except `/network/list` require a `network_identifier` parameter. The samples include it in each request body.
+| Script | Page |
+| --- | --- |
+| `account-balance.ts` | smoke test for `/account/balance` |
+| `scan-blocks.ts` | [Scanning Blocks](scan-blocks) |
+| `track-deposits.ts` | [Tracking Deposits](track-deposits) |
+| `send-transaction.ts`, `offline-sign.ts` | [Sending Transactions](send-transactions) |
 
-:::tip
-Replace `mainnet` with `devnet` if you are testing against a devnet instance.
-:::
+## Why no TypeScript SDK?
+
+There is no upstream Coinbase-blessed TypeScript Rosetta/Mesh SDK — the only one they listed (`dfinity/rosetta-client`) was archived in August 2025. Mina ships its own at [`@o1-labs/mina-rosetta-sdk`](https://www.npmjs.com/package/@o1-labs/mina-rosetta-sdk), focused on the endpoints Mina's Rosetta server actually exposes plus the Mina-specific operation types. For Go integrators, [`coinbase/mesh-sdk-go`](https://github.com/coinbase/mesh-sdk-go) remains the canonical Mesh client.
+
+## Network identifier
+
+All endpoints except `/network/list` require a `network_identifier` parameter. For Mina:
+
+```json
+{ "blockchain": "mina", "network": "mainnet" }
+```
+
+Replace `mainnet` with `devnet` to point at devnet. The SDK's `RosettaClient` injects the network identifier into every request automatically.
+
+For the Mina-specific request and response objects (operation types, transfer transaction layout, currency, token IDs), see [Requests and Responses](requests).
