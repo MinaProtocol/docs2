@@ -21036,6 +21036,74 @@ This tutorial has been tested with:
   export { BasicTokenContract };
   ```
 
+## Concepts
+
+Before you read the contract, learn the three objects that every custom token on Mina uses: the token manager, the token id, and the token account. Then learn the approval mechanism, which is how the token manager controls every change to a token balance.
+
+The [tokenConcepts.test.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/08-custom-tokens/src/tokenConcepts.test.ts) test file in the example project checks each statement in this section on a local blockchain.
+
+### Token manager
+
+The token manager is the zkApp account that owns a token. In o1js, you write a token manager as a class that extends `TokenContract`. The token manager can:
+
+- Set a token symbol for its token, such as `MYTKN`. The token symbol is not unique. Two token managers can set the same symbol and still manage two different tokens.
+- Mint tokens. Minting adds tokens to the balance of an account. In o1js, `this.internal.mint()` does this.
+- Burn tokens. Burning removes tokens from the balance of an account. In o1js, `this.internal.burn()` does this, and it requires a signature from the account that loses the tokens. A balance cannot go below zero, so an account cannot burn or send more tokens than it holds.
+- Approve transfers. Any account that holds the token can start a transfer, but the token manager must approve it. See [Approval mechanism](#approval-mechanism).
+
+`TokenContract.deploy()` sets the `access` permission of the token manager account to `proofOrSignature()`, and requires that the account is new. Without this permission, anyone can mint the token without the token manager.
+
+### Token id
+
+A token id is a field element that identifies a token. The token id is derived from the public key of the token manager, so each token manager has exactly one token id. That is why the token symbol does not need to be unique.
+
+To get the token id of a token manager, call `deriveTokenId()` on the contract:
+
+```ts
+const tokenId = token.deriveTokenId();
+```
+
+This is the same value as `TokenId.derive(token.address)`. The MINA token has the token id `TokenId.default`, which is `1`.
+
+`TokenId.derive()` also takes the token id of the token manager account as a second argument, which is `TokenId.default` when you do not supply it. For a token manager that is a normal MINA account, like the one in this tutorial, the two calls give the same value.
+
+### Token account
+
+An account on Mina is identified by a public key _and_ a token id. A token account is an account whose token id is the id of a custom token. Its balance is in that token, not in MINA.
+
+So one public key can have many accounts: one MINA account and one token account for each token that it holds. They are separate accounts. When you mint tokens to a public key, its MINA balance does not change.
+
+To read a token balance, give the token id:
+
+```ts
+Mina.getBalance(address, tokenId); // the token balance
+Mina.getBalance(address); // the MINA balance
+```
+
+A token account is created the first time that its public key receives the token. The public key does not need a MINA account. Creating a token account costs the account creation fee, the same as creating a MINA account. Some account in the transaction must pay it, usually with `AccountUpdate.fundNewAccount()`. If no account pays it, the transaction fails with `Invalid fee excess`. Later transactions to the same token account do not pay the fee again.
+
+### Approval mechanism
+
+Every change to a token account is an account update with that token id. The Mina protocol accepts such an account update only when it is a child of the token manager's account update in the same transaction, or a deeper descendant that inherits the token permission from its parent. A top-level account update that uses a custom token id fails with the error `Top-level account update can not use or pass on token permissions`. So a token holder cannot move tokens without the token manager, even with a valid signature.
+
+The token manager approves account updates in two ways:
+
+- Its own methods create the account updates, as `this.internal.mint()`, `this.internal.burn()` and `this.internal.send()` do. The rules in the method are the rules of the token.
+- It approves account updates that other code created. `TokenContract` leaves the `approveBase()` method for you to define. It receives the account updates as an `AccountUpdateForest` and must fail if it does not approve them. The helpers `transfer()`, `approveAccountUpdate()` and `approveAccountUpdates()` all put the account updates into a forest and call `approveBase()`.
+
+`checkZeroBalanceChange()` is the most common implementation of `approveBase()`. It proves that the token balance changes of the approved account updates sum to zero, so an approved transaction cannot create tokens. `approveBase()` can check at most `TokenContract.MAX_ACCOUNT_UPDATES` account updates, which is `9` by default.
+
+Make `approveBase()` a `@method`, so that the token manager can prove its approval. Then any token holder can call `transfer()`, and signs only for the account that sends the tokens:
+
+```ts
+const tx = await Mina.transaction(sender, async () => {
+  AccountUpdate.fundNewAccount(sender); // only if the receiver has no token account yet
+  await token.transfer(sender, receiver, UInt64.from(400));
+});
+await tx.prove();
+await tx.sign([sender.key]).send();
+```
+
 ## Basic Token Example
 
 To create a token manager smart contract, create a normal smart contract whose methods call special functions that manipulate tokens.
@@ -21108,7 +21176,7 @@ Next, add an init method and a method that mints tokens.
       this.totalAmountInCirculation.set(UInt64.zero);
     }
 
-    async approveBase(forest: AccountUpdateForest) {
+    @method async approveBase(forest: AccountUpdateForest) {
       this.checkZeroBalanceChange(forest);
     }
 
@@ -21140,7 +21208,8 @@ Next, add an init method and a method that mints tokens.
 `approveBase()` is the method `TokenContract` leaves for you to define: it decides
 which account updates this contract approves. `checkZeroBalanceChange()` proves
 that the balance changes of the approved updates sum to zero, so a transaction
-cannot create tokens out of nothing. `mint()` is the only method that raises the
+cannot create tokens out of nothing. It is a `@method`, so token holders can call
+the inherited `transfer()` helper (see [Approval mechanism](#approval-mechanism)). `mint()` is the only method that raises the
 supply, and it is gated by the admin signature.
 
 ### Send function
