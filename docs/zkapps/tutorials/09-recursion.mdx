@@ -50,7 +50,7 @@ You build recursive zkApps with [ZkProgram](https://docs.o1labs.org/o1js/api-ref
 
 Proofs generated using a ZkProgram can be passed into zkApp smart contracts for them to verify recursively. They can even be passed recursively into their own functions for off-chain recursive composition.
 
-The following example code for the ZkProgram tutorial is provided in the [main.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/09-recursion/src/main.ts) file on GitHub. While you're there, give the `/docs2` repository a star so that other zk developers can learn to build a zkApp!
+The following example code for the ZkProgram tutorial is provided in the [Add.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/09-recursion/src/Add.ts) file on GitHub. While you're there, give the `/docs2` repository a star so that other zk developers can learn to build a zkApp!
 
 ## Prerequisites
 
@@ -96,13 +96,13 @@ export { Add };
 
 Now, the fun part! Write your smart contract in the `src/Add.ts` file.
 
-A final version of the smart contract is provided in the [Add.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/09-recursion/src/Add.ts) example file.
+A final version of the smart contract is provided in the [Add.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/09-recursion/src/Add.ts) example file.
 
 ### Copy the example
 
-Use the existing code in the [Add.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/09-recursion/src/Add.ts) example file.
+Use the existing code in the [Add.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/09-recursion/src/Add.ts) example file.
 
-1. First, open the [Add.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/09-recursion/src/Add.ts) example file.
+1. First, open the [Add.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/09-recursion/src/Add.ts) example file.
 1. Copy the file's entire contents into your project `src/Add.ts` file.
 
 ### Imports
@@ -223,7 +223,7 @@ Verification of the proof can occur off-chain using the `verify()` method. This 
 
 ## Voting Example
 
-Another example of off-chain multi-party proof construction with recursive ZKPs is provided in the [vote.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/09-recursion/src/vote.ts) example file.
+Another example of off-chain multi-party proof construction with recursive ZKPs is provided in the [vote.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/09-recursion/src/vote.ts) example file.
 
 ## Using ZkProgram in Smart Contracts
 
@@ -239,7 +239,7 @@ This zkRollup design is flexible to how much compute is being demanded of it (fo
 
 On a single machine, the example code does not offer a high throughput. However, you can achieve very high throughputs by switching the mapreduce here for a mapreduce that runs over tens or hundreds of machines. In fact, you can achieve any level of throughput as long as you're willing to incur `log(N)` latency when constructing the proof of N transactions.
 
-The following code for the ZkProgram part of a rollup is provided in the [rollup.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/09-recursion/src/rollup.ts) example file.
+The following code for the ZkProgram part of a rollup is provided in the [rollup.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/09-recursion/src/rollup.ts) example file.
 
 A community-contributed implementation distributes compute over AWS instances in this [proof_aggregator](https://github.com/Trivo25/proof_aggregator) example.
 

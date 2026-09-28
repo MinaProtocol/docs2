@@ -31,7 +31,7 @@ nvm install v18
 After your local build environment is set, you can run a local build:
 
 ```sh
-git clone https://github.com/o1-labs/docs2.git
+git clone https://github.com/MinaProtocol/docs2.git
 npm install
 npm run dev
 ```

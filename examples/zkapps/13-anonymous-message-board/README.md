@@ -10,7 +10,7 @@ See [Anonymous Message Board Tutorial](https://docs.minaprotocol.com/zkapps/tuto
 
 1. Clone the repository:
     ```sh
-    git clone https://github.com/o1-labs/docs2.git
+    git clone https://github.com/MinaProtocol/docs2.git
     ```
 2. Change directory to the project location:
     ```sh

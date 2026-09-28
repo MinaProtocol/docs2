@@ -475,7 +475,7 @@ module.exports = {
           path: './docs',
           routeBasePath: '/',
           sidebarPath: require.resolve('./sidebars.js'),
-          editUrl: 'https://github.com/o1-labs/docs2/edit/main',
+          editUrl: 'https://github.com/MinaProtocol/docs2/edit/main',
           remarkPlugins: [math],
           rehypePlugins: [katex],
           admonitions: {
@@ -559,7 +559,7 @@ module.exports = {
           {
             type: 'html',
             position: 'right',
-            value: `<a href="https://github.com/o1-labs/docs2/"><img class="navbar-icon" src="/svg/socials/github_24x24.svg"/></a>`,
+            value: `<a href="https://github.com/MinaProtocol/docs2/"><img class="navbar-icon" src="/svg/socials/github_24x24.svg"/></a>`,
           },
           {
             type: 'html',

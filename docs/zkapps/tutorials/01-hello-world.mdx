@@ -34,7 +34,7 @@ You will:
 
 Later tutorials introduce more concepts and patterns.
 
-The full source code for this tutorial is provided in the [examples/zkapps/01-hello-world](https://github.com/o1-labs/docs2/tree/main/examples/zkapps/01-hello-world) directory on GitHub. While you're there, give the `/docs2` repository a star so that other zk developers can learn to build a zkApp!
+The full source code for this tutorial is provided in the [examples/zkapps/01-hello-world](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/01-hello-world) directory on GitHub. While you're there, give the `/docs2` repository a star so that other zk developers can learn to build a zkApp!
 
 :::info
 
@@ -161,15 +161,15 @@ The `src/index.ts` file contains all of the exports you want to make available f
 
 Now, the fun part! Write your smart contract in the `src/Square.ts` file.
 
-Line numbers are provided for convenience. A final version of the smart contract is provided in the [Square.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/01-hello-world/src/Square.ts) example file.
+Line numbers are provided for convenience. A final version of the smart contract is provided in the [Square.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/01-hello-world/src/Square.ts) example file.
 
 This part of the tutorial walks you through the `Square` smart contract code already completed in the `src/Square.ts` example file.
 
 ### Copy the example
 
-This tutorial describes each part of the completed code in the [Square.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/01-hello-world/src/Square.ts) example file.
+This tutorial describes each part of the completed code in the [Square.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/01-hello-world/src/Square.ts) example file.
 
-1. First, open the [Square.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/01-hello-world/src/Square.ts) example file.
+1. First, open the [Square.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/01-hello-world/src/Square.ts) example file.
 
 1. Copy the entire contents of the file into your smart contract in the `src/Square.ts` file.
 
@@ -284,13 +284,13 @@ Congratulations, you have reviewed the complete smart contract code.
 
 ## Interact with a smart contract
 
-Next, write a script that interacts with your smart contract. As before, the complete [main.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/01-hello-world/src/main.ts) example file is provided. Follow these steps to build the `main.ts` file so you can interact with the smart contract.
+Next, write a script that interacts with your smart contract. As before, the complete [main.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/01-hello-world/src/main.ts) example file is provided. Follow these steps to build the `main.ts` file so you can interact with the smart contract.
 
 ### Imports
 
 For this tutorial, the `import` statement brings in items from `o1js` that you use to interact with your smart contract.
 
-1. Copy the following lines from [main.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/01-hello-world/src/main.ts) example file into the `src/main.ts` file:
+1. Copy the following lines from [main.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/01-hello-world/src/main.ts) example file into the `src/main.ts` file:
 
   ```ts src/main.ts
   1 import { Square } from './Square.js';
@@ -315,7 +315,7 @@ Using a simulated local blockchain speeds up development and tests the behavior 
 
 :::
 
-To initialize your simulated local blockchain, add the following code from the [main.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/01-hello-world/src/main.ts) example file to `src/main.ts`:
+To initialize your simulated local blockchain, add the following code from the [main.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/01-hello-world/src/main.ts) example file to `src/main.ts`:
 
 ```ts src/main.ts
  4 const useProof = false;
@@ -369,7 +369,7 @@ npm run build && node build/src/main.js
 
 ### Initialize your smart contract
 
-To initialize your smart contract, add more code from the [main.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/01-hello-world/src/main.ts) example file to the `src/main.ts` file.
+To initialize your smart contract, add more code from the [main.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/01-hello-world/src/main.ts) example file to the `src/main.ts` file.
 
 All smart contracts that you create with the zkApp CLI use similar code:
 
@@ -445,7 +445,7 @@ state after txn1: 9
 
 ### Add a transaction that fails
 
-It's time to do some testing. To add a transaction that fails, add more code from the [main.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/01-hello-world/src/main.ts) example file to the `src/main.ts` file.
+It's time to do some testing. To add a transaction that fails, add more code from the [main.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/01-hello-world/src/main.ts) example file to the `src/main.ts` file.
 
 The contract logic allows the number that is stored as on-chain state to be replaced only by its square. Now that `num` is in state `9`, updating is possible only with `81`.
 

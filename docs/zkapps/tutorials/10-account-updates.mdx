@@ -86,11 +86,11 @@ In this tutorial, you build two smart contracts:
 - `ProofsOnlyZkApp`: Non-upgradeable proof only
 - `SecondaryZkApp`: the other zkApp
 
-The full source code for this tutorial is provided in the [examples/zkapps/10-account-updates](https://github.com/o1-labs/docs2/tree/main/examples/zkapps/10-account-updates) directory on GitHub.
+The full source code for this tutorial is provided in the [examples/zkapps/10-account-updates](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/10-account-updates) directory on GitHub.
 
 ### Non-upgradeable proof only
 
-The full example code is provided in the [examples/zkapps/10-account-updates/src/ProofsOnlyZkApp.ts](https://github.com/o1-labs/docs2/tree/main/examples/zkapps/10-account-updates/src/ProofsOnlyZkApp.ts) file.
+The full example code is provided in the [examples/zkapps/10-account-updates/src/ProofsOnlyZkApp.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/10-account-updates/src/ProofsOnlyZkApp.ts) file.
 
 Goal: Configure this zkApp to be modifiable only by using proofs.
 
@@ -199,7 +199,7 @@ This zkApp has methods that call other methods to let you explore the impacts to
 
   The `callSecondary()` method takes the address of the other zkApp, `SecondaryZkApp`, and calls a method on it. Note that the impact of calling that method occurs after this set of AccountUpdates—so when you call `secondaryContract.num.get()`, it gets the value before this transaction is applied.
 
-Finally, look briefly at [SecondaryZkApp.ts](https://github.com/o1-labs/docs2/tree/main/examples/zkapps/10-account-updates/src/SecondaryZkApp.ts) that contains:
+Finally, look briefly at [SecondaryZkApp.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/10-account-updates/src/SecondaryZkApp.ts) that contains:
 
 ```ts
 export class SecondaryZkApp extends SmartContract {
@@ -234,7 +234,7 @@ You declare functions for initializing the account and the `add()` method that i
 
 ### Running Your Smart Contracts and Visualizing the AccountUpdates
 
-Now it's time to learn about the [main.ts](https://github.com/o1-labs/docs2/tree/main/examples/zkapps/10-account-updates/src/main.ts) file that creates transactions with the earlier smart contracts and the account update visualizations it creates.
+Now it's time to learn about the [main.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/10-account-updates/src/main.ts) file that creates transactions with the earlier smart contracts and the account update visualizations it creates.
 
 1. Import the transaction visualizer:
 

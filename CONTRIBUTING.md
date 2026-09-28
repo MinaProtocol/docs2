@@ -10,7 +10,7 @@ By contributing, you can help us improve the functionality and user experience o
 
 ## Style Guidance
 
-Follow the style guidance in the [Docs Style Guide](https://github.com/o1-labs/docs2/wiki/Docs-Style-Guide) and recommended [Word List](https://github.com/o1-labs/docs2/wiki/Word-list) to ensure a consistent user experience. Look around. Match the style you see used in the rest of the project. 
+Follow the style guidance in the [Docs Style Guide](https://github.com/MinaProtocol/docs2/wiki/Docs-Style-Guide) and recommended [Word List](https://github.com/MinaProtocol/docs2/wiki/Word-list) to ensure a consistent user experience. Look around. Match the style you see used in the rest of the project. 
 
 ## Get Involved
 
@@ -30,7 +30,7 @@ To build the docs locally during development, see the [README](README.md) file.
 
 ## Using this repo
 
-If you don't find what you are looking for or something in the docs is not working as expected, review existing [docs2 issues](https://github.com/o1-labs/docs2/issues/) on GitHub. Before you report a problem, take a look around and see if someone already opened an issue. If you are certain this is a new, unreported bug, submit a new issue to help us improve.
+If you don't find what you are looking for or something in the docs is not working as expected, review existing [docs2 issues](https://github.com/MinaProtocol/docs2/issues/) on GitHub. Before you report a problem, take a look around and see if someone already opened an issue. If you are certain this is a new, unreported bug, submit a new issue to help us improve.
 
 - One issue, one bug: Report a single bug per issue.
 - If you're ready to fix a bug, it's fine to submit a pull request right away, but we still recommend filing an issue detailing what you're fixing. This workflow is helpful in case we don't accept that specific fix but want to keep track of the issue. 
