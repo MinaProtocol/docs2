@@ -22057,7 +22057,7 @@ set of instructions for one account in a transaction. To learn about account
 updates, see [Tutorial 10: Account Updates](account-updates).
 
 The full source code for this tutorial is in the
-[examples/zkapps/12-cross-contract-calls](https://github.com/o1-labs/docs2/tree/main/examples/zkapps/12-cross-contract-calls)
+[examples/zkapps/12-cross-contract-calls](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/12-cross-contract-calls)
 directory on GitHub.
 
 ## Prerequisites
@@ -22074,7 +22074,7 @@ This tutorial has been tested with:
 ## Get the example project
 
 ```sh
-git clone https://github.com/o1-labs/docs2.git
+git clone https://github.com/MinaProtocol/docs2.git
 cd docs2/examples/zkapps/12-cross-contract-calls
 npm install
 ```
@@ -22779,7 +22779,7 @@ To meet other developers building zkApps with o1js, participate in the [#zkapps-
 
 ## The tutorials
 
-Each tutorial has an example project in the [examples/zkapps/](https://github.com/o1-labs/docs2/tree/main/examples/zkapps/) directory on GitHub.
+Each tutorial has an example project in the [examples/zkapps/](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/) directory on GitHub.
 
 - [Tutorial 1: Hello World](/zkapps/tutorials/hello-world)
 - [Tutorial 2: Private Inputs and Hash Functions](/zkapps/tutorials/private-inputs-hash-functions)
