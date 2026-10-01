@@ -62,6 +62,18 @@ All pull requests must go through the code review process. As the PR submitter, 
 - If you are a member of the docs repo, you can merge the approved PR.
 - If your PR is a fork, the code maintainers will merge the approved PR.
 
+### Mina releases
+
+Node operator docs describe the current release. Describe what a feature does, not when it changed or what it did before.
+
+For each Mina release:
+
+1. Read the `changes/*.md` entries of the release in the [mina repository](https://github.com/MinaProtocol/mina/tree/master/changes). Update the pages for each change that affects operators: new or changed flags, environment variables, packages, tools, log messages, and defaults.
+2. Update the release versions with `scripts/update_release_info.sh --mainnet-tag <tag> --devnet-tag <tag>`.
+3. Regenerate the CLI reference with `scripts/generate-cli-reference.sh` against the installed release. The **Check CLI reference is up to date** workflow fails until you do this.
+4. Run `npm run validate-docker-images` to check the image tags on the pages.
+5. Run `node scripts/generate-llms-txt.mjs` and commit `static/llms-full.txt`.
+
 ### o1js Reference
 
 The zkApp Developers > [o1js Reference](https://docs.minaprotocol.com/zkapps/o1js-reference) docs are generated content and are outside the scope of the Mina Docs repository.

@@ -97,6 +97,16 @@ When you generated a keypair, you created a password. Use the password you creat
 
 This is an optional file to pass [configuration options](/node-operators/reference/mina-cli-reference#mina-daemon) to the daemon (rather than passing via the command line). The daemon looks for it by default, which results in an error if you do not include it. Just ignore this error (unless you are trying to include it) as it is not fatal, and the daemon will start as per normal.
 
+### I get "Node config: no profile set" at startup?
+
+The binary did not find a node profile. It looks for the `MINA_PROFILE` environment variable and then for the file `/etc/coda/build_config/PROFILE`:
+
+```text
+Node config: no profile set. Set MINA_PROFILE to one of dev, devnet, lightnet, mainnet (installed packages provide /etc/coda/build_config/PROFILE instead).
+```
+
+The profile packages, for example `mina-mainnet-profile`, write this file. The network packages (`mina-mainnet`, `mina-devnet`) and the Docker images include a profile package. `mina-generic` alone does not. If you installed only `mina-generic`, also install the profile package of your network. If you run a binary that you built from source, set `MINA_PROFILE` to the profile of your network, for example `MINA_PROFILE=mainnet`. See [Node profile](/node-operators/validator-node/installing-on-ubuntu-and-debian#node-profile).
+
 ### I see messages about prover/verifier being killed periodically
 
 This is normal, and these processes are currently periodically killed and restarted. Ignore these messages unless they result in a fatal error/crash.
@@ -208,6 +218,10 @@ The Mina node does its best to configure itself to be able to connect to the out
 A common cause of this is routers not supporting UPnP, a protocol that allows the node to configure the port forwarding automatically. If you experience this type of problem, find your router model and search for `<model> port forwarding` and follow the instructions to forward the ports from your router to your device running the Mina node. You'll need to open the TCP port `8302` by default.
 
 Note: When running Mina in the cloud, you should instead configure security groups for your cloud provider.
+
+### My node has fewer peers than I expect?
+
+A node that other nodes cannot reach on TCP port `8302` can only connect to peers that it dials, so it has fewer peers. Forward the port (see the previous question), or allow inbound traffic in the security group of your cloud provider. To make the node look for peers more often, set a shorter `MINA_LIBP2P_DISCOVERY_MAX_INTERVAL`. See [Peer discovery](/node-operators/validator-node/connecting-to-the-network#peer-discovery).
 
 ### Do I need to allow "Accept incoming connections"
 

@@ -37,6 +37,26 @@ mina daemon --peer-list-url https://bootnodes.minaprotocol.com/networks/mainnet.
             --coinbase-receiver $RECEIVER_PUBLICKEY
 ```
 
+### Minimum block reward
+
+The `--minimum-block-reward AMOUNT` flag makes the node produce an empty block when the reward of a block is less than `AMOUNT`. The block reward is the coinbase plus the transaction fees, minus the SNARK work fees.
+
+:::caution
+If `--minimum-block-reward` is more than the coinbase amount of the network, the node logs this warning at startup:
+
+```text
+Minimum block reward threshold $threshold is greater than the coinbase amount $coinbase_amount. This node may produce empty blocks unless transaction fees or supercharged coinbase raise the block reward above the threshold
+```
+
+Each block that the node produces empty for this reason gives this log message:
+
+```text
+Block reward $reward is less than the min-block-reward $threshold, creating empty block
+```
+
+To produce blocks with transactions, set `--minimum-block-reward` to the coinbase amount or less, or remove the flag.
+:::
+
 ## Verify block production
 
 Run `mina client status` and check the `Block producers running` field:

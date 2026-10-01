@@ -201,6 +201,26 @@ On first bootstrap, expect the following timeline:
 
 Subsequent restarts sync faster when the on-disk cache in `~/.mina-config` is preserved. For Docker, ensure `/root/.mina-config` is mounted to a persistent host volume.
 
+## Peer discovery
+
+The daemon connects to the peers in the peer list. It then finds more peers through the libp2p distributed hash table (DHT). The libp2p helper, a process that the daemon starts, does this for as long as the node runs:
+
+- When the node has fewer connections than `--min-connections` (default `20`), the helper queries the DHT for peers and connects to the peers that it finds. The time between two queries starts at the minimum interval and doubles after each query, up to the maximum interval.
+- When the node has `--min-connections` connections or more, the helper does not query the DHT, and the interval returns to the minimum.
+
+Two environment variables set the interval:
+
+| Variable | Default | Description |
+|--|--|--|
+| `MINA_LIBP2P_DISCOVERY_MIN_INTERVAL` | `1s` | First wait between two DHT queries. |
+| `MINA_LIBP2P_DISCOVERY_MAX_INTERVAL` | `5m` | Longest wait between two DHT queries. |
+
+The values are Go duration strings, for example `500ms`, `30s`, or `2m`. If a value is not set or is not valid, the helper uses the default. The libp2p helper gets the environment of the daemon, so set these variables in `~/.mina-env` or in the environment of the Docker container. Use shorter intervals in a small test network that must connect quickly. Use longer intervals to send fewer DHT queries.
+
+Other nodes can connect to your node only if they can reach TCP port `8302` (or the port that you set with `--external-port`). A node behind NAT without a forwarded port can only connect to peers that it dials, so it usually has fewer peers than a node that other nodes can reach. See [Do I need to configure port forwarding manually?](/node-operators/troubleshooting#do-i-need-to-configure-port-forwarding-manually).
+
+When the daemon cannot validate a block or a transaction from gossip in the available time, it drops the message. It does not lower the score of the peer that sent the message.
+
 ## Step up your game
 
 Once synced, continue with [Sending a Payment](/mina-protocol/sending-a-payment) and [Staking and Snarking](/node-operators/validator-node/staking-and-snarking).
