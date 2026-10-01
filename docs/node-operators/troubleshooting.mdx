@@ -105,7 +105,7 @@ The binary did not find a node profile. It looks for the `MINA_PROFILE` environm
 Node config: no profile set. Set MINA_PROFILE to one of dev, devnet, lightnet, mainnet (installed packages provide /etc/coda/build_config/PROFILE instead).
 ```
 
-The profile packages, for example `mina-mainnet-profile`, write this file. The network packages (`mina-mainnet`, `mina-devnet`) and the Docker images include a profile package. `mina-generic` alone does not. If you installed only `mina-generic`, also install the profile package of your network. If you run a binary that you built from source, set `MINA_PROFILE` to the profile of your network, for example `MINA_PROFILE=mainnet`. See [Node profile](/node-operators/validator-node/installing-on-ubuntu-and-debian#node-profile).
+The `mina-mainnet` and `mina-devnet` packages and the Docker images write this file. If you see this error on a host where you installed Mina from a package, install `mina-mainnet` or `mina-devnet`. If you run a binary that you built from source, set `MINA_PROFILE` to the profile of your network, for example `MINA_PROFILE=mainnet`. See [Node profile](/node-operators/validator-node/installing-on-ubuntu-and-debian#node-profile).
 
 ### I see messages about prover/verifier being killed periodically
 
