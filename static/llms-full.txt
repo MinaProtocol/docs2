@@ -8988,6 +8988,21 @@ curl -s http://localhost:3087/account/balance \
   }' | jq .
 ```
 
+## Transaction metadata
+
+In `/block` and `/search/transactions` responses, each payment, delegation, and zkApp command has a `metadata` object:
+
+| Field | Description |
+|--|--|
+| `nonce` | Nonce of the fee payer. For a payment or a delegation, the fee payer is the sender. |
+| `memo` | Memo of the transaction, as text. Not present when the memo is empty. |
+
+```json
+"metadata": { "nonce": 42, "memo": "deposit-7f3a" }
+```
+
+To match a deposit to a customer by memo, read `memo` from this object. Internal commands, such as coinbase and fee transfers, have no `metadata`.
+
 ## Building Your Own Image
 
 For most users, the official images are sufficient. If you need to build a custom image, see the [Rosetta README](https://github.com/MinaProtocol/mina/blob/master/src/app/rosetta/README.md) in the Mina repository for build instructions.
