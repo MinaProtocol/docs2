@@ -8086,6 +8086,10 @@ Referenced by:
 
 Review the full schema at [/archive/create_schema.sql](https://github.com/minaProtocol/mina/blob/master/src/app/archive/create_schema.sql) and [/archive/zkapp_tables.sql](https://github.com/MinaProtocol/mina/blob/berkeley/src/app/archive/zkapp_tables.sql)
 
+## Monitor the archive node
+
+To check that the database is reachable and that new blocks arrive, use `mina-archive-healthcheck`. See [Health Checks](/node-operators/reference/health-checks).
+
 ## Query the database
 
 Now that you know the structure of the data, try some queries.
@@ -9800,12 +9804,237 @@ signer sign --private-key <private key> --unsigned-transaction <tx>
 Replace `<tx>` with the unsigned transaction string from the `/construction/payloads` endpoint. See [Sending Transactions](/node-operators/rosetta/samples/send-transactions) for the full flow.
 
 ---
+url: /node-operators/reference/health-checks
+---
+
+# Health Checks
+
+Three command line tools check the health of a Mina service. Each tool prints one result and sets its exit code, so you can use it as a Kubernetes exec probe, a Docker `HEALTHCHECK`, or a step in a script.
+
+| Tool | Checks | Reads from | Debian package |
+|--|--|--|--|
+| `mina-healthcheck` | Daemon | Daemon GraphQL API | `mina-generic` |
+| `mina-archive-healthcheck` | Archive node | Archive PostgreSQL database | `mina-archive-generic` |
+| `rosetta-healthcheck` | Rosetta server | Rosetta API | `mina-rosetta-generic` |
+
+The tools are installed in `/usr/local/bin`, and the `mina-daemon`, `mina-archive`, and `mina-rosetta` Docker images contain them.
+
+All three tools use the same output rules:
+
+- Exit code `0`: the check passed. Exit code `1`: the check failed. Exit code `2` (archive and Rosetta tools only): a flag value is not valid, and no request is sent.
+- `--json` (`-j`) prints one JSON object on stdout. Without `--json`, the tool prints one line.
+- The `wait` subcommand polls until the service is ready or the time limit expires. It writes progress to stderr, so stdout contains only the result.
+
+## Daemon: mina-healthcheck
+
+`mina-healthcheck` queries the daemon GraphQL API. The default endpoint is `http://127.0.0.1:3085/graphql`.
+
+| Subcommand | Passes when |
+|--|--|
+| `daemon-status` | The daemon answers. Prints the full daemon status. |
+| `sync-status` | The sync status is `SYNCED`. |
+| `peer-count` | The peer count is at least `--min-peers`. |
+| `chain-length` | The local chain length is equal to the highest block length received. |
+| `ready` | `sync-status`, `peer-count`, and `chain-length` all pass. |
+| `wait` | `ready` passes before `--timeout` expires. |
+
+| Flag | Default | Description |
+|--|--|--|
+| `--graphql-uri`, `-u` | `http://127.0.0.1:3085/graphql` | Daemon GraphQL endpoint. |
+| `--min-peers`, `-n` | `2` | Minimum peer count. |
+| `--timeout`, `-t` | `600` | Maximum time in seconds (`wait` only). |
+| `--interval`, `-i` | `10` | Time between polls in seconds (`wait` only). |
+| `--json`, `-j` | off | Print JSON. |
+
+```sh
+mina-healthcheck ready --min-peers 2
+mina-healthcheck sync-status --graphql-uri http://my-node:3085/graphql --json
+mina-healthcheck wait --timeout 1800 --interval 10
+```
+
+During `wait`, each poll writes one progress line to stderr:
+
+```
+[  10s] Bootstrap   (peers: 0, chain: ?/?)
+[  20s] Bootstrap   (peers: 2, chain: 50/1741)
+[  30s] Catchup     (peers: 4, chain: 800/1741)
+[  40s] Synced      (peers: 4, chain: 1741/1741)
+READY
+```
+
+:::caution Liveness probes
+Do not use `sync-status` or `ready` as a liveness probe. A node is not synced during bootstrap and catchup, which can take 30 minutes or more. A liveness probe that fails during this time restarts the node before it can sync. Use `daemon-status` for liveness and `ready` for readiness.
+:::
+
+## Archive node: mina-archive-healthcheck
+
+`mina-archive-healthcheck` reads the archive database directly. It does not need a running daemon or the Archive Node API. All subcommands except `server-ready` require `--postgres-uri`. `server-ready` requires `--server-port`.
+
+| Subcommand | Passes when |
+|--|--|
+| `db-ready` | The database is reachable and the `blocks` table can be queried. |
+| `server-ready` | The archive process accepts TCP connections on `--server-port`. |
+| `block-height` | The database is reachable. Prints the highest block height. |
+| `block-recency` | The newest block is not older than `--max-delay` seconds. |
+| `missing-blocks` | The number of missing heights in the last `--window` blocks is not more than `--max-missing`. |
+| `unparented-blocks` | The number of blocks without a parent is not more than `--max-unparented`. |
+| `ready` | All database checks pass. |
+| `wait` | `ready` passes before `--timeout` expires. |
+
+| Flag | Default | Description |
+|--|--|--|
+| `--postgres-uri`, `-p` | | PostgreSQL connection URI. Required, except for `server-ready`. |
+| `--max-delay` | `360` | Maximum age of the newest block in seconds. |
+| `--max-missing` | `10` | Maximum number of missing blocks. |
+| `--max-unparented` | `5` | Maximum number of blocks without a parent. |
+| `--window` | `2000` | Number of blocks that `missing-blocks` examines. |
+| `--server-port` | | Archive server port. Required for `server-ready`. Optional for `wait`: `wait` then also requires that the port accepts connections. |
+| `--server-host` | `127.0.0.1` | Archive server host for `server-ready` and `wait`. |
+| `--db-only` | off | `wait` only: wait for the database and skip the recency, missing, and unparented checks. |
+| `--timeout`, `-t` | `600` | Maximum time in seconds (`wait` only). |
+| `--interval`, `-i` | `10` | Time between polls in seconds (`wait` only). |
+| `--json`, `-j` | off | Print JSON. |
+
+```sh
+mina-archive-healthcheck ready --postgres-uri postgres://user@localhost:5432/archive --max-delay 360
+mina-archive-healthcheck missing-blocks --postgres-uri postgres://user@localhost:5432/archive --max-missing 10
+```
+
+The database answers queries before the archive process listens for blocks. A block that the daemon sends before the archive process listens is lost. To wait until the archive can receive blocks, check the database and the server port together:
+
+```sh
+mina-archive-healthcheck wait --db-only --server-port 3086 \
+  --postgres-uri postgres://user@localhost:5432/archive
+```
+
+A failed check still reports the values that it measured. The `error` field gives the reason: `Db_unreachable`, `Db_query_failed`, `No_blocks`, `Invalid_timestamp`, `Thresholds_exceeded`, or `Timed_out`.
+
+```json
+{ "healthy": false, "missing_blocks": 41, "max_missing": 10, "window": 2000,
+  "error": { "sexp": [ "Thresholds_exceeded", [ "missing blocks 41 > 10" ] ] } }
+```
+
+These probes are fast checks of the current state. For a full check of archive data integrity, use `mina-missing-blocks-auditor`. See [Backfilling Missing Blocks](/node-operators/archive-node/backfilling-missing-blocks).
+
+## Rosetta: rosetta-healthcheck
+
+`rosetta-healthcheck` calls the Rosetta API. The default endpoint is `http://localhost:3087`.
+
+| Subcommand | Rosetta endpoint | Passes when |
+|--|--|--|
+| `connectivity` | `/network/list` | The server lists the network given in `--network`. |
+| `tip-recency` | `/network/status` | The tip block is not older than `--max-age` seconds. |
+| `ready` | All of the above and `/network/options` | All three checks pass. |
+| `wait` | Polls `ready` | `ready` passes before `--deadline` expires. |
+
+| Flag | Default | Environment variable | Description |
+|--|--|--|--|
+| `--rosetta-uri` | `http://localhost:3087` | `MINA_ROSETTA_URI` | Rosetta server URL. |
+| `--network` | `testnet` | `MINA_ROSETTA_NETWORK` | Network name that the server must list. |
+| `--blockchain` | `mina` | `MINA_ROSETTA_BLOCKCHAIN` | Blockchain name. |
+| `--max-age` | `360` | | Maximum age of the tip block in seconds. |
+| `--timeout` | `5` | | Maximum time in seconds for one request. |
+| `--deadline`, `-d` | `600` | | Maximum time in seconds (`wait` only). |
+| `--interval`, `-i` | `10` | | Time between polls in seconds (`wait` only). |
+| `--json`, `-j` | off | | Print JSON. |
+
+A flag has priority over its environment variable.
+
+:::note
+Set `--network` to `mainnet` or `devnet`. The Rosetta server lists the network of its daemon, so the default value `testnet` does not match Mainnet or Devnet.
+:::
+
+```sh
+rosetta-healthcheck ready --network mainnet --max-age 360 --json
+rosetta-healthcheck wait --network devnet --deadline 600 --interval 10
+```
+
+The same packages contain `rosetta-client`, which sends one Rosetta API request and prints the response. Use it to examine a Rosetta server manually, for example `rosetta-client network status`.
+
+## Examples
+
+### Kubernetes
+
+Set `timeoutSeconds` to a value that is larger than the time that the probe can take. The kubelet default is 1 second, and `rosetta-healthcheck` waits up to `--timeout` (5 seconds) for one request.
+
+```yaml
+# Daemon
+initContainers:
+  - name: wait-for-mina
+    image: minaprotocol/mina-daemon:<VERSION>
+    command: ["mina-healthcheck", "wait", "--timeout", "1800", "--interval", "10",
+              "--graphql-uri", "http://mina-node:3085/graphql"]
+livenessProbe:
+  exec:
+    command: ["mina-healthcheck", "daemon-status"]
+  periodSeconds: 30
+  timeoutSeconds: 10
+readinessProbe:
+  exec:
+    command: ["mina-healthcheck", "ready", "--min-peers", "2"]
+  periodSeconds: 10
+  timeoutSeconds: 10
+```
+
+```yaml
+# Archive node
+livenessProbe:
+  exec:
+    command: ["mina-archive-healthcheck", "db-ready", "--postgres-uri", "$(ARCHIVE_URI)"]
+  periodSeconds: 30
+  timeoutSeconds: 10
+readinessProbe:
+  exec:
+    command: ["mina-archive-healthcheck", "ready", "--postgres-uri", "$(ARCHIVE_URI)",
+              "--max-delay", "360"]
+  periodSeconds: 30
+  timeoutSeconds: 10
+```
+
+```yaml
+# Rosetta
+livenessProbe:
+  exec:
+    command: ["rosetta-healthcheck", "connectivity", "--network", "mainnet"]
+  periodSeconds: 30
+  timeoutSeconds: 10
+readinessProbe:
+  exec:
+    command: ["rosetta-healthcheck", "ready", "--network", "mainnet", "--max-age", "360"]
+  periodSeconds: 30
+  timeoutSeconds: 10
+```
+
+### Docker
+
+```dockerfile
+HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
+  CMD ["mina-healthcheck", "ready", "--min-peers", "2"]
+```
+
+With Docker Compose:
+
+```yaml
+services:
+  mina-node:
+    healthcheck:
+      test: ["CMD", "mina-healthcheck", "ready", "--min-peers", "2"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30m
+```
+
+`start_period` gives the node time to sync before Docker marks it as unhealthy.
+
+---
 url: /node-operators/reference
 ---
 
 # Reference
 
 - **[Mina CLI Reference](/node-operators/reference/mina-cli-reference)** -- Complete reference for the `mina` command line interface.
+- **[Health Checks](/node-operators/reference/health-checks)** -- Probes for the daemon, the archive node, and Rosetta, for Kubernetes, Docker, and scripts.
 - **[Mina Signer](/node-operators/mina-signer)** -- Key generation and transaction signing for node operators.
 - **[Troubleshooting](/node-operators/troubleshooting)** -- Solutions to common problems when running a Mina node.
 - **[FAQ](/node-operators/faq)** -- Frequently asked questions about node operations, SNARKs, and the Mina network.
@@ -12240,6 +12469,8 @@ Example environment files for public networks can be found in [this](https://git
 
 :::
 
+To check that the Rosetta server is ready, use `rosetta-healthcheck`, which the image contains. See [Health Checks](/node-operators/reference/health-checks).
+
 ---
 url: /node-operators/rosetta/samples
 ---
@@ -13769,6 +14000,8 @@ On first bootstrap, expect the following timeline:
 | 0 – ~5 min | `mina client status` may fail to connect while the daemon initializes |
 | ~5 – ~25 min | `Sync Status: Bootstrap` then `Sync Status: Catchup` |
 | ~30 min | `Sync Status: Synced` |
+
+To check the node from a script, a Kubernetes probe, or a Docker `HEALTHCHECK`, use `mina-healthcheck`. See [Health Checks](/node-operators/reference/health-checks).
 
 Subsequent restarts sync faster when the on-disk cache in `~/.mina-config` is preserved. For Docker, ensure `/root/.mina-config` is mounted to a persistent host volume.
 

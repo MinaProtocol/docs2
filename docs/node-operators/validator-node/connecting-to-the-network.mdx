@@ -199,6 +199,8 @@ On first bootstrap, expect the following timeline:
 | ~5 – ~25 min | `Sync Status: Bootstrap` then `Sync Status: Catchup` |
 | ~30 min | `Sync Status: Synced` |
 
+To check the node from a script, a Kubernetes probe, or a Docker `HEALTHCHECK`, use `mina-healthcheck`. See [Health Checks](/node-operators/reference/health-checks).
+
 Subsequent restarts sync faster when the on-disk cache in `~/.mina-config` is preserved. For Docker, ensure `/root/.mina-config` is mounted to a persistent host volume.
 
 ## Step up your game

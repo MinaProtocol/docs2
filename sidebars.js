@@ -377,7 +377,10 @@ module.exports = {
             type: 'doc',
             id: 'node-operators/reference/index',
           },
-          items: ['node-operators/reference/mina-cli-reference'],
+          items: [
+            'node-operators/reference/mina-cli-reference',
+            'node-operators/reference/health-checks',
+          ],
         },
         'node-operators/downgrading-to-older-versions',
         'node-operators/troubleshooting',
