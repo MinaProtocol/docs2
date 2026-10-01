@@ -17,13 +17,13 @@ keywords:
 
 Three command line tools check the health of a Mina service. Each tool prints one result and sets its exit code, so you can use it as a Kubernetes exec probe, a Docker `HEALTHCHECK`, or a step in a script.
 
-| Tool | Checks | Reads from | Debian package |
+| Tool | Checks | Reads from | Installed with |
 |--|--|--|--|
-| `mina-healthcheck` | Daemon | Daemon GraphQL API | `mina-generic` |
-| `mina-archive-healthcheck` | Archive node | Archive PostgreSQL database | `mina-archive-generic` |
-| `rosetta-healthcheck` | Rosetta server | Rosetta API | `mina-rosetta-generic` |
+| `mina-healthcheck` | Daemon | Daemon GraphQL API | `mina-mainnet`, `mina-devnet` |
+| `mina-archive-healthcheck` | Archive node | Archive PostgreSQL database | `mina-archive-mainnet`, `mina-archive-devnet` |
+| `rosetta-healthcheck` | Rosetta server | Rosetta API | `mina-rosetta-mainnet`, `mina-rosetta-devnet` |
 
-The tools are installed in `/usr/local/bin`, and the `mina-daemon`, `mina-archive`, and `mina-rosetta` Docker images contain them.
+The tools are installed in `/usr/local/bin`. The `mina-daemon`, `mina-archive`, and `mina-rosetta` Docker images also contain them.
 
 All three tools use the same output rules:
 
@@ -159,63 +159,55 @@ The same packages contain `rosetta-client`, which sends one Rosetta API request 
 
 ## Examples
 
-### Kubernetes
+The probes run inside the container that they check. The daemon binds its GraphQL API to `127.0.0.1:3085`, so `mina-healthcheck` in the same container needs no flags.
 
-Set `timeoutSeconds` to a value that is larger than the time that the probe can take. The kubelet default is 1 second, and `rosetta-healthcheck` waits up to `--timeout` (5 seconds) for one request.
+A Kubernetes `exec` probe runs its command without a shell, so it does not expand environment variables. To pass a value from the environment, for example a database password, run the probe with `sh -c`.
 
-```yaml
-# Daemon
-initContainers:
-  - name: wait-for-mina
-    image: minaprotocol/mina-daemon:<VERSION>
-    command: ["mina-healthcheck", "wait", "--timeout", "1800", "--interval", "10",
-              "--graphql-uri", "http://mina-node:3085/graphql"]
-livenessProbe:
-  exec:
-    command: ["mina-healthcheck", "daemon-status"]
-  periodSeconds: 30
-  timeoutSeconds: 10
-readinessProbe:
-  exec:
-    command: ["mina-healthcheck", "ready", "--min-peers", "2"]
-  periodSeconds: 10
-  timeoutSeconds: 10
-```
+Set `timeoutSeconds` on each probe to more than the time that the probe can take. The default is 1 second.
+
+### Node operator
+
+Kubernetes container for a daemon or a block producer. The startup probe allows up to 15 minutes for the daemon to start its GraphQL API. Liveness checks only that the daemon answers. Readiness checks that the node is synced and connected, so a Service sends traffic only to synced nodes.
 
 ```yaml
-# Archive node
-livenessProbe:
-  exec:
-    command: ["mina-archive-healthcheck", "db-ready", "--postgres-uri", "$(ARCHIVE_URI)"]
-  periodSeconds: 30
-  timeoutSeconds: 10
-readinessProbe:
-  exec:
-    command: ["mina-archive-healthcheck", "ready", "--postgres-uri", "$(ARCHIVE_URI)",
-              "--max-delay", "360"]
-  periodSeconds: 30
-  timeoutSeconds: 10
+containers:
+  - name: mina
+    image: minaprotocol/mina-daemon:<VERSION>-bookworm-mainnet
+    args: ["daemon", "--peer-list-url", "https://bootnodes.minaprotocol.com/networks/mainnet.txt"]
+    startupProbe:
+      exec:
+        command: ["mina-healthcheck", "daemon-status"]
+      periodSeconds: 10
+      failureThreshold: 90
+      timeoutSeconds: 10
+    livenessProbe:
+      exec:
+        command: ["mina-healthcheck", "daemon-status"]
+      periodSeconds: 30
+      failureThreshold: 5
+      timeoutSeconds: 10
+    readinessProbe:
+      exec:
+        command: ["mina-healthcheck", "ready", "--min-peers", "5"]
+      periodSeconds: 30
+      timeoutSeconds: 10
 ```
 
-```yaml
-# Rosetta
-livenessProbe:
-  exec:
-    command: ["rosetta-healthcheck", "connectivity", "--network", "mainnet"]
-  periodSeconds: 30
-  timeoutSeconds: 10
-readinessProbe:
-  exec:
-    command: ["rosetta-healthcheck", "ready", "--network", "mainnet", "--max-age", "360"]
-  periodSeconds: 30
-  timeoutSeconds: 10
+On a host with systemd, check the node from a timer or a cron job and send an alert when the check fails:
+
+```sh
+#!/bin/sh
+# /usr/local/bin/mina-check: alert when the node is not synced and connected
+if ! out=$(mina-healthcheck ready --min-peers 5 2>&1); then
+  echo "mina node not ready: $out" | mail -s "mina alert $(hostname)" ops@example.com
+fi
 ```
 
-### Docker
+Wait until the node is synced before a step that needs it, for example after an upgrade or before the next node in a rolling restart:
 
-```dockerfile
-HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
-  CMD ["mina-healthcheck", "ready", "--min-peers", "2"]
+```sh
+sudo systemctl restart mina   # or: systemctl --user restart mina
+mina-healthcheck wait --timeout 3600 --interval 30
 ```
 
 With Docker Compose:
@@ -223,12 +215,114 @@ With Docker Compose:
 ```yaml
 services:
   mina-node:
+    image: minaprotocol/mina-daemon:<VERSION>-bookworm-mainnet
     healthcheck:
-      test: ["CMD", "mina-healthcheck", "ready", "--min-peers", "2"]
+      test: ["CMD", "mina-healthcheck", "ready", "--min-peers", "5"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 30m
+      start_period: 60m
 ```
 
 `start_period` gives the node time to sync before Docker marks it as unhealthy.
+
+### Archive node operator
+
+The archive process must accept connections before the daemon sends it blocks: a block that the daemon sends before that is lost. An init container in the daemon pod waits for the archive server. Probes in the archive pod check the database and the age of the newest block.
+
+```yaml
+# Archive pod
+containers:
+  - name: archive
+    image: minaprotocol/mina-archive:<VERSION>-bookworm-mainnet
+    env:
+      - name: ARCHIVE_URI
+        valueFrom:
+          secretKeyRef: { name: archive-db, key: uri }   # postgres://user:password@postgres:5432/archive
+    livenessProbe:
+      exec:
+        command: ["sh", "-c", "mina-archive-healthcheck db-ready --postgres-uri \"$ARCHIVE_URI\""]
+      periodSeconds: 30
+      timeoutSeconds: 10
+    readinessProbe:
+      exec:
+        command: ["sh", "-c", "mina-archive-healthcheck ready --postgres-uri \"$ARCHIVE_URI\" --max-delay 600"]
+      periodSeconds: 60
+      timeoutSeconds: 30
+```
+
+```yaml
+# Daemon pod: start the daemon only when the archive server listens
+initContainers:
+  - name: wait-for-archive
+    image: minaprotocol/mina-archive:<VERSION>-bookworm-mainnet
+    env:
+      - name: ARCHIVE_URI
+        valueFrom:
+          secretKeyRef: { name: archive-db, key: uri }
+    command: ["sh", "-c", "mina-archive-healthcheck wait --db-only --server-host archive --server-port 3086 --postgres-uri \"$ARCHIVE_URI\" --timeout 600"]
+```
+
+Check the completeness of the archive at regular intervals and alert when blocks are missing:
+
+```yaml
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: archive-missing-blocks
+spec:
+  schedule: "*/10 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: check
+              image: minaprotocol/mina-archive:<VERSION>-bookworm-mainnet
+              env:
+                - name: ARCHIVE_URI
+                  valueFrom:
+                    secretKeyRef: { name: archive-db, key: uri }
+              command: ["sh", "-c", "mina-archive-healthcheck missing-blocks --postgres-uri \"$ARCHIVE_URI\" --max-missing 0 --json"]
+```
+
+A failed job means that blocks are missing. The JSON output gives the number in `missing_blocks`. To fill the gaps, see [Backfilling Missing Blocks](/node-operators/archive-node/backfilling-missing-blocks).
+
+### Exchange operator
+
+An exchange that uses Rosetta depends on the daemon, the archive node, and the Rosetta server. Stop deposit and withdrawal processing when Rosetta is not ready or its newest block is old, and start it again when the check passes:
+
+```sh
+#!/bin/sh
+export MINA_ROSETTA_URI=http://localhost:3087
+export MINA_ROSETTA_NETWORK=mainnet
+
+if ! rosetta-healthcheck ready --max-age 600 --json > /tmp/rosetta-health.json; then
+  echo "Rosetta not ready, pausing deposits and withdrawals" >&2
+  cat /tmp/rosetta-health.json >&2
+  exit 1
+fi
+
+# Height of the newest block that Rosetta serves
+rosetta-client network status --compact | jq '.current_block_identifier.index'
+```
+
+`MINA_ROSETTA_URI` and `MINA_ROSETTA_NETWORK` apply to `rosetta-healthcheck` and `rosetta-client`.
+
+To check each component separately, run `mina-healthcheck ready` for the daemon and `mina-archive-healthcheck ready` for the archive database. A Rosetta failure then shows which component causes it.
+
+Kubernetes probes for the Rosetta container:
+
+```yaml
+livenessProbe:
+  exec:
+    command: ["rosetta-healthcheck", "connectivity", "--network", "mainnet"]
+  periodSeconds: 30
+  timeoutSeconds: 10
+readinessProbe:
+  exec:
+    command: ["rosetta-healthcheck", "ready", "--network", "mainnet", "--max-age", "600"]
+  periodSeconds: 30
+  timeoutSeconds: 10
+```
