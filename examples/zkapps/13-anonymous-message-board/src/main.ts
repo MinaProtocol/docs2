@@ -17,12 +17,14 @@ const zkAppAddress = zkAppKey.toPublicKey();
 const zkApp = new Message(zkAppAddress);
 
 console.log('deploying the message board...');
+// docs:start deploy
 const deployTx = await Mina.transaction(deployer, async () => {
   AccountUpdate.fundNewAccount(deployer);
   await zkApp.deploy();
 });
 await deployTx.prove();
 await deployTx.sign([deployer.key, zkAppKey]).send();
+// docs:end deploy
 
 // init() put the three approved public keys on chain.
 console.log('approved posters:');
