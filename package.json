@@ -21,7 +21,8 @@
     "generate-llms-txt": "node scripts/generate-llms-txt.mjs",
     "generate-llms-index": "node scripts/generate-llms-index.mjs",
     "check-llms-txt": "node scripts/generate-llms-txt.mjs && node scripts/generate-llms-index.mjs && git diff --exit-code static/llms-full.txt static/llms.txt",
-    "check-graphql-endpoints": "node scripts/check-graphql-endpoints.js"
+    "check-graphql-endpoints": "node scripts/check-graphql-endpoints.js",
+    "test:scripts": "node --test scripts/*.test.mjs"
   },
   "dependencies": {
     "@docusaurus/core": "^3.8.0",
