@@ -21,7 +21,7 @@ keywords:
 
 In [Tutorial 5: Common Types and Functions](common-types-and-functions), you learned how to use Merkle trees to refer to large amounts of data stored off-chain.
 
-A zkApp account holds eight field elements of state. This tutorial shows how to keep much more than that, with only a commitment on chain, using the offchain state API that o1js provides.
+A zkApp account holds 32 field elements of state. This tutorial shows how to keep much more than that, with only a commitment on chain, using the offchain state API that o1js provides.
 
 The full example is in [examples/zkapps/06-offchain-storage](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/06-offchain-storage). It runs on a local blockchain, so you need no network, no faucet and no funded accounts:
 
@@ -83,25 +83,7 @@ The offchain state API is exported under `Experimental`, so its shape can change
 
 Declare what the contract stores. A map from an index to a value takes the place of the Merkle tree of the earlier version of this tutorial, and a field counts the entries:
 
-```ts
-import { Experimental, Field, method, SmartContract, state, UInt64 } from 'o1js';
-
-const { OffchainState } = Experimental;
-
-export const offchainState = OffchainState(
-  {
-    numbers: OffchainState.Map(Field, Field),
-    total: OffchainState.Field(UInt64),
-  },
-  {
-    // 2^10 entries is plenty for a tutorial and keeps proving quick.
-    logTotalCapacity: 10,
-    maxActionsPerUpdate: 4,
-  }
-);
-
-export class StateProof extends offchainState.Proof {}
-```
+#include_code declaration examples/zkapps/06-offchain-storage/src/NumberStorageContract.ts ts title="src/NumberStorageContract.ts"
 
 `logTotalCapacity` sizes the state: 10 gives 2<sup>10</sup> entries. A smaller capacity means fewer constraints and quicker proofs. `maxActionsPerUpdate` is how many writes one method may make.
 
@@ -109,91 +91,43 @@ export class StateProof extends offchainState.Proof {}
 
 The contract holds one piece of on-chain state, the commitment, and binds the offchain state to itself:
 
-```ts
-export class NumberStorageContract extends SmartContract {
-  @state(OffchainState.Commitments) offchainStateCommitments =
-    offchainState.emptyCommitments();
-
-  offchainState = offchainState.init(this);
-```
+#include_code contract-class examples/zkapps/06-offchain-storage/src/NumberStorageContract.ts ts title="src/NumberStorageContract.ts"
 
 Add a method that writes a new entry. `update` takes the value it expects to find. Passing `undefined` as `from` requires that the entry is empty, so this method cannot overwrite an entry that already holds a value:
 
-```ts
-  @method async setNumber(index: Field, value: Field) {
-    this.offchainState.fields.numbers.update(index, {
-      from: undefined,
-      to: value,
-    });
-
-    const total = await this.offchainState.fields.total.get();
-    this.offchainState.fields.total.update({
-      from: total,
-      to: total.orElse(0n).add(1),
-    });
-  }
-```
+#include_code set-number examples/zkapps/06-offchain-storage/src/NumberStorageContract.ts ts title="src/NumberStorageContract.ts"
 
 Add a method that replaces a value, where the caller names the value being replaced:
 
-```ts
-  @method async updateNumber(index: Field, from: Field, to: Field) {
-    this.offchainState.fields.numbers.update(index, { from, to });
-  }
-```
+#include_code update-number examples/zkapps/06-offchain-storage/src/NumberStorageContract.ts ts title="src/NumberStorageContract.ts"
 
-Finally, add the method that settles. It takes the proof and hands it to the offchain state:
+Finally, add the method that settles. It takes the proof and hands it to the offchain state. Then close the class with `}`:
 
-```ts
-  @method async settle(proof: StateProof) {
-    await this.offchainState.settle(proof);
-  }
-}
-```
+#include_code settle examples/zkapps/06-offchain-storage/src/NumberStorageContract.ts ts title="src/NumberStorageContract.ts"
 
 ## Run it
 
-Bind the state to the contract instance, then compile both the offchain state program and the contract:
+`src/main.ts` runs the contract on a local blockchain, with the first test account as the deployer. Bind the state to the contract instance, then compile both the offchain state program and the contract:
 
-```ts
-const contract = new NumberStorageContract(zkAppAddress);
-const state = contract.offchainState;
-state.setContractInstance(contract);
+#include_code setup examples/zkapps/06-offchain-storage/src/main.ts ts title="src/main.ts"
 
-await offchainState.compile();
-await NumberStorageContract.compile();
-```
+After the deployment, write a value. At this point the write is an action, and reading the entry returns none:
 
-Write a value. At this point the write is an action, and reading the entry returns none:
+#include_code write examples/zkapps/06-offchain-storage/src/main.ts ts title="src/main.ts"
 
-```ts
-const writeTx = await Mina.transaction(sender, async () => {
-  await contract.setNumber(Field(1), Field(42));
-});
-await writeTx.prove();
-await writeTx.sign([senderKey]).send();
+A settlement makes a proof over the pending actions and sends it to `settle()`. `main.ts` puts this in a function, because it settles more than once:
 
-const before = await state.fields.numbers.get(Field(1));
-before.isSome.toBoolean(); // false
-```
+#include_code settle-function examples/zkapps/06-offchain-storage/src/main.ts ts title="src/main.ts"
 
 Settle, and the value becomes readable:
 
-```ts
-const proof = await state.createSettlementProof();
-const settleTx = await Mina.transaction(sender, async () => {
-  await contract.settle(proof);
-});
-await settleTx.prove();
-await settleTx.sign([senderKey]).send();
-
-const after = await state.fields.numbers.get(Field(1));
-after.value.toString(); // '42'
-```
+#include_code read-after-settle examples/zkapps/06-offchain-storage/src/main.ts ts title="src/main.ts"
 
 Running `npm start` in the example prints the whole sequence:
 
-```
+```text
+compiling...
+deploying...
 writing 42 at index 1...
 before settling, index 1 is: not set yet
 settling...
@@ -207,14 +141,9 @@ index 1 is now: 43
 
 `update` is the reason to prefer this API over keeping a tree yourself. Two users who read the same value and both write are not a lost update: the settlement applies the first and drops the second, because the second names a value that is no longer there.
 
-The example asserts this. After index 1 has moved from 42 to 43, an update that still expects 42 changes nothing:
+The example's test suite asserts this. After index 1 has moved from 42 to 43, an update that still expects 42 changes nothing. `call()` sends a transaction from the deployer, and `numberAt()` reads an entry:
 
-```ts
-await contract.updateNumber(Field(1), Field(42), Field(99));
-await settle();
-
-(await state.fields.numbers.get(Field(1))).value.toString(); // still '43'
-```
+#include_code stale-update examples/zkapps/06-offchain-storage/src/NumberStorageContract.test.ts ts title="src/NumberStorageContract.test.ts"
 
 `overwrite` is the other option, and it does exactly what its name says: it ignores the previous value. Use it only where a lost update does not matter.
 

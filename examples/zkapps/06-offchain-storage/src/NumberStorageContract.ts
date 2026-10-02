@@ -1,3 +1,4 @@
+// docs:start declaration
 import {
   Experimental,
   Field,
@@ -33,13 +34,16 @@ export const offchainState = OffchainState(
 
 /** The proof that `settle()` consumes. */
 export class StateProof extends offchainState.Proof {}
+// docs:end declaration
 
+// docs:start contract-class
 export class NumberStorageContract extends SmartContract {
   /** The only onchain state: commitments to everything held offchain. */
   @state(OffchainState.Commitments) offchainStateCommitments =
     offchainState.emptyCommitments();
 
   offchainState = offchainState.init(this);
+  // docs:end contract-class
 
   /**
    * Write `value` at `index`, requiring that the entry is currently empty.
@@ -48,6 +52,7 @@ export class NumberStorageContract extends SmartContract {
    * since the caller read it, the settlement drops this action rather than
    * overwriting someone else's write.
    */
+  // docs:start set-number
   @method async setNumber(index: Field, value: Field) {
     this.offchainState.fields.numbers.update(index, {
       from: undefined,
@@ -60,14 +65,17 @@ export class NumberStorageContract extends SmartContract {
       to: total.orElse(0n).add(1),
     });
   }
+  // docs:end set-number
 
   /**
    * Replace the value at `index`, requiring the caller to name the value being
    * replaced. This is the concurrency-safe update the tutorial cares about.
    */
+  // docs:start update-number
   @method async updateNumber(index: Field, from: Field, to: Field) {
     this.offchainState.fields.numbers.update(index, { from, to });
   }
+  // docs:end update-number
 
   /**
    * Fold the pending actions into the onchain commitment.
@@ -75,7 +83,9 @@ export class NumberStorageContract extends SmartContract {
    * Until this runs, a write is an action and nothing else; afterwards it is
    * part of the state the contract commits to.
    */
+  // docs:start settle
   @method async settle(proof: StateProof) {
     await this.offchainState.settle(proof);
   }
+  // docs:end settle
 }
