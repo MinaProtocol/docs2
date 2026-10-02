@@ -18,11 +18,12 @@ import {
   UInt32,
   UInt64,
 } from 'o1js';
+import { BasicMerkleMapContract } from './BasicMerkleMapContract';
 import { BasicMerkleTreeContract } from './BasicMerkleTreeContract';
 import { LedgerContract } from './LedgerContract';
 
-// Proofs are off so the suite runs in seconds. main.ts compiles both
-// contracts and takes about two minutes; the assertions, the state
+// Proofs are off so the suite runs much faster than main.ts, which compiles
+// all three contracts and creates real proofs. The assertions, the state
 // transitions and the rejections below are exercised either way.
 const proofsEnabled = false;
 
@@ -237,6 +238,61 @@ describe('BasicMerkleTreeContract', () => {
     await update(522n, Field(9), Field(9));
     expect(tree.getLeaf(522n)).toEqual(Field(18));
     expect(zkApp.treeRoot.get()).toEqual(tree.getRoot());
+  });
+});
+
+describe('BasicMerkleMapContract', () => {
+  let deployer: Mina.TestPublicKey;
+  let zkApp: BasicMerkleMapContract;
+  let map: MerkleMap;
+
+  async function update(key: Field, before: Field, amount: Field) {
+    const witness = map.getWitness(key);
+    const tx = await Mina.transaction(deployer, async () => {
+      await zkApp.update(witness, key, before, amount);
+    });
+    await tx.prove();
+    await tx.sign([deployer.key]).send();
+    map.set(key, before.add(amount));
+  }
+
+  beforeEach(async () => {
+    ({ deployer } = await setup());
+    const zkAppKey = PrivateKey.random();
+    zkApp = new BasicMerkleMapContract(zkAppKey.toPublicKey());
+    map = new MerkleMap();
+    if (proofsEnabled) await BasicMerkleMapContract.compile();
+
+    const tx = await Mina.transaction(deployer, async () => {
+      AccountUpdate.fundNewAccount(deployer);
+      await zkApp.deploy();
+      await zkApp.initState(map.getRoot());
+    });
+    await tx.prove();
+    await tx.sign([deployer.key, zkAppKey]).send();
+  });
+
+  it('matches the local map root after the update', async () => {
+    // main.ts adds 5 to key 100 and prints the local and the contract root.
+    await update(Field(100), Field(0), Field(5));
+    expect(map.get(Field(100))).toEqual(Field(5));
+    expect(zkApp.mapRoot.get()).toEqual(map.getRoot());
+  });
+
+  it('rejects an increment of 10 or more', async () => {
+    const rootBefore = zkApp.mapRoot.get();
+    await expect(update(Field(100), Field(0), Field(10))).rejects.toThrow();
+    expect(zkApp.mapRoot.get()).toEqual(rootBefore);
+  });
+
+  it('rejects a witness for a different key', async () => {
+    // The contract checks the key that the witness proves, not only the root.
+    const witness = map.getWitness(Field(101));
+    await expect(
+      Mina.transaction(deployer, async () => {
+        await zkApp.update(witness, Field(100), Field(0), Field(5));
+      })
+    ).rejects.toThrow();
   });
 });
 

@@ -24,7 +24,7 @@ import ResponsiveVideo from '@site/src/components/common/ResponsiveVideo';
 
 # Tutorial 5: Common Types and Functions
 
-In previous tutorials, you learned how to deploy smart contracts to the network interact with them from a React UI and NodeJS.
+In previous tutorials, you learned how to deploy smart contracts to the network and interact with them from a React UI and NodeJS.
 
 In this tutorial, you learn about types you can use when building with o1js. Earlier tutorials mostly use the `Field` type. o1js provides other higher-order types built from Fields that are useful for zkApp development and expand the possibilities for more applications.
 
@@ -32,10 +32,7 @@ The [example project](https://github.com/MinaProtocol/docs2/tree/main/examples/z
 
 ## Prerequisites
 
-This tutorial has been tested with:
-
-- [zkApp CLI](https://www.npmjs.com/package/zkapp-cli) version `0.20.1`
-- [o1js](https://www.npmjs.com/package/o1js) version `1.1.0`.
+This tutorial has been tested with [o1js](https://www.npmjs.com/package/o1js) version `3.0.0`. o1js 3.0.0 requires Node.js `22.19.5` or later.
 
 Ensure your environment meets the [Prerequisites](/zkapps/tutorials#prerequisites) for zkApp Developer Tutorials.
 
@@ -53,35 +50,7 @@ Each type has the usual programming language semantics.
 
 For example, the following code:
 
-```ts
-const num1 = UInt32.from(40);
-const num2 = UInt64.from(40);
-
-const num1EqualsNum2: Bool = num1.toUInt64().equals(num2);
-
-console.log(`num1 === num2: ${num1EqualsNum2.toString()}`);
-console.log(`Fields in num1: ${num1.toFields().length}`);
-
-// --------------------------------------
-
-const signedNum1 = Int64.from(-3);
-const signedNum2 = Int64.from(45);
-
-const signedNumSum = signedNum1.add(signedNum2);
-
-console.log(`signedNum1 + signedNum2: ${signedNumSum}`);
-console.log(`Fields in signedNum1: ${signedNum1.toFields().length}`);
-
-// --------------------------------------
-
-const char1 = Character.fromString('c');
-const char2 = Character.fromString('d');
-const char1EqualsChar2: Bool = char1.toField().equals(char2.toField());
-
-console.log(`char1: ${char1}`);
-console.log(`char1 === char2: ${char1EqualsChar2.toString()}`);
-console.log(`Fields in char1: ${Character.toFields(char1).length}`);
-```
+#include_code basic-types examples/zkapps/05-common-types-and-functions/src/main.ts ts title="src/main.ts"
 
 This result prints to the console when the code is run:
 
@@ -112,42 +81,15 @@ You can create custom types to build your own strings, modified to whatever leng
 
 A brief example of custom types:
 
-```ts
-const str1 = CircuitString.fromString('abc..xyz');
-console.log(`str1: ${str1}`);
-console.log(`Fields in str1: ${CircuitString.toFields(str1).length}`);
-
-// --------------------------------------
-
-const zkAppPrivateKey = PrivateKey.random();
-const zkAppPublicKey = zkAppPrivateKey.toPublicKey();
-
-const data1 = Character.toFields(char2).concat(signedNumSum.toFields());
-const data2 = Character.toFields(char1).concat(CircuitString.toFields(str1));
-
-const signature = Signature.create(zkAppPrivateKey, data2);
-
-const verifiedData1 = signature.verify(zkAppPublicKey, data1).toString();
-const verifiedData2 = signature.verify(zkAppPublicKey, data2).toString();
-
-console.log(`private key: ${zkAppPrivateKey.toBase58()}`);
-console.log(`public key: ${zkAppPublicKey.toBase58()}`);
-console.log(`Fields in private key: ${zkAppPrivateKey.toFields().length}`);
-console.log(`Fields in public key: ${zkAppPublicKey.toFields().length}`);
-
-console.log(`signature verified for data1: ${verifiedData1}`);
-console.log(`signature verified for data2: ${verifiedData2}`);
-
-console.log(`Fields in signature: ${signature.toFields().length}`);
-```
+#include_code advanced-types examples/zkapps/05-common-types-and-functions/src/main.ts ts title="src/main.ts"
 
 And the console output:
 
 ```
 str1: abc..xyz
 Fields in str1: 128
-private key: EKF714j3wgH3tuuQncL93ruQFbJGnhDzfWossAHUp15PdATKE7Ka
-public key: B62qrhsTdExJDAxQx76V1mc13ibzikpmNaNRShTG3MWedCXESBhQ2Ch
+private key: EKEkySvJhQexHr2NEb3iKHe5czTMDnMwzRbTwp2MAuCJKuCGoy3B
+public key: B62qpkeBN4rCyP5wCj4FDh7AHuDLn2gnaxFUXGZNteRgWSBrqrfiqpX
 Fields in private key: 2
 Fields in public key: 2
 signature verified for data1: false
@@ -161,7 +103,7 @@ Observe and follow best practices for your key security. Make sure that you neve
 
 ## Struct
 
-You can create your own compound data types with the special [Struct](https://docs.o1labs.org/o1js/api-reference/functions/Struct) type.
+You can create your own compound data types with the special [Struct](https://docs.o1labs.org/o1js/api-reference/functions/Struct) type. For more about structs, see [Structs](https://docs.o1labs.org/o1js/basic-types/structs) in the o1js documentation.
 
 Define a Struct as one or more data types that o1js understands. For example, Field, higher-order types built into o1js based on Field, or other Struct types defined by you. You can also define methods on your Struct to act upon this data type.
 
@@ -171,31 +113,7 @@ In o1js, programs are compiled into fixed-sized circuits. This means that data s
 
 To meet the fixed-size requirement, this code declares the array in `Points8` structure to be a static size of 8.
 
-```ts
-class Point extends Struct({ x: Field, y: Field }) {
-  static add(a: Point, b: Point) {
-    return { x: a.x.add(b.x), y: a.y.add(b.y) };
-  }
-}
-
-const point1 = { x: Field(10), y: Field(4) };
-const point2 = { x: Field(1), y: Field(2) };
-
-const pointSum = Point.add(point1, point2);
-
-console.log(`pointSum Fields: ${Point.toFields(pointSum)}`);
-
-class Points8 extends Struct({
-  points: [Point, Point, Point, Point, Point, Point, Point, Point],
-}) {}
-
-const points = new Array(8)
-  .fill(null)
-  .map((_, i) => ({ x: Field(i), y: Field(i * 10) }));
-const points8: Points8 = { points };
-
-console.log(`points8 JSON: ${JSON.stringify(points8)}`);
-```
+#include_code struct examples/zkapps/05-common-types-and-functions/src/main.ts ts title="src/main.ts"
 
 The console output:
 
@@ -218,44 +136,7 @@ You can write conditionals inside o1js with these functions.
 
 For example:
 
-```ts
-const input1 = Int64.from(10);
-const input2 = Int64.from(-15);
-
-const inputSum = input1.add(input2);
-
-const inputSumAbs = Provable.if(
-  inputSum.isPositive(),
-  inputSum,
-  inputSum.mul(Int64.minusOne)
-);
-
-console.log(`inputSum: ${inputSum.toString()}`);
-console.log(`inputSumAbs: ${inputSumAbs.toString()}`);
-
-const input3 = Int64.from(22);
-
-const input1largest = input1
-  .sub(input2)
-  .isPositive()
-  .and(input1.sub(input3).isPositive());
-const input2largest = input2
-  .sub(input1)
-  .isPositive()
-  .and(input2.sub(input3).isPositive());
-const input3largest = input3
-  .sub(input1)
-  .isPositive()
-  .and(input3.sub(input2).isPositive());
-
-const largest = Provable.switch(
-  [input1largest, input2largest, input3largest],
-  Int64,
-  [input1, input2, input3]
-);
-
-console.log(`largest: ${largest.toString()}`);
-```
+#include_code control-flow examples/zkapps/05-common-types-and-functions/src/main.ts ts title="src/main.ts"
 
 With output:
 
@@ -300,110 +181,21 @@ import {
 
 To create Merkle trees in your application:
 
-```ts
-const height = 20;
-const tree = new MerkleTree(height);
-```
+#include_code merkle-tree-create examples/zkapps/05-common-types-and-functions/src/main.ts ts title="src/main.ts"
 
 The height variable determines how many leaves are available to the application. For example, a height of 20 leads to a tree with `2^(20-1)`, or 524,288 leaves.
 
-Merkle trees in smart contracts are stored as the hash of the Merkle tree's root. Smart contract methods that update the Merkle root can take a _witness_ of the change as an argument. The [MerkleMapWitness](https://docs.o1labs.org/o1js/api-reference/classes/MerkleMapWitness) represents the Merkle path to the data for which inclusion is being proved.
+Merkle trees in smart contracts are stored as the hash of the Merkle tree's root. Smart contract methods that update the Merkle root can take a _witness_ of the change as an argument. A witness represents the Merkle path to the data for which inclusion is being proved. For a Merkle tree, the [MerkleWitness](https://docs.o1labs.org/o1js/api-reference/functions/MerkleWitness) function creates a witness class for a tree height, such as `MerkleWitness20` in the contract below. For more about Merkle trees in o1js, see [Merkle Trees](https://docs.o1labs.org/o1js/basic-types/merkle-trees) in the o1js documentation.
 
 A contract stores the root of a Merkle tree, where each leaf stores a number, and the smart contract has an `update` function that adds a number to the leaf.
 
 For example, to put a condition on a leaf update, the `update` function checks that the number added was less than 10:
 
-```ts
-...
-  @state(Field) treeRoot = State<Field>();
-...
-  @method async initState(initialRoot: Field) {
-    this.treeRoot.set(initialRoot);
-  }
-
-  @method async update(
-    leafWitness: MerkleWitness20,
-    numberBefore: Field,
-    incrementAmount: Field
-  ) {
-    const initialRoot = this.treeRoot.get();
-    this.treeRoot.requireEquals(initialRoot);
-
-    incrementAmount.assertLessThan(Field(10));
-
-    // check the initial state matches what we expect
-    const rootBefore = leafWitness.calculateRoot(numberBefore);
-    rootBefore.assertEquals(initialRoot);
-
-    // compute the root after incrementing
-    const rootAfter = leafWitness.calculateRoot(
-      numberBefore.add(incrementAmount)
-    );
-
-    // set the new root
-    this.treeRoot.set(rootAfter);
-  }
-```
+#include_code merkle-tree-contract examples/zkapps/05-common-types-and-functions/src/BasicMerkleTreeContract.ts ts title="src/BasicMerkleTreeContract.ts"
 
 The code to interact with the smart contract:
 
-```ts
-// initialize the zkapp
-const zkApp = new BasicMerkleTreeContract(basicTreeZkAppAddress);
-await BasicMerkleTreeContract.compile();
-
-// create a new tree
-const height = 20;
-const tree = new MerkleTree(height);
-class MerkleWitness20 extends MerkleWitness(height) {}
-
-// deploy the smart contract
-const deployTxn = await Mina.transaction(deployerAccount, async () => {
-  AccountUpdate.fundNewAccount(deployerAccount);
-  await zkApp.deploy();
-  // get the root of the new tree to use as the initial tree root
-  await zkApp.initState(tree.getRoot());
-});
-await deployTxn.prove();
-deployTxn.sign([deployerKey, basicTreeZkAppPrivateKey]);
-
-const pendingDeployTx = await deployTxn.send();
-/**
- * `txn.send()` returns a pending transaction with two methods - `.wait()` and `.hash`
- * `.hash` returns the transaction hash
- * `.wait()` automatically resolves once the transaction has been included in a block. this is redundant for the LocalBlockchain, but very helpful for live testnets
- */
-await pendingDeployTx.wait();
-
-const incrementIndex = 522n;
-const incrementAmount = Field(9);
-
-// get the witness for the current tree
-const witness = new MerkleWitness20(tree.getWitness(incrementIndex));
-
-// update the leaf locally
-tree.setLeaf(incrementIndex, incrementAmount);
-
-// update the smart contract
-const txn1 = await Mina.transaction(senderPublicKey, async () => {
-  await zkApp.update(
-    witness,
-    Field(0), // leafs in new trees start at a state of 0
-    incrementAmount
-  );
-});
-await txn1.prove();
-const pendingTx = await txn1.sign([senderPrivateKey, basicTreeZkAppPrivateKey]).send();
-await pendingTx.wait();
-
-// compare the root of the smart contract tree to our local tree
-console.log(
-  `BasicMerkleTree: local tree root hash after send1: ${tree.getRoot()}`
-);
-console.log(
-  `BasicMerkleTree: smart contract root hash after send1: ${zkApp.treeRoot.get()}`
-);
-```
+#include_code merkle-tree-interaction examples/zkapps/05-common-types-and-functions/src/main.ts ts title="src/main.ts"
 
 In this example, leaves are fields. However, you can put more variables in a leaf by hashing an array of fields and setting a leaf to that hash.
 
@@ -417,16 +209,7 @@ See the API reference documentation for the [MerkleMap](https://docs.o1labs.org/
 
 The API for Merkle Maps is similar to Merkle Trees, just instead of using an index to set a leaf, one uses a key:
 
-```ts
-const map = new MerkleMap();
-
-const key = Field(100);
-const value = Field(50);
-
-map.set(key, value);
-
-console.log(`value for key ${key}: ${map.get(key)}`);
-```
+#include_code merkle-map examples/zkapps/05-common-types-and-functions/src/main.ts ts title="src/main.ts"
 
 Which prints:
 
@@ -434,66 +217,19 @@ Which prints:
 value for key 100: 50
 ```
 
-It can be used inside smart contracts with a witness, similar to merkle trees
+It can be used inside smart contracts with a witness, similar to Merkle trees:
 
-```ts
-...
-  @state(Field) mapRoot = State<Field>();
-...
-  @method async init(initialRoot: Field) {
-    this.mapRoot.set(initialRoot);
-  }
-  @method async update(
-    keyWitness: MerkleMapWitness,
-    keyToChange: Field,
-    valueBefore: Field,
-    incrementAmount: Field,
-  ) {
-    const initialRoot = this.mapRoot.get();
-    this.mapRoot.requireEquals(initialRoot);
+#include_code merkle-map-contract examples/zkapps/05-common-types-and-functions/src/BasicMerkleMapContract.ts ts title="src/BasicMerkleMapContract.ts"
 
-    incrementAmount.assertLessThan(Field(10));
+The code to interact with it is similar to the Merkle tree example above:
 
-    // check the initial state matches what we expect
-    const [ rootBefore, key ] = keyWitness.computeRootAndKey(valueBefore);
-    rootBefore.assertEquals(initialRoot);
+#include_code merkle-map-interaction examples/zkapps/05-common-types-and-functions/src/main.ts ts title="src/main.ts"
 
-    key.assertEquals(keyToChange);
-
-    // compute the root after incrementing
-    const [ rootAfter, _ ] = keyWitness.computeRootAndKey(valueBefore.add(incrementAmount));
-
-    // set the new root
-    this.mapRoot.set(rootAfter);
-  }
-```
-
-With (abbreviated) code to interact with it, similar to the Merkle tree example above:
-
-```ts
-const map = new MerkleMap();
-
-const rootBefore = map.getRoot();
-
-const key = Field(100);
-
-const witness = map.getWitness(key);
-...
-// update the smart contract
-const txn1 = await Mina.transaction(deployerAccount, async () => {
-  await zkapp.update(
-    witness,
-    key,
-    Field(0), // keys in a new map start at a value of 0
-    Field(5)
-  );
-});
-...
-```
+The witness proves both the old value and the key. The contract rejects a witness for a different key, so a caller cannot change the value of one key with a witness for another key.
 
 You use [MerkleMaps](https://docs.o1labs.org/o1js/api-reference/classes/MerkleMap) to implement many useful patterns. For example:
 
-- A key value store from public keys to booleans, of token accounts to whether they've participated in a voted yet.
+- A key-value store from public keys to booleans, for example to record whether each account has voted yet.
 - A nullifier that privately tracks if an input was used, without revealing it.
 
 ## Test it
@@ -508,18 +244,21 @@ npm test
 ```
 
 It asserts each value that the console-output blocks on this page print, from
-`num1 === num2: true` to `value for key 100: 50`. It also runs both contracts
+`num1 === num2: true` to `value for key 100: 50`. It also runs all three contracts
 on a local blockchain:
 
 - `BasicMerkleTreeContract` accepts an increment of `9` and **rejects** an
   increment of `10`. After an update, the contract root and the local tree
   root are equal.
+- `BasicMerkleMapContract` adds `5` to key `100` and **rejects** an increment
+  of `10` and a witness for a different key. After an update, the contract
+  root and the local map root are equal.
 - `LedgerContract` moves `12` to an existing recipient and to a new recipient.
   It **rejects** a transfer signed by a different key, a transfer of the full
   balance, and a new recipient that claims a balance that is not `0`.
 
-`main.ts` compiles both contracts and takes about two minutes. The test suite
-turns proofs off and takes about 20 seconds.
+`main.ts` compiles all three contracts and creates real proofs, so it takes
+several minutes. The test suite turns proofs off and is much faster.
 
 ## Conclusion
 
