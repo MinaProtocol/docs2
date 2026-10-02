@@ -51,8 +51,12 @@ export class BasicTokenContract extends TokenContract {
    * updates sum to zero, so a transaction cannot create tokens out of nothing.
    * Minting goes through `mint()` below, which is the only method that raises
    * the supply.
+   *
+   * It is a `@method`, so the contract can prove its approval. That is what
+   * lets a token holder call the inherited `transfer()` and
+   * `approveAccountUpdate()` helpers, which both end in `approveBase()`.
    */
-  async approveBase(forest: AccountUpdateForest) {
+  @method async approveBase(forest: AccountUpdateForest) {
     this.checkZeroBalanceChange(forest);
   }
 
