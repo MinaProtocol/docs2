@@ -7,7 +7,7 @@ url: /glossary
 [A](#a) [B](#b) [C](#c) [D](#d) [E](#e) [F](#f) G [H](#h) [I](#i) J [K](#k) [L](#l) [M](#m) [N](#n) [O](#o)
 [P](#p) Q [R](#r) [S](#s) [T](#t) [U](#u) [V](#v) W X Y [Z](#z)
 
-Are you looking for a zero knowledge or Mina term that isn't here yet? To let us know, please [create an issue](https://github.com/o1-labs/docs2/issues) or click **EDIT THIS PAGE** to submit a PR.
+Are you looking for a zero knowledge or Mina term that isn't here yet? To let us know, please [create an issue](https://github.com/MinaProtocol/docs2/issues) or click **EDIT THIS PAGE** to submit a PR.
 
 ## A
 
@@ -6765,7 +6765,7 @@ Mina is entirely open source, and the code is distributed under the terms of the
 Mina Docs are also open source. We love our community. Help us make the docs better, contributions are welcome and appreciated.
 
 - For a quick fix, click **EDIT THIS PAGE**. 
-- For a more substantial contribution, see the [Docs Contributing Guidelines](https://github.com/o1-labs/docs2/blob/main/CONTRIBUTING.md).
+- For a more substantial contribution, see the [Docs Contributing Guidelines](https://github.com/MinaProtocol/docs2/blob/main/CONTRIBUTING.md).
 
 ## Mina Grants
 
@@ -17883,7 +17883,7 @@ You will:
 
 Later tutorials introduce more concepts and patterns.
 
-The full source code for this tutorial is provided in the [examples/zkapps/01-hello-world](https://github.com/o1-labs/docs2/tree/main/examples/zkapps/01-hello-world) directory on GitHub. While you're there, give the `/docs2` repository a star so that other zk developers can learn to build a zkApp!
+The full source code for this tutorial is provided in the [examples/zkapps/01-hello-world](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/01-hello-world) directory on GitHub. While you're there, give the `/docs2` repository a star so that other zk developers can learn to build a zkApp!
 
 :::info
 
@@ -18010,15 +18010,15 @@ The `src/index.ts` file contains all of the exports you want to make available f
 
 Now, the fun part! Write your smart contract in the `src/Square.ts` file.
 
-A final version of the smart contract is provided in the [Square.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/01-hello-world/src/Square.ts) example file. The code blocks on this page are taken from the example files when the docs are built, so they always match the code that CI runs.
+A final version of the smart contract is provided in the [Square.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/01-hello-world/src/Square.ts) example file. The code blocks on this page are taken from the example files when the docs are built, so they always match the code that CI runs.
 
 This part of the tutorial walks you through the `Square` smart contract code already completed in the `src/Square.ts` example file.
 
 ### Copy the example
 
-This tutorial describes each part of the completed code in the [Square.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/01-hello-world/src/Square.ts) example file.
+This tutorial describes each part of the completed code in the [Square.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/01-hello-world/src/Square.ts) example file.
 
-1. First, open the [Square.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/01-hello-world/src/Square.ts) example file.
+1. First, open the [Square.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/01-hello-world/src/Square.ts) example file.
 
 1. Copy the entire contents of the file into your smart contract in the `src/Square.ts` file.
 
@@ -18120,13 +18120,13 @@ Congratulations, you have reviewed the complete smart contract code.
 
 ## Interact with a smart contract
 
-Next, write a script that interacts with your smart contract. As before, the complete [main.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/01-hello-world/src/main.ts) example file is provided. Follow these steps to build the `main.ts` file so you can interact with the smart contract.
+Next, write a script that interacts with your smart contract. As before, the complete [main.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/01-hello-world/src/main.ts) example file is provided. Follow these steps to build the `main.ts` file so you can interact with the smart contract.
 
 ### Imports
 
 For this tutorial, the `import` statement brings in items from `o1js` that you use to interact with your smart contract.
 
-1. Copy the following lines from [main.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/01-hello-world/src/main.ts) example file into the `src/main.ts` file:
+1. Copy the following lines from [main.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/01-hello-world/src/main.ts) example file into the `src/main.ts` file:
 
   ```ts title="src/main.ts"
   import { Square } from './Square.js';
@@ -18151,7 +18151,7 @@ Using a simulated local blockchain speeds up development and tests the behavior 
 
 :::
 
-To initialize your simulated local blockchain, add the following code from the [main.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/01-hello-world/src/main.ts) example file to `src/main.ts`:
+To initialize your simulated local blockchain, add the following code from the [main.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/01-hello-world/src/main.ts) example file to `src/main.ts`:
 
 ```ts title="src/main.ts"
 const useProof = false;
@@ -18203,7 +18203,7 @@ npm run build && node build/src/main.js
 
 ### Initialize your smart contract
 
-To initialize your smart contract, add more code from the [main.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/01-hello-world/src/main.ts) example file to the `src/main.ts` file.
+To initialize your smart contract, add more code from the [main.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/01-hello-world/src/main.ts) example file to the `src/main.ts` file.
 
 All smart contracts that you create with the zkApp CLI use similar code:
 
@@ -18279,7 +18279,7 @@ state after txn1: 9
 
 ### Add a transaction that fails
 
-It's time to do some testing. To add a transaction that fails, add more code from the [main.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/01-hello-world/src/main.ts) example file to the `src/main.ts` file.
+It's time to do some testing. To add a transaction that fails, add more code from the [main.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/01-hello-world/src/main.ts) example file to the `src/main.ts` file.
 
 The contract logic allows the number that is stored as on-chain state to be replaced only by its square. Now that `num` is in state `9`, updating is possible only with `81`.
 
@@ -18515,13 +18515,13 @@ Start by deleting the default files that come with the new project.
 
 ### Copy the example files
 
-This tutorial relies on the completed code in the [02-private-inputs-and-hash-functions/src/](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/02-private-inputs-and-hash-functions/src/) example files.
+This tutorial relies on the completed code in the [02-private-inputs-and-hash-functions/src/](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/02-private-inputs-and-hash-functions/src) example files.
 
-1. First, open the [IncrementSecret.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/02-private-inputs-and-hash-functions/src/IncrementSecret.ts) example file.
+1. First, open the [IncrementSecret.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/02-private-inputs-and-hash-functions/src/IncrementSecret.ts) example file.
 
 1. Copy the entire contents of the file into your smart contract in the `IncrementSecret.ts` file.
 
-1. Next, open the [main.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/02-private-inputs-and-hash-functions/src/main.ts) example file.
+1. Next, open the [main.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/02-private-inputs-and-hash-functions/src/main.ts) example file.
 
 1. Copy the entire contents of the file into your smart contract in the `main.ts` file.
 
@@ -18613,7 +18613,7 @@ Adding salt as a second input to the contract code makes it harder for an attack
 
 ## Main
 
-The `src/main.ts` file is similar to the Hello World tutorial. For a full version,  see [main.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/02-private-inputs-and-hash-functions/src/main.ts).
+The `src/main.ts` file is similar to the Hello World tutorial. For a full version,  see [main.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/02-private-inputs-and-hash-functions/src/main.ts).
 
 For this tutorial, the key parts to discuss are initializing our contract and using the poseidon hash.
 
@@ -19084,7 +19084,7 @@ You use example code and the zkApp CLI to build an application that:
 1. Implements a button that requests the latest state of the smart contract.
 1. Deploys the zkApp to GitHub Pages.
 
-Like previous tutorials, you use the provided [example files](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/04-zkapp-browser-ui/) so you can focus on the React implementation itself.
+Like previous tutorials, you use the provided [example files](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/04-zkapp-browser-ui) so you can focus on the React implementation itself.
 
 ## Create a project
 
@@ -19171,8 +19171,8 @@ Because o1js code is computationally intensive, it's helpful to use web workers.
 
 1. Download the helper files from the `examples/zkapps/04-zkapp-browser-ui` directory on GitHub:
 
-    - [zkappWorker.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/04-zkapp-browser-ui/ui/app/zkappWorker.ts)
-    - [zkappWorkerClient.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/04-zkapp-browser-ui/ui/app/zkappWorkerClient.ts)
+    - [zkappWorker.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/04-zkapp-browser-ui/ui/app/zkappWorker.ts)
+    - [zkappWorkerClient.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/04-zkapp-browser-ui/ui/app/zkappWorkerClient.ts)
 
 1. Move the files to your local `04-zkapp-browser-ui/ui/app` directory.
 
@@ -19185,7 +19185,7 @@ Because o1js code is computationally intensive, it's helpful to use web workers.
 
 The example project has a completed app. The `page.tsx` file is the entry file for your application and contains the main logic for the browser UI that is ready to deploy to GitHub Pages.
 
-1. Download the [page.tsx](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/04-zkapp-browser-ui/ui/app/page.tsx) example file.
+1. Download the [page.tsx](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/04-zkapp-browser-ui/ui/app/page.tsx) example file.
 
 1. Move the `page.tsx` file to your local `04-zkapp-browser-ui/ui/app` directory.
 
@@ -19719,7 +19719,7 @@ In previous tutorials, you learned how to deploy smart contracts to the network 
 
 In this tutorial, you learn about types you can use when building with o1js. Earlier tutorials mostly use the `Field` type. o1js provides other higher-order types built from Fields that are useful for zkApp development and expand the possibilities for more applications.
 
-The [example project](https://github.com/o1-labs/docs2/tree/main/examples/zkapps/05-common-types-and-functions/src) includes a [main.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/05-common-types-and-functions/src/main.ts) file that shows all of the concepts presented in this tutorial, along with smart contracts showing more advanced usage of some of the concepts, particularly Merkle Trees.
+The [example project](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/05-common-types-and-functions/src) includes a [main.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/05-common-types-and-functions/src/main.ts) file that shows all of the concepts presented in this tutorial, along with smart contracts showing more advanced usage of some of the concepts, particularly Merkle Trees.
 
 ## Prerequisites
 
@@ -19977,7 +19977,7 @@ If a program is too large to fit into these constraints, it can be broken up int
 
 ## Merkle Trees
 
-You can use [Merkle trees](https://docs.o1labs.org/o1js/api-reference/classes/MerkleTree) to manage large amounts of data within a circuit. The power of Merkle trees is demonstrated in the [05-common-types-and-functions/src](https://github.com/o1-labs/docs2/tree/main/examples/zkapps/05-common-types-and-functions/src) reference project for this tutorial. See the [BasicMerkleTreeContract.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/05-common-types-and-functions/src/BasicMerkleTreeContract.ts) contract and [main.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/05-common-types-and-functions/src/main.ts) that demonstrates how contracts interact with Merkle trees and how to construct them.
+You can use [Merkle trees](https://docs.o1labs.org/o1js/api-reference/classes/MerkleTree) to manage large amounts of data within a circuit. The power of Merkle trees is demonstrated in the [05-common-types-and-functions/src](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/05-common-types-and-functions/src) reference project for this tutorial. See the [BasicMerkleTreeContract.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/05-common-types-and-functions/src/BasicMerkleTreeContract.ts) contract and [main.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/05-common-types-and-functions/src/main.ts) that demonstrates how contracts interact with Merkle trees and how to construct them.
 
 The first step is to import `MerkleTree`:
 
@@ -20098,7 +20098,7 @@ console.log(
 
 In this example, leaves are fields. However, you can put more variables in a leaf by hashing an array of fields and setting a leaf to that hash.
 
-This complete example is in the [project directory](https://github.com/o1-labs/docs2/tree/main/examples/zkapps/05-common-types-and-functions/src).
+This complete example is in the [project directory](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/05-common-types-and-functions/src).
 
 A more advanced example `LedgerContract` implements a basic ledger of tokens, including checks that the sender has signed their transaction and that the amount the sender has sent matches the amount the receiver receives.
 
@@ -20487,7 +20487,7 @@ This simple oracle design:
 
 ### Code
 
-You can view the complete [oracle logic code](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/07-oracles/oracle/app/api/credit-score/route.ts) and the corresponding `Next.js` project [here](https://github.com/o1-labs/docs2/tree/main/examples/zkapps/07-oracles/oracle).
+You can view the complete [oracle logic code](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/07-oracles/oracle/app/api/credit-score/route.ts) and the corresponding `Next.js` project [here](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/07-oracles/oracle).
 
 This oracle uses the [Vercel Functions](https://vercel.com/docs/functions). You don't have to dive into the code now, since the code is commented to explain each step so you can build something similar for yourself!
 
@@ -20534,8 +20534,8 @@ You can generate the Mina-compatible public/private key pair for your oracle by 
 npm run keygen
 ```
 
-This command runs the code in the [keygen.js](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/07-oracles/oracle/scripts/keygen.js) file.
-This file is the part of the oracle `Next.js` application, source code of which is available [here](https://github.com/o1-labs/docs2/tree/main/examples/zkapps/07-oracles/oracle).
+This command runs the code in the [keygen.js](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/07-oracles/oracle/scripts/keygen.js) file.
+This file is the part of the oracle `Next.js` application, source code of which is available [here](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/07-oracles/oracle).
 
 ## Smart Contract
 
@@ -20586,7 +20586,7 @@ The files in the `src` directory contain the TypeScript code for the smart contr
 
 ### Write the smart contract
 
-You can find the complete code for this smart contract [here](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/07-oracles/contracts/src/OracleExample.ts).
+You can find the complete code for this smart contract [here](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/07-oracles/contracts/src/OracleExample.ts).
 
 Paste the following content into the `src/OracleExample.ts` file:
 
@@ -20743,7 +20743,7 @@ this.emitEvent('verified', id);
 
 ## Test your smart contract
 
-You can find the complete code for the smart contract tests [here](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/07-oracles/contracts/src/OracleExample.test.ts).
+You can find the complete code for the smart contract tests [here](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/07-oracles/contracts/src/OracleExample.test.ts).
 
 When you ran the `zk file OracleExample` command, the zkApp CLI automatically generated a test file `src/OracleExample.test.ts`.
 
@@ -21295,7 +21295,7 @@ You build recursive zkApps with [ZkProgram](https://docs.o1labs.org/o1js/api-ref
 
 Proofs generated using a ZkProgram can be passed into zkApp smart contracts for them to verify recursively. They can even be passed recursively into their own functions for off-chain recursive composition.
 
-The following example code for the ZkProgram tutorial is provided in the [main.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/09-recursion/src/main.ts) file on GitHub. While you're there, give the `/docs2` repository a star so that other zk developers can learn to build a zkApp!
+The following example code for the ZkProgram tutorial is provided in the [Add.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/09-recursion/src/Add.ts) file on GitHub. While you're there, give the `/docs2` repository a star so that other zk developers can learn to build a zkApp!
 
 ## Prerequisites
 
@@ -21341,13 +21341,13 @@ export { Add };
 
 Now, the fun part! Write your smart contract in the `src/Add.ts` file.
 
-A final version of the smart contract is provided in the [Add.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/09-recursion/src/Add.ts) example file.
+A final version of the smart contract is provided in the [Add.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/09-recursion/src/Add.ts) example file.
 
 ### Copy the example
 
-Use the existing code in the [Add.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/09-recursion/src/Add.ts) example file.
+Use the existing code in the [Add.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/09-recursion/src/Add.ts) example file.
 
-1. First, open the [Add.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/09-recursion/src/Add.ts) example file.
+1. First, open the [Add.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/09-recursion/src/Add.ts) example file.
 1. Copy the file's entire contents into your project `src/Add.ts` file.
 
 ### Imports
@@ -21472,7 +21472,7 @@ Verification of the proof can occur off-chain using the `verify()` method. This 
 
 ## Voting Example
 
-Another example of off-chain multi-party proof construction with recursive ZKPs is provided in the [vote.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/09-recursion/src/vote.ts) example file.
+Another example of off-chain multi-party proof construction with recursive ZKPs is provided in the [vote.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/09-recursion/src/vote.ts) example file.
 
 ## Using ZkProgram in Smart Contracts
 
@@ -21488,7 +21488,7 @@ This zkRollup design is flexible to how much compute is being demanded of it (fo
 
 On a single machine, the example code does not offer a high throughput. However, you can achieve very high throughputs by switching the mapreduce here for a mapreduce that runs over tens or hundreds of machines. In fact, you can achieve any level of throughput as long as you're willing to incur `log(N)` latency when constructing the proof of N transactions.
 
-The following code for the ZkProgram part of a rollup is provided in the [rollup.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/09-recursion/src/rollup.ts) example file.
+The following code for the ZkProgram part of a rollup is provided in the [rollup.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/09-recursion/src/rollup.ts) example file.
 
 A community-contributed implementation distributes compute over AWS instances in this [proof_aggregator](https://github.com/Trivo25/proof_aggregator) example.
 
@@ -21780,11 +21780,11 @@ In this tutorial, you build two smart contracts:
 - `ProofsOnlyZkApp`: Non-upgradeable proof only
 - `SecondaryZkApp`: the other zkApp
 
-The full source code for this tutorial is provided in the [examples/zkapps/10-account-updates](https://github.com/o1-labs/docs2/tree/main/examples/zkapps/10-account-updates) directory on GitHub.
+The full source code for this tutorial is provided in the [examples/zkapps/10-account-updates](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/10-account-updates) directory on GitHub.
 
 ### Non-upgradeable proof only
 
-The full example code is provided in the [examples/zkapps/10-account-updates/src/ProofsOnlyZkApp.ts](https://github.com/o1-labs/docs2/tree/main/examples/zkapps/10-account-updates/src/ProofsOnlyZkApp.ts) file.
+The full example code is provided in the [examples/zkapps/10-account-updates/src/ProofsOnlyZkApp.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/10-account-updates/src/ProofsOnlyZkApp.ts) file.
 
 Goal: Configure this zkApp to be modifiable only by using proofs.
 
@@ -21893,7 +21893,7 @@ This zkApp has methods that call other methods to let you explore the impacts to
 
   The `callSecondary()` method takes the address of the other zkApp, `SecondaryZkApp`, and calls a method on it. Note that the impact of calling that method occurs after this set of AccountUpdates—so when you call `secondaryContract.num.get()`, it gets the value before this transaction is applied.
 
-Finally, look briefly at [SecondaryZkApp.ts](https://github.com/o1-labs/docs2/tree/main/examples/zkapps/10-account-updates/src/SecondaryZkApp.ts) that contains:
+Finally, look briefly at [SecondaryZkApp.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/10-account-updates/src/SecondaryZkApp.ts) that contains:
 
 ```ts
 export class SecondaryZkApp extends SmartContract {
@@ -21928,7 +21928,7 @@ You declare functions for initializing the account and the `add()` method that i
 
 ### Running Your Smart Contracts and Visualizing the AccountUpdates
 
-Now it's time to learn about the [main.ts](https://github.com/o1-labs/docs2/tree/main/examples/zkapps/10-account-updates/src/main.ts) file that creates transactions with the earlier smart contracts and the account update visualizations it creates.
+Now it's time to learn about the [main.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/10-account-updates/src/main.ts) file that creates transactions with the earlier smart contracts and the account update visualizations it creates.
 
 1. Import the transaction visualizer:
 
@@ -22575,7 +22575,7 @@ This tutorial has been tested with:
 
   For this tutorial, you run commands from the root of the `message-board` directory as you work in the `src` directory on files that contain the TypeScript code for the smart contract.
 
-  Each time you make updates, then build or deploy, the TypeScript code is compiled into JavaScript in the `build` directory. See the included [README](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/13-anonymous-message-board/README.md) file with usage instructions.
+  Each time you make updates, then build or deploy, the TypeScript code is compiled into JavaScript in the `build` directory. See the included [README](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/13-anonymous-message-board/README.md) file with usage instructions.
 
 ### Prepare the project
 
@@ -22593,7 +22593,7 @@ Example smart contract files come with the new project, you can delete them if y
   $ zk file message
   ```
 
-1. Copy the entire contents of the [message.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/13-anonymous-message-board/src/message.ts) example file into your local `message-board/src/message.ts` file.
+1. Copy the entire contents of the [message.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/13-anonymous-message-board/src/message.ts) example file into your local `message-board/src/message.ts` file.
 
   ```ts
   import {
@@ -22965,7 +22965,7 @@ To verify your installed versions, use `npm -v`, `node -v`, and `git -v`.
 
 ## Tips
 
-The full source code for tutorials is provided in  the [examples/zkapps/](https://github.com/o1-labs/docs2/tree/main/examples/zkapps/) directory on GitHub. While you're there, give the `/docs2` repository a star so that other zk developers can learn to build a zkApp!
+The full source code for tutorials is provided in  the [examples/zkapps/](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/) directory on GitHub. While you're there, give the `/docs2` repository a star so that other zk developers can learn to build a zkApp!
 
 Line numbers are provided for convenience. To prevent copying line numbers and command prompts as shown in the tutorials, use the copy code to clipboard button that appears at the top right of the snippet box when you hover over it.
 
@@ -23019,7 +23019,7 @@ Each time you make updates, then build or deploy, the TypeScript code is compile
 
 To make this more script convenient to write, use the provided helper functions.
 
-1. Download the [utils.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/interacting-with-zkApps-server-side/src/utils.ts) file.
+1. Download the [utils.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/interacting-with-zkApps-server-side/src/utils.ts) file.
 
 1. Place the file in the project `03-deploying-to-a-live-network/src` folder.
 
@@ -23032,7 +23032,7 @@ To make this more script convenient to write, use the provided helper functions.
 
 ### Connect to a remote network
 
-1. Download the [main.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/interacting-with-zkApps-server-side/src/main.ts) example file.
+1. Download the [main.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/interacting-with-zkApps-server-side/src/main.ts) example file.
 
 1. Because you are building on your earlier work, place the `main.ts` file in the project `03-deploying-to-a-live-network/src` folder.
 
@@ -23179,7 +23179,7 @@ console.log(`current value of num is ${num}`);
 
 To do this, reuse the helper function `loopUntilAccountExists()` from `utils.js`. This time, pass in `isZkappAccount: true` checks if the account exists and that there is a verification key on the account. An existing verification key indicates that the zkApp has been successfully deployed.
 
-The smart contract was already deployed with `zk deploy` so a programmatic deploy is not required and is commented out here. If you want to see how this works, or it's useful for your application, see the code in [utils.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/interacting-with-zkApps-server-side/src/utils.ts).
+The smart contract was already deployed with `zk deploy` so a programmatic deploy is not required and is commented out here. If you want to see how this works, or it's useful for your application, see the code in [utils.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/interacting-with-zkApps-server-side/src/utils.ts).
 
 After the zkApp has been deployed, fetch the current value of `zkapp.num` (the on-chain defined on the `SmartContract`) and log it. If this is the first time you have run this script, the value is `3` because that's how it is set in the smart contract's `init()` function. The `init()` function is called automatically during the first deploy (not during re-deploys).
 
@@ -25844,7 +25844,7 @@ This section collects more recommendations and describes more complex attacks on
 
 :::info
 
-The list above is intended to grow over time. If you have a security tip that you think should be included, [please let us know](https://github.com/o1-labs/docs2/edit/main/docs/zkapps/writing-a-zkapp/introduction-to-zkapps/secure-zkapps.mdx)!
+The list above is intended to grow over time. If you have a security tip that you think should be included, [please let us know](https://github.com/MinaProtocol/docs2/edit/main/docs/zkapps/writing-a-zkapp/introduction-to-zkapps/secure-zkapps.mdx)!
 
 :::
 

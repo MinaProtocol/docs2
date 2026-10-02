@@ -71,7 +71,7 @@ This simple oracle design:
 
 ### Code
 
-You can view the complete [oracle logic code](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/07-oracles/oracle/app/api/credit-score/route.ts) and the corresponding `Next.js` project [here](https://github.com/o1-labs/docs2/tree/main/examples/zkapps/07-oracles/oracle).
+You can view the complete [oracle logic code](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/07-oracles/oracle/app/api/credit-score/route.ts) and the corresponding `Next.js` project [here](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/07-oracles/oracle).
 
 This oracle uses the [Vercel Functions](https://vercel.com/docs/functions). You don't have to dive into the code now, since the code is commented to explain each step so you can build something similar for yourself!
 
@@ -118,8 +118,8 @@ You can generate the Mina-compatible public/private key pair for your oracle by 
 npm run keygen
 ```
 
-This command runs the code in the [keygen.js](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/07-oracles/oracle/scripts/keygen.js) file.
-This file is the part of the oracle `Next.js` application, source code of which is available [here](https://github.com/o1-labs/docs2/tree/main/examples/zkapps/07-oracles/oracle).
+This command runs the code in the [keygen.js](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/07-oracles/oracle/scripts/keygen.js) file.
+This file is the part of the oracle `Next.js` application, source code of which is available [here](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/07-oracles/oracle).
 
 ## Smart Contract
 
@@ -170,7 +170,7 @@ The files in the `src` directory contain the TypeScript code for the smart contr
 
 ### Write the smart contract
 
-You can find the complete code for this smart contract [here](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/07-oracles/contracts/src/OracleExample.ts).
+You can find the complete code for this smart contract [here](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/07-oracles/contracts/src/OracleExample.ts).
 
 Paste the following content into the `src/OracleExample.ts` file:
 
@@ -327,7 +327,7 @@ this.emitEvent('verified', id);
 
 ## Test your smart contract
 
-You can find the complete code for the smart contract tests [here](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/07-oracles/contracts/src/OracleExample.test.ts).
+You can find the complete code for the smart contract tests [here](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/07-oracles/contracts/src/OracleExample.test.ts).
 
 When you ran the `zk file OracleExample` command, the zkApp CLI automatically generated a test file `src/OracleExample.test.ts`.
 

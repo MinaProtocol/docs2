@@ -10,7 +10,7 @@ For the step-by-step tutorial, see [Tutorial 10: Account Updates](https://docs.m
 
 1. Clone the repository:
     ```sh
-    git clone https://github.com/o1-labs/docs2.git
+    git clone https://github.com/MinaProtocol/docs2.git
     ```
 2. Change directory to the project location:
     ```sh

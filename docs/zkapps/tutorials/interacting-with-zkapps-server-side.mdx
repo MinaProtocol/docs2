@@ -43,7 +43,7 @@ Each time you make updates, then build or deploy, the TypeScript code is compile
 
 To make this more script convenient to write, use the provided helper functions.
 
-1. Download the [utils.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/interacting-with-zkApps-server-side/src/utils.ts) file.
+1. Download the [utils.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/interacting-with-zkApps-server-side/src/utils.ts) file.
 
 1. Place the file in the project `03-deploying-to-a-live-network/src` folder.
 
@@ -56,7 +56,7 @@ To make this more script convenient to write, use the provided helper functions.
 
 ### Connect to a remote network
 
-1. Download the [main.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/interacting-with-zkApps-server-side/src/main.ts) example file.
+1. Download the [main.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/interacting-with-zkApps-server-side/src/main.ts) example file.
 
 1. Because you are building on your earlier work, place the `main.ts` file in the project `03-deploying-to-a-live-network/src` folder.
 
@@ -203,7 +203,7 @@ console.log(`current value of num is ${num}`);
 
 To do this, reuse the helper function `loopUntilAccountExists()` from `utils.js`. This time, pass in `isZkappAccount: true` checks if the account exists and that there is a verification key on the account. An existing verification key indicates that the zkApp has been successfully deployed.
 
-The smart contract was already deployed with `zk deploy` so a programmatic deploy is not required and is commented out here. If you want to see how this works, or it's useful for your application, see the code in [utils.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/interacting-with-zkApps-server-side/src/utils.ts).
+The smart contract was already deployed with `zk deploy` so a programmatic deploy is not required and is commented out here. If you want to see how this works, or it's useful for your application, see the code in [utils.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/interacting-with-zkApps-server-side/src/utils.ts).
 
 After the zkApp has been deployed, fetch the current value of `zkapp.num` (the on-chain defined on the `SmartContract`) and log it. If this is the first time you have run this script, the value is `3` because that's how it is set in the smart contract's `init()` function. The `init()` function is called automatically during the first deploy (not during re-deploys).
 

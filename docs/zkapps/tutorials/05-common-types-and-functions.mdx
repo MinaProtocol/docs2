@@ -28,7 +28,7 @@ In previous tutorials, you learned how to deploy smart contracts to the network 
 
 In this tutorial, you learn about types you can use when building with o1js. Earlier tutorials mostly use the `Field` type. o1js provides other higher-order types built from Fields that are useful for zkApp development and expand the possibilities for more applications.
 
-The [example project](https://github.com/o1-labs/docs2/tree/main/examples/zkapps/05-common-types-and-functions/src) includes a [main.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/05-common-types-and-functions/src/main.ts) file that shows all of the concepts presented in this tutorial, along with smart contracts showing more advanced usage of some of the concepts, particularly Merkle Trees.
+The [example project](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/05-common-types-and-functions/src) includes a [main.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/05-common-types-and-functions/src/main.ts) file that shows all of the concepts presented in this tutorial, along with smart contracts showing more advanced usage of some of the concepts, particularly Merkle Trees.
 
 ## Prerequisites
 
@@ -286,7 +286,7 @@ If a program is too large to fit into these constraints, it can be broken up int
 
 ## Merkle Trees
 
-You can use [Merkle trees](https://docs.o1labs.org/o1js/api-reference/classes/MerkleTree) to manage large amounts of data within a circuit. The power of Merkle trees is demonstrated in the [05-common-types-and-functions/src](https://github.com/o1-labs/docs2/tree/main/examples/zkapps/05-common-types-and-functions/src) reference project for this tutorial. See the [BasicMerkleTreeContract.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/05-common-types-and-functions/src/BasicMerkleTreeContract.ts) contract and [main.ts](https://github.com/o1-labs/docs2/blob/main/examples/zkapps/05-common-types-and-functions/src/main.ts) that demonstrates how contracts interact with Merkle trees and how to construct them.
+You can use [Merkle trees](https://docs.o1labs.org/o1js/api-reference/classes/MerkleTree) to manage large amounts of data within a circuit. The power of Merkle trees is demonstrated in the [05-common-types-and-functions/src](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/05-common-types-and-functions/src) reference project for this tutorial. See the [BasicMerkleTreeContract.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/05-common-types-and-functions/src/BasicMerkleTreeContract.ts) contract and [main.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/05-common-types-and-functions/src/main.ts) that demonstrates how contracts interact with Merkle trees and how to construct them.
 
 The first step is to import `MerkleTree`:
 
@@ -407,7 +407,7 @@ console.log(
 
 In this example, leaves are fields. However, you can put more variables in a leaf by hashing an array of fields and setting a leaf to that hash.
 
-This complete example is in the [project directory](https://github.com/o1-labs/docs2/tree/main/examples/zkapps/05-common-types-and-functions/src).
+This complete example is in the [project directory](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/05-common-types-and-functions/src).
 
 A more advanced example `LedgerContract` implements a basic ledger of tokens, including checks that the sender has signed their transaction and that the amount the sender has sent matches the amount the receiver receives.
 
