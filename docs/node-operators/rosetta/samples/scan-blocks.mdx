@@ -1,48 +1,37 @@
 ---
 title: Scanning Blocks
-description: Poll for new blocks and inspect transactions using curl
+description: Poll Mina Rosetta for new blocks and inspect their transactions
 ---
 
 # Scanning Blocks
 
-To poll for new blocks, query `/network/status` for the current block height, then fetch each block sequentially.
+The pattern: query `/network/status` for the current chain tip, then fetch each block by index sequentially. When `/block` returns `{ block: null }` the height is not yet produced — wait and retry.
 
-Get the current block height:
+This is the foundation of every other read-side integration (deposit tracking, search, custodial reconciliation). The full runnable version is at [`src/app/rosetta/examples/ts/scan-blocks.ts`](https://github.com/MinaProtocol/mina/blob/develop/src/app/rosetta/examples/ts/scan-blocks.ts). The core loop:
 
-```bash
-curl -s "$ROSETTA_URL/network/status" \
-  -H 'Content-Type: application/json' \
-  -d "{\"network_identifier\":$NETWORK}" | jq '.current_block_identifier.index'
+```ts
+let height = (await client.networkStatus()).current_block_identifier.index;
+
+while (true) {
+  const { block } = await client.block({ index: height });
+  if (!block) {
+    await sleep(POLL_INTERVAL_MS);
+    continue;
+  }
+  for (const tx of block.transactions) {
+    console.log(tx.transaction_identifier.hash);
+  }
+  height += 1;
+}
 ```
 
-Fetch a specific block by index:
+## Mina-specific notes
 
-```bash
-BLOCK_INDEX=1000
+- **Block index vs hash**: `/block` accepts either `{ index: number }` or `{ hash: string }`. Index is simpler for sequential scanning; hash is useful when reconciling against an external source.
+- **Reorgs**: Mina has a finite reorg window. If you build state from blocks before final confirmation, persist the parent hash and detect divergence — when the new block at height `N` doesn't reference the hash you saw at height `N-1`, walk back and reapply.
+- **Confirmations**: see [Lifecycle of a Payment](/mina-protocol/lifecycle-of-a-payment) for how many slots to wait before treating a transaction as final.
+- **Skipped slots**: Mina has empty slots (no block produced). If you only see a `null` response, you may need to skip the slot or wait for the next block, depending on whether you index by block height or slot.
 
-curl -s "$ROSETTA_URL/block" \
-  -H 'Content-Type: application/json' \
-  -d "{\"network_identifier\":$NETWORK,\"block_identifier\":{\"index\":$BLOCK_INDEX}}" | jq .
-```
+## Want it in shell?
 
-A simple polling loop that waits for new blocks:
-
-```bash
-HEIGHT=$(curl -s "$ROSETTA_URL/network/status" \
-  -H 'Content-Type: application/json' \
-  -d "{\"network_identifier\":$NETWORK}" | jq '.current_block_identifier.index')
-
-while true; do
-  BLOCK=$(curl -s "$ROSETTA_URL/block" \
-    -H 'Content-Type: application/json' \
-    -d "{\"network_identifier\":$NETWORK,\"block_identifier\":{\"index\":$HEIGHT}}")
-
-  if echo "$BLOCK" | jq -e '.block' > /dev/null 2>&1; then
-    echo "Block $HEIGHT:"
-    echo "$BLOCK" | jq '.block.transactions[] | .transaction_identifier.hash'
-    HEIGHT=$((HEIGHT + 1))
-  else
-    sleep 10
-  fi
-done
-```
+A curl-based loop is in the mina repo at [`src/app/rosetta/test-curl/`](https://github.com/MinaProtocol/mina/tree/develop/src/app/rosetta/test-curl). Useful for exploration; not intended as production code.

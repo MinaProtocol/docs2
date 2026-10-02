@@ -1,65 +1,36 @@
 ---
 title: Tracking Deposits
-description: Monitor an address for incoming MINA deposits using curl
+description: Watch a Mina address for incoming MINA deposits via Rosetta
 ---
 
 # Tracking Deposits
 
-To track deposits, scan each block for `payment_receiver_inc` operations matching your deposit address.
+The pattern: scan blocks (see [Scanning Blocks](scan-blocks)) and within each block, filter operations by:
 
-Fetch a block and filter for deposits to a specific address:
+1. `type === "payment_receiver_inc"` — operation that credits an account
+2. `account.address === <your deposit address>`
+3. `status !== "Failed"` — exclude operations from rolled-back transactions
 
-```bash
-DEPOSIT_ADDRESS="B62qr..."
-BLOCK_INDEX=1000
+Each matching operation represents one credit to the address. Sum or record them per transaction depending on how your accounting works.
 
-curl -s "$ROSETTA_URL/block" \
-  -H 'Content-Type: application/json' \
-  -d "{\"network_identifier\":$NETWORK,\"block_identifier\":{\"index\":$BLOCK_INDEX}}" \
-  | jq --arg addr "$DEPOSIT_ADDRESS" '
-    .block.transactions[]
-    | {
-        tx_hash: .transaction_identifier.hash,
-        deposits: [
-          .operations[]
-          | select(.account.address == $addr and .type == "payment_receiver_inc")
-          | { amount: .amount.value }
-        ]
-      }
-    | select(.deposits | length > 0)
-  '
+The full runnable version is at [`src/app/rosetta/examples/ts/track-deposits.ts`](https://github.com/MinaProtocol/mina/blob/develop/src/app/rosetta/examples/ts/track-deposits.ts). The filter:
+
+```ts
+function isDeposit(op: Operation, address: string): boolean {
+  return (
+    op.type === "payment_receiver_inc" &&
+    op.status !== "Failed" &&
+    op.account?.address === address &&
+    !!op.amount
+  );
+}
 ```
 
-A continuous deposit monitoring loop:
+## Mina-specific notes
 
-```bash
-DEPOSIT_ADDRESS="B62qr..."
-
-HEIGHT=$(curl -s "$ROSETTA_URL/network/status" \
-  -H 'Content-Type: application/json' \
-  -d "{\"network_identifier\":$NETWORK}" | jq '.current_block_identifier.index')
-
-while true; do
-  BLOCK=$(curl -s "$ROSETTA_URL/block" \
-    -H 'Content-Type: application/json' \
-    -d "{\"network_identifier\":$NETWORK,\"block_identifier\":{\"index\":$HEIGHT}}")
-
-  if echo "$BLOCK" | jq -e '.block' > /dev/null 2>&1; then
-    echo "$BLOCK" | jq --arg addr "$DEPOSIT_ADDRESS" '
-      .block.transactions[]
-      | {
-          tx_hash: .transaction_identifier.hash,
-          deposits: [
-            .operations[]
-            | select(.account.address == $addr and .type == "payment_receiver_inc")
-            | { amount: .amount.value }
-          ]
-        }
-      | select(.deposits | length > 0)
-    '
-    HEIGHT=$((HEIGHT + 1))
-  else
-    sleep 10
-  fi
-done
-```
+- **`payment_receiver_inc` is the operation type to filter on**, not `transfer` or similar. Mina's transfer is represented as three distinct operations (fee, source decrement, receiver increment) — the receiver credit is what you care about for deposits. See [Transfer transaction layout](requests#transfer-transaction-layout).
+- **Token IDs**: the default MINA token ID is `wSHV2S4qX9jFsLjQo8r1BsMLH2ZRKsZx6EJd1sbozGPieEC4Jf`. If you support custom tokens, also check `op.account.metadata.token_id`.
+- **Amounts are nanomina** (`decimals: 9`). Display as MINA by dividing by 10⁹.
+- **Failed transactions** still appear in `block.transactions` with operations marked `status: "Failed"`. Always check status before crediting.
+- **Account creation fee**: a deposit to a brand-new address pays a one-time 1 MINA account creation fee that appears as a separate operation. The receiver still receives the full deposit amount minus this fee.
+- **Memos**: Mina supports an optional memo field, but the recommended best practice is **not to require memos** for deposit attribution — see the [FAQ](/node-operators/faq#why-do-some-users-appear-to-have-lost-their-funds-when-sending-to-exchanges).
