@@ -1,0 +1,390 @@
+---
+title: 'Tutorial 12: Cross-Contract Calls'
+hide_title: true
+sidebar_label: 'Tutorial 12: Cross-Contract Calls'
+description: Call a method of one smart contract from a method of another, use the value it returns, and see the tree of account updates and the proofs that the call makes.
+pagination_prev: zkapps/tutorials/account-updates
+pagination_next: zkapps/tutorials/anonymous-message-board
+keywords:
+  - smart contracts
+  - zkapps
+  - cross-contract calls
+  - composability
+  - account updates
+  - events
+  - zero knowledge proof programming
+  - zk proof
+  - zk
+  - mina
+---
+
+# Tutorial 12: Cross-Contract Calls
+
+A _cross-contract call_ is a call from a method of one smart contract to a
+method of a different smart contract, in the same transaction. With
+cross-contract calls, you can build a zkApp from small contracts that each do
+one thing, and use a contract that another developer deployed without a copy
+of its code in your contract.
+
+In this tutorial, you write three contracts:
+
+- `Incrementer` adds 1 to a number and returns the result.
+- `Adder` adds two numbers, then calls `Incrementer` to add 1 to the sum.
+- `Caller` calls `Adder`, stores the result on chain, and emits it as an
+  event.
+
+A call to `Caller` with `5` and `6` stores `12`.
+
+You also see what the call makes: one transaction with a tree of three
+account updates, and one proof for each contract. An _account update_ is the
+set of instructions for one account in a transaction. To learn about account
+updates, see [Tutorial 10: Account Updates](account-updates).
+
+The full source code for this tutorial is in the
+[examples/zkapps/12-cross-contract-calls](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/12-cross-contract-calls)
+directory on GitHub.
+
+## Prerequisites
+
+Make sure your environment meets the
+[Prerequisites](/zkapps/tutorials#prerequisites) for zkApp Developer
+Tutorials. o1js 3 requires Node.js 22 or later.
+
+This tutorial has been tested with:
+
+- [o1js](https://www.npmjs.com/package/o1js) version `3.0.0`
+- Node.js version `22`
+
+## Get the example project
+
+```sh
+git clone https://github.com/MinaProtocol/docs2.git
+cd docs2/examples/zkapps/12-cross-contract-calls
+npm install
+```
+
+The contracts are in the `src` directory, one contract in each file:
+
+- `src/Incrementer.ts`
+- `src/Adder.ts`
+- `src/Caller.ts`
+
+`src/main.ts` deploys the contracts to a local blockchain and calls them.
+
+## The `Incrementer` contract
+
+`Incrementer` has one method. The method adds 1 to its argument and returns
+the result:
+
+```ts
+import { Field, SmartContract, method } from 'o1js';
+
+// A contract that adds 1 to a number and returns the result.
+export class Incrementer extends SmartContract {
+  // `@method.returns` declares the type of the value that the method returns.
+  // A caller can use that value only because it is declared here.
+  @method.returns(Field)
+  async increment(x: Field) {
+    return x.add(1);
+  }
+}
+```
+
+A method that returns a value must declare the type of that value with
+`@method.returns(Type)` in place of `@method`. The value becomes part of the
+proof: the proof of `increment()` shows that it returned `x + 1` for the `x`
+that it received.
+
+Like all methods in o1js 3, `increment()` is `async`, so a caller must
+`await` it.
+
+## The `Adder` contract
+
+`Adder` computes `x + y`, and then calls `Incrementer` to add 1:
+
+```ts
+import { Field, PublicKey, SmartContract, method } from 'o1js';
+import { Incrementer } from './Incrementer.js';
+
+// A contract that adds two numbers, adds 1 to the sum, and returns the result.
+// It does not add the 1 itself: it calls the Incrementer contract to do it.
+export class Adder extends SmartContract {
+  @method.returns(Field)
+  async addPlus1(incrementerAddress: PublicKey, x: Field, y: Field) {
+    // Compute the sum
+    const sum = x.add(y);
+
+    // Call the Incrementer contract at `incrementerAddress` to add 1
+    const incrementer = new Incrementer(incrementerAddress);
+    return await incrementer.increment(sum);
+  }
+}
+```
+
+To call another contract, a method does two things:
+
+1. It makes an instance of the other contract's class, with the address of
+   the account that holds that contract: `new Incrementer(incrementerAddress)`.
+1. It calls a method on that instance and awaits the result:
+   `await incrementer.increment(sum)`.
+
+The call does not run `Incrementer` inside the `Adder` circuit. It adds a
+separate account update for the `Incrementer` account, with its own proof,
+as a child of the `Adder` account update. The `Adder` proof uses the returned
+value, and the network makes sure that the value is the same one that the
+`Incrementer` proof returned.
+
+The address is a method argument, `incrementerAddress`, so the transaction
+that calls `Adder` chooses which account to call.
+
+## The `Caller` contract
+
+`Caller` calls `Adder`, and then does two things with the result:
+
+- It emits the result as a `sum` event. An _event_ is data that a zkApp
+  attaches to a transaction. Events are not stored in the account, but an
+  archive node keeps them, and a user interface can read them.
+- It stores the result in its on-chain state field `sum`.
+
+```ts
+import { Field, PublicKey, SmartContract, State, method, state } from 'o1js';
+import { Adder } from './Adder.js';
+
+// A contract that calls the Adder contract, stores the result on chain and
+// emits it as an event.
+export class Caller extends SmartContract {
+  @state(Field) sum = State<Field>();
+
+  events = { sum: Field };
+
+  @method async callAddAndEmit(
+    adderAddress: PublicKey,
+    incrementerAddress: PublicKey,
+    x: Field,
+    y: Field
+  ) {
+    // Call the Adder contract, which calls the Incrementer contract
+    const adder = new Adder(adderAddress);
+    const sum = await adder.addPlus1(incrementerAddress, x, y);
+
+    // Emit the result as an event and store it on chain
+    this.emitEvent('sum', sum);
+    this.sum.set(sum);
+  }
+}
+```
+
+`events = { sum: Field }` declares one event type, `sum`, with a `Field`
+value. `this.emitEvent('sum', sum)` emits it.
+
+`callAddAndEmit()` does not return a value, so it uses `@method`.
+
+## Deploy and call the contracts
+
+`src/main.ts` runs the contracts on a local blockchain. A local blockchain
+needs no network, no faucet and no funded accounts: it has test accounts that
+already hold MINA.
+
+```ts
+import { fileURLToPath } from 'node:url';
+import { AccountUpdate, Field, Mina, PrivateKey } from 'o1js';
+import { Adder } from './Adder.js';
+import { Caller } from './Caller.js';
+import { Incrementer } from './Incrementer.js';
+
+export async function main(proofsEnabled = false) {
+  // A local blockchain, so this runs with no network, no faucet and no funds.
+  const Local = await Mina.LocalBlockchain({ proofsEnabled });
+  Mina.setActiveInstance(Local);
+
+  // A test account that pays all the fees
+  const feePayer = Local.testAccounts[0];
+
+  // One key pair, and so one address, for each contract
+  const incrementerKey = PrivateKey.randomKeypair();
+  const adderKey = PrivateKey.randomKeypair();
+  const callerKey = PrivateKey.randomKeypair();
+
+  const incrementer = new Incrementer(incrementerKey.publicKey);
+  const adder = new Adder(adderKey.publicKey);
+  const caller = new Caller(callerKey.publicKey);
+
+  // With proofs on, compile each contract to get its prover and its
+  // verification key
+  if (proofsEnabled) {
+    console.log('compiling...');
+    await Incrementer.compile();
+    await Adder.compile();
+    await Caller.compile();
+  }
+
+  // Deploy the three contracts in one transaction
+  console.log('deploying the three contracts...');
+  const deployTx = await Mina.transaction(feePayer, async () => {
+    AccountUpdate.fundNewAccount(feePayer, 3);
+    await incrementer.deploy();
+    await adder.deploy();
+    await caller.deploy();
+  });
+  await deployTx.prove();
+  await deployTx.sign([
+    feePayer.key,
+    incrementerKey.privateKey,
+    adderKey.privateKey,
+    callerKey.privateKey,
+  ]).send();
+
+  // Call Caller, which calls Adder, which calls Incrementer
+  console.log('calling Caller.callAddAndEmit(5, 6)...');
+  const callTx = await Mina.transaction(feePayer, async () => {
+    await caller.callAddAndEmit(
+      adderKey.publicKey,
+      incrementerKey.publicKey,
+      Field(5),
+      Field(6)
+    );
+  });
+  // One proof for each of the three contracts
+  await callTx.prove();
+  await callTx.sign([feePayer.key]).send();
+
+  // The account updates of the call, one line for each
+  for (const update of callTx.transaction.accountUpdates) {
+    const indent = '  '.repeat(update.body.callDepth);
+    console.log(`${indent}${update.label}`);
+  }
+
+  const sum = caller.sum.get();
+  console.log('sum on chain:', sum.toString());
+
+  const events = await caller.fetchEvents();
+  for (const event of events) {
+    console.log(`event '${event.type}':`, event.event.data.toString());
+  }
+
+  return sum;
+}
+
+// Run main() only when this file is the entry point, not when a test imports it
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  await main();
+}
+```
+
+The deploy transaction creates three new accounts, so
+`AccountUpdate.fundNewAccount(feePayer, 3)` pays three account creation fees.
+It must be signed with the private key of each new account.
+
+The call transaction is signed only by the fee payer. The three contract
+account updates are authorized by proofs, not by signatures.
+
+To run it:
+
+```sh
+npm start
+```
+
+```text
+deploying the three contracts...
+calling Caller.callAddAndEmit(5, 6)...
+Caller.callAddAndEmit()
+  Adder.addPlus1()
+    Incrementer.increment()
+sum on chain: 12
+event 'sum': 12
+```
+
+The indented lines are the account updates of the call transaction. The
+indent is the `callDepth` of each update: `Caller` is the parent, `Adder` is
+its child, and `Incrementer` is the child of `Adder`. The network applies
+them in this order.
+
+`main()` turns proofs off, so it finishes in seconds. `main(true)` compiles
+the three contracts and makes three proofs for the call, one for each account
+update. That can take some minutes.
+
+## Which contract runs at an address
+
+When `Caller` calls `new Adder(adderAddress).addPlus1(...)`, o1js runs the
+`Adder` code from your project to make the `Adder` proof. The network then
+checks that proof against the verification key that is stored in the account
+at `adderAddress`. If that account holds a different contract, the proof is
+not valid for it, and the network rejects the transaction.
+
+:::caution
+
+With proofs off, `Mina.LocalBlockchain` does not do this check. A call with
+the wrong address succeeds on a local blockchain without proofs, and fails on
+a real network. Test this type of claim with proofs on.
+
+:::
+
+Because the addresses in this tutorial are method arguments, the transaction
+chooses which accounts to call. The proof check makes sure that each account
+holds the expected contract, but it does not make sure that it is a specific
+account. If your contract must call one specific account, store its address in
+on-chain state and read it with `getAndRequireEquals()`, or write it into the
+contract as a constant.
+
+## Test it
+
+The example project in this repository carries a test suite for the code on
+this page:
+
+```sh
+cd examples/zkapps/12-cross-contract-calls
+npm install
+npm test
+```
+
+`src/CrossContractCalls.test.ts` runs with proofs off. It checks that:
+
+- The deploy transaction deploys the three contracts, and `sum` starts at `0`.
+- `Incrementer.increment(41)` returns `42`.
+- `Adder.addPlus1(5, 6)` returns `12`, with `Adder` as the parent account
+  update and `Incrementer` as its child.
+- `Caller.callAddAndEmit(5, 6)` stores `12` in `sum`, and emits a `sum` event
+  with the value `12`.
+- The call makes one transaction with three account updates at call depths
+  `0`, `1` and `2`, for the three contract addresses. Each update is
+  authorized by a proof and not by a signature.
+- `Adder` and `Incrementer` do not change their own state.
+- `main()` runs end to end and returns `12`.
+
+It also checks that the network **rejects** these transactions, and that
+`sum` does not change:
+
+- A call with an `Incrementer` address that has no account. The network must
+  create that account, and no one pays the account creation fee
+  (`Invalid fee excess`).
+- An update to `sum` that is signed with the `Caller` private key. The default
+  permissions let only a proof change the state of a zkApp
+  (`Update_not_permitted_app_state`).
+
+The last test in that file records that, with proofs off, a call with the
+`Incrementer` address in place of the `Adder` address is accepted.
+
+`src/proofs.test.ts` compiles the contracts and makes real proofs. It checks
+that:
+
+- Each contract has a different verification key.
+- `callAddAndEmit(5, 6)` makes three proofs, stores `12`, and emits `12`.
+- The same call with the `Incrementer` address in place of the `Adder`
+  address is **rejected** (`Invalid proof for account update`), and `sum`
+  does not change.
+
+Compiling and proving take some minutes, so the test timeout is long.
+
+## Conclusion
+
+Congratulations! You have called a method of one smart contract from another,
+used the value that it returned, and emitted that value as an event. You have
+also seen that each contract in the call has its own account update and its
+own proof, and that the network checks each proof against the contract at the
+address that was called.
+
+For more about the account updates that a call makes and about events, see
+[Account updates](https://docs.o1labs.org/o1js/zkapps/account-updates) and
+[Events](https://docs.o1labs.org/o1js/zkapps/events) in the o1Labs docs.
+
+Next: [Tutorial 13: Anonymous Message Board](anonymous-message-board).

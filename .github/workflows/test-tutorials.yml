@@ -32,6 +32,7 @@ jobs:
           - examples/zkapps/08-custom-tokens
           - examples/zkapps/09-recursion
           - examples/zkapps/10-account-updates
+          - examples/zkapps/12-cross-contract-calls
           - examples/zkapps/13-anonymous-message-board
           - examples/zkapps/interacting-with-zkApps-server-side
 
@@ -89,6 +90,7 @@ jobs:
           - examples/zkapps/07-oracles/contracts
           - examples/zkapps/interacting-with-zkApps-server-side
           - examples/zkapps/10-account-updates
+          - examples/zkapps/12-cross-contract-calls
 
     steps:
       - name: Checkout repository
@@ -164,6 +166,7 @@ jobs:
           - examples/zkapps/08-custom-tokens
           - examples/zkapps/09-recursion
           - examples/zkapps/10-account-updates
+          - examples/zkapps/12-cross-contract-calls
           - examples/zkapps/feature-overview
           - examples/zkapps/04-zkapp-browser-ui/contracts
           - examples/zkapps/07-oracles/contracts

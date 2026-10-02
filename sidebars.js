@@ -218,6 +218,7 @@ module.exports = {
             'zkapps/tutorials/custom-tokens',
             'zkapps/tutorials/recursion',
             'zkapps/tutorials/account-updates',
+            'zkapps/tutorials/cross-contract-calls',
             'zkapps/tutorials/upgrading-a-zkapp',
             'zkapps/tutorials/anonymous-message-board',
             'zkapps/tutorials/interacting-with-zkapps-server-side',
