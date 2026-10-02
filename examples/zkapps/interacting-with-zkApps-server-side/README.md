@@ -22,13 +22,14 @@ Use a script to initialize the state and interact with it. See [Interacting with
     npm run build
     ```
 
-5. Run the compiled code:
+5. Run the same flow on a local blockchain. It needs no network, no funds and no keys:
     ```sh
-    node build/src/main.js
+    npm start
     ```
-    To run and build the compiled code with a single command:
+
+6. Run the script against Devnet. Run it from a project where `zk config` created a deploy alias (for example `devnet`) and where `zk deploy` deployed the `Square` contract. The fee payer account must have tMINA:
     ```sh
-    npm run build && node build/src/main.js
+    npm run build && node build/src/main.js devnet
     ```
 
 ## License

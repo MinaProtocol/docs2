@@ -6,7 +6,7 @@ import {
   PublicKey,
   fetchAccount,
 } from 'o1js';
-import { Square } from './Square';
+import { Square } from './Square.js';
 
 export { deploy, loopUntilAccountExists };
 

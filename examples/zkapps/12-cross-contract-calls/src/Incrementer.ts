@@ -1,3 +1,4 @@
+// docs:start incrementer
 import { Field, SmartContract, method } from 'o1js';
 
 // A contract that adds 1 to a number and returns the result.
@@ -9,3 +10,4 @@ export class Incrementer extends SmartContract {
     return x.add(1);
   }
 }
+// docs:end incrementer

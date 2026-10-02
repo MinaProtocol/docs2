@@ -104,6 +104,7 @@ describe('NumberStorageContract', () => {
   it('drops an update that names a stale value', async () => {
     // 42 is what index 1 held before the previous test. A writer working from
     // that stale read must not clobber the newer value.
+    // docs:start stale-update
     await call(async () => contract.updateNumber(Field(1), Field(42), Field(99)));
     await settle();
 
@@ -112,6 +113,7 @@ describe('NumberStorageContract', () => {
       '43',
       'a stale update overwrote a newer value'
     );
+    // docs:end stale-update
   });
 
   it('drops a set on an index that already holds a value', async () => {

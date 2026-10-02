@@ -10,6 +10,7 @@ Mina.setActiveInstance(Local);
 
 const deployer = Local.testAccounts[0];
 const zkAppKey = PrivateKey.random();
+// docs:start setup
 const contract = new NumberStorageContract(zkAppKey.toPublicKey());
 
 // `init()` in the contract binds the offchain state to the contract class;
@@ -21,6 +22,7 @@ state.setContractInstance(contract);
 console.log('compiling...');
 await offchainState.compile();
 await NumberStorageContract.compile();
+// docs:end setup
 
 console.log('deploying...');
 const deployTx = await Mina.transaction(deployer, async () => {
@@ -30,6 +32,7 @@ const deployTx = await Mina.transaction(deployer, async () => {
 await deployTx.prove();
 await deployTx.sign([deployer.key, zkAppKey]).send();
 
+// docs:start settle-function
 async function settle() {
   const proof = await state.createSettlementProof();
   const tx = await Mina.transaction(deployer, async () => {
@@ -38,7 +41,9 @@ async function settle() {
   await tx.prove();
   await tx.sign([deployer.key]).send();
 }
+// docs:end settle-function
 
+// docs:start write
 // A write is an action first. Nothing is readable until it is settled.
 console.log('writing 42 at index 1...');
 const writeTx = await Mina.transaction(deployer, async () => {
@@ -52,7 +57,9 @@ console.log(
   'before settling, index 1 is:',
   beforeSettle.isSome.toBoolean() ? beforeSettle.value.toString() : 'not set yet'
 );
+// docs:end write
 
+// docs:start read-after-settle
 console.log('settling...');
 await settle();
 
@@ -62,6 +69,7 @@ console.log(
   'entries written:',
   (await state.fields.total.get()).value.toString()
 );
+// docs:end read-after-settle
 
 // An update names the value it replaces, so a stale writer cannot clobber a
 // newer value by accident.

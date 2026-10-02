@@ -41,6 +41,7 @@ if (proofsEnabled) {
 // ----------------------------------------------------
 
 console.log('\ndeploying...');
+// docs:start deploy
 const deployTx = await Mina.transaction(deployer, async () => {
   // The fee payer pays the account creation fee for the new zkApp account.
   AccountUpdate.fundNewAccount(deployer);
@@ -55,6 +56,7 @@ await deployTx.sign([deployer.key, zkAppPrivateKey]).send();
 // nothing to wait for.
 const num = zkApp.num.get();
 console.log(`current value of num is ${num.toString()}`);
+// docs:end deploy
 
 // ----------------------------------------------------
 
