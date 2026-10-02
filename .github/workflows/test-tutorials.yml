@@ -87,7 +87,11 @@ jobs:
           - examples/zkapps/08-custom-tokens
           - examples/zkapps/09-recursion
           - examples/zkapps/04-zkapp-browser-ui/contracts
+          # The worker API of the browser UI, against a local blockchain
+          - examples/zkapps/04-zkapp-browser-ui/ui
           - examples/zkapps/07-oracles/contracts
+          # The oracle's signing logic, checked with o1js
+          - examples/zkapps/07-oracles/oracle
           - examples/zkapps/interacting-with-zkApps-server-side
           - examples/zkapps/10-account-updates
           - examples/zkapps/12-cross-contract-calls
@@ -103,41 +107,6 @@ jobs:
 
       - name: Install dependencies, build and test ${{ matrix.example-path }}
         run: |
-          cd ${{ matrix.example-path }}
-          npm ci
-          npm run build
-          npm test
-
-  # Examples with no offline entry point yet: the browser and oracle front
-  # ends, the message board contract, and the server-side guide, which talks
-  # to a live devnet. Tracked in #1249 (phases 2 and 3).
-  build-examples:
-    runs-on: ubuntu-latest
-
-    strategy:
-      fail-fast: false
-      matrix:
-        node-version: [22, 24]
-        example-path:
-          - examples/zkapps/04-zkapp-browser-ui/ui
-          - examples/zkapps/07-oracles/oracle
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v7
-        with:
-          node-version: ${{ matrix.node-version }}
-
-      - name: Set Git config (global)
-        run: |
-          git config --global user.email "test@example.com"
-          git config --global user.name "Test"
-
-      - name: Install dependencies and build ${{ matrix.example-path }}
-        run: |
           example_path="${{ matrix.example-path }}"
           # The browser UI imports the compiled contracts of its sibling
           # package, so that package has to be built first.
@@ -147,6 +116,7 @@ jobs:
           cd "$example_path"
           npm ci
           npm run build
+          npm test
 
   # Canary: build every example against the o1js the reader would install
   # today, so the next release shows up here and not in a stale tutorial.
