@@ -41,10 +41,7 @@ For reference, a more extensive example, including all the ways to interact with
 
 - Ensure your environment meets the [Prerequisites](/zkapps/tutorials#prerequisites) for zkApp Developer Tutorials.
 
-This tutorial has been tested with:
-
-- [zkApp CLI](https://www.npmjs.com/package/zkapp-cli) version `0.16.0`
-- [o1js](https://www.npmjs.com/package/o1js) version `0.15.3`
+The example project for this tutorial is tested with [o1js](https://www.npmjs.com/package/o1js) version `3.0.0` and Node.js 22.
 
 ## Create the project
 
@@ -65,6 +62,7 @@ This tutorial has been tested with:
     empty
   > none
   ```
+
 ## Prepare the project
 
 1. Change to the project directory, delete the existing files, and create a new `src/BasicTokenContract` smart contract, and a `index.ts` file:
@@ -78,53 +76,11 @@ This tutorial has been tested with:
   $ touch src/index.ts
   ```
 
-1. Edit `index.ts` to import and export your new smart contract:
+1. Edit `index.ts` to export your new smart contract:
 
-  ```ts
-  import { BasicTokenContract } from './BasicTokenContract.js';
+  #include_code index-basic examples/zkapps/08-custom-tokens/src/index.ts ts title="src/index.ts"
 
-  export { BasicTokenContract };
-  ```
-
-## Create the project
-
-1. Create or change to a directory where you have write privileges.
-1. Create a project by using the `zk project` command:
-
-  ```sh
-  $ zk project 08-custom-tokens
-  ```
-
-  The `zk project` command has the ability to scaffold the UI for your project. For this tutorial, select `none`:
-
-  ```
-  ? Create an accompanying UI project too? …
-    next
-    svelte
-    nuxt
-    empty
-  ❯ none
-  ```
-## Prepare the project
-
-1. Change to the project directory, delete the existing files, and create a new `src/BasicTokenContract` smart contract, and a `index.ts` file:
-
-  ```sh
-  $ cd 08-custom-tokens
-  $ rm src/Add.ts
-  $ rm src/Add.test.ts
-  $ rm src/interact.ts
-  $ zk file src/BasicTokenContract
-  $ touch src/index.ts
-  ```
-
-1. Edit `index.ts` to import and export your new smart contract:
-
-  ```ts
-  import { BasicTokenContract } from './BasicTokenContract.js';
-
-  export { BasicTokenContract };
-  ```
+  The example project also exports `WhitelistedTokenContract` from `index.ts`. See [Examples](#examples).
 
 ## Concepts
 
@@ -183,16 +139,9 @@ The token manager approves account updates in two ways:
 
 `checkZeroBalanceChange()` is the most common implementation of `approveBase()`. It proves that the token balance changes of the approved account updates sum to zero, so an approved transaction cannot create tokens. `approveBase()` can check at most `TokenContract.MAX_ACCOUNT_UPDATES` account updates, which is `9` by default.
 
-Make `approveBase()` a `@method`, so that the token manager can prove its approval. Then any token holder can call `transfer()`, and signs only for the account that sends the tokens:
+Make `approveBase()` a `@method`, so that the token manager can prove its approval. If `approveBase()` is not a `@method`, `transfer()` does not add the token account updates to the transaction, and the transaction moves no tokens. When `approveBase()` is a `@method`, any token holder can call `transfer()`, and signs only for the account that sends the tokens:
 
-```ts
-const tx = await Mina.transaction(sender, async () => {
-  AccountUpdate.fundNewAccount(sender); // only if the receiver has no token account yet
-  await token.transfer(sender, receiver, UInt64.from(400));
-});
-await tx.prove();
-await tx.sign([sender.key]).send();
-```
+#include_code transfer examples/zkapps/08-custom-tokens/src/tokenConcepts.test.ts ts title="src/tokenConcepts.test.ts"
 
 ## Basic Token Example
 
@@ -200,46 +149,13 @@ To create a token manager smart contract, create a normal smart contract whose m
 
 A full copy of the [BasicTokenContract.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/08-custom-tokens/src/BasicTokenContract.ts) is provided.
 
-
 ### Imports and smart contract structure
 
 First, bring in imports and set up the structure for the smart contract.
 
 The single state variable `totalAmountInCirculation` tracks how many tokens exist.
 
-```ts
-import {
-  AccountUpdateForest,
-  DeployArgs,
-  method,
-  Permissions,
-  PublicKey,
-  Signature,
-  State,
-  state,
-  TokenContract,
-  UInt64,
-} from 'o1js';
-
-const tokenSymbol = 'MYTKN';
-
-export class BasicTokenContract extends TokenContract {
-  @state(UInt64) totalAmountInCirculation = State<UInt64>();
-
-  async deploy(args?: DeployArgs) {
-    await super.deploy(args);
-
-    const permissionToEdit = Permissions.proof();
-
-    this.account.permissions.set({
-      ...Permissions.default(),
-      editState: permissionToEdit,
-      setTokenSymbol: permissionToEdit,
-      send: permissionToEdit,
-      receive: permissionToEdit,
-    });
-  }
-```
+#include_code imports-and-structure examples/zkapps/08-custom-tokens/src/BasicTokenContract.ts ts title="src/BasicTokenContract.ts"
 
 The contract extends `TokenContract`, not `SmartContract`. `TokenContract` is the
 o1js base class for a token manager: it supplies the `this.internal` helpers used
@@ -259,41 +175,7 @@ Next, add an init method and a method that mints tokens.
 
 - In the `mint()` method, track how many tokens are in existence.
 
-  ```ts
-    @method async init() {
-      await super.init();
-      this.account.tokenSymbol.set(tokenSymbol);
-      this.totalAmountInCirculation.set(UInt64.zero);
-    }
-
-    @method async approveBase(forest: AccountUpdateForest) {
-      this.checkZeroBalanceChange(forest);
-    }
-
-    @method async mint(
-      receiverAddress: PublicKey,
-      amount: UInt64,
-      adminSignature: Signature
-    ) {
-      const totalAmountInCirculation =
-        this.totalAmountInCirculation.getAndRequireEquals();
-      const newTotalAmountInCirculation = totalAmountInCirculation.add(amount);
-
-      adminSignature
-        .verify(
-          this.address,
-          amount.toFields().concat(receiverAddress.toFields())
-        )
-        .assertTrue();
-
-      this.internal.mint({
-        address: receiverAddress,
-        amount,
-      });
-
-      this.totalAmountInCirculation.set(newTotalAmountInCirculation);
-    }
-  ```
+  #include_code init-approve-mint examples/zkapps/08-custom-tokens/src/BasicTokenContract.ts ts title="src/BasicTokenContract.ts"
 
 `approveBase()` is the method `TokenContract` leaves for you to define: it decides
 which account updates this contract approves. `checkZeroBalanceChange()` proves
@@ -308,20 +190,7 @@ Finally, write a send function.
 
 - Holders of the MYTKN token call the `sendTokens()` method to send tokens to other Mina accounts.
 
-  ```ts
-    @method async sendTokens(
-      senderAddress: PublicKey,
-      receiverAddress: PublicKey,
-      amount: UInt64
-    ) {
-      this.internal.send({
-        from: senderAddress,
-        to: receiverAddress,
-        amount,
-      });
-    }
-  }
-  ```
+  #include_code send-tokens examples/zkapps/08-custom-tokens/src/BasicTokenContract.ts ts title="src/BasicTokenContract.ts"
 
 A transfer moves tokens between accounts, so it does not change
 `totalAmountInCirculation`.
@@ -332,7 +201,21 @@ That completes a review of a basic token.
 
 To see an example of interacting with this contract, see [main.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/08-custom-tokens/src/main.ts).
 
-To see an example of putting rules around a token, see this [example](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/08-custom-tokens/src/WhitelistedTokenContract.ts) of a token with whitelist gating so that public keys can interact with it.
+To see an example of putting rules around a token, see [WhitelistedTokenContract.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/08-custom-tokens/src/WhitelistedTokenContract.ts). Only the public keys on a whitelist can hold or move this token. The contract keeps only the hash of the whitelist in its on-chain state, and each method gets the whitelist from the caller and checks it against that hash.
+
+### Rules in approveBase()
+
+Any account can call a `@method`. So when `approveBase()` is a `@method`, it must enforce every rule of the token. If it only calls `checkZeroBalanceChange()`, a token holder can use `transfer()` to send tokens to an address that `sendTokens()` refuses.
+
+`WhitelistedTokenContract.approveBase()` uses `forEachUpdate()`, which `checkZeroBalanceChange()` also uses, to check each account update that uses the token. It also requires that the public key of each of these account updates is on the whitelist:
+
+#include_code approve-base examples/zkapps/08-custom-tokens/src/WhitelistedTokenContract.ts ts title="src/WhitelistedTokenContract.ts"
+
+`approveBase()` cannot take the whitelist as an argument, because `TokenContract` sets its arguments. Thus the caller sets the `whitelist` property of the contract object before it calls `transfer()`. `Experimental.memoizeWitness()` keeps the value that the method used when it made the transaction, so that `tx.prove()` uses the same value:
+
+#include_code whitelisted-transfer examples/zkapps/08-custom-tokens/src/WhitelistedTokenContract.proofs.test.ts ts title="src/WhitelistedTokenContract.proofs.test.ts"
+
+A transfer to an address that is not on the whitelist fails with `the address is not on the whitelist`.
 
 ## Building zkApps that interact with Tokens
 
