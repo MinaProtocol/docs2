@@ -62,6 +62,18 @@ All pull requests must go through the code review process. As the PR submitter, 
 - If you are a member of the docs repo, you can merge the approved PR.
 - If your PR is a fork, the code maintainers will merge the approved PR.
 
+### Mina releases
+
+Node operator docs describe the current release. Describe what a feature does, not when it changed or what it did before.
+
+For each Mina release:
+
+1. Read the `changes/*.md` entries of the release in the [mina repository](https://github.com/MinaProtocol/mina/tree/master/changes). Update the pages for each change that affects operators: new or changed flags, environment variables, packages, tools, log messages, and defaults.
+2. Update the release versions with `scripts/update_release_info.sh --mainnet-tag <tag> --devnet-tag <tag>`.
+3. Regenerate the CLI reference with `scripts/generate-cli-reference.sh` against the installed release. The **Check CLI reference is up to date** workflow fails until you do this.
+4. Run `npm run validate-docker-images` to check the image tags on the pages.
+5. Run `npm run generate-llms-txt` and commit `static/llms-full.txt`.
+
 ### Code blocks from the example projects
 
 A tutorial code block that shows code from an example project under `examples/` must not be a copy. Include it from the example source, so the page always shows the code that CI builds and tests.

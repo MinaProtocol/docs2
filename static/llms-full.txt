@@ -8542,6 +8542,26 @@ mina daemon --peer-list-url https://bootnodes.minaprotocol.com/networks/mainnet.
             --coinbase-receiver $RECEIVER_PUBLICKEY
 ```
 
+### Minimum block reward
+
+The `--minimum-block-reward AMOUNT` flag makes the node produce an empty block when the reward of a block is less than `AMOUNT`. The block reward is the coinbase plus the transaction fees, minus the SNARK work fees.
+
+:::caution
+If `--minimum-block-reward` is more than the coinbase amount of the network, the node logs this warning at startup:
+
+```text
+Minimum block reward threshold $threshold is greater than the coinbase amount $coinbase_amount. This node may produce empty blocks unless transaction fees or supercharged coinbase raise the block reward above the threshold
+```
+
+Each block that the node produces empty for this reason gives this log message:
+
+```text
+Block reward $reward is less than the min-block-reward $threshold, creating empty block
+```
+
+To produce blocks with transactions, set `--minimum-block-reward` to the coinbase amount or less, or remove the flag.
+:::
+
 ## Verify block production
 
 Run `mina client status` and check the `Block producers running` field:
@@ -8967,6 +8987,21 @@ curl -s http://localhost:3087/account/balance \
     "account_identifier": {"address": "<MINA_ADDRESS>"}
   }' | jq .
 ```
+
+## Transaction metadata
+
+In `/block` and `/search/transactions` responses, each payment, delegation, and zkApp command has a `metadata` object:
+
+| Field | Description |
+|--|--|
+| `nonce` | Nonce of the fee payer. For a payment or a delegation, the fee payer is the sender. |
+| `memo` | Memo of the transaction, as text. Not present when the memo is empty. |
+
+```json
+"metadata": { "nonce": 42, "memo": "deposit-7f3a" }
+```
+
+To match a deposit to a customer by memo, read `memo` from this object. Internal commands, such as coinbase and fee transfers, have no `metadata`.
 
 ## Building Your Own Image
 
@@ -13289,6 +13324,16 @@ When you generated a keypair, you created a password. Use the password you creat
 
 This is an optional file to pass [configuration options](/node-operators/reference/mina-cli-reference#mina-daemon) to the daemon (rather than passing via the command line). The daemon looks for it by default, which results in an error if you do not include it. Just ignore this error (unless you are trying to include it) as it is not fatal, and the daemon will start as per normal.
 
+### I get "Node config: no profile set" at startup?
+
+The binary did not find a node profile. It looks for the `MINA_PROFILE` environment variable and then for the file `/etc/coda/build_config/PROFILE`:
+
+```text
+Node config: no profile set. Set MINA_PROFILE to one of dev, devnet, lightnet, mainnet (installed packages provide /etc/coda/build_config/PROFILE instead).
+```
+
+The `mina-mainnet` and `mina-devnet` packages and the Docker images write this file. If you see this error on a host where you installed Mina from a package, install `mina-mainnet` or `mina-devnet`. If you run a binary that you built from source, set `MINA_PROFILE` to the profile of your network, for example `MINA_PROFILE=mainnet`. See [Node profile](/node-operators/validator-node/installing-on-ubuntu-and-debian#node-profile).
+
 ### I see messages about prover/verifier being killed periodically
 
 This is normal, and these processes are currently periodically killed and restarted. Ignore these messages unless they result in a fatal error/crash.
@@ -13400,6 +13445,10 @@ The Mina node does its best to configure itself to be able to connect to the out
 A common cause of this is routers not supporting UPnP, a protocol that allows the node to configure the port forwarding automatically. If you experience this type of problem, find your router model and search for `<model> port forwarding` and follow the instructions to forward the ports from your router to your device running the Mina node. You'll need to open the TCP port `8302` by default.
 
 Note: When running Mina in the cloud, you should instead configure security groups for your cloud provider.
+
+### My node has fewer peers than I expect?
+
+A node that other nodes cannot reach on TCP port `8302` can only connect to peers that it dials, so it has fewer peers. Forward the port (see the previous question), or allow inbound traffic in the security group of your cloud provider. To make the node look for peers more often, set a shorter `MINA_LIBP2P_DISCOVERY_MAX_INTERVAL`. See [Peer discovery](/node-operators/validator-node/connecting-to-the-network#peer-discovery).
 
 ### Do I need to allow "Accept incoming connections"
 
@@ -13772,6 +13821,26 @@ On first bootstrap, expect the following timeline:
 
 Subsequent restarts sync faster when the on-disk cache in `~/.mina-config` is preserved. For Docker, ensure `/root/.mina-config` is mounted to a persistent host volume.
 
+## Peer discovery
+
+The daemon connects to the peers in the peer list. It then finds more peers through the libp2p distributed hash table (DHT). The libp2p helper, a process that the daemon starts, does this for as long as the node runs:
+
+- When the node has fewer connections than `--min-connections` (default `20`), the helper queries the DHT for peers and connects to the peers that it finds. The time between two queries starts at the minimum interval and doubles after each query, up to the maximum interval.
+- When the node has `--min-connections` connections or more, the helper does not query the DHT, and the interval returns to the minimum.
+
+Two environment variables set the interval:
+
+| Variable | Default | Description |
+|--|--|--|
+| `MINA_LIBP2P_DISCOVERY_MIN_INTERVAL` | `1s` | First wait between two DHT queries. |
+| `MINA_LIBP2P_DISCOVERY_MAX_INTERVAL` | `5m` | Longest wait between two DHT queries. |
+
+The values are Go duration strings, for example `500ms`, `30s`, or `2m`. If a value is not set or is not valid, the helper uses the default. The libp2p helper gets the environment of the daemon, so set these variables in `~/.mina-env` or in the environment of the Docker container. Use shorter intervals in a small test network that must connect quickly. Use longer intervals to send fewer DHT queries.
+
+Other nodes can connect to your node only if they can reach TCP port `8302` (or the port that you set with `--external-port`). A node behind NAT without a forwarded port can only connect to peers that it dials, so it usually has fewer peers than a node that other nodes can reach. See [Do I need to configure port forwarding manually?](/node-operators/troubleshooting#do-i-need-to-configure-port-forwarding-manually).
+
+When the daemon cannot validate a block or a transaction from gossip in the available time, it drops the message. It does not lower the score of the peer that sent the message.
+
 ## Step up your game
 
 Once synced, continue with [Sending a Payment](/mina-protocol/sending-a-payment) and [Staking and Snarking](/node-operators/validator-node/staking-and-snarking).
@@ -13976,6 +14045,15 @@ mina version
 ```
 
 The output should include a `Commit` line.
+
+## Node profile
+
+A Mina binary starts only when it knows its node profile: `mainnet`, `devnet`, `lightnet`, or `dev`. The profile selects the constants of the network.
+
+- The `mina-mainnet` and `mina-devnet` packages and the Docker images write the profile of their network to `/etc/coda/build_config/PROFILE`.
+- The `MINA_PROFILE` environment variable has priority over that file. Use it only when you run a binary with a profile that is different from its package, for example a binary built from source. The runtime configuration and the genesis ledger must agree with the profile.
+
+If no profile is set, the binary stops at startup. See [Node config: no profile set](/node-operators/troubleshooting#i-get-node-config-no-profile-set-at-startup).
 
 ## Next steps
 

@@ -73,6 +73,15 @@ mina version
 
 The output should include a `Commit` line.
 
+## Node profile
+
+A Mina binary starts only when it knows its node profile: `mainnet`, `devnet`, `lightnet`, or `dev`. The profile selects the constants of the network.
+
+- The `mina-mainnet` and `mina-devnet` packages and the Docker images write the profile of their network to `/etc/coda/build_config/PROFILE`.
+- The `MINA_PROFILE` environment variable has priority over that file. Use it only when you run a binary with a profile that is different from its package, for example a binary built from source. The runtime configuration and the genesis ledger must agree with the profile.
+
+If no profile is set, the binary stops at startup. See [Node config: no profile set](/node-operators/troubleshooting#i-get-node-config-no-profile-set-at-startup).
+
 ## Next steps
 
 - [Generating a Wallet Key Pair](/node-operators/validator-node/generating-a-keypair)
