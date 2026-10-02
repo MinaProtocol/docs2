@@ -34,10 +34,14 @@ Learn about zkOracles in this 5-minute video:
 
 - Ensure your environment meets the [Prerequisites](/zkapps/tutorials#prerequisites) for zkApp Developer Tutorials.
 
+- Use Node.js 22.19.5 or later. o1js 3 requires it.
+
 This tutorial has been tested with:
 
-- [zkApp CLI](https://www.npmjs.com/package/zkapp-cli) version `0.20.1`
-- [o1js](https://www.npmjs.com/package/o1js) version `1.1.0`.
+- [o1js](https://www.npmjs.com/package/o1js) version `3.0.0`
+- Node.js versions `22` and `24`
+
+The example project is built and tested in CI: the smart contract tests run against a local blockchain, and the oracle's signing logic is tested offline with o1js.
 
 ## High-Level Overview
 
@@ -71,9 +75,17 @@ This simple oracle design:
 
 ### Code
 
-You can view the complete [oracle logic code](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/07-oracles/oracle/app/api/credit-score/route.ts) and the corresponding `Next.js` project [here](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/07-oracles/oracle).
+The oracle is a `Next.js` project: see the [complete project](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/07-oracles/oracle). It runs as a [Vercel Function](https://vercel.com/docs/functions).
 
-This oracle uses the [Vercel Functions](https://vercel.com/docs/functions). You don't have to dive into the code now, since the code is commented to explain each step so you can build something similar for yourself!
+The route handler reads the `user` query parameter and returns the signed response:
+
+#include_code route examples/zkapps/07-oracles/oracle/app/api/credit-score/route.ts ts title="app/api/credit-score/route.ts"
+
+The signing logic gets the credit score of the user and signs the user id and the credit score, in that order, with the oracle's private key:
+
+#include_code sign examples/zkapps/07-oracles/oracle/lib/signCreditScore.ts ts title="lib/signCreditScore.ts"
+
+The smart contract verifies the signature on the same two fields, in the same order. If the oracle signs different fields, or the same fields in a different order, the smart contract rejects the signature.
 
 You can adapt this code to create oracles for other API sources. For example, if you want your smart contract to ingest price feed data from an exchange, query the exchange API, sign the results, and return a response in the following response format.
 
@@ -112,14 +124,21 @@ While the first user has a credit score of `787`, the second user has a credit s
 
 ## Generate a key pair for your oracle
 
-You can generate the Mina-compatible public/private key pair for your oracle by executing the following command:
+To generate a Mina-compatible public/private key pair for your oracle, run this command in the `oracle` directory of the example project:
 
 ```sh
 npm run keygen
 ```
 
-This command runs the code in the [keygen.js](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/07-oracles/oracle/scripts/keygen.js) file.
-This file is the part of the oracle `Next.js` application, source code of which is available [here](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/07-oracles/oracle).
+This command runs the code in the [keygen.js](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/07-oracles/oracle/scripts/keygen.js) file of the oracle `Next.js` project.
+
+The demo oracle at `https://07-oracles.vercel.app` signs with its own private key. Its public key is `B62qoAE4rBRuTgC42vqvEyUqCGhaZsW58SKVW4Ht8aYqP9UTvxFWBgy`, and the smart contract in this tutorial trusts only this key.
+
+When you run the oracle yourself (`npm run dev`) without the `PRIVATE_KEY` environment variable, it signs with a development key. The public key of the development key is `B62qphyUJg3TjMKi74T2rF8Yer5rQjBr1UyEG7Wg9XEYAHjaSiSqFv1`, so the smart contract rejects its signatures. To use your own oracle:
+
+1. Generate a key pair with `npm run keygen`.
+1. Set the `PRIVATE_KEY` environment variable of the oracle to the private key.
+1. Set `ORACLE_PUBLIC_KEY` in the smart contract to the public key.
 
 ## Smart Contract
 
@@ -131,13 +150,19 @@ Now that you have an oracle that returns signed data, you can write a smart cont
 
 1. Create a project by using the `zk project` command:
 
-  ```sh
-  $ zk project --ui none 07-oracles
-  ```
+   ```sh
+   $ zk project --ui none 07-oracles
+   ```
 
-This command will scaffold the zkApp project skipping the UI part since we don't need it.
+   This command creates the zkApp project without a UI, because this tutorial does not need one.
 
 1. Change into the `07-oracles` directory.
+
+1. The zkApp CLI can create the project with an earlier o1js. In `package.json`, set the `o1js` version in `peerDependencies` to `^3.0.0`, then run:
+
+   ```sh
+   $ npm install
+   ```
 
 For this tutorial, you run commands from the root of the `07-oracles` directory.
 
@@ -148,25 +173,25 @@ Each time you make changes, then build or deploy, the TypeScript code is compile
 The files in the `src` directory contain the TypeScript code for the smart contract.
 
 1. Delete the default generated files by running:
-  ```sh
-  $ rm src/Add.ts
-  $ rm src/Add.test.ts
-  $ rm src/interact.ts
-  ```
+
+   ```sh
+   $ rm src/Add.ts
+   $ rm src/Add.test.ts
+   $ rm src/AddZkProgram.ts
+   $ rm src/interact.ts
+   ```
+
+   If your version of the zkApp CLI does not create `src/AddZkProgram.ts`, skip that command.
 
 1. Create the `OracleExample.ts` file and generate the corresponding test file:
 
-  ```sh
-  $ zk file OracleExample
-  ```
+   ```sh
+   $ zk file OracleExample
+   ```
 
 1. Change `src/index.ts` to:
 
-  ```ts
-  import { OracleExample } from './OracleExample.js';
-
-  export { OracleExample };
-  ```
+   #include_code index examples/zkapps/07-oracles/contracts/src/index.ts ts title="src/index.ts"
 
 ### Write the smart contract
 
@@ -174,41 +199,7 @@ You can find the complete code for this smart contract [here](https://github.com
 
 Paste the following content into the `src/OracleExample.ts` file:
 
-```ts
-import {
-  Field,
-  SmartContract,
-  state,
-  State,
-  method,
-  PublicKey,
-  Signature,
-} from 'o1js';
-
-// The public key of our trusted data provider
-const ORACLE_PUBLIC_KEY =
-  'B62qoAE4rBRuTgC42vqvEyUqCGhaZsW58SKVW4Ht8aYqP9UTvxFWBgy';
-
-export class OracleExample extends SmartContract {
-  // Define zkApp state
-  // Define zkApp events
-
-  init() {
-    // Initialize zkApp state
-    super.init();
-    // Specify that caller should include signature with tx instead of proof
-    this.requireSignature();
-  }
-
-  @method async verify(id: Field, creditScore: Field, signature: Signature) {
-    // Get the oracle public key from the zkApp state
-    // Evaluate whether the signature is valid for the provided data
-    // Check that the signature is valid
-    // Check that the provided credit score is 700 or higher
-    // Emit an event containing the verified user's id
-  }
-}
-```
+#include_code scaffold examples/zkapps/07-oracles/contracts/src/OracleExampleScaffold.ts ts title="src/OracleExample.ts"
 
 This completes the basic setup for the smart contract. For details on the `init()` method, see [Tutorial 1: Hello World](hello-world).
 
@@ -218,23 +209,11 @@ The smart contract stores the public key for the oracle that you retrieve data f
 
 In the `src/OracleExample.ts` file:
 
-```ts
-// Define zkApp state
-@state(PublicKey) oraclePublicKey = State<PublicKey>();
-```
+#include_code state examples/zkapps/07-oracles/contracts/src/OracleExample.ts ts
 
 Use the `init` method to initialize the `oraclePublicKey` to the credit score oracle's public key.
 
-```ts
-init() {
-  // Initialize zkApp state
-  super.init();
-  // Set the oracle public key as zkApp on-chain state
-  this.oraclePublicKey.set(PublicKey.fromBase58(ORACLE_PUBLIC_KEY));
-  // Specify that caller should include signature with tx instead of proof
-  this.requireSignature();
-}
-```
+#include_code init examples/zkapps/07-oracles/contracts/src/OracleExample.ts ts
 
 ### Emit Events
 
@@ -244,12 +223,7 @@ To expose the result to the outside world, you can emit events. Events allow sma
 
 This code adds an `events` object to the smart contract class to define the names and types of the events it can emit:
 
-```ts
-// Define zkApp events
-events = {
-  verified: Field,
-};
-```
+#include_code events examples/zkapps/07-oracles/contracts/src/OracleExample.ts ts
 
 ### Define the verify() method
 
@@ -275,11 +249,7 @@ The `verify()` method does not return any values or change any contract state. I
 
 To get the oracle's public key from the on-chain state, verify the signature of data from the oracle:
 
-```ts
-// Get the oracle public key from the zkApp state
-const oraclePublicKey = this.oraclePublicKey.get();
-this.oraclePublicKey.requireEquals(oraclePublicKey);
-```
+#include_code get-public-key examples/zkapps/07-oracles/contracts/src/OracleExample.ts ts
 
 The `requireEquals()` method invocation ensures that the public key that is retrieved at execution time is the same as the public key that exists within the zkApp account on the Mina network when the transaction is processed by the network.
 
@@ -287,26 +257,17 @@ The `requireEquals()` method invocation ensures that the public key that is retr
 
 To ensure that the signature was from our expected source, verify that the signature on the oracle's `data` object (`id` and `creditScore`) is valid for the expected public key. This code returns true if the signature is valid, and false if it is not.
 
-```ts
-// Evaluate whether the signature is valid for the provided data
-const validSignature = signature.verify(oraclePublicKey, [id, creditScore]);
-```
+#include_code verify-signature examples/zkapps/07-oracles/contracts/src/OracleExample.ts ts
 
 You always want to make it impossible to generate a valid zero knowledge proof if `validSignature` is false. You can do this with `assertTrue()`. If the signature is invalid, this throws an exception and makes it impossible to generate a valid zero knowledge proof and proceed with transaction creation.
 
-```ts
-// Check that the signature is valid
-validSignature.assertTrue();
-```
+#include_code assert-signature examples/zkapps/07-oracles/contracts/src/OracleExample.ts ts
 
 ### Verify the credit score is 700 or higher
 
 You want the `verify()` method to emit an event only if the user's credit score is 700 or higher. To ensure that this condition is met, call `assertGreaterThanOrEqual()` (assert greater than or equal to) on `creditScore`.
 
-```ts
-// Check that the provided credit score is 700 or higher
-creditScore.assertGreaterThanOrEqual(Field(700));
-```
+#include_code assert-score examples/zkapps/07-oracles/contracts/src/OracleExample.ts ts
 
 These assert methods create a constraint that makes it impossible for users to generate a valid zero knowledge proof unless their condition is met. Without a valid zero knowledge proof (or a signature) it's impossible to generate a valid Mina transaction. Users can call the smart contract method and send a valid transaction only if they have a valid signature from the expected oracle and a credit score 700 or above.
 
@@ -320,10 +281,11 @@ With this foundation, you can emit a verified event.
 In this case, the event has the `Field` type, but it could be a more complicated type built on `Fields`, if the situation called for it.
 Emitted events can be fetched using the [Archive-Node-API](/zkapps/writing-a-zkapp/feature-overview/fetch-events-and-actions).
 
-```ts
-// Emit an event containing the verified user's id
-this.emitEvent('verified', id);
-```
+#include_code emit examples/zkapps/07-oracles/contracts/src/OracleExample.ts ts
+
+The complete smart contract:
+
+#include_code contract examples/zkapps/07-oracles/contracts/src/OracleExample.ts ts title="src/OracleExample.ts"
 
 ## Test your smart contract
 
@@ -333,171 +295,17 @@ When you ran the `zk file OracleExample` command, the zkApp CLI automatically ge
 
 To add tests, paste the following code in the `OracleExample.test.ts` file:
 
-```ts
-import { OracleExample } from './OracleExample';
-import {
-  Field,
-  Mina,
-  PrivateKey,
-  PublicKey,
-  AccountUpdate,
-  Signature,
-} from 'o1js';
+#include_code test examples/zkapps/07-oracles/contracts/src/OracleExample.test.ts ts title="src/OracleExample.test.ts"
 
-let proofsEnabled = false;
-
-// The public key of our trusted data provider
-const ORACLE_PUBLIC_KEY =
-  'B62qoAE4rBRuTgC42vqvEyUqCGhaZsW58SKVW4Ht8aYqP9UTvxFWBgy';
-
-describe('OracleExample', () => {
-  let deployerAccount: Mina.TestPublicKey,
-    deployerKey: PrivateKey,
-    senderAccount: Mina.TestPublicKey,
-    senderKey: PrivateKey,
-    zkAppAddress: PublicKey,
-    zkAppPrivateKey: PrivateKey,
-    zkApp: OracleExample;
-
-  beforeAll(async () => {
-    if (proofsEnabled) await OracleExample.compile();
-  });
-
-  beforeEach(async () => {
-    const Local = await Mina.LocalBlockchain({ proofsEnabled });
-    Mina.setActiveInstance(Local);
-    deployerAccount = Local.testAccounts[0];
-    deployerKey = deployerAccount.key;
-    senderAccount = Local.testAccounts[1];
-    senderKey = senderAccount.key;
-    zkAppPrivateKey = PrivateKey.random();
-    zkAppAddress = zkAppPrivateKey.toPublicKey();
-    zkApp = new OracleExample(zkAppAddress);
-  });
-
-  async function localDeploy() {
-    const txn = await Mina.transaction(deployerAccount, async () => {
-      AccountUpdate.fundNewAccount(deployerAccount);
-      await zkApp.deploy();
-    });
-    await txn.prove();
-    // this tx needs .sign(), because `deploy()` adds an account update that requires signature authorization
-    await txn.sign([deployerKey, zkAppPrivateKey]).send();
-  }
-
-  it('generates and deploys the `OracleExample` smart contract', async () => {
-    await localDeploy();
-    const oraclePublicKey = zkApp.oraclePublicKey.get();
-    expect(oraclePublicKey).toEqual(PublicKey.fromBase58(ORACLE_PUBLIC_KEY));
-  });
-
-  describe('hardcoded values', () => {
-    it('emits an `id` event containing the users id if their credit score is above 700 and the provided signature is valid', async () => {
-      await localDeploy();
-
-      const id = Field(1);
-      const creditScore = Field(787);
-      const signature = Signature.fromBase58(
-        '7mXGPCbSJUiYgZnGioezZm7GCy46CEUbgcCH9nrJYXQQiwwVrA5wemBX4T1XFHUw62oR2324QNnkUVXW6yYQLsPsqxZ3nsYR'
-      );
-
-      const txn = await Mina.transaction(senderAccount, async () => {
-        await zkApp.verify(id, creditScore, signature);
-      });
-      await txn.prove();
-      await txn.sign([senderKey]).send();
-
-      const events = await zkApp.fetchEvents();
-      const verifiedEventValue = events[0].event.data.toFields(null)[0];
-      expect(verifiedEventValue).toEqual(id);
-    });
-
-    it('throws an error if the credit score is below 700 even if the provided signature is valid', async () => {
-      await localDeploy();
-
-      const id = Field(1);
-      const creditScore = Field(536);
-      const signature = Signature.fromBase58(
-        '7mXXnqMx6YodEkySD3yQ5WK7CCqRL1MBRTASNhrm48oR4EPmenD2NjJqWpFNZnityFTZX5mWuHS1WhRnbdxSTPzytuCgMGuL'
-      );
-
-      expect(async () => {
-        const txn = await Mina.transaction(senderAccount, async () => {
-          await zkApp.verify(id, creditScore, signature);
-        });
-      }).rejects;
-    });
-
-    it('throws an error if the credit score is above 700 and the provided signature is invalid', async () => {
-      await localDeploy();
-
-      const id = Field(1);
-      const creditScore = Field(787);
-      const signature = Signature.fromBase58(
-        '7mXPv97hRN7AiUxBjuHgeWjzoSgL3z61a5QZacVgd1PEGain6FmyxQ8pbAYd5oycwLcAbqJLdezY7PRAUVtokFaQP8AJDEGX'
-      );
-
-      expect(async () => {
-        const txn = await Mina.transaction(senderAccount, async () => {
-          await zkApp.verify(id, creditScore, signature);
-        });
-      }).rejects;
-    });
-  });
-
-  describe('actual API requests', () => {
-    it('emits an `id` event containing the users id if their credit score is above 700 and the provided signature is valid', async () => {
-      await localDeploy();
-
-      const response = await fetch(
-        'https://07-oracles.vercel.app/api/credit-score?user=1'
-      );
-      const data = await response.json();
-
-      const id = Field(data.data.id);
-      const creditScore = Field(data.data.creditScore);
-      const signature = Signature.fromBase58(data.signature);
-
-      const txn = await Mina.transaction(senderAccount, async () => {
-        await zkApp.verify(id, creditScore, signature);
-      });
-      await txn.prove();
-      await txn.sign([senderKey]).send();
-
-      const events = await zkApp.fetchEvents();
-      const verifiedEventValue = events[0].event.data.toFields(null)[0];
-      expect(verifiedEventValue).toEqual(id);
-    });
-
-    it('throws an error if the credit score is below 700 even if the provided signature is valid', async () => {
-      await localDeploy();
-
-      const response = await fetch(
-        'https://07-oracles.vercel.app/api/credit-score?user=2'
-      );
-      const data = await response.json();
-
-      const id = Field(data.data.id);
-      const creditScore = Field(data.data.creditScore);
-      const signature = Signature.fromBase58(data.signature);
-
-      expect(async () => {
-        const txn = await Mina.transaction(senderAccount, async () => {
-          await zkApp.verify(id, creditScore, signature);
-        });
-      }).rejects;
-    });
-  });
-});
-```
+Each failure test waits for the rejected transaction with `await expect(...).rejects.toThrow(...)` and checks the error message. Without `await` and a matcher such as `toThrow()`, the test checks nothing and passes even when the transaction succeeds.
 
 To run the tests:
 
 1. Save the `OracleExample.test.ts` file.
-1. Run `npm i`.
+1. Run `npm install`.
 1. Run `npm run test`.
 
-Note that writing a test that calls an API is generally not a best practice, but it's convenient for the sake of this tutorial. You can also mock your HTTP requests.
+The tests in the `actual API requests` group call the demo oracle at `https://07-oracles.vercel.app`, so they need network access. Writing a test that calls an API is generally not a best practice, but it's convenient for the sake of this tutorial. You can also mock your HTTP requests.
 
 Congratulations! You have just built a simple oracle using o1js and the Mina blockchain.
 You can find the complete code for this example [here](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/07-oracles).
