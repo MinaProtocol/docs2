@@ -56,6 +56,8 @@ The following example code for the ZkProgram tutorial is provided in the [Add.ts
 
 Ensure your environment meets the [Prerequisites](/zkapps/tutorials#prerequisites) for zkApp Developer Tutorials.
 
+This tutorial uses o1js 3.0.0. o1js 3.0.0 needs Node.js 22.19.5 or later (`engines.node` in the o1js package).
+
 In particular, make sure you have the zkApp CLI installed:
 
 ```sh
@@ -87,10 +89,7 @@ Like earlier tutorials, you can prepare your project by deleting the default fil
 
 Open `src/index.ts` in a text editor and import the `Add` smart contract, like:
 
-```ts src/index.ts
-import { Add } from './Add.js';
-export { Add };
-```
+#include_code index examples/zkapps/09-recursion/src/index.ts ts title="src/index.ts"
 
 ## Write the ZkProgram
 
@@ -113,11 +112,9 @@ The `import` statement brings in other packages and dependencies to use in your 
 
 All functions used inside a ZkProgram must operate on o1js compatible data types: `Field` types and other types built on top of `Field` types.
 
-:::info
+:::
 
-```ts src/Add.ts
-import { Field, SelfProof, ZkProgram } from 'o1js';
-```
+#include_code imports examples/zkapps/09-recursion/src/Add.ts ts title="src/Add.ts"
 
 These items are:
 
@@ -134,94 +131,21 @@ To create a ZkProgram, start with the `init()` method.
 - For each method, declare the inputs it will receive.
 - The first argument of a ZkProgram method is always the state of the ZkProgram, named `publicInput` since it is public.
 
-```ts
-export const Add = ZkProgram({
-  name: 'add-example',
-  publicInput: Field,
+This block is the start of the program: the `init()` method in the `methods` object. Add the next two methods after `init`, in the same `methods` object. The example file then closes the `methods` object and the `ZkProgram()` call.
 
-  methods: {
-    init: {
-      privateInputs: [],
-
-      async method(state: Field) {
-        state.assertEquals(Field(0));
-      },
-    },
-  },
-});
-```
+#include_code init examples/zkapps/09-recursion/src/Add.ts ts title="src/Add.ts"
 
 Add another method that takes an existing proof, adds a new number to it, and produces a new proof:
 
-```ts
-
-   addNumber: {
-     privateInputs: [SelfProof, Field],
-
-     async method(
-       newState: Field,
-       earlierProof: SelfProof<Field, void>,
-       numberToAdd: Field
-     ) {
-       earlierProof.verify();
-       newState.assertEquals(earlierProof.publicInput.add(numberToAdd));
-     },
-   },
-```
+#include_code add-number examples/zkapps/09-recursion/src/Add.ts ts title="src/Add.ts"
 
 Use recursion to combine two proofs:
 
-```ts
-
-   add: {
-     privateInputs: [SelfProof, SelfProof],
-
-     async method(
-       newState: Field,
-       earlierProof1: SelfProof<Field, void>,
-       earlierProof2: SelfProof<Field, void>
-     ) {
-       earlierProof1.verify();
-       earlierProof2.verify();
-       newState.assertEquals(
-         earlierProof1.publicInput.add(earlierProof2.publicInput)
-       );
-     },
-   },
-```
+#include_code add examples/zkapps/09-recursion/src/Add.ts ts title="src/Add.ts"
 
 To use ZkProgram, compile it and then call methods on it:
 
-```ts src/main.ts
-import { Field, verify } from 'o1js';
-import { Add } from './Add.js';
-
-async function main() {
-  console.log('compiling...');
-
-  const { verificationKey } = await Add.compile();
-
-  console.log('making proof 0');
-
-  const { proof: proof0 } = await Add.init(Field(0));
-
-  console.log('making proof 1');
-
-  const { proof: proof1 } = await Add.addNumber(Field(4), proof0, Field(4));
-
-  console.log('making proof 2');
-
-  const { proof: proof2 } = await Add.add(Field(4), proof1, proof0);
-
-  console.log('verifying proof 2');
-  console.log('proof 2 data', proof2.publicInput.toString());
-
-  const ok = await verify(proof2.toJSON(), verificationKey);
-  console.log('ok', ok);
-}
-
-main();
-```
+#include_code main examples/zkapps/09-recursion/src/main.ts ts title="src/main.ts"
 
 Verification of the proof can occur off-chain using the `verify()` method. This is useful for applications where you want to prove something to an off-chain entity.
 
@@ -249,79 +173,30 @@ A community-contributed implementation distributes compute over AWS instances in
 
 ### Set up ZkProgram
 
-```ts
-class RollupState extends Struct({
-  initialRoot: Field,
-  latestRoot: Field,
-}) {
-  static createOneStep(
-    initialRoot: Field,
-    latestRoot: Field,
-    key: Field,
-    currentValue: Field,
-    incrementAmount: Field,
-    merkleMapWitness: MerkleMapWitness
-  ) {
-    const [witnessRootBefore, witnessKey] =
-      merkleMapWitness.computeRootAndKey(currentValue);
-    initialRoot.assertEquals(witnessRootBefore);
+The public input of the rollup ZkProgram is a `RollupState`. A `RollupState` holds two Merkle roots: the root before the transactions (`initialRoot`) and the root after them (`latestRoot`).
 
-    witnessKey.assertEquals(key);
+#include_code rollup-state examples/zkapps/09-recursion/src/rollup.ts ts title="src/rollup.ts"
 
-    const [witnessRootAfter] = merkleMapWitness.computeRootAndKey(
-      currentValue.add(incrementAmount)
-    );
+The `Rollup` ZkProgram has two methods, `oneStep()` and `merge()`:
 
-    latestRoot.assertEquals(witnessRootAfter);
-
-    return new RollupState({
-      initialRoot,
-      latestRoot,
-    });
-  }
-```
+#include_code rollup-program examples/zkapps/09-recursion/src/rollup.ts ts title="src/rollup.ts"
 
 A proof generated by the `merge()` method indicates there is a valid sequence of transactions (for example, the applications of `oneStep`):
 
 - Get from an `initialRoot`, the root of a MerkleMap
 - To a `latestRoot` root of the Merkle map after transactions are applied
 
+`merge()` verifies the two proofs. It asserts that the second proof starts at the root where the first proof ends, that the new state starts at the `initialRoot` of the first proof, and that the new state ends at the `latestRoot` of the second proof.
+
 ### Consume the proofs
 
 To consume these proofs in a smart contract (`SmartContract`) that uses the recursive proof to update its internal state:
 
-```ts
-class RollupContract extends SmartContract {
-  @state(Field) state = State<Field>();
-
-  async deploy(args: DeployArgs) {
-    await super.deploy(args);
-    this.account.permissions.set({
-      ...Permissions.default(),
-      editState: Permissions.proofOrSignature(),
-    });
-  }
-
-  @method async initStateRoot(stateRoot: Field) {
-    this.state.set(stateRoot);
-  }
-
-  @method async update(rollupStateProof: RollupProof) {
-    const currentState = this.state.get();
-    this.state.requireEquals(currentState);
-
-    rollupStateProof.publicInput.initialRoot.assertEquals(currentState);
-
-    rollupStateProof.verify();
-
-    this.state.set(rollupStateProof.publicInput.latestRoot);
-  }
-}
-```
+#include_code rollup-contract examples/zkapps/09-recursion/src/rollup.ts ts title="src/rollup.ts"
 
 ### Verify the value at account is incremented
 
-Fill in the previous methods, particularly `oneStep()` and `createOneStep()`.
+Look again at `oneStep()` and `createOneStep()`.
 
 This step of the rollup checks that the value at an account was incremented by a particular amount.
 
@@ -329,64 +204,9 @@ This step of the rollup checks that the value at an account was incremented by a
 - Then, asserting that the new state of the recursive SNARK is equivalent to the computed state.
 - Inside `createOneStep()`, a single step of the rollup is created.
 
-```ts
-class RollupState extends Struct({
-...
-}) {
-  static createOneStep(
-    initialRoot: Field,
-    latestRoot: Field,
-    key: Field,
-    currentValue: Field,
-    incrementAmount: Field,
-    merkleMapWitness: MerkleMapWitness,
-  ) {
-    const [ witnessRootBefore, witnessKey ] =
-      merkleMapWitness.computeRootAndKey(currentValue);
-    initialRoot.assertEquals(witnessRootBefore);
-    witnessKey.assertEquals(key);
-    const [ witnessRootAfter, _ ] =
-      merkleMapWitness.computeRootAndKey(currentValue.add(incrementAmount));
-    latestRoot.assertEquals(witnessRootAfter);
+#include_code create-one-step examples/zkapps/09-recursion/src/rollup.ts ts title="src/rollup.ts"
 
-    return new RollupState({
-      initialRoot,
-      latestRoot
-    });
-  }
-...
-}
-
-const Rollup = ZkProgram({
-  name: "rollup",
-  publicInput: RollupState,
-
-  methods: {
-	oneStep: {
-  	privateInputs: [ Field, Field, Field, Field, Field, MerkleMapWitness ],
-
-  	async method(
-      state: RollupState,
-      initialRoot: Field,
-      latestRoot: Field,
-      key: Field,
-      currentValue: Field,
-      incrementAmount: Field,
-      merkleMapWitness: MerkleMapWitness
-  	) {
-      const computedState = RollupState.createOneStep(
-        initialRoot,
-        latestRoot,
-        key,
-        currentValue,
-        incrementAmount,
-        merkleMapWitness
-      );
-      RollupState.assertEquals(computedState, state);
-  	}
-},
-
-```
+#include_code one-step examples/zkapps/09-recursion/src/rollup.ts ts title="src/rollup.ts"
 
 The `oneStep()` method returns a proof that acts as the leaf in a tree of recursive proofs. (`createOneStep()` returns the `RollupState` that the proof is about.)
 
@@ -401,7 +221,14 @@ You can reimplement the example code for more substantial functionality, just by
 
 ## Test it
 
-When you run `main.ts`, it prints:
+Build the project, then run `main.ts`:
+
+```sh
+npm run build
+node build/src/main.js
+```
+
+It prints:
 
 ```
 compiling...
@@ -412,6 +239,40 @@ verifying proof 2
 proof 2 data 4
 ok true
 ```
+
+The voting example and the rollup example run the same way. They make real proofs, so each run takes several minutes.
+
+```sh
+node build/src/vote.js
+```
+
+```
+compiling...
+making proof 0
+making proof 1
+making proof 2
+verifying proof 2
+1 1
+ok true
+```
+
+`1 1` is one vote for and one vote against.
+
+```sh
+node build/src/rollup.js
+```
+
+```
+compiling...
+generating transition information
+making first set of proofs
+merging proofs
+verifying rollup
+16681890329296260524727674720599141567461542680012070463181990759791426893085
+ok true
+```
+
+The long number is the `latestRoot` of the merged proof: the root of the MerkleMap after the four transitions in `main()`.
 
 The example project in this repository carries a test suite for the code on
 this page:

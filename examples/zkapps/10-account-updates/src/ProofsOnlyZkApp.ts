@@ -11,6 +11,7 @@ import {
   TransactionVersion,
 } from 'o1js';
 
+// docs:start class-init
 export class ProofsOnlyZkApp extends SmartContract {
   @state(Field) num = State<Field>();
   @state(Field) calls = State<Field>();
@@ -40,7 +41,9 @@ export class ProofsOnlyZkApp extends SmartContract {
     this.num.set(Field(1));
     this.calls.set(Field(0));
   }
+  // docs:end class-init
 
+  // docs:start add-increment
   @method async add(incrementBy: Field) {
     this.account.provedState.getAndRequireEquals().assertTrue();
 
@@ -56,7 +59,9 @@ export class ProofsOnlyZkApp extends SmartContract {
     const calls = this.calls.getAndRequireEquals();
     this.calls.set(calls.add(Field(1)));
   }
+  // docs:end add-increment
 
+  // docs:start call-secondary
   @method async callSecondary(secondaryAddr: PublicKey) {
     this.account.provedState.getAndRequireEquals().assertTrue();
 
@@ -70,4 +75,5 @@ export class ProofsOnlyZkApp extends SmartContract {
 
     await this.incrementCalls();
   }
+  // docs:end call-secondary
 }

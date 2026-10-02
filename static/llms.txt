@@ -149,6 +149,7 @@ This file is auto-generated from `sidebars.js` and the frontmatter of each docum
 - [Mina Signer](https://docs.minaprotocol.com/node-operators/mina-signer): Key generation and transaction signing for node operators using mina-signer and the Rosetta offline signer CLI.
 - [Reference](https://docs.minaprotocol.com/node-operators/reference): Reference documentation for Mina node operators.
 - [Mina CLI Reference](https://docs.minaprotocol.com/node-operators/reference/mina-cli-reference): Reference for the Mina CLI (command line interface) which is the primary way to interact with the Mina network.
+- [Health Checks](https://docs.minaprotocol.com/node-operators/reference/health-checks): Probe the health of a Mina daemon, archive node, or Rosetta server with mina-healthcheck, mina-archive-healthcheck, and rosetta-healthcheck.
 - [Downgrading to Older Versions](https://docs.minaprotocol.com/node-operators/downgrading-to-older-versions): How to downgrade your Mina node from versions above 3.3.0 to 3.3.0 or below by converting on-disk state, avoiding a full rebootstrap.
 - [Troubleshooting](https://docs.minaprotocol.com/node-operators/troubleshooting): Answers to common problems when setting up a Mina daemon
 - [FAQ](https://docs.minaprotocol.com/node-operators/faq): Troubleshooting tips and answers to frequently asked questions about node operators and exchange integration in the Mina network.
