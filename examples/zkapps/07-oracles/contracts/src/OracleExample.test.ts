@@ -1,3 +1,4 @@
+// docs:start test
 import { OracleExample } from './OracleExample';
 import {
   Field,
@@ -79,17 +80,17 @@ describe('OracleExample', () => {
     it('throws an error if the credit score is below 700 even if the provided signature is valid', async () => {
       await localDeploy();
 
-      const id = Field(1);
+      const id = Field(2);
       const creditScore = Field(536);
       const signature = Signature.fromBase58(
         '7mXXnqMx6YodEkySD3yQ5WK7CCqRL1MBRTASNhrm48oR4EPmenD2NjJqWpFNZnityFTZX5mWuHS1WhRnbdxSTPzytuCgMGuL'
       );
 
-      expect(async () => {
-        const txn = await Mina.transaction(senderAccount, async () => {
+      await expect(
+        Mina.transaction(senderAccount, async () => {
           await zkApp.verify(id, creditScore, signature);
-        });
-      }).rejects;
+        })
+      ).rejects.toThrow('expected 700 <= 536');
     });
 
     it('throws an error if the credit score is above 700 and the provided signature is invalid', async () => {
@@ -101,11 +102,11 @@ describe('OracleExample', () => {
         '7mXPv97hRN7AiUxBjuHgeWjzoSgL3z61a5QZacVgd1PEGain6FmyxQ8pbAYd5oycwLcAbqJLdezY7PRAUVtokFaQP8AJDEGX'
       );
 
-      expect(async () => {
-        const txn = await Mina.transaction(senderAccount, async () => {
+      await expect(
+        Mina.transaction(senderAccount, async () => {
           await zkApp.verify(id, creditScore, signature);
-        });
-      }).rejects;
+        })
+      ).rejects.toThrow('Bool.assertTrue');
     });
   });
 
@@ -145,11 +146,12 @@ describe('OracleExample', () => {
       const creditScore = Field(data.data.creditScore);
       const signature = Signature.fromBase58(data.signature);
 
-      expect(async () => {
-        const txn = await Mina.transaction(senderAccount, async () => {
+      await expect(
+        Mina.transaction(senderAccount, async () => {
           await zkApp.verify(id, creditScore, signature);
-        });
-      }).rejects;
+        })
+      ).rejects.toThrow('expected 700 <= 536');
     });
   });
 });
+// docs:end test

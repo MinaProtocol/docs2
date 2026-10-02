@@ -1,8 +1,12 @@
+// docs:start scaffold
 import {
   Field,
-  Signature,
   SmartContract,
-  method
+  state,
+  State,
+  method,
+  PublicKey,
+  Signature,
 } from 'o1js';
 
 // The public key of our trusted data provider
@@ -16,8 +20,6 @@ export class OracleExample extends SmartContract {
   init() {
     // Initialize zkApp state
     super.init();
-    // Specify that caller should include signature with tx instead of proof
-    this.requireSignature();
   }
 
   @method async verify(id: Field, creditScore: Field, signature: Signature) {
@@ -28,3 +30,4 @@ export class OracleExample extends SmartContract {
     // Emit an event containing the verified user's id
   }
 }
+// docs:end scaffold

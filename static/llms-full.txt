@@ -19469,13 +19469,17 @@ In this tutorial, you are going to implement a browser UI using `Next.js` that i
 
 - Ensure your environment meets the [Prerequisites](/zkapps/tutorials#prerequisites) for zkApp Developer Tutorials.
 
+- Use Node.js 22.19.5 or later. o1js 3 requires it.
+
 - The Auro Wallet browser extension wallet that supports interactions with zkApps. See [Install a Wallet](/using-mina/install-a-wallet) and create a MINA account.
 
 This tutorial has been tested with:
 
-- [zkApp CLI](https://www.npmjs.com/package/zkapp-cli) version `0.21.6`
-- [o1js](https://www.npmjs.com/package/o1js) version `1.8.0`
-- [Auro Wallet](https://www.aurowallet.com/) version `2.2.15`
+- [o1js](https://www.npmjs.com/package/o1js) version `3.0.0`
+- [Next.js](https://nextjs.org/) version `14.2.3` and React version `18`
+- Node.js versions `22` and `24`
+
+The example project is built and tested in CI. The test runs the web worker functions of the UI against a local blockchain, with real proofs, and does the part of the wallet: it adds the fee payer, signs and sends the transaction. CI does not run the UI in a browser or with Auro Wallet.
 
 ## High-Level Overview
 
@@ -19514,29 +19518,27 @@ You can have the `zk project` command scaffold the UI for your project.
     none
   ```
 
+1. Select **yes** at the `? Do you want to set up your project for deployment to GitHub Pages? …` prompt.
 1. If you are prompted to install the required Next packages, press **y** to proceed.
-1. Select **yes** at the `? Do you want to set up your project for deployment to Github Pages? …` prompt.
-1. If you are prompted to install the required Next packages, press **y** to proceed. 
 1. Select **No** at the `? Would you like to use ESLint with this project?` prompt.
 1. Select **No** at the `? Would you like to use Tailwind CSS with this project?` prompt.
 
-  Your UI is created in the project directory: `04-zkapp-browser-ui/ui` with two directories:
-
-    - `contracts`: The smart contract code
-    - `ui`: Where you write the UI code
-
-For this tutorial, you run commands from the root of the `04-zkapp-browser-ui/ui` directory. You work in the `ui/app` directory on TypeScript files that contain the UI code.
-
-Each time you make updates, then build or deploy, the TypeScript code is compiled into JavaScript in the `build` directory.
-
-### Install the dependencies
-
-When you ran the `zk project` command, your UI was created in the project directory: `04-zkapp-browser-ui/ui`. The project has two sub-directories:
+The project directory `04-zkapp-browser-ui` has two sub-directories:
 
 - `contracts`: The smart contract code
 - `ui`: The UI application code
 
-The dependencies in each sub-directory are installed automatically by the zkApp CLI.
+For this tutorial, you run commands from the root of the `04-zkapp-browser-ui/ui` directory. You work in the `ui/app` directory on TypeScript files that contain the UI code.
+
+### Install the dependencies
+
+The zkApp CLI installs the dependencies in each sub-directory.
+
+The zkApp CLI can create the project with an earlier o1js. Set o1js to version 3:
+
+1. In `ui/package.json`, set the `o1js` version in `dependencies` to `^3.0.0`.
+1. In `contracts/package.json`, set the `o1js` version in `peerDependencies` to `^3.0.0`.
+1. Run `npm install` in the `ui` directory and in the `contracts` directory.
 
 ## Create a repository
 
@@ -19561,7 +19563,7 @@ Start by deleting the default `page.tsx` file that comes with a new project so t
   ```
 ### Install UI dependencies
 
-This tutorial uses the `comlink` package to integrate web workers into the React application. Comlink simplifies 
+This tutorial uses the `comlink` package to integrate web workers into the React application. Comlink simplifies
 communication between the main thread and web workers by abstracting the `postMessage` API, allowing you to call functions in the worker as if they were local.
 
 In the `04-zkapp-browser-ui/ui` directory, install `comlink` by running the following command:
@@ -19595,11 +19597,46 @@ The example project has a completed app. The `page.tsx` file is the entry file f
 
 1. Move the `page.tsx` file to your local `04-zkapp-browser-ui/ui/app` directory.
 
-## Build the default contract
+## Build the contract
 
-This tutorial uses the default contract `Add` that is always scaffolded with the `zk project` command.
+This tutorial uses an `Add` contract with an `update()` method that adds 2 to the on-chain state `num`. The web worker calls `update()`.
 
-To build the default contract so that it can be used with UI application, run this command from the `04-zkapp-browser-ui/contracts` directory:
+Recent versions of the zkApp CLI create a different `Add` contract, which has a `settleState()` method and uses a `ZkProgram` from `src/AddZkProgram.ts`. If your `contracts/src` directory has the file `AddZkProgram.ts`, replace the contract files with the files of the example project:
+
+1. Delete `contracts/src/AddZkProgram.ts`.
+1. Replace `contracts/src/Add.ts` with:
+
+   ```ts title="contracts/src/Add.ts"
+   import { Field, SmartContract, state, State, method } from 'o1js';
+
+   /**
+    * Basic Example
+    * See https://docs.minaprotocol.com/zkapps for more info.
+    *
+    * The Add contract initializes the state variable 'num' to be a Field(1) value by default when deployed.
+    * When the 'update' method is called, the Add contract adds Field(2) to its 'num' contract state.
+    *
+    * This file is safe to delete and replace with your own contract.
+    */
+   export class Add extends SmartContract {
+     @state(Field) num = State<Field>();
+
+     init() {
+       super.init();
+       this.num.set(Field(1));
+     }
+
+     @method async update() {
+       const currentState = this.num.getAndRequireEquals();
+       const newState = currentState.add(2);
+       this.num.set(newState);
+     }
+   }
+   ```
+
+1. Replace `contracts/src/index.ts`, `contracts/src/Add.test.ts` and `contracts/src/interact.ts` with the [example files](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/04-zkapp-browser-ui/contracts/src).
+
+To build the contract so that it can be used with UI application, run this command from the `04-zkapp-browser-ui/contracts` directory:
 
 ```sh
 $ npm run build
@@ -19617,20 +19654,21 @@ The web worker code resides in the `04-zkapp-browser-ui/ui/app/zkappWorker.ts` f
 
 #### Defining State
 
-The state object holds references to the zkApp Instance, Add contract instance, and the transactions.
-```ts ignore
-  const state = {
-    AddInstance: null as null | typeof Add,
-    zkappInstance: null as null | Add,
-    transaction: null as null | Transaction,
-  };
-  ```
+The state object holds references to the `Add` contract class, the zkApp instance, and the transaction.
+
+```ts title="ui/app/zkappWorker.ts"
+const state = {
+  AddInstance: null as null | typeof Add,
+  zkappInstance: null as null | Add,
+  transaction: null as null | Transaction,
+};
+```
 
 ##### Defining functions that will run in the worker thread
 
 These functions perform tasks such as setting up the network instance, loading and compiling the smart contract, fetching accounts, interacting with the smart contract, and handling transactions. The functions will run in the web worker thread to ensure the UI thread is not blocked during long computations.
 
-```ts ignore
+```ts title="ui/app/zkappWorker.ts"
 export const api = {
   async setActiveInstanceToDevnet() {
     const Network = Mina.Network('https://devnet-plain-1.gcp.o1test.net/graphql');
@@ -19668,94 +19706,100 @@ export const api = {
     return state.transaction!.toJSON();
   },
 };
-```  
+```
+
 #### Expose functions to the main thread with `comlink`
 
-```ts ignore
+```ts title="ui/app/zkappWorker.ts"
 // Expose the API to be used by the main thread
 Comlink.expose(api);
 ```
+
 #### Creating the worker client
 
 - The web worker client code resides in the `04-zkapp-browser-ui/ui/app/zkappWorkerClient.ts` file. Here you create a client in the main thread that interacts with the web worker.
 
 - `worker` is a reference to the web worker instance and `remoteApi` is a reference to a proxy object that provides typesafe access to the worker's API methods.
 
-```ts
+```ts title="ui/app/zkappWorkerClient.ts"
 export default class ZkappWorkerClient {
   worker: Worker;
   // Proxy to interact with the worker's methods as if they were local
   remoteApi: Comlink.Remote<typeof import('./zkappWorker').api>;
 ```
 
-In the constructor create a new Worker instance pointing to the `zkappWorker.ts` file.
-```ts
+In the constructor, create a new `Worker` instance from the `zkappWorker.ts` file. With `Comlink.wrap`, create a proxy object `remoteApi` that provides typesafe access to the worker's API methods.
+
+```ts title="ui/app/zkappWorkerClient.ts"
 constructor() {
   // Initialize the worker from the zkappWorker module
-  const worker = new Worker(new URL('./zkappWorker.ts', import.meta.url), { type: 'module' });
-  ```
-With `Comlink.wrap`, create a proxy object `remoteApi` that provides typesafe access the worker's API methods.
-
-```ts
+  this.worker = new Worker(new URL('./zkappWorker.ts', import.meta.url), { type: 'module' });
   // Wrap the worker with Comlink to enable direct method invocation
   this.remoteApi = Comlink.wrap(this.worker);
-```    
+}
+```
 
-Define methods in the ZkappWorkerClient class that call the corresponding method on `remoteApi`, effectively forwarding the calls to the worker.
+Define methods in the `ZkappWorkerClient` class that call the corresponding method on `remoteApi`, effectively forwarding the calls to the worker.
 
-```ts
+```ts title="ui/app/zkappWorkerClient.ts"
 async setActiveInstanceToDevnet() {
-    return this.remoteApi.setActiveInstanceToDevnet();
-  }
+  return this.remoteApi.setActiveInstanceToDevnet();
+}
 
-  async loadContract() {
-    return this.remoteApi.loadContract();
-  }
+async loadContract() {
+  return this.remoteApi.loadContract();
+}
 
-  async compileContract() {
-    return this.remoteApi.compileContract();
-  }
+async compileContract() {
+  return this.remoteApi.compileContract();
+}
 
-  async fetchAccount(publicKeyBase58: string) {
-    return this.remoteApi.fetchAccount(publicKeyBase58);
-  }
+async fetchAccount(publicKeyBase58: string) {
+  return this.remoteApi.fetchAccount(publicKeyBase58);
+}
 
-  async initZkappInstance(publicKeyBase58: string) {
-    return this.remoteApi.initZkappInstance(publicKeyBase58);
-  }
+async initZkappInstance(publicKeyBase58: string) {
+  return this.remoteApi.initZkappInstance(publicKeyBase58);
+}
 
-  async getNum(): Promise<Field> {
-    const result = await this.remoteApi.getNum();
-    return Field.fromJSON(JSON.parse(result as string));
-  }
+async getNum(): Promise<Field> {
+  const result = await this.remoteApi.getNum();
+  return Field.fromJSON(JSON.parse(result as string));
+}
 
-  async createUpdateTransaction() {
-    return this.remoteApi.createUpdateTransaction();
-  }
+async createUpdateTransaction() {
+  return this.remoteApi.createUpdateTransaction();
+}
 
-  async proveUpdateTransaction() {
-    return this.remoteApi.proveUpdateTransaction();
-  }
+async proveUpdateTransaction() {
+  return this.remoteApi.proveUpdateTransaction();
+}
 
-  async getTransactionJSON() {
-    return this.remoteApi.getTransactionJSON();
-  }
+async getTransactionJSON() {
+  return this.remoteApi.getTransactionJSON();
+}
 ```
 
 ### Environment configuration
 
 - In `04-zkapp-browser-ui/ui/app/page.tsx`
 
-  ```ts ignore
+  ```tsx
   let transactionFee = 0.1;
   const ZKAPP_ADDRESS = 'B62qpXPvmKDf4SaFJynPsT6DyvuxMS9H1pT4TGonDT26m599m7dS9gP';
   ```
 
-  The smart contract that the UI interacts with in this tutorial has been deployed to the Devnet and the public key is stored in the `ZKAPP_ADDRESS` variable. If you experience problems with the deployed contract, you can [deploy](deploying-to-a-network) the `Add` contract included in the `contracts` folder yourself to any other network. When deployed, replace `ZKAPP_ADDRESS` variable with the public key of your own deployed zkApp.
+  `ZKAPP_ADDRESS` is the public key of an `Add` contract on Devnet. The UI reads its state.
+
+  :::caution
+
+  The `Add` contract at this address was deployed with an earlier version of o1js. Its verification key is not the verification key that o1js 3.0.0 compiles for `Add`, so Devnet rejects a transaction that you prove with o1js 3.0.0. To send transactions, [deploy](deploying-to-a-network) the `Add` contract in the `contracts` folder yourself, and replace the value of `ZKAPP_ADDRESS` with the public key of your zkApp.
+
+  :::
 
 - In `04-zkapp-browser-ui/ui/app/zkappWorker.ts`
 
-  ```ts ignore
+  ```ts
   async setActiveInstanceToDevnet() {
     const Network = Mina.Network('https://devnet-plain-1.gcp.o1test.net/graphql');
     console.log('Devnet network instance configured');
@@ -19768,26 +19812,24 @@ async setActiveInstanceToDevnet() {
 
 :::info
 
-In this example, the `o1js` code is included in a client component and executed on the client side using an effect after the page loads. If you're integrating `o1js` within a server component, be aware that Next.js's caching mechanism might cause `o1js` to return outdated data. To prevent this, you can disable caching by adding `export const revalidate = 0;` to your component. For more details, refer to the [Next.js caching documentation](https://nextjs.org/docs/app/building-your-application/caching#opting-out-2).
+In this example, the `o1js` code is included in a client component and executed on the client side using an effect after the page loads. If you're integrating `o1js` within a server component, be aware that Next.js's caching mechanism might cause `o1js` to return outdated data. To prevent this, you can disable caching by adding `export const revalidate = 0;` to your component. For more details, refer to the [Next.js 14 caching documentation](https://nextjs.org/docs/14/app/building-your-application/caching#opting-out-2).
 
 :::
 
 ### Add state
 
-These `04-zkapp-browser-ui/ui/app/page.tsx` statements creates mutable state that you can reference in the UI. The state updates as the application runs:
+These `04-zkapp-browser-ui/ui/app/page.tsx` statements create mutable state that you can reference in the UI. The state updates as the application runs:
 
-```ts ignore
-...
-  const [zkappWorkerClient, setZkappWorkerClient] = useState<null | ZkappWorkerClient>(null);
-  const [hasWallet, setHasWallet] = useState<null | boolean>(null);
-  const [hasBeenSetup, setHasBeenSetup] = useState(false);
-  const [accountExists, setAccountExists] = useState(false);
-  const [currentNum, setCurrentNum] = useState<null | Field>(null);
-  const [publicKeyBase58, setPublicKeyBase58] = useState('');
-  const [creatingTransaction, setCreatingTransaction] = useState(false);
-  const [displayText, setDisplayText] = useState('');
-  const [transactionlink, setTransactionLink] = useState('');
-...
+```tsx
+const [zkappWorkerClient, setZkappWorkerClient] = useState<null | ZkappWorkerClient>(null);
+const [hasWallet, setHasWallet] = useState<null | boolean>(null);
+const [hasBeenSetup, setHasBeenSetup] = useState(false);
+const [accountExists, setAccountExists] = useState(false);
+const [currentNum, setCurrentNum] = useState<null | Field>(null);
+const [publicKeyBase58, setPublicKeyBase58] = useState('');
+const [creatingTransaction, setCreatingTransaction] = useState(false);
+const [displayText, setDisplayText] = useState('');
+const [transactionlink, setTransactionLink] = useState('');
 ```
 
 To learn more about `useState` hooks, see [built-in React hooks](https://react.dev/reference/react/hooks#state-hooks) in the React API reference documentation.
@@ -19802,68 +19844,63 @@ To learn more about `useEffect` hooks, see [useEffect](https://react.dev/referen
 - This code also sets up your web worker client that interacts with the web worker running o1js code to ensure the computationally heavy o1js code doesn't block the UI thread.
 
 #### Load web worker and setup Mina active instance
-```ts ignore
-...
-  displayStep('Loading web worker...')
-  const zkappWorkerClient = new ZkappWorkerClient();
-  setZkappWorkerClient(zkappWorkerClient);
-  await new Promise((resolve) => setTimeout(resolve, 5000));
-  displayStep('Done loading web worker')
 
-  await zkappWorkerClient.setActiveInstanceToDevnet();
-...
+```tsx
+displayStep('Loading web worker...')
+const zkappWorkerClient = new ZkappWorkerClient();
+setZkappWorkerClient(zkappWorkerClient);
+await new Promise((resolve) => setTimeout(resolve, 5000));
+displayStep('Done loading web worker')
+
+await zkappWorkerClient.setActiveInstanceToDevnet();
 ```
 
 #### Connect Auro Wallet and setup fee payer account
-```ts ignore
-...
-  const mina = (window as any).mina;
-  if (mina == null) {
-    setHasWallet(false);
-    displayStep('Wallet not found.');
-    return;
-  }
 
-  const publicKeyBase58: string = (await mina.requestAccounts())[0];
-  setPublicKeyBase58(publicKeyBase58);
-  displayStep(`Using key:${publicKeyBase58}`);
+```tsx
+const mina = (window as any).mina;
+if (mina == null) {
+  setHasWallet(false);
+  displayStep('Wallet not found.');
+  return;
+}
 
-  displayStep('Checking if fee payer account exists...');
-  const res = await zkappWorkerClient.fetchAccount(
-  publicKeyBase58,
-  );
-  const accountExists = res.error === null;
-  setAccountExists(accountExists);
-...
+const publicKeyBase58: string = (await mina.requestAccounts())[0];
+setPublicKeyBase58(publicKeyBase58);
+displayStep(`Using key:${publicKeyBase58}`);
+
+displayStep('Checking if fee payer account exists...');
+const res = await zkappWorkerClient.fetchAccount(
+publicKeyBase58,
+);
+const accountExists = res.error === null;
+setAccountExists(accountExists);
 ```
 
 #### Import the contract code, instantiate zkApp instance, compile the contract and fetch zkApp state
-```ts ignore
-...
-  await zkappWorkerClient.loadContract();
 
-  displayStep('Compiling zkApp...');
-  await zkappWorkerClient.compileContract();
-  displayStep('zkApp compiled');
+```tsx
+await zkappWorkerClient.loadContract();
 
-  await zkappWorkerClient.initZkappInstance(ZKAPP_ADDRESS);
+displayStep('Compiling zkApp...');
+await zkappWorkerClient.compileContract();
+displayStep('zkApp compiled');
 
-  displayStep('Getting zkApp state...');
-  await zkappWorkerClient.fetchAccount(ZKAPP_ADDRESS);
-  const currentNum = await zkappWorkerClient.getNum();
-  setCurrentNum(currentNum);
-  console.log(`Current state in zkApp: ${currentNum}`);
-...
+await zkappWorkerClient.initZkappInstance(ZKAPP_ADDRESS);
+
+displayStep('Getting zkApp state...');
+await zkappWorkerClient.fetchAccount(ZKAPP_ADDRESS);
+const currentNum = await zkappWorkerClient.getNum();
+setCurrentNum(currentNum);
+console.log(`Current state in zkApp: ${currentNum}`);
 ```
 
 #### Update the state of the React application
 
-```ts ignore
-...
-  setHasBeenSetup(true);
-  setHasWallet(true);
-  setDisplayText('');
-...
+```tsx
+setHasBeenSetup(true);
+setHasWallet(true);
+setDisplayText('');
 ```
 
 ### Run the React app
@@ -19887,7 +19924,7 @@ Execute the following commands being within the `04-zkapp-browser-ui/ui/` direct
   Your browser refreshes automatically when you update the source code.
 
 1. If prompted, request the funds from the Testnet Faucet service to fund your fee payer account.
-1. And in the second terminal window:
+1. In a second terminal window, run:
 
   ```sh
   $ npm run ts-watch
@@ -19901,45 +19938,43 @@ Now that the UI setup is finished, a new useEffect waits for the fee payer accou
 
 Don't forget that if the account has been newly created, it must be funded from the Faucet.
 
-```ts ignore
-...
-  useEffect(() => {
-    const checkAccountExists = async () => {
-      if (hasBeenSetup && !accountExists) {
-        try { 
-          for (;;) {
-            displayStep('Checking if fee payer account exists...');
-            
-            const res = await zkappWorkerClient!.fetchAccount(publicKeyBase58);
-            const accountExists = res.error == null;
-            if (accountExists) {
-              break;
-            }
-            await new Promise((resolve) => setTimeout(resolve, 5000));
-          } 
-        } catch (error: any) {
-          displayStep(`Error checking account: ${error.message}`);
-        }
+```tsx
+useEffect(() => {
+  const checkAccountExists = async () => {
+    if (hasBeenSetup && !accountExists) {
+      try { 
+        for (;;) {
+          displayStep('Checking if fee payer account exists...');
 
+          const res = await zkappWorkerClient!.fetchAccount(publicKeyBase58);
+          const accountExists = res.error == null;
+          if (accountExists) {
+            break;
+          }
+          await new Promise((resolve) => setTimeout(resolve, 5000));
+        } 
+      } catch (error: any) {
+        displayStep(`Error checking account: ${error.message}`);
       }
-      setAccountExists(true);
-    };
 
-    checkAccountExists();
-  }, [zkappWorkerClient, hasBeenSetup, accountExists]); 
-...
+    }
+    setAccountExists(true);
+  };
+
+  checkAccountExists();
+}, [zkappWorkerClient, hasBeenSetup, accountExists]);
 ```
 
 ### Let UI buttons do some useful work
 
-These functions will be triggered on buttons press.
+These functions run when the user presses the buttons. While a transaction is in progress, both buttons are disabled.
 
-```ts ignore
-...
-  const onSendTransaction = async () => {
-    setCreatingTransaction(true);
+```tsx
+const onSendTransaction = async () => {
+  setCreatingTransaction(true);
+  try {
     displayStep('Creating a transaction...');
-   
+
     console.log('publicKeyBase58 sending to worker', publicKeyBase58);
     await zkappWorkerClient!.fetchAccount(publicKeyBase58);
 
@@ -19948,10 +19983,10 @@ These functions will be triggered on buttons press.
     displayStep('Creating proof...');
     await zkappWorkerClient!.proveUpdateTransaction();
 
-    displayStep('Requesting send transaction...');
+    displayStep('Getting transaction JSON...');
     const transactionJSON = await zkappWorkerClient!.getTransactionJSON();
 
-    displayStep('Getting transaction JSON...');
+    displayStep('Requesting send transaction...');
     const { hash } = await (window as any).mina.sendTransaction({
       transaction: transactionJSON,
       feePayer: {
@@ -19963,110 +19998,119 @@ These functions will be triggered on buttons press.
     const transactionLink = `https://minascan.io/devnet/tx/${hash}`;
     setTransactionLink(transactionLink);
     setDisplayText(transactionLink);
+  } catch (error: any) {
+    displayStep(`Error sending transaction: ${error.message}`);
+  } finally {
+    setCreatingTransaction(false);
+  }
+};
 
-    setCreatingTransaction(true);
-  };
+// -------------------------------------------------------
+// Refresh the current state
 
-  const onRefreshCurrentNum = async () => {
-    try {
-      displayStep('Getting zkApp state...');
-      await zkappWorkerClient!.fetchAccount(ZKAPP_ADDRESS);
-      const currentNum = await zkappWorkerClient!.getNum();
-      setCurrentNum(currentNum);
-      console.log(`Current state in zkApp: ${currentNum}`);
-      setDisplayText('');
-    } catch (error: any) {
-      displayStep(`Error refreshing state: ${error.message}`);
-    }
-  };
+const onRefreshCurrentNum = async () => {
+  try {
+    displayStep('Getting zkApp state...');
+    await zkappWorkerClient!.fetchAccount(ZKAPP_ADDRESS);
+    const currentNum = await zkappWorkerClient!.getNum();
+    setCurrentNum(currentNum);
+    console.log(`Current state in zkApp: ${currentNum}`);
+    setDisplayText('');
+  } catch (error: any) {
+    displayStep(`Error refreshing state: ${error.message}`);
+  }
+};
 ```
 
 ### Take care of the page markup
 
-```ts ignore
-...
-  let auroLinkElem;
-  if (hasWallet === false) {
-    const auroLink = 'https://www.aurowallet.com/';
-    auroLinkElem = (
-      <div>
-        Could not find a wallet.{' '}
-        <a href="https://www.aurowallet.com/" target="_blank" rel="noreferrer">
-          Install Auro wallet here
-        </a>
-      </div>
-    );
-  }
-
-  const stepDisplay = transactionlink ? (
-    <a
-      href={transactionlink}
-      target="_blank"
-      rel="noreferrer"
-      style={{ textDecoration: 'underline' }}
-    >
-      View transaction
-    </a>
-  ) : (
-    displayText
-  );
-
-  let setup = (
-    <div
-      className={styles.start}
-      style={{ fontWeight: 'bold', fontSize: '1.5rem', paddingBottom: '5rem' }}
-    >
-      {stepDisplay}
-      {auroLinkElem}
+```tsx
+let auroLinkElem;
+if (hasWallet === false) {
+  const auroLink = 'https://www.aurowallet.com/';
+  auroLinkElem = (
+    <div>
+      Could not find a wallet.{' '}
+      <a href={auroLink} target="_blank" rel="noreferrer">
+        Install Auro wallet here
+      </a>
     </div>
   );
+}
 
-  let accountDoesNotExist;
-  if (hasBeenSetup && !accountExists) {
-    const faucetLink =
-      `https://faucet.minaprotocol.com/?address='${publicKeyBase58}`;
-    accountDoesNotExist = (
-      <div>
-        <span style={{ paddingRight: '1rem' }}>Account does not exist.</span>
-        <a href={faucetLink} target="_blank" rel="noreferrer">
-          Visit the faucet to fund this fee payer account
-        </a>
-      </div>
-    );
-  }
+const stepDisplay = transactionlink ? (
+  <a
+    href={transactionlink}
+    target="_blank"
+    rel="noreferrer"
+    style={{ textDecoration: 'underline' }}
+  >
+    View transaction
+  </a>
+) : (
+  displayText
+);
 
-  let mainContent;
-  if (hasBeenSetup && accountExists) {
-    mainContent = (
-      <div style={{ justifyContent: 'center', alignItems: 'center' }}>
-        <div className={styles.center} style={{ padding: 0 }}>
-          Current state in zkApp: {currentNum?.toString()}{' '}
-        </div>
-        <button
-          className={styles.card}
-          onClick={onSendTransaction}
-          disabled={creatingTransaction}
-        >
-          Send Transaction
-        </button>
-        <button className={styles.card} onClick={onRefreshCurrentNum}>
-          Get Latest State
-        </button>
-      </div>
-    );
-  }
+let setup = (
+  <div
+    className={styles.start}
+    style={{ fontWeight: 'bold', fontSize: '1.5rem', paddingBottom: '5rem' }}
+  >
+    {stepDisplay}
+    {auroLinkElem}
+  </div>
+);
 
-  return (
-    <GradientBG>
-      <div className={styles.main} style={{ padding: 0 }}>
-        <div className={styles.center} style={{ padding: 0 }}>
-          {setup}
-          {accountDoesNotExist}
-          {mainContent}
-        </div>
-      </div>
-    </GradientBG>
+let accountDoesNotExist;
+if (hasBeenSetup && !accountExists) {
+  const faucetLink =
+    `https://faucet.minaprotocol.com/?address=${publicKeyBase58}`;
+  accountDoesNotExist = (
+    <div>
+      <span style={{ paddingRight: '1rem' }}>Account does not exist.</span>
+      <a href={faucetLink} target="_blank" rel="noreferrer">
+        Visit the faucet to fund this fee payer account
+      </a>
+    </div>
   );
+}
+
+let mainContent;
+if (hasBeenSetup && accountExists) {
+  mainContent = (
+    <div style={{ justifyContent: 'center', alignItems: 'center' }}>
+      <div className={styles.center} style={{ padding: 0 }}>
+        Current state in zkApp: {currentNum?.toString()}{' '}
+      </div>
+      <button
+        className={styles.card}
+        onClick={onSendTransaction}
+        disabled={creatingTransaction}
+      >
+        Send Transaction
+      </button>
+      <button
+        className={styles.card}
+        onClick={onRefreshCurrentNum}
+        disabled={creatingTransaction}
+      >
+        Get Latest State
+      </button>
+    </div>
+  );
+}
+
+return (
+  <GradientBG>
+    <div className={styles.main} style={{ padding: 0 }}>
+      <div className={styles.center} style={{ padding: 0 }}>
+        {setup}
+        {accountDoesNotExist}
+        {mainContent}
+      </div>
+    </div>
+  </GradientBG>
+);
 ```
 
 The UI has three sections:
@@ -20086,7 +20130,7 @@ Before you can deploy your project to GitHub Pages, you must push it to a new Gi
 
 - The GitHub repo must have the same name as the project name.
 - In this tutorial, the project name is `04-zkapp-browser-ui`.
-- The `zk project` command created the correct project name strings in the `next.config.js` and `src/pages/reactCOIServiceWorker.ts` files.
+- The `zk project` command created the correct project name strings in the `ui/next.config.mjs`, `ui/app/reactCOIServiceWorker.tsx` and `ui/ghp-postbuild.js` files.
 
 To deploy the UI:
 
@@ -20856,10 +20900,14 @@ Learn about zkOracles in this 5-minute video:
 
 - Ensure your environment meets the [Prerequisites](/zkapps/tutorials#prerequisites) for zkApp Developer Tutorials.
 
+- Use Node.js 22.19.5 or later. o1js 3 requires it.
+
 This tutorial has been tested with:
 
-- [zkApp CLI](https://www.npmjs.com/package/zkapp-cli) version `0.20.1`
-- [o1js](https://www.npmjs.com/package/o1js) version `1.1.0`.
+- [o1js](https://www.npmjs.com/package/o1js) version `3.0.0`
+- Node.js versions `22` and `24`
+
+The example project is built and tested in CI: the smart contract tests run against a local blockchain, and the oracle's signing logic is tested offline with o1js.
 
 ## High-Level Overview
 
@@ -20893,9 +20941,56 @@ This simple oracle design:
 
 ### Code
 
-You can view the complete [oracle logic code](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/07-oracles/oracle/app/api/credit-score/route.ts) and the corresponding `Next.js` project [here](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/07-oracles/oracle).
+The oracle is a `Next.js` project: see the [complete project](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/07-oracles/oracle). It runs as a [Vercel Function](https://vercel.com/docs/functions).
 
-This oracle uses the [Vercel Functions](https://vercel.com/docs/functions). You don't have to dive into the code now, since the code is commented to explain each step so you can build something similar for yourself!
+The route handler reads the `user` query parameter and returns the signed response:
+
+```ts title="app/api/credit-score/route.ts"
+export function GET(request: NextRequest) {
+  const searchParams = new URLSearchParams(request.nextUrl.search);
+  return NextResponse.json(
+    getSignedCreditScore(+(searchParams.get('user') ?? 0)),
+    { status: 200 }
+  );
+}
+```
+
+The signing logic gets the credit score of the user and signs the user id and the credit score, in that order, with the oracle's private key:
+
+```ts title="lib/signCreditScore.ts"
+export function getSignedCreditScore(userId: number) {
+  // The private key of our account. When running locally the hardcoded key will
+  // be used. In production the key will be loaded from a Vercel environment
+  // variable. The public key of the hardcoded key is
+  // B62qphyUJg3TjMKi74T2rF8Yer5rQjBr1UyEG7Wg9XEYAHjaSiSqFv1, which is not the
+  // key of the demo oracle that the smart contract trusts.
+  let privateKey =
+    process.env.PRIVATE_KEY ??
+    'EKF65JKw9Q1XWLDZyZNGysBbYG21QbJf3a4xnEoZPZ28LKYGMw53';
+
+  // We get the users credit score. In this case it's 787 for user 1, and 536
+  // for anybody else :)
+  const knownCreditScore = (userId: number) => (userId === 1 ? 787 : 536);
+
+  // Compute the users credit score
+  const creditScore = knownCreditScore(userId);
+
+  // Use our private key to sign an array of numbers containing the users id and
+  // credit score
+  const signature = client.signFields(
+    [BigInt(userId), BigInt(creditScore)],
+    privateKey
+  );
+
+  return {
+    data: { id: userId, creditScore: creditScore },
+    signature: signature.signature,
+    publicKey: signature.publicKey,
+  };
+}
+```
+
+The smart contract verifies the signature on the same two fields, in the same order. If the oracle signs different fields, or the same fields in a different order, the smart contract rejects the signature.
 
 You can adapt this code to create oracles for other API sources. For example, if you want your smart contract to ingest price feed data from an exchange, query the exchange API, sign the results, and return a response in the following response format.
 
@@ -20934,14 +21029,21 @@ While the first user has a credit score of `787`, the second user has a credit s
 
 ## Generate a key pair for your oracle
 
-You can generate the Mina-compatible public/private key pair for your oracle by executing the following command:
+To generate a Mina-compatible public/private key pair for your oracle, run this command in the `oracle` directory of the example project:
 
 ```sh
 npm run keygen
 ```
 
-This command runs the code in the [keygen.js](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/07-oracles/oracle/scripts/keygen.js) file.
-This file is the part of the oracle `Next.js` application, source code of which is available [here](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/07-oracles/oracle).
+This command runs the code in the [keygen.js](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/07-oracles/oracle/scripts/keygen.js) file of the oracle `Next.js` project.
+
+The demo oracle at `https://07-oracles.vercel.app` signs with its own private key. Its public key is `B62qoAE4rBRuTgC42vqvEyUqCGhaZsW58SKVW4Ht8aYqP9UTvxFWBgy`, and the smart contract in this tutorial trusts only this key.
+
+When you run the oracle yourself (`npm run dev`) without the `PRIVATE_KEY` environment variable, it signs with a development key. The public key of the development key is `B62qphyUJg3TjMKi74T2rF8Yer5rQjBr1UyEG7Wg9XEYAHjaSiSqFv1`, so the smart contract rejects its signatures. To use your own oracle:
+
+1. Generate a key pair with `npm run keygen`.
+1. Set the `PRIVATE_KEY` environment variable of the oracle to the private key.
+1. Set `ORACLE_PUBLIC_KEY` in the smart contract to the public key.
 
 ## Smart Contract
 
@@ -20953,13 +21055,19 @@ Now that you have an oracle that returns signed data, you can write a smart cont
 
 1. Create a project by using the `zk project` command:
 
-  ```sh
-  $ zk project --ui none 07-oracles
-  ```
+   ```sh
+   $ zk project --ui none 07-oracles
+   ```
 
-This command will scaffold the zkApp project skipping the UI part since we don't need it.
+   This command creates the zkApp project without a UI, because this tutorial does not need one.
 
 1. Change into the `07-oracles` directory.
+
+1. The zkApp CLI can create the project with an earlier o1js. In `package.json`, set the `o1js` version in `peerDependencies` to `^3.0.0`, then run:
+
+   ```sh
+   $ npm install
+   ```
 
 For this tutorial, you run commands from the root of the `07-oracles` directory.
 
@@ -20970,25 +21078,29 @@ Each time you make changes, then build or deploy, the TypeScript code is compile
 The files in the `src` directory contain the TypeScript code for the smart contract.
 
 1. Delete the default generated files by running:
-  ```sh
-  $ rm src/Add.ts
-  $ rm src/Add.test.ts
-  $ rm src/interact.ts
-  ```
+
+   ```sh
+   $ rm src/Add.ts
+   $ rm src/Add.test.ts
+   $ rm src/AddZkProgram.ts
+   $ rm src/interact.ts
+   ```
+
+   If your version of the zkApp CLI does not create `src/AddZkProgram.ts`, skip that command.
 
 1. Create the `OracleExample.ts` file and generate the corresponding test file:
 
-  ```sh
-  $ zk file OracleExample
-  ```
+   ```sh
+   $ zk file OracleExample
+   ```
 
 1. Change `src/index.ts` to:
 
-  ```ts
-  import { OracleExample } from './OracleExample.js';
+   ```ts title="src/index.ts"
+   import { OracleExample } from './OracleExample.js';
 
-  export { OracleExample };
-  ```
+   export { OracleExample };
+   ```
 
 ### Write the smart contract
 
@@ -20996,8 +21108,8 @@ You can find the complete code for this smart contract [here](https://github.com
 
 Paste the following content into the `src/OracleExample.ts` file:
 
-```ts
-
+```ts title="src/OracleExample.ts"
+import {
   Field,
   SmartContract,
   state,
@@ -21018,8 +21130,6 @@ export class OracleExample extends SmartContract {
   init() {
     // Initialize zkApp state
     super.init();
-    // Specify that caller should include signature with tx instead of proof
-    this.requireSignature();
   }
 
   @method async verify(id: Field, creditScore: Field, signature: Signature) {
@@ -21053,8 +21163,6 @@ init() {
   super.init();
   // Set the oracle public key as zkApp on-chain state
   this.oraclePublicKey.set(PublicKey.fromBase58(ORACLE_PUBLIC_KEY));
-  // Specify that caller should include signature with tx instead of proof
-  this.requireSignature();
 }
 ```
 
@@ -21147,6 +21255,55 @@ Emitted events can be fetched using the [Archive-Node-API](/zkapps/writing-a-zka
 this.emitEvent('verified', id);
 ```
 
+The complete smart contract:
+
+```ts title="src/OracleExample.ts"
+import {
+  Field,
+  SmartContract,
+  state,
+  State,
+  method,
+  PublicKey,
+  Signature,
+} from 'o1js';
+
+// The public key of our trusted data provider
+const ORACLE_PUBLIC_KEY =
+  'B62qoAE4rBRuTgC42vqvEyUqCGhaZsW58SKVW4Ht8aYqP9UTvxFWBgy';
+
+export class OracleExample extends SmartContract {
+  // Define zkApp state
+  @state(PublicKey) oraclePublicKey = State<PublicKey>();
+
+  // Define zkApp events
+  events = {
+    verified: Field,
+  };
+
+  init() {
+    // Initialize zkApp state
+    super.init();
+    // Set the oracle public key as zkApp on-chain state
+    this.oraclePublicKey.set(PublicKey.fromBase58(ORACLE_PUBLIC_KEY));
+  }
+
+  @method async verify(id: Field, creditScore: Field, signature: Signature) {
+    // Get the oracle public key from the zkApp state
+    const oraclePublicKey = this.oraclePublicKey.get();
+    this.oraclePublicKey.requireEquals(oraclePublicKey);
+    // Evaluate whether the signature is valid for the provided data
+    const validSignature = signature.verify(oraclePublicKey, [id, creditScore]);
+    // Check that the signature is valid
+    validSignature.assertTrue();
+    // Check that the provided credit score is 700 or higher
+    creditScore.assertGreaterThanOrEqual(Field(700));
+    // Emit an event containing the verified user's id
+    this.emitEvent('verified', id);
+  }
+}
+```
+
 ## Test your smart contract
 
 You can find the complete code for the smart contract tests [here](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/07-oracles/contracts/src/OracleExample.test.ts).
@@ -21155,9 +21312,9 @@ When you ran the `zk file OracleExample` command, the zkApp CLI automatically ge
 
 To add tests, paste the following code in the `OracleExample.test.ts` file:
 
-```ts
-
-
+```ts title="src/OracleExample.test.ts"
+import { OracleExample } from './OracleExample';
+import {
   Field,
   Mina,
   PrivateKey,
@@ -21237,17 +21394,17 @@ describe('OracleExample', () => {
     it('throws an error if the credit score is below 700 even if the provided signature is valid', async () => {
       await localDeploy();
 
-      const id = Field(1);
+      const id = Field(2);
       const creditScore = Field(536);
       const signature = Signature.fromBase58(
         '7mXXnqMx6YodEkySD3yQ5WK7CCqRL1MBRTASNhrm48oR4EPmenD2NjJqWpFNZnityFTZX5mWuHS1WhRnbdxSTPzytuCgMGuL'
       );
 
-      expect(async () => {
-        const txn = await Mina.transaction(senderAccount, async () => {
+      await expect(
+        Mina.transaction(senderAccount, async () => {
           await zkApp.verify(id, creditScore, signature);
-        });
-      }).rejects;
+        })
+      ).rejects.toThrow('expected 700 <= 536');
     });
 
     it('throws an error if the credit score is above 700 and the provided signature is invalid', async () => {
@@ -21259,11 +21416,11 @@ describe('OracleExample', () => {
         '7mXPv97hRN7AiUxBjuHgeWjzoSgL3z61a5QZacVgd1PEGain6FmyxQ8pbAYd5oycwLcAbqJLdezY7PRAUVtokFaQP8AJDEGX'
       );
 
-      expect(async () => {
-        const txn = await Mina.transaction(senderAccount, async () => {
+      await expect(
+        Mina.transaction(senderAccount, async () => {
           await zkApp.verify(id, creditScore, signature);
-        });
-      }).rejects;
+        })
+      ).rejects.toThrow('Bool.assertTrue');
     });
   });
 
@@ -21303,23 +21460,25 @@ describe('OracleExample', () => {
       const creditScore = Field(data.data.creditScore);
       const signature = Signature.fromBase58(data.signature);
 
-      expect(async () => {
-        const txn = await Mina.transaction(senderAccount, async () => {
+      await expect(
+        Mina.transaction(senderAccount, async () => {
           await zkApp.verify(id, creditScore, signature);
-        });
-      }).rejects;
+        })
+      ).rejects.toThrow('expected 700 <= 536');
     });
   });
 });
 ```
 
+Each failure test waits for the rejected transaction with `await expect(...).rejects.toThrow(...)` and checks the error message. Without `await` and a matcher such as `toThrow()`, the test checks nothing and passes even when the transaction succeeds.
+
 To run the tests:
 
 1. Save the `OracleExample.test.ts` file.
-1. Run `npm i`.
+1. Run `npm install`.
 1. Run `npm run test`.
 
-Note that writing a test that calls an API is generally not a best practice, but it's convenient for the sake of this tutorial. You can also mock your HTTP requests.
+The tests in the `actual API requests` group call the demo oracle at `https://07-oracles.vercel.app`, so they need network access. Writing a test that calls an API is generally not a best practice, but it's convenient for the sake of this tutorial. You can also mock your HTTP requests.
 
 Congratulations! You have just built a simple oracle using o1js and the Mina blockchain.
 You can find the complete code for this example [here](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/07-oracles).
