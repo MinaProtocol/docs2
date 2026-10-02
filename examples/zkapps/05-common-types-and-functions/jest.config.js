@@ -3,6 +3,9 @@ export default {
   verbose: true,
   preset: 'ts-jest/presets/default-esm',
   testEnvironment: 'node',
+  // The contract suites deploy to a local blockchain in each beforeEach. On a
+  // busy runner that takes longer than jest's default of 5 seconds.
+  testTimeout: 60_000,
   globals: {
     'ts-jest': {
       useESM: true,
