@@ -8,6 +8,8 @@ For the step-by-step tutorial, see [Tutorial 10: Account Updates](https://docs.m
 
 ## How to install and run this example project
 
+This project uses o1js 3.0.0, which needs Node.js 22.19.5 or later.
+
 1. Clone the repository:
     ```sh
     git clone https://github.com/MinaProtocol/docs2.git
@@ -35,9 +37,10 @@ For the step-by-step tutorial, see [Tutorial 10: Account Updates](https://docs.m
     npm run build && node build/src/main.js
     ```
 
-## Last audit date
-
-**20-Februrary-2024**
+6. Run the tests:
+    ```sh
+    npm test
+    ```
 
 ## License
 

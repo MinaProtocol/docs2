@@ -1,3 +1,4 @@
+// docs:start main
 import { Field, verify } from 'o1js';
 import { Add } from './Add.js';
 
@@ -26,3 +27,4 @@ async function main() {
 }
 
 main();
+// docs:end main

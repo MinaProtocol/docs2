@@ -8,6 +8,7 @@ import {
   Permissions,
 } from 'o1js';
 
+// docs:start secondary
 export class SecondaryZkApp extends SmartContract {
   @state(Field) num = State<Field>();
 
@@ -34,3 +35,4 @@ export class SecondaryZkApp extends SmartContract {
     this.num.set(num.add(incrementBy));
   }
 }
+// docs:end secondary

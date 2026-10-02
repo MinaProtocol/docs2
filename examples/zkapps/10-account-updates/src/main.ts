@@ -23,17 +23,20 @@ import { Field, Mina, PrivateKey, AccountUpdate } from 'o1js';
   const secondarySk = PrivateKey.random();
   const secondaryAddr = secondarySk.toPublicKey();
 
+  // docs:start legend
   const legend = {
     [proofsOnlyAddr.toBase58()]: 'proofsOnlyZkApp',
     [secondaryAddr.toBase58()]: 'secondaryZkApp',
     [deployerAccount.toBase58()]: 'deployer',
   };
+  // docs:end legend
 
   const proofsOnlyInstance = new ProofsOnlyZkApp(proofsOnlyAddr);
   const secondaryInstance = new SecondaryZkApp(secondaryAddr);
 
   // ----------------------------------------------------
 
+  // docs:start deploy
   const deployTxn = await Mina.transaction(deployerAccount, async () => {
     AccountUpdate.fundNewAccount(deployerAccount, 2);
     await proofsOnlyInstance.deploy();
@@ -44,9 +47,11 @@ import { Field, Mina, PrivateKey, AccountUpdate } from 'o1js';
   deployTxn.sign([deployerKey, proofsOnlySk, secondarySk]);
 
   await deployTxn.send();
+  // docs:end deploy
 
   // ----------------------------------------------------
 
+  // docs:start txn1
   const txn1 = await Mina.transaction(deployerAccount, async () => {
     await proofsOnlyInstance.add(Field(4));
   });
@@ -54,9 +59,11 @@ import { Field, Mina, PrivateKey, AccountUpdate } from 'o1js';
   await txn1.prove();
 
   await txn1.sign([deployerKey]).send();
+  // docs:end txn1
 
   // ----------------------------------------------------
 
+  // docs:start txn2
   const txn2 = await Mina.transaction(deployerAccount, async () => {
     await proofsOnlyInstance.callSecondary(secondaryAddr);
   });
@@ -64,4 +71,5 @@ import { Field, Mina, PrivateKey, AccountUpdate } from 'o1js';
   await txn2.prove();
 
   await txn2.sign([deployerKey]).send();
+  // docs:end txn2
 })();
