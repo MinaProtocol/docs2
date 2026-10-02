@@ -1,3 +1,4 @@
+// docs:start imports-and-structure
 import {
   AccountUpdateForest,
   DeployArgs,
@@ -37,7 +38,9 @@ export class BasicTokenContract extends TokenContract {
       receive: permissionToEdit,
     });
   }
+  // docs:end imports-and-structure
 
+  // docs:start init-approve-mint
   @method async init() {
     await super.init();
     this.account.tokenSymbol.set(tokenSymbol);
@@ -85,7 +88,9 @@ export class BasicTokenContract extends TokenContract {
 
     this.totalAmountInCirculation.set(newTotalAmountInCirculation);
   }
+  // docs:end init-approve-mint
 
+  // docs:start send-tokens
   /**
    * Send `amount` tokens from one account to another.
    *
@@ -104,5 +109,6 @@ export class BasicTokenContract extends TokenContract {
     });
   }
 }
+// docs:end send-tokens
 
 export { tokenSymbol };

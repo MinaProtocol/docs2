@@ -30,6 +30,12 @@ token id is not the MINA token id, minting raises the amount in circulation, a
 transfer does not, and both the forged-signature and the overdraft cases are
 rejected.
 
+`WhitelistedTokenContract` adds a whitelist to the same design. Its
+`approveBase()` is a `@method` that also checks the whitelist, so the inherited
+`transfer()` helper works for whitelisted holders and cannot move the token to
+or from any other address. `WhitelistedTokenContract.proofs.test.ts` checks
+this with real proofs, so it compiles the contract and takes several minutes.
+
 ## Requirements
 
 Node 22.19.5 or later, which is what o1js 3 requires.
