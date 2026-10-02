@@ -72,7 +72,33 @@ For each Mina release:
 2. Update the release versions with `scripts/update_release_info.sh --mainnet-tag <tag> --devnet-tag <tag>`.
 3. Regenerate the CLI reference with `scripts/generate-cli-reference.sh` against the installed release. The **Check CLI reference is up to date** workflow fails until you do this.
 4. Run `npm run validate-docker-images` to check the image tags on the pages.
-5. Run `node scripts/generate-llms-txt.mjs` and commit `static/llms-full.txt`.
+5. Run `npm run generate-llms-txt` and commit `static/llms-full.txt`.
+
+### Code blocks from the example projects
+
+A tutorial code block that shows code from an example project under `examples/` must not be a copy. Include it from the example source, so the page always shows the code that CI builds and tests.
+
+1. In the example source, put the code between two marker comments. The region name uses letters, digits, `.`, `_` and `-`:
+
+   ```ts
+   // docs:start update
+   @method async update(square: Field) {
+     // ...
+   }
+   // docs:end update
+   ```
+
+   `# docs:start name` and `<!-- docs:start name -->` also work, for shell, YAML and HTML files. Regions can nest and overlap.
+
+2. In the `.mdx` page, write the directive alone in its own paragraph, with blank lines before and after it. The path is relative to the repository root. `title="..."` is optional:
+
+   ```md
+   #include_code update examples/zkapps/01-hello-world/src/Square.ts ts title="src/Square.ts"
+   ```
+
+At build time, the directive becomes a fenced code block with the region's lines. The build removes the marker lines of that region and of all other regions inside it, removes the common indentation, and removes blank lines at the start and end. `static/llms-full.txt` gets the same code, so run `npm run generate-llms-txt` after you change an included region.
+
+If the file or the region does not exist, or a region has no end, the build **fails** and names the page, the file and the region. It never shows an empty block. The resolver is `scripts/include-code.cjs`, and `npm run test:scripts` runs its tests.
 
 ### o1js Reference
 

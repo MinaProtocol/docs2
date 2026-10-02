@@ -75,7 +75,7 @@ describe('Square', () => {
     await update(Field(9));
     await expect(update(Field(75))).rejects.toThrow();
 
-    // The page's final listing prints "state after txn2: 81".
+    // The page's final listing prints "state after txn3: 81".
     await update(Field(81));
     expect(zkApp.num.get()).toEqual(Field(81));
   });

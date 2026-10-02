@@ -2,6 +2,7 @@ require('dotenv').config();
 
 const math = require('remark-math');
 const katex = require('rehype-katex');
+const { remarkIncludeCode } = require('./scripts/include-code.cjs');
 
 // With JSDoc @type annotations, IDEs can provide config autocompletion
 /** @type {import('@docusaurus/types').DocusaurusConfig} */
@@ -476,7 +477,9 @@ module.exports = {
           routeBasePath: '/',
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl: 'https://github.com/o1-labs/docs2/edit/main',
-          remarkPlugins: [math],
+          // `#include_code <region> <path> <lang>` -> code block from an example
+          // source. See scripts/include-code.cjs.
+          remarkPlugins: [math, remarkIncludeCode],
           rehypePlugins: [katex],
           admonitions: {
             keywords: [
