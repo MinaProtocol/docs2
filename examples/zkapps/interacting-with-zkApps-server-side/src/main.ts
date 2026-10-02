@@ -1,31 +1,52 @@
+// docs:start imports
 import { Mina, PrivateKey } from 'o1js';
 import { Square } from './Square.js';
 
 import fs from 'fs';
 import { deploy, loopUntilAccountExists } from './utils.js';
+// docs:end imports
 
-const Network = Mina.Network('https://devnet-plain-1.gcp.o1test.net/graphql');
+// docs:start config
+// `zk config` (Tutorial 3) wrote a deploy alias to config.json. The alias names
+// the GraphQL endpoint, the network kind, the fee, the zkApp key file and the
+// fee payer key file.
+const deployAlias = process.argv[2];
+if (!deployAlias) {
+  throw Error('usage: node build/src/main.js <deploy-alias>');
+}
+const config = JSON.parse(fs.readFileSync('config.json', 'utf8'));
+const alias = config.deployAliases?.[deployAlias];
+if (!alias) {
+  throw Error(`config.json has no deploy alias "${deployAlias}"`);
+}
+// docs:end config
+
+// docs:start network
+const Network = Mina.Network({ networkId: alias.networkId, mina: alias.url });
 Mina.setActiveInstance(Network);
 
-const transactionFee = 100_000_000;
+// The fee in config.json is in MINA. Transaction fees in code are in nanomina.
+const transactionFee = Math.round(Number(alias.fee) * 1e9);
+// docs:end network
 
-const deployAlias = process.argv[2];
-const deployerKeysFileContents = fs.readFileSync(
-  'keys/' + deployAlias + '.json',
-  'utf8'
-);
-const deployerPrivateKeyBase58 = JSON.parse(
-  deployerKeysFileContents
-).privateKey;
-const deployerPrivateKey = PrivateKey.fromBase58(deployerPrivateKeyBase58);
+// docs:start keys
+function readPrivateKey(path: string) {
+  return PrivateKey.fromBase58(JSON.parse(fs.readFileSync(path, 'utf8')).privateKey);
+}
+
+// The fee payer pays for every transaction. It is the account that you funded
+// at the faucet in Tutorial 3.
+const deployerPrivateKey = readPrivateKey(alias.feepayerKeyPath);
 const deployerPublicKey = deployerPrivateKey.toPublicKey();
 
-const zkAppPrivateKey = PrivateKey.fromBase58(
-  'EKFTMuvTirzrwpeHP8RKe7bGufBGiKs27nTMzD5XyMV8NcK3upt2'
-);
+// The zkApp has its own key, not the fee payer's. `zk deploy` deployed the
+// Square contract to this key in Tutorial 3.
+const zkAppPrivateKey = readPrivateKey(alias.keyPath);
+// docs:end keys
 
 // ----------------------------------------------------
 
+// docs:start wait-for-fee-payer
 let account = await loopUntilAccountExists({
   account: deployerPublicKey,
   eachTimeNotExist: () => {
@@ -42,9 +63,11 @@ let account = await loopUntilAccountExists({
 console.log(
   `Using fee payer account with nonce ${account.nonce}, balance ${account.balance}`
 );
+// docs:end wait-for-fee-payer
 
 // ----------------------------------------------------
 
+// docs:start deploy
 console.log('Compiling smart contract...');
 let { verificationKey } = await Square.compile();
 
@@ -67,9 +90,11 @@ await loopUntilAccountExists({
 
 let num = (await zkapp.num.fetch())!;
 console.log(`current value of num is ${num}`);
+// docs:end deploy
 
 // ----------------------------------------------------
 
+// docs:start update
 let transaction = await Mina.transaction(
   { sender: deployerPublicKey, fee: transactionFee },
   async () => {
@@ -89,9 +114,11 @@ transaction.sign([deployerPrivateKey]);
 
 console.log('Sending the transaction...');
 let pendingTransaction = await transaction.send();
+// docs:end update
 
 // ----------------------------------------------------
 
+// docs:start wait-for-inclusion
 if (pendingTransaction.status === 'rejected') {
   console.log('error sending transaction (see above)');
   process.exit(0);
@@ -104,3 +131,4 @@ Waiting for transaction to be included...`
 await pendingTransaction.wait();
 
 console.log(`updated state! ${await zkapp.num.fetch()}`);
+// docs:end wait-for-inclusion
