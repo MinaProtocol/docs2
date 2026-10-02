@@ -17887,7 +17887,7 @@ The full source code for this tutorial is provided in the [examples/zkapps/01-he
 
 :::info
 
-To prevent copying line numbers and command prompts as shown in the examples, use the copy code to clipboard button that appears at the top right of the snippet box when you hover over it.
+To prevent copying command prompts as shown in the examples, use the copy code to clipboard button that appears at the top right of the snippet box when you hover over it.
 
 :::
 
@@ -17998,10 +17998,10 @@ Start by deleting the default files that come with the new project.
 
 1. Now, open `src/index.ts` in a text editor and change it to look like:
 
-  ```ts src/index.ts
-  1 import { Square } from './Square.js';
-  2
-  3 export { Square };
+  ```ts title="src/index.ts"
+  import { Square } from './Square.js';
+
+  export { Square };
   ```
 
 The `src/index.ts` file contains all of the exports you want to make available for consumption from outside your smart contract project, such as from a UI.
@@ -18010,7 +18010,7 @@ The `src/index.ts` file contains all of the exports you want to make available f
 
 Now, the fun part! Write your smart contract in the `src/Square.ts` file.
 
-Line numbers are provided for convenience. A final version of the smart contract is provided in the [Square.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/01-hello-world/src/Square.ts) example file.
+A final version of the smart contract is provided in the [Square.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/01-hello-world/src/Square.ts) example file. The code blocks on this page are taken from the example files when the docs are built, so they always match the code that CI runs.
 
 This part of the tutorial walks you through the `Square` smart contract code already completed in the `src/Square.ts` example file.
 
@@ -18032,16 +18032,10 @@ The `import` statement brings in other packages and dependencies to use in your 
 
 All functions used inside a smart contract must operate on o1js compatible data types: `Field` types and other types built on top of `Field` types.
 
-:::info
+:::
 
-```ts src/Square.ts
-1 import {
-2   Field,
-3   SmartContract,
-4   state,
-5   State,
-6   method,
-7 } from 'o1js';
+```ts title="src/Square.ts"
+import { Field, SmartContract, state, State, method } from 'o1js';
 ```
 
 These items are:
@@ -18058,27 +18052,23 @@ Now, review the smart contract in the `src/Square.ts` file.
 
 The smart contract called `Square` has one element of on-chain state named `num` of type `Field` as defined by following code:
 
-```ts src/Square.ts
-8
-9 export class Square extends SmartContract {
-10   @state(Field) num = State<Field>();
-11
-12 }
+```ts title="src/Square.ts"
+export class Square extends SmartContract {
+  @state(Field) num = State<Field>();
 ```
 
 zkApps can have up to 32 fields of on-chain state. Each field stores up to 32 bytes (technically, 31.875 bytes or 255 bits) of arbitrary data. A later tutorial covers options for off-chain state.
 
 Now, this code adds the `init` method to set up the initial state of the smart contract on deployment:
 
-```ts src/Square.ts
-8
-9 export class Square extends SmartContract {
-10   @state(Field) num = State<Field>();
-11
-12   init() {
-13     super.init();
-14     this.num.set(Field(3));
-15   }
+```ts title="src/Square.ts"
+export class Square extends SmartContract {
+  @state(Field) num = State<Field>();
+
+  init() {
+    super.init();
+    this.num.set(Field(3));
+  }
 ```
 
 Since this code extends `SmartContract` that has its own initialization to perform, calling `super.init()` invokes this function on the base class.
@@ -18089,17 +18079,14 @@ You can optionally specify permissions. See [setPermissions](https://docs.o1labs
 
 Finally, this code adds the `update()` function:
 
-```ts src/Square.ts
-14     this.num.set(Field(3));
-15   }
-16
-17   @method async update(square: Field) {
-18     const currentState = this.num.get();
-19     this.num.requireEquals(currentState);
-20     square.assertEquals(currentState.mul(currentState));
-21     this.num.set(square);
-22   }
-23 }
+```ts title="src/Square.ts"
+  @method async update(square: Field) {
+    const currentState = this.num.get();
+    this.num.requireEquals(currentState);
+    square.assertEquals(currentState.mul(currentState));
+    this.num.set(square);
+  }
+}
 ```
 
 The function name `update` is arbitrary, but it makes sense for this example. Notice how the `@method` decorator is used because it is intended to be invoked by end users by using a zkApp UI, or as in this case, the `main.ts` script.
@@ -18141,9 +18128,9 @@ For this tutorial, the `import` statement brings in items from `o1js` that you u
 
 1. Copy the following lines from [main.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/01-hello-world/src/main.ts) example file into the `src/main.ts` file:
 
-  ```ts src/main.ts
-  1 import { Square } from './Square.js';
-  2 import { Field, Mina, PrivateKey, AccountUpdate } from 'o1js';
+  ```ts title="src/main.ts"
+  import { Square } from './Square.js';
+  import { Field, Mina, PrivateKey, AccountUpdate } from 'o1js';
   ```
 
   These import items are:
@@ -18166,28 +18153,26 @@ Using a simulated local blockchain speeds up development and tests the behavior 
 
 To initialize your simulated local blockchain, add the following code from the [main.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/01-hello-world/src/main.ts) example file to `src/main.ts`:
 
-```ts src/main.ts
- 4 const useProof = false;
- 5
- 6  const Local = await Mina.LocalBlockchain({ proofsEnabled: useProof });
- 7  Mina.setActiveInstance(Local);
- 8
- 9  const deployerAccount = Local.testAccounts[0];
-10  const deployerKey = deployerAccount.key;
-11  const senderAccount = Local.testAccounts[1];
-12  const senderKey = senderAccount.key;
-```
+```ts title="src/main.ts"
+const useProof = false;
 
-Tip: To preserve line numbers in your local `main.ts` file, add blank lines as needed after you copy the code snippets.
+const Local = await Mina.LocalBlockchain({ proofsEnabled: useProof });
+Mina.setActiveInstance(Local);
+
+const deployerAccount = Local.testAccounts[0];
+const deployerKey = deployerAccount.key;
+const senderAccount = Local.testAccounts[1];
+const senderKey = senderAccount.key;
+```
 
 This simulated local blockchain provides pre-funded accounts. Add these lines to create local test accounts with test MINA (tMINA) to use for this tutorial:
 
-```ts src/main.ts
-16 // ----------------------------------------------------
-17
-18 // Create a public/private key pair. The public key is your address and where you deploy the zkApp to
-19 const zkAppPrivateKey = PrivateKey.random();
-20 const zkAppAddress = zkAppPrivateKey.toPublicKey();
+```ts title="src/main.ts"
+// ----------------------------------------------------
+
+// Create a public/private key pair. The public key is your address and where you deploy the zkApp to
+const zkAppPrivateKey = PrivateKey.random();
+const zkAppAddress = zkAppPrivateKey.toPublicKey();
 ```
 
 ### Build and run the smart contract
@@ -18228,19 +18213,20 @@ All smart contracts that you create with the zkApp CLI use similar code:
 
 Comments break down each stage:
 
-```ts src/main.ts
-21
-22 // create an instance of Square - and deploy it to zkAppAddress
-23 const zkAppInstance = new Square(zkAppAddress);
-24 const deployTxn = await Mina.transaction(deployerAccount, async () => {
-25   AccountUpdate.fundNewAccount(deployerAccount);
-26   await zkAppInstance.deploy();
-27 });
-28 await deployTxn.sign([deployerKey, zkAppPrivateKey]).send();
-29
-30 // get the initial state of Square after deployment
-31 const num0 = zkAppInstance.num.get();
-32 console.log('state after init:', num0.toString());
+```ts title="src/main.ts"
+// create an instance of Square - and deploy it to zkAppAddress
+const zkAppInstance = new Square(zkAppAddress);
+const deployTxn = await Mina.transaction(deployerAccount, async () => {
+  // 1 Mina fee is required to create a new account for the zkApp
+  // This line means the deployer account will pay the fee for any account created in this transaction
+  AccountUpdate.fundNewAccount(deployerAccount);
+  await zkAppInstance.deploy();
+});
+await deployTxn.sign([deployerKey, zkAppPrivateKey]).send();
+
+// get the initial state of Square after deployment
+const num0 = zkAppInstance.num.get();
+console.log('state after init:', num0.toString());
 ```
 
 Try running this command again:
@@ -18262,18 +18248,17 @@ state after init: 3
 
 To update your local zkApp account with a transaction, add the following code to the `src/main.ts` file:
 
-```ts src/main.ts
-33
-34 // ----------------------------------------------------
-35
-36 const txn1 = await Mina.transaction(senderAccount, async () => {
-37   await zkAppInstance.update(Field(9));
-38 });
-39 await txn1.prove();
-40 await txn1.sign([senderKey]).send();
-41
-42 const num1 = zkAppInstance.num.get();
-43 console.log('state after txn1:', num1.toString());
+```ts title="src/main.ts"
+// ----------------------------------------------------
+
+const txn1 = await Mina.transaction(senderAccount, async () => {
+  await zkAppInstance.update(Field(9));
+});
+await txn1.prove();
+await txn1.sign([senderKey]).send();
+
+const num1 = zkAppInstance.num.get();
+console.log('state after txn1:', num1.toString());
 ```
 
 This code creates a new transaction that attempts to update the field to the value `9`. Because of the rules in the `update()` function that is called on the smart contract, this command succeeds when you run it again:
@@ -18298,23 +18283,22 @@ It's time to do some testing. To add a transaction that fails, add more code fro
 
 The contract logic allows the number that is stored as on-chain state to be replaced only by its square. Now that `num` is in state `9`, updating is possible only with `81`.
 
-To test a failure, add these next lines of code from the `src/main.ts` file and change the state to `75` in `zkAppInstance.update(Field(75))`:
+To test a failure, add these next lines of code from the `src/main.ts` example file. They try to change the state to `75` with `zkAppInstance.update(Field(75))`:
 
-```ts src/main.ts
-44
-45 // ----------------------------------------------------
-46
-47 try {
-48   const txn2 = await Mina.transaction(senderAccount, async () => {
-49     await zkAppInstance.update(Field(75));
-50   });
-51   await txn2.prove();
-52   await txn2.sign([senderKey]).send();
-53 } catch (error: any) {
-54   console.log(error.message);
-55 }
-56 const num2 = zkAppInstance.num.get();
-57 console.log('state after txn2:', num2.toString());
+```ts title="src/main.ts"
+// ----------------------------------------------------
+
+try {
+  const txn2 = await Mina.transaction(senderAccount, async () => {
+    await zkAppInstance.update(Field(75));
+  });
+  await txn2.prove();
+  await txn2.sign([senderKey]).send();
+} catch (error: any) {
+  console.log(error.message);
+}
+const num2 = zkAppInstance.num.get();
+console.log('state after txn2:', num2.toString());
 ```
 
 Try running this command again:
@@ -18335,7 +18319,20 @@ Field.assertEquals(): 75 != 81
 state after txn2: 9
 ```
 
-And finally, be sure to change your `main.ts` file to include the correct update to change the state to `81` in `zkAppInstance.update(Field(81))`.
+And finally, add a third transaction that makes the correct update: it changes the state to `81` with `zkAppInstance.update(Field(81))`:
+
+```ts title="src/main.ts"
+// ----------------------------------------------------
+
+const txn3 = await Mina.transaction(senderAccount, async () => {
+  await zkAppInstance.update(Field(81));
+});
+await txn3.prove();
+await txn3.sign([senderKey]).send();
+
+const num3 = zkAppInstance.num.get();
+console.log('state after txn3:', num3.toString());
+```
 
 Run this command again:
 
@@ -18351,7 +18348,9 @@ The expected output is:
 
 state after init: 3
 state after txn1: 9
-state after txn2: 81
+Field.assertEquals(): 75 != 81
+state after txn2: 9
+state after txn3: 81
 ```
 
 ## Test it
@@ -21036,6 +21035,74 @@ This tutorial has been tested with:
   export { BasicTokenContract };
   ```
 
+## Concepts
+
+Before you read the contract, learn the three objects that every custom token on Mina uses: the token manager, the token id, and the token account. Then learn the approval mechanism, which is how the token manager controls every change to a token balance.
+
+The [tokenConcepts.test.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/08-custom-tokens/src/tokenConcepts.test.ts) test file in the example project checks each statement in this section on a local blockchain.
+
+### Token manager
+
+The token manager is the zkApp account that owns a token. In o1js, you write a token manager as a class that extends `TokenContract`. The token manager can:
+
+- Set a token symbol for its token, such as `MYTKN`. The token symbol is not unique. Two token managers can set the same symbol and still manage two different tokens.
+- Mint tokens. Minting adds tokens to the balance of an account. In o1js, `this.internal.mint()` does this.
+- Burn tokens. Burning removes tokens from the balance of an account. In o1js, `this.internal.burn()` does this, and it requires a signature from the account that loses the tokens. A balance cannot go below zero, so an account cannot burn or send more tokens than it holds.
+- Approve transfers. Any account that holds the token can start a transfer, but the token manager must approve it. See [Approval mechanism](#approval-mechanism).
+
+`TokenContract.deploy()` sets the `access` permission of the token manager account to `proofOrSignature()`, and requires that the account is new. Without this permission, anyone can mint the token without the token manager.
+
+### Token id
+
+A token id is a field element that identifies a token. The token id is derived from the public key of the token manager, so each token manager has exactly one token id. That is why the token symbol does not need to be unique.
+
+To get the token id of a token manager, call `deriveTokenId()` on the contract:
+
+```ts
+const tokenId = token.deriveTokenId();
+```
+
+This is the same value as `TokenId.derive(token.address)`. The MINA token has the token id `TokenId.default`, which is `1`.
+
+`TokenId.derive()` also takes the token id of the token manager account as a second argument, which is `TokenId.default` when you do not supply it. For a token manager that is a normal MINA account, like the one in this tutorial, the two calls give the same value.
+
+### Token account
+
+An account on Mina is identified by a public key _and_ a token id. A token account is an account whose token id is the id of a custom token. Its balance is in that token, not in MINA.
+
+So one public key can have many accounts: one MINA account and one token account for each token that it holds. They are separate accounts. When you mint tokens to a public key, its MINA balance does not change.
+
+To read a token balance, give the token id:
+
+```ts
+Mina.getBalance(address, tokenId); // the token balance
+Mina.getBalance(address); // the MINA balance
+```
+
+A token account is created the first time that its public key receives the token. The public key does not need a MINA account. Creating a token account costs the account creation fee, the same as creating a MINA account. Some account in the transaction must pay it, usually with `AccountUpdate.fundNewAccount()`. If no account pays it, the transaction fails with `Invalid fee excess`. Later transactions to the same token account do not pay the fee again.
+
+### Approval mechanism
+
+Every change to a token account is an account update with that token id. The Mina protocol accepts such an account update only when it is a child of the token manager's account update in the same transaction, or a deeper descendant that inherits the token permission from its parent. A top-level account update that uses a custom token id fails with the error `Top-level account update can not use or pass on token permissions`. So a token holder cannot move tokens without the token manager, even with a valid signature.
+
+The token manager approves account updates in two ways:
+
+- Its own methods create the account updates, as `this.internal.mint()`, `this.internal.burn()` and `this.internal.send()` do. The rules in the method are the rules of the token.
+- It approves account updates that other code created. `TokenContract` leaves the `approveBase()` method for you to define. It receives the account updates as an `AccountUpdateForest` and must fail if it does not approve them. The helpers `transfer()`, `approveAccountUpdate()` and `approveAccountUpdates()` all put the account updates into a forest and call `approveBase()`.
+
+`checkZeroBalanceChange()` is the most common implementation of `approveBase()`. It proves that the token balance changes of the approved account updates sum to zero, so an approved transaction cannot create tokens. `approveBase()` can check at most `TokenContract.MAX_ACCOUNT_UPDATES` account updates, which is `9` by default.
+
+Make `approveBase()` a `@method`, so that the token manager can prove its approval. Then any token holder can call `transfer()`, and signs only for the account that sends the tokens:
+
+```ts
+const tx = await Mina.transaction(sender, async () => {
+  AccountUpdate.fundNewAccount(sender); // only if the receiver has no token account yet
+  await token.transfer(sender, receiver, UInt64.from(400));
+});
+await tx.prove();
+await tx.sign([sender.key]).send();
+```
+
 ## Basic Token Example
 
 To create a token manager smart contract, create a normal smart contract whose methods call special functions that manipulate tokens.
@@ -21108,7 +21175,7 @@ Next, add an init method and a method that mints tokens.
       this.totalAmountInCirculation.set(UInt64.zero);
     }
 
-    async approveBase(forest: AccountUpdateForest) {
+    @method async approveBase(forest: AccountUpdateForest) {
       this.checkZeroBalanceChange(forest);
     }
 
@@ -21140,7 +21207,8 @@ Next, add an init method and a method that mints tokens.
 `approveBase()` is the method `TokenContract` leaves for you to define: it decides
 which account updates this contract approves. `checkZeroBalanceChange()` proves
 that the balance changes of the approved updates sum to zero, so a transaction
-cannot create tokens out of nothing. `mint()` is the only method that raises the
+cannot create tokens out of nothing. It is a `@method`, so token holders can call
+the inherited `transfer()` helper (see [Approval mechanism](#approval-mechanism)). `mint()` is the only method that raises the
 supply, and it is gated by the admin signature.
 
 ### Send function
@@ -21301,7 +21369,8 @@ These items are:
 - `Field`: The native number type in o1js. You can think of `Field` elements as unsigned integers. Field elements are the most basic type in o1js. All other o1js-compatible types are built on top of `Field` elements.
 - `SelfProof`: The class in o1js that extends the `Proof` class and allows you to pass in a proof of a circuit in one of its own methods.
 - `ZkProgram`: The o1js general purpose API for creating zero knowledge proofs. A ZkProgram is similar to zkApp smart contracts but isn't tied to an on-chain account.
-- `verify`: Verifies the signature using a message and the corresponding `PublicKey`.
+
+The `src/main.ts` file that runs the ZkProgram also imports `verify`. The `verify()` function verifies a proof against the verification key that `compile()` returns.
 
 ### ZkProgram
 
@@ -21368,7 +21437,10 @@ Use recursion to combine two proofs:
 
 To use ZkProgram, compile it and then call methods on it:
 
-```ts
+```ts src/main.ts
+
+
+
 async function main() {
   console.log('compiling...');
 
@@ -21467,9 +21539,9 @@ To consume these proofs in a smart contract (`SmartContract`) that uses the recu
 class RollupContract extends SmartContract {
   @state(Field) state = State<Field>();
 
-  deploy(args: DeployArgs) {
-    super.deploy(args);
-    this.setPermissions({
+  async deploy(args: DeployArgs) {
+    await super.deploy(args);
+    this.account.permissions.set({
       ...Permissions.default(),
       editState: Permissions.proofOrSignature(),
     });
@@ -21531,14 +21603,14 @@ class RollupState extends Struct({
 }
 
 const Rollup = ZkProgram({
-  name: "rollup-example",
-  publicInput: Field,
+  name: "rollup",
+  publicInput: RollupState,
 
   methods: {
 	oneStep: {
   	privateInputs: [ Field, Field, Field, Field, Field, MerkleMapWitness ],
 
-  	method(
+  	async method(
       state: RollupState,
       initialRoot: Field,
       latestRoot: Field,
@@ -21561,7 +21633,7 @@ const Rollup = ZkProgram({
 
 ```
 
-The `createOneStep()` method returns a proof that acts as the leaf in a tree of recursive proofs.
+The `oneStep()` method returns a proof that acts as the leaf in a tree of recursive proofs. (`createOneStep()` returns the `RollupState` that the proof is about.)
 
 To use this rollup, first you construct all of the leafs in parallel then recursively merge these leafs until you get a proof for the entire sequence. This parallel merging gives the high throughput properties for the rollup.
 
@@ -21571,6 +21643,56 @@ You can reimplement the example code for more substantial functionality, just by
 - Execute those buy/sell orders
 - Add a queue of tokens to move to the app chain in the smart contract
 - Add a queue of tokens to move out of the app chain in the ZkProgram
+
+## Test it
+
+When you run `main.ts`, it prints:
+
+```
+compiling...
+making proof 0
+making proof 1
+making proof 2
+verifying proof 2
+proof 2 data 4
+ok true
+```
+
+The example project in this repository carries a test suite for the code on
+this page:
+
+```sh
+cd examples/zkapps/09-recursion
+npm install
+npm test
+```
+
+It asserts what this page claims:
+
+- `Add` makes real proofs. Proof 0 is for `0`, proof 1 adds `4` to proof 0,
+  and proof 2 combines proof 1 and proof 0 into `4`. Proof 2 verifies with
+  `verify()`, so `main()` prints `ok true`.
+- A proof of `4` that claims `5` does **not** verify, and neither does a dummy
+  proof.
+- `init` **rejects** a state that is not `0`. `addNumber` and `add` **reject**
+  a new state that is not the sum. After a rejection, the earlier proofs still
+  verify.
+- `Rollup` merges one proof per transition into one proof that goes from the
+  root of the empty map to the latest root. It **rejects** a step with a wrong
+  increment or a wrong key, two proofs in the wrong order, and a merge that
+  claims a different latest root.
+- `RollupContract` moves its state to the latest root of a rollup proof. It
+  **rejects** a proof that does not start at the stored root, and the same
+  proof a second time. The state does not change.
+- `Vote` counts one vote for and one vote against. It **rejects** a second
+  vote from the same voter, a voter who is not in the voters tree, and a new
+  state that counts a vote twice.
+
+A ZkProgram with proofs off makes dummy proofs, and `earlierProof.verify()`
+checks nothing, so the `Add` tests make real proofs. They compile the
+ZkProgram once and make the three proofs once, which takes several minutes.
+The `Rollup` and `Vote` tests turn proofs off: every assertion still runs, and
+each of these test files takes about one minute.
 
 ## Conclusion
 
@@ -22028,7 +22150,382 @@ proofs off.
 
 Congratulations! You have explored the core features of AccountUpdates and learned about visualizing the AccountUpdates for a set of transactions. You can build more complicated transactions that involve multiple zkApps. This tutorial builds a foundational understanding of how o1js and zkApps work to enable permissions, preconditions, and composability.
 
-That is the end of the numbered series. Two further walk-throughs build on it: the [Anonymous Message Board](anonymous-message-board), and [Interacting with zkApps Server-Side](interacting-with-zkapps-server-side).
+Next: [Tutorial 12: Cross-Contract Calls](cross-contract-calls) builds a transaction in which three contracts call each other, and shows the account update tree and the proofs that it makes. After it, two further walk-throughs build on the series: the [Anonymous Message Board](anonymous-message-board), and [Interacting with zkApps Server-Side](interacting-with-zkapps-server-side).
+
+---
+url: /zkapps/tutorials/cross-contract-calls
+---
+
+# Tutorial 12: Cross-Contract Calls
+
+A _cross-contract call_ is a call from a method of one smart contract to a
+method of a different smart contract, in the same transaction. With
+cross-contract calls, you can build a zkApp from small contracts that each do
+one thing, and use a contract that another developer deployed without a copy
+of its code in your contract.
+
+In this tutorial, you write three contracts:
+
+- `Incrementer` adds 1 to a number and returns the result.
+- `Adder` adds two numbers, then calls `Incrementer` to add 1 to the sum.
+- `Caller` calls `Adder`, stores the result on chain, and emits it as an
+  event.
+
+A call to `Caller` with `5` and `6` stores `12`.
+
+You also see what the call makes: one transaction with a tree of three
+account updates, and one proof for each contract. An _account update_ is the
+set of instructions for one account in a transaction. To learn about account
+updates, see [Tutorial 10: Account Updates](account-updates).
+
+The full source code for this tutorial is in the
+[examples/zkapps/12-cross-contract-calls](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/12-cross-contract-calls)
+directory on GitHub.
+
+## Prerequisites
+
+Make sure your environment meets the
+[Prerequisites](/zkapps/tutorials#prerequisites) for zkApp Developer
+Tutorials. o1js 3 requires Node.js 22 or later.
+
+This tutorial has been tested with:
+
+- [o1js](https://www.npmjs.com/package/o1js) version `3.0.0`
+- Node.js version `22`
+
+## Get the example project
+
+```sh
+git clone https://github.com/MinaProtocol/docs2.git
+cd docs2/examples/zkapps/12-cross-contract-calls
+npm install
+```
+
+The contracts are in the `src` directory, one contract in each file:
+
+- `src/Incrementer.ts`
+- `src/Adder.ts`
+- `src/Caller.ts`
+
+`src/main.ts` deploys the contracts to a local blockchain and calls them.
+
+## The `Incrementer` contract
+
+`Incrementer` has one method. The method adds 1 to its argument and returns
+the result:
+
+```ts
+
+
+// A contract that adds 1 to a number and returns the result.
+export class Incrementer extends SmartContract {
+  // `@method.returns` declares the type of the value that the method returns.
+  // A caller can use that value only because it is declared here.
+  @method.returns(Field)
+  async increment(x: Field) {
+    return x.add(1);
+  }
+}
+```
+
+A method that returns a value must declare the type of that value with
+`@method.returns(Type)` in place of `@method`. The value becomes part of the
+proof: the proof of `increment()` shows that it returned `x + 1` for the `x`
+that it received.
+
+Like all methods in o1js 3, `increment()` is `async`, so a caller must
+`await` it.
+
+## The `Adder` contract
+
+`Adder` computes `x + y`, and then calls `Incrementer` to add 1:
+
+```ts
+
+
+
+// A contract that adds two numbers, adds 1 to the sum, and returns the result.
+// It does not add the 1 itself: it calls the Incrementer contract to do it.
+export class Adder extends SmartContract {
+  @method.returns(Field)
+  async addPlus1(incrementerAddress: PublicKey, x: Field, y: Field) {
+    // Compute the sum
+    const sum = x.add(y);
+
+    // Call the Incrementer contract at `incrementerAddress` to add 1
+    const incrementer = new Incrementer(incrementerAddress);
+    return await incrementer.increment(sum);
+  }
+}
+```
+
+To call another contract, a method does two things:
+
+1. It makes an instance of the other contract's class, with the address of
+   the account that holds that contract: `new Incrementer(incrementerAddress)`.
+1. It calls a method on that instance and awaits the result:
+   `await incrementer.increment(sum)`.
+
+The call does not run `Incrementer` inside the `Adder` circuit. It adds a
+separate account update for the `Incrementer` account, with its own proof,
+as a child of the `Adder` account update. The `Adder` proof uses the returned
+value, and the network makes sure that the value is the same one that the
+`Incrementer` proof returned.
+
+The address is a method argument, `incrementerAddress`, so the transaction
+that calls `Adder` chooses which account to call.
+
+## The `Caller` contract
+
+`Caller` calls `Adder`, and then does two things with the result:
+
+- It emits the result as a `sum` event. An _event_ is data that a zkApp
+  attaches to a transaction. Events are not stored in the account, but an
+  archive node keeps them, and a user interface can read them.
+- It stores the result in its on-chain state field `sum`.
+
+```ts
+
+
+
+// A contract that calls the Adder contract, stores the result on chain and
+// emits it as an event.
+export class Caller extends SmartContract {
+  @state(Field) sum = State<Field>();
+
+  events = { sum: Field };
+
+  @method async callAddAndEmit(
+    adderAddress: PublicKey,
+    incrementerAddress: PublicKey,
+    x: Field,
+    y: Field
+  ) {
+    // Call the Adder contract, which calls the Incrementer contract
+    const adder = new Adder(adderAddress);
+    const sum = await adder.addPlus1(incrementerAddress, x, y);
+
+    // Emit the result as an event and store it on chain
+    this.emitEvent('sum', sum);
+    this.sum.set(sum);
+  }
+}
+```
+
+`events = { sum: Field }` declares one event type, `sum`, with a `Field`
+value. `this.emitEvent('sum', sum)` emits it.
+
+`callAddAndEmit()` does not return a value, so it uses `@method`.
+
+## Deploy and call the contracts
+
+`src/main.ts` runs the contracts on a local blockchain. A local blockchain
+needs no network, no faucet and no funded accounts: it has test accounts that
+already hold MINA.
+
+```ts
+
+
+
+
+
+
+export async function main(proofsEnabled = false) {
+  // A local blockchain, so this runs with no network, no faucet and no funds.
+  const Local = await Mina.LocalBlockchain({ proofsEnabled });
+  Mina.setActiveInstance(Local);
+
+  // A test account that pays all the fees
+  const feePayer = Local.testAccounts[0];
+
+  // One key pair, and so one address, for each contract
+  const incrementerKey = PrivateKey.randomKeypair();
+  const adderKey = PrivateKey.randomKeypair();
+  const callerKey = PrivateKey.randomKeypair();
+
+  const incrementer = new Incrementer(incrementerKey.publicKey);
+  const adder = new Adder(adderKey.publicKey);
+  const caller = new Caller(callerKey.publicKey);
+
+  // With proofs on, compile each contract to get its prover and its
+  // verification key
+  if (proofsEnabled) {
+    console.log('compiling...');
+    await Incrementer.compile();
+    await Adder.compile();
+    await Caller.compile();
+  }
+
+  // Deploy the three contracts in one transaction
+  console.log('deploying the three contracts...');
+  const deployTx = await Mina.transaction(feePayer, async () => {
+    AccountUpdate.fundNewAccount(feePayer, 3);
+    await incrementer.deploy();
+    await adder.deploy();
+    await caller.deploy();
+  });
+  await deployTx.prove();
+  await deployTx.sign([
+    feePayer.key,
+    incrementerKey.privateKey,
+    adderKey.privateKey,
+    callerKey.privateKey,
+  ]).send();
+
+  // Call Caller, which calls Adder, which calls Incrementer
+  console.log('calling Caller.callAddAndEmit(5, 6)...');
+  const callTx = await Mina.transaction(feePayer, async () => {
+    await caller.callAddAndEmit(
+      adderKey.publicKey,
+      incrementerKey.publicKey,
+      Field(5),
+      Field(6)
+    );
+  });
+  // One proof for each of the three contracts
+  await callTx.prove();
+  await callTx.sign([feePayer.key]).send();
+
+  // The account updates of the call, one line for each
+  for (const update of callTx.transaction.accountUpdates) {
+    const indent = '  '.repeat(update.body.callDepth);
+    console.log(`${indent}${update.label}`);
+  }
+
+  const sum = caller.sum.get();
+  console.log('sum on chain:', sum.toString());
+
+  const events = await caller.fetchEvents();
+  for (const event of events) {
+    console.log(`event '${event.type}':`, event.event.data.toString());
+  }
+
+  return sum;
+}
+
+// Run main() only when this file is the entry point, not when a test imports it
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  await main();
+}
+```
+
+The deploy transaction creates three new accounts, so
+`AccountUpdate.fundNewAccount(feePayer, 3)` pays three account creation fees.
+It must be signed with the private key of each new account.
+
+The call transaction is signed only by the fee payer. The three contract
+account updates are authorized by proofs, not by signatures.
+
+To run it:
+
+```sh
+npm start
+```
+
+```text
+deploying the three contracts...
+calling Caller.callAddAndEmit(5, 6)...
+Caller.callAddAndEmit()
+  Adder.addPlus1()
+    Incrementer.increment()
+sum on chain: 12
+event 'sum': 12
+```
+
+The indented lines are the account updates of the call transaction. The
+indent is the `callDepth` of each update: `Caller` is the parent, `Adder` is
+its child, and `Incrementer` is the child of `Adder`. The network applies
+them in this order.
+
+`main()` turns proofs off, so it finishes in seconds. `main(true)` compiles
+the three contracts and makes three proofs for the call, one for each account
+update. That can take some minutes.
+
+## Which contract runs at an address
+
+When `Caller` calls `new Adder(adderAddress).addPlus1(...)`, o1js runs the
+`Adder` code from your project to make the `Adder` proof. The network then
+checks that proof against the verification key that is stored in the account
+at `adderAddress`. If that account holds a different contract, the proof is
+not valid for it, and the network rejects the transaction.
+
+:::caution
+
+With proofs off, `Mina.LocalBlockchain` does not do this check. A call with
+the wrong address succeeds on a local blockchain without proofs, and fails on
+a real network. Test this type of claim with proofs on.
+
+:::
+
+Because the addresses in this tutorial are method arguments, the transaction
+chooses which accounts to call. The proof check makes sure that each account
+holds the expected contract, but it does not make sure that it is a specific
+account. If your contract must call one specific account, store its address in
+on-chain state and read it with `getAndRequireEquals()`, or write it into the
+contract as a constant.
+
+## Test it
+
+The example project in this repository carries a test suite for the code on
+this page:
+
+```sh
+cd examples/zkapps/12-cross-contract-calls
+npm install
+npm test
+```
+
+`src/CrossContractCalls.test.ts` runs with proofs off. It checks that:
+
+- The deploy transaction deploys the three contracts, and `sum` starts at `0`.
+- `Incrementer.increment(41)` returns `42`.
+- `Adder.addPlus1(5, 6)` returns `12`, with `Adder` as the parent account
+  update and `Incrementer` as its child.
+- `Caller.callAddAndEmit(5, 6)` stores `12` in `sum`, and emits a `sum` event
+  with the value `12`.
+- The call makes one transaction with three account updates at call depths
+  `0`, `1` and `2`, for the three contract addresses. Each update is
+  authorized by a proof and not by a signature.
+- `Adder` and `Incrementer` do not change their own state.
+- `main()` runs end to end and returns `12`.
+
+It also checks that the network **rejects** these transactions, and that
+`sum` does not change:
+
+- A call with an `Incrementer` address that has no account. The network must
+  create that account, and no one pays the account creation fee
+  (`Invalid fee excess`).
+- An update to `sum` that is signed with the `Caller` private key. The default
+  permissions let only a proof change the state of a zkApp
+  (`Update_not_permitted_app_state`).
+
+The last test in that file records that, with proofs off, a call with the
+`Incrementer` address in place of the `Adder` address is accepted.
+
+`src/proofs.test.ts` compiles the contracts and makes real proofs. It checks
+that:
+
+- Each contract has a different verification key.
+- `callAddAndEmit(5, 6)` makes three proofs, stores `12`, and emits `12`.
+- The same call with the `Incrementer` address in place of the `Adder`
+  address is **rejected** (`Invalid proof for account update`), and `sum`
+  does not change.
+
+Compiling and proving take some minutes, so the test timeout is long.
+
+## Conclusion
+
+Congratulations! You have called a method of one smart contract from another,
+used the value that it returned, and emitted that value as an event. You have
+also seen that each contract in the call has its own account update and its
+own proof, and that the network checks each proof against the contract at the
+address that was called.
+
+For more about the account updates that a call makes and about events, see
+[Account updates](https://docs.o1labs.org/o1js/zkapps/account-updates) and
+[Events](https://docs.o1labs.org/o1js/zkapps/events) in the o1Labs docs.
+
+Next: [Tutorial 13: Anonymous Message Board](anonymous-message-board).
 
 ---
 url: /zkapps/tutorials/anonymous-message-board
@@ -22401,6 +22898,25 @@ zkApp developer tutorials are a hands-on walk-through of use cases that guide yo
 o1js, fka. SnarkyJS, is a TypeScript (TS) library for writing general-purpose zk programs and writing zk smart contracts for Mina.
 
 To meet other developers building zkApps with o1js, participate in the [#zkapps-developers](https://discord.com/login?redirect_to=%2Fchannels%2F484437221055922177%2F915745847692636181) channel on Mina Protocol Discord.
+
+## The tutorials
+
+Each tutorial has an example project in the [examples/zkapps/](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/) directory on GitHub.
+
+- [Tutorial 1: Hello World](/zkapps/tutorials/hello-world)
+- [Tutorial 2: Private Inputs and Hash Functions](/zkapps/tutorials/private-inputs-hash-functions)
+- [Tutorial 3: Deploy to a Live Network](/zkapps/tutorials/deploying-to-a-network)
+- [Tutorial 4: Build a zkApp UI in the Browser with React](/zkapps/tutorials/zkapp-ui-with-react)
+- [Tutorial 5: Common Types and Functions](/zkapps/tutorials/common-types-and-functions)
+- [Tutorial 6: Off-Chain Storage](/zkapps/tutorials/offchain-storage)
+- [Tutorial 7: Oracles](/zkapps/tutorials/oracle)
+- [Tutorial 8: Custom Tokens](/zkapps/tutorials/custom-tokens)
+- [Tutorial 9: Recursion](/zkapps/tutorials/recursion)
+- [Tutorial 10: Account Updates](/zkapps/tutorials/account-updates)
+- [Tutorial 12: Cross-Contract Calls](/zkapps/tutorials/cross-contract-calls)
+- [Tutorial 13: Anonymous Message Board](/zkapps/tutorials/anonymous-message-board)
+
+Two further walk-throughs build on the series: [Upgrading a zkApp](/zkapps/tutorials/upgrading-a-zkapp), and [Interacting with zkApps Server-Side](/zkapps/tutorials/interacting-with-zkapps-server-side).
 
 ## Prerequisites
 

@@ -12,8 +12,9 @@ import {
   MerkleWitness,
   MerkleMapWitness,
 } from 'o1js';
+import { fileURLToPath } from 'url';
 
-class MerkleWitness20 extends MerkleWitness(20) {}
+export class MerkleWitness20 extends MerkleWitness(20) {}
 
 // ===============================================================
 
@@ -99,7 +100,7 @@ async function main() {
 
 // ===============================================================
 
-class VoteState extends Struct({
+export class VoteState extends Struct({
   voteFor: Field,
   voteAgainst: Field,
   votersTreeRoot: Field,
@@ -169,7 +170,7 @@ class VoteState extends Struct({
 
 // ===============================================================
 
-const Vote = ZkProgram({
+export const Vote = ZkProgram({
   name: 'vote-example',
   publicInput: VoteState,
 
@@ -215,4 +216,6 @@ const Vote = ZkProgram({
 
 // ===============================================================
 
-main();
+// Run the example when this file is the entry point
+// (`node build/src/vote.js`), but not when the test suite imports it.
+if (process.argv[1] === fileURLToPath(import.meta.url)) main();

@@ -8,6 +8,11 @@ on:
       - 'docs/**/*.mdx'
       - 'docs/**/*.md'
       - 'scripts/generate-llms-txt.mjs'
+      - 'scripts/include-code.cjs'
+      - 'scripts/include-code.test.mjs'
+      # Pages include code regions from the examples with #include_code, so an
+      # example change can change llms-full.txt.
+      - 'examples/**'
       - 'static/llms-full.txt'
   workflow_dispatch: {}
 
@@ -23,6 +28,9 @@ jobs:
         uses: actions/setup-node@v7
         with:
           node-version: 22
+
+      - name: Test the #include_code resolver
+        run: npm run test:scripts
 
       - name: Regenerate llms-full.txt
         run: node scripts/generate-llms-txt.mjs

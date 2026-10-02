@@ -38,7 +38,7 @@ The full source code for this tutorial is provided in the [examples/zkapps/01-he
 
 :::info
 
-To prevent copying line numbers and command prompts as shown in the examples, use the copy code to clipboard button that appears at the top right of the snippet box when you hover over it.
+To prevent copying command prompts as shown in the examples, use the copy code to clipboard button that appears at the top right of the snippet box when you hover over it.
 
 :::
 
@@ -149,11 +149,7 @@ Start by deleting the default files that come with the new project.
 
 1. Now, open `src/index.ts` in a text editor and change it to look like:
 
-  ```ts src/index.ts
-  1 import { Square } from './Square.js';
-  2
-  3 export { Square };
-  ```
+  #include_code index examples/zkapps/01-hello-world/src/index.ts ts title="src/index.ts"
 
 The `src/index.ts` file contains all of the exports you want to make available for consumption from outside your smart contract project, such as from a UI.
 
@@ -161,7 +157,7 @@ The `src/index.ts` file contains all of the exports you want to make available f
 
 Now, the fun part! Write your smart contract in the `src/Square.ts` file.
 
-Line numbers are provided for convenience. A final version of the smart contract is provided in the [Square.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/01-hello-world/src/Square.ts) example file.
+A final version of the smart contract is provided in the [Square.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/01-hello-world/src/Square.ts) example file. The code blocks on this page are taken from the example files when the docs are built, so they always match the code that CI runs.
 
 This part of the tutorial walks you through the `Square` smart contract code already completed in the `src/Square.ts` example file.
 
@@ -183,17 +179,9 @@ The `import` statement brings in other packages and dependencies to use in your 
 
 All functions used inside a smart contract must operate on o1js compatible data types: `Field` types and other types built on top of `Field` types.
 
-:::info
+:::
 
-```ts src/Square.ts
-1 import {
-2   Field,
-3   SmartContract,
-4   state,
-5   State,
-6   method,
-7 } from 'o1js';
-```
+#include_code imports examples/zkapps/01-hello-world/src/Square.ts ts title="src/Square.ts"
 
 These items are:
 
@@ -209,28 +197,13 @@ Now, review the smart contract in the `src/Square.ts` file.
 
 The smart contract called `Square` has one element of on-chain state named `num` of type `Field` as defined by following code:
 
-```ts src/Square.ts
-8
-9 export class Square extends SmartContract {
-10   @state(Field) num = State<Field>();
-11
-12 }
-```
+#include_code class-state examples/zkapps/01-hello-world/src/Square.ts ts title="src/Square.ts"
 
 zkApps can have up to 32 fields of on-chain state. Each field stores up to 32 bytes (technically, 31.875 bytes or 255 bits) of arbitrary data. A later tutorial covers options for off-chain state.
 
 Now, this code adds the `init` method to set up the initial state of the smart contract on deployment:
 
-```ts src/Square.ts
-8
-9 export class Square extends SmartContract {
-10   @state(Field) num = State<Field>();
-11
-12   init() {
-13     super.init();
-14     this.num.set(Field(3));
-15   }
-```
+#include_code class-init examples/zkapps/01-hello-world/src/Square.ts ts title="src/Square.ts"
 
 Since this code extends `SmartContract` that has its own initialization to perform, calling `super.init()` invokes this function on the base class.
 
@@ -240,18 +213,7 @@ You can optionally specify permissions. See [setPermissions](https://docs.o1labs
 
 Finally, this code adds the `update()` function:
 
-```ts src/Square.ts
-14     this.num.set(Field(3));
-15   }
-16
-17   @method async update(square: Field) {
-18     const currentState = this.num.get();
-19     this.num.requireEquals(currentState);
-20     square.assertEquals(currentState.mul(currentState));
-21     this.num.set(square);
-22   }
-23 }
-```
+#include_code update examples/zkapps/01-hello-world/src/Square.ts ts title="src/Square.ts"
 
 The function name `update` is arbitrary, but it makes sense for this example. Notice how the `@method` decorator is used because it is intended to be invoked by end users by using a zkApp UI, or as in this case, the `main.ts` script.
 
@@ -292,10 +254,7 @@ For this tutorial, the `import` statement brings in items from `o1js` that you u
 
 1. Copy the following lines from [main.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/01-hello-world/src/main.ts) example file into the `src/main.ts` file:
 
-  ```ts src/main.ts
-  1 import { Square } from './Square.js';
-  2 import { Field, Mina, PrivateKey, AccountUpdate } from 'o1js';
-  ```
+  #include_code imports examples/zkapps/01-hello-world/src/main.ts ts title="src/main.ts"
 
   These import items are:
 
@@ -317,29 +276,11 @@ Using a simulated local blockchain speeds up development and tests the behavior 
 
 To initialize your simulated local blockchain, add the following code from the [main.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/01-hello-world/src/main.ts) example file to `src/main.ts`:
 
-```ts src/main.ts
- 4 const useProof = false;
- 5
- 6  const Local = await Mina.LocalBlockchain({ proofsEnabled: useProof });
- 7  Mina.setActiveInstance(Local);
- 8
- 9  const deployerAccount = Local.testAccounts[0];
-10  const deployerKey = deployerAccount.key;
-11  const senderAccount = Local.testAccounts[1];
-12  const senderKey = senderAccount.key;
-```
-
-Tip: To preserve line numbers in your local `main.ts` file, add blank lines as needed after you copy the code snippets.
+#include_code local-blockchain examples/zkapps/01-hello-world/src/main.ts ts title="src/main.ts"
 
 This simulated local blockchain provides pre-funded accounts. Add these lines to create local test accounts with test MINA (tMINA) to use for this tutorial:
 
-```ts src/main.ts
-16 // ----------------------------------------------------
-17
-18 // Create a public/private key pair. The public key is your address and where you deploy the zkApp to
-19 const zkAppPrivateKey = PrivateKey.random();
-20 const zkAppAddress = zkAppPrivateKey.toPublicKey();
-```
+#include_code zkapp-key examples/zkapps/01-hello-world/src/main.ts ts title="src/main.ts"
 
 ### Build and run the smart contract
 
@@ -379,20 +320,7 @@ All smart contracts that you create with the zkApp CLI use similar code:
 
 Comments break down each stage:
 
-```ts src/main.ts
-21
-22 // create an instance of Square - and deploy it to zkAppAddress
-23 const zkAppInstance = new Square(zkAppAddress);
-24 const deployTxn = await Mina.transaction(deployerAccount, async () => {
-25   AccountUpdate.fundNewAccount(deployerAccount);
-26   await zkAppInstance.deploy();
-27 });
-28 await deployTxn.sign([deployerKey, zkAppPrivateKey]).send();
-29
-30 // get the initial state of Square after deployment
-31 const num0 = zkAppInstance.num.get();
-32 console.log('state after init:', num0.toString());
-```
+#include_code deploy examples/zkapps/01-hello-world/src/main.ts ts title="src/main.ts"
 
 Try running this command again:
 
@@ -413,19 +341,7 @@ state after init: 3
 
 To update your local zkApp account with a transaction, add the following code to the `src/main.ts` file:
 
-```ts src/main.ts
-33
-34 // ----------------------------------------------------
-35
-36 const txn1 = await Mina.transaction(senderAccount, async () => {
-37   await zkAppInstance.update(Field(9));
-38 });
-39 await txn1.prove();
-40 await txn1.sign([senderKey]).send();
-41
-42 const num1 = zkAppInstance.num.get();
-43 console.log('state after txn1:', num1.toString());
-```
+#include_code txn1 examples/zkapps/01-hello-world/src/main.ts ts title="src/main.ts"
 
 This code creates a new transaction that attempts to update the field to the value `9`. Because of the rules in the `update()` function that is called on the smart contract, this command succeeds when you run it again:
 
@@ -449,24 +365,9 @@ It's time to do some testing. To add a transaction that fails, add more code fro
 
 The contract logic allows the number that is stored as on-chain state to be replaced only by its square. Now that `num` is in state `9`, updating is possible only with `81`.
 
-To test a failure, add these next lines of code from the `src/main.ts` file and change the state to `75` in `zkAppInstance.update(Field(75))`:
+To test a failure, add these next lines of code from the `src/main.ts` example file. They try to change the state to `75` with `zkAppInstance.update(Field(75))`:
 
-```ts src/main.ts
-44
-45 // ----------------------------------------------------
-46
-47 try {
-48   const txn2 = await Mina.transaction(senderAccount, async () => {
-49     await zkAppInstance.update(Field(75));
-50   });
-51   await txn2.prove();
-52   await txn2.sign([senderKey]).send();
-53 } catch (error: any) {
-54   console.log(error.message);
-55 }
-56 const num2 = zkAppInstance.num.get();
-57 console.log('state after txn2:', num2.toString());
-```
+#include_code txn2 examples/zkapps/01-hello-world/src/main.ts ts title="src/main.ts"
 
 Try running this command again:
 
@@ -486,7 +387,9 @@ Field.assertEquals(): 75 != 81
 state after txn2: 9
 ```
 
-And finally, be sure to change your `main.ts` file to include the correct update to change the state to `81` in `zkAppInstance.update(Field(81))`.
+And finally, add a third transaction that makes the correct update: it changes the state to `81` with `zkAppInstance.update(Field(81))`:
+
+#include_code txn3 examples/zkapps/01-hello-world/src/main.ts ts title="src/main.ts"
 
 Run this command again:
 
@@ -502,7 +405,9 @@ The expected output is:
 
 state after init: 3
 state after txn1: 9
-state after txn2: 81
+Field.assertEquals(): 75 != 81
+state after txn2: 9
+state after txn3: 81
 ```
 
 ## Test it

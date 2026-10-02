@@ -10,6 +10,9 @@
 
 import { readdir, readFile, writeFile, mkdir } from 'node:fs/promises';
 import { join, relative, dirname, basename, extname } from 'node:path';
+import includeCode from './include-code.cjs';
+
+const { resolveIncludesInMarkdown } = includeCode;
 
 const DOCS_DIR = new URL('../docs', import.meta.url).pathname;
 const OUTPUT_FILE = new URL('../static/llms-full.txt', import.meta.url).pathname;
@@ -75,7 +78,12 @@ async function main() {
   for (const file of files) {
     const raw = await readFile(file, 'utf8');
     const url = filePathToUrl(file);
-    const content = stripImportsAndJsx(stripFrontMatter(raw)).trim();
+    // Resolve #include_code the same way the site build does, so the file
+    // carries the code and not the directive. Resolve after stripping MDX
+    // imports, so the import lines of included code are kept.
+    const content = resolveIncludesInMarkdown(stripImportsAndJsx(stripFrontMatter(raw)), {
+      from: relative(join(DOCS_DIR, '..'), file),
+    }).trim();
 
     if (!content) continue;
 
