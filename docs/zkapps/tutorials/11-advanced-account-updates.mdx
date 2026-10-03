@@ -457,25 +457,30 @@ npm run start:proofs
 `npm run start:proofs` compiles the four contracts, and makes a proof for each
 contract account update. That takes much longer:
 
-| Step | Measured time |
-| --- | --- |
-| Compile `MyToken` | 29 s |
-| Compile `TokenHolder` | 13 s |
-| Compile `TokenUser` | 10 s |
-| Compile `WrappedMina` | 32 s |
-| Prove the deploy transaction | 145 s |
-| Prove `transfer()` | 63 s |
-| Prove `sendMyTokens()` (three proofs) | 121 s |
-| Prove the `WrappedMina` deploy transaction | 28 s |
-| Prove `wrap()` | 29 s |
-| Prove `unwrap()` | 38 s |
-| Prove `settleTotalSupply()` | 28 s |
+These are the times that `src/AdvancedAccountUpdates.proofs.test.ts`
+measured for each step. The CI column is a GitHub Actions `ubuntu-latest`
+runner (4 CPU cores) with an empty o1js cache. The local column is a Linux
+computer with 16 CPU cores and other work running at the same time.
 
-These times are from `src/AdvancedAccountUpdates.proofs.test.ts` on a Linux
-computer with 16 CPU cores and other work running at the same time. A full
-`npm run start:proofs` on the same computer took 13.5 minutes. Expect between
-5 and 15 minutes, as a function of your computer. o1js keeps the compile
-output in a cache (`~/.cache/o1js`), so the second run compiles faster.
+| Step | CI | Local |
+| --- | --- | --- |
+| Compile `MyToken` (the first compile also makes keys that all contracts use) | 83 s | 29 s |
+| Compile `TokenHolder` | 5 s | 13 s |
+| Compile `TokenUser` | 7 s | 10 s |
+| Compile `WrappedMina` | 26 s | 32 s |
+| Prove the deploy transaction | 28 s | 145 s |
+| Prove `transfer()` | 22 s | 63 s |
+| Prove `sendMyTokens()` (three proofs) | 43 s | 121 s |
+| Prove the `WrappedMina` deploy transaction | 13 s | 28 s |
+| Prove `wrap()` | 15 s | 29 s |
+| Prove `unwrap()` | 15 s | 38 s |
+| Prove `settleTotalSupply()` | 13 s | 28 s |
+
+So `npm run start:proofs` takes approximately 5 minutes on a 4-core computer
+(the sum of the CI column is 270 s). On the local computer, with other work
+running, a full run took 13.5 minutes. o1js keeps the compile output in a
+cache (`~/.cache/o1js`), so a second run compiles faster: on the local
+computer, the compile step went from 200 s to 42 s.
 
 :::tip Is it stuck?
 
@@ -596,8 +601,8 @@ real proofs. It checks that:
   total supply is 6 MINA.
 
 Compiling and proving take some minutes, so the test timeout is long. Each
-step prints its time. On the computer of the table above, the file took 12
-minutes.
+step prints its time. The file took 5.6 minutes on the CI runner, and 12
+minutes on the local computer of the table above.
 
 ## Conclusion
 
