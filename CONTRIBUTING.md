@@ -100,6 +100,12 @@ At build time, the directive becomes a fenced code block with the region's lines
 
 If the file or the region does not exist, or a region has no end, the build **fails** and names the page, the file and the region. It never shows an empty block. The resolver is `scripts/include-code.cjs`, and `npm run test:scripts` runs its tests.
 
+### Markdown twins for agents
+
+Each doc page has a markdown twin: add `.md` to the page URL (for example `/zkapps/tutorials/hello-world.md`, and `/index.md` for the home page). The twin starts with the page title, the description and the canonical URL, followed by the page body as plain markdown: no front matter, no MDX imports, no JSX lines, and each `#include_code` replaced by its code. Each page also links its twin in the HTML head (`<link rel="alternate" type="text/markdown">`).
+
+The plugin `plugins/markdown-twins.cjs` writes the twins into `build/` after `npm run build`. It uses the routes that Docusaurus computed, so number prefixes and `slug` front matter apply. The conversion is `scripts/mdx-to-markdown.cjs`, which also makes `static/llms-full.txt`, so the two always agree. Do not commit twins. `vercel.json` serves `*.md` as `text/markdown; charset=utf-8`.
+
 ### o1js Reference
 
 The zkApp Developers > [o1js Reference](https://docs.minaprotocol.com/zkapps/o1js-reference) docs are generated content and are outside the scope of the Mina Docs repository.

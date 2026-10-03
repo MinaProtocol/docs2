@@ -10,9 +10,11 @@
 
 import { readdir, readFile, writeFile, mkdir } from 'node:fs/promises';
 import { join, relative, dirname, basename, extname } from 'node:path';
-import includeCode from './include-code.cjs';
+import mdxToMarkdownModule from './mdx-to-markdown.cjs';
 
-const { resolveIncludesInMarkdown } = includeCode;
+// The same conversion makes the markdown twin of each page
+// (plugins/markdown-twins.cjs), so the two cannot disagree.
+const { mdxToMarkdown } = mdxToMarkdownModule;
 
 const DOCS_DIR = new URL('../docs', import.meta.url).pathname;
 const OUTPUT_FILE = new URL('../static/llms-full.txt', import.meta.url).pathname;
@@ -54,23 +56,6 @@ function filePathToUrl(filePath) {
   return '/' + rel;
 }
 
-function stripFrontMatter(content) {
-  // Remove YAML front matter (between --- delimiters)
-  const match = content.match(/^---\s*\n[\s\S]*?\n---\s*\n/);
-  if (match) {
-    return content.slice(match[0].length);
-  }
-  return content;
-}
-
-function stripImportsAndJsx(content) {
-  // Remove import statements
-  content = content.replace(/^import\s+.*$/gm, '');
-  // Remove JSX-only lines (self-closing component tags)
-  content = content.replace(/^<[A-Z]\w+[^>]*\/>\s*$/gm, '');
-  return content;
-}
-
 async function main() {
   const files = (await collectFiles(DOCS_DIR)).sort();
   const parts = [];
@@ -78,12 +63,9 @@ async function main() {
   for (const file of files) {
     const raw = await readFile(file, 'utf8');
     const url = filePathToUrl(file);
-    // Resolve #include_code the same way the site build does, so the file
-    // carries the code and not the directive. Resolve after stripping MDX
-    // imports, so the import lines of included code are kept.
-    const content = resolveIncludesInMarkdown(stripImportsAndJsx(stripFrontMatter(raw)), {
-      from: relative(join(DOCS_DIR, '..'), file),
-    }).trim();
+    // Strips front matter, MDX imports and JSX, and resolves #include_code
+    // the same way the site build does.
+    const content = mdxToMarkdown(raw, { from: relative(join(DOCS_DIR, '..'), file) });
 
     if (!content) continue;
 

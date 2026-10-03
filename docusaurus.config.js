@@ -25,6 +25,9 @@ module.exports = {
 
   plugins: [
     'docusaurus-plugin-sass',
+    // Writes build/<route>.md, a markdown twin of every doc page, for agents.
+    // See plugins/markdown-twins.cjs.
+    require.resolve('./plugins/markdown-twins.cjs'),
     [
       '@docusaurus/plugin-client-redirects',
       {
