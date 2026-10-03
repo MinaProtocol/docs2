@@ -1,0 +1,617 @@
+---
+title: 'Tutorial 11: Advanced Account Updates'
+hide_title: true
+sidebar_label: 'Tutorial 11: Advanced Account Updates'
+description: A token manager account approves every account update that uses its token. Write approval methods that check account updates, and a wrapped MINA token that keeps its total supply with a reducer.
+pagination_prev: zkapps/tutorials/account-updates
+pagination_next: zkapps/tutorials/cross-contract-calls
+keywords:
+  - smart contracts
+  - zkapps
+  - account updates
+  - token manager accounts
+  - zkApp manager accounts
+  - tokens
+  - wrapped MINA
+  - balance change check
+  - reducer
+  - actions
+---
+
+# Tutorial 11: Advanced Account Updates
+
+In [Tutorial 10: Account Updates](account-updates), you learned the structure
+of account updates, and how a zkApp transaction is made of account updates.
+
+In this tutorial, you learn how a token contract controls the account updates
+that use its token:
+
+- A token contract approves the deployment of a zkApp on a token account, and
+  makes sure that the deployment does not make tokens.
+- A token contract approves a transfer from a zkApp that holds tokens.
+- A wrapped MINA contract changes MINA into a token and back. It approves only
+  the account updates that leave the token supply unchanged, and it keeps a
+  total supply with a reducer.
+
+To review the types of accounts:
+
+- A _zkApp account_ is an account that holds a smart contract.
+- A _token account_ is an account that holds a custom token. Its token ID is
+  not the MINA token ID. One address can have one MINA account and one token
+  account for each token.
+- A _token manager account_ (in the 2023 version of this tutorial, a _zkApp
+  manager account_) is the zkApp account of a token contract. It manages one
+  token.
+
+The full source code for this tutorial is in the
+[examples/zkapps/11-advanced-account-updates](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/11-advanced-account-updates)
+directory on GitHub.
+
+## Prerequisites
+
+Make sure your environment meets the
+[Prerequisites](/zkapps/tutorials#prerequisites) for zkApp Developer
+Tutorials. o1js 3 requires Node.js 22 or later.
+
+Read [Tutorial 8: Custom Tokens](custom-tokens) first. It shows how to mint,
+burn and transfer a custom token.
+
+This tutorial has been tested with:
+
+- [o1js](https://www.npmjs.com/package/o1js) version `3.0.0`
+- Node.js version `22`
+
+## Get the example project
+
+```sh
+git clone https://github.com/MinaProtocol/docs2.git
+cd docs2/examples/zkapps/11-advanced-account-updates
+npm install
+```
+
+The contracts are in the `src` directory:
+
+- `src/MyToken.ts`: the `MyToken` token contract.
+- `src/TokenUser.ts`: the `TokenUser` and `TokenHolder` contracts, a zkApp
+  that holds `MyToken` tokens.
+- `src/WrappedMina.ts`: the `WrappedMina` token contract.
+
+`src/main.ts` deploys the contracts to a local blockchain and uses them.
+
+## Token manager accounts and tokens
+
+Each token has one token manager account. The token ID is derived from the
+address of that account. The token manager account sets the rules to mint,
+burn and transfer the token.
+
+The control is more general than that. The token manager account controls all
+properties of the token accounts of its token, not only their balances.
+
+For an account update to change a token account (for example, to send tokens
+from it), two things must be true:
+
+1. The account update must meet the permissions of the token account itself.
+   For example, if the account has the `proof` permission for `send`, the
+   account update must have a proof that is valid for the verification key
+   of the account.
+1. The account update must have the permission to use the token. That is
+   the `mayUseToken` field of the account update. Its value must be
+   `parentsOwnToken` (the parent account update is the token manager account)
+   or `inheritFromParent` (the parent has the permission). So the token
+   manager account must _approve_ the account update: it must make the
+   account update its child in the transaction.
+
+A token manager account approves an account update in a method of its token
+contract. The network checks the authorization of that method against the
+`access` permission of the token manager account. `TokenContract.deploy()`
+sets `access` to `proofOrSignature()`, so no one can use the token without a
+proof of the token contract, or a signature of its private key.
+
+## The `MyToken` contract
+
+`MyToken` extends `TokenContract`, the base class for token contracts in
+o1js. Its account is the token manager account of the `MyToken` token.
+
+#include_code my-token examples/zkapps/11-advanced-account-updates/src/MyToken.ts ts title="src/MyToken.ts"
+
+`init()` mints the full supply, `1000` tokens, to the token account with the
+same address as `MyToken`.
+
+`approveBase()` is the method that `TokenContract` requires. The helpers
+`transfer()`, `approveAccountUpdate()` and `approveAccountUpdates()` call it.
+`checkZeroBalanceChange()` goes through all the account updates that it gets,
+adds the balance changes of the updates that use this token, and makes sure
+that the sum is zero. So no update that `approveBase()` approves can make or
+destroy tokens.
+
+### Approve a deployment on a token account
+
+A zkApp can be on a token account. In this tutorial, the `TokenHolder` zkApp
+holds `MyToken` tokens. It is on the `MyToken` token account at the address of
+`TokenUser`. The deploy update of `TokenHolder` uses the `MyToken` token, so
+`MyToken` must approve it. `approveDeploy()` does that:
+
+#include_code approve-deploy examples/zkapps/11-advanced-account-updates/src/MyToken.ts ts title="src/MyToken.ts"
+
+The argument is an `AccountUpdateTree`: an account update together with its
+child account updates. `deployUpdate.accountUpdate.unhash()` gives the fields
+of the account update, and proves that they are the fields of the update that
+the method approves.
+
+The method checks three things:
+
+- The update has no children. A child update with `mayUseToken` set to
+  `inheritFromParent` gets the token permission from its parent. Without this
+  check, a child could use the token with no check from `MyToken`.
+- The update is on the `MyToken` token.
+- The balance change is zero.
+
+The balance change check is essential. It means that the account update does
+not make tokens. Without the check, a user could send an account update with
+a positive balance change, and mint tokens to their account out of nothing.
+
+Also, a user can call this method with _any account update that they like_,
+if its balance change is zero. For example, a user can set the 8 fields of
+on-chain state of their token account to any values. The balance change is
+the only property of token accounts that `MyToken` manages.
+
+:::note
+
+The approval mechanism lets you put any constraints on account updates in your
+token contract.
+
+:::
+
+A fungible token is only one possible use. For example, a different token
+contract could keep NFTs, or a commitment to NFTs, in the on-chain state of its
+token accounts. Then the on-chain state is the important part of a token
+account. That contract does not check the balance change. Its approval method
+checks that the on-chain state changes in the correct way: for example, that
+`update.update.appState` does not set a field.
+
+Deploy `MyToken`, `TokenUser` and `TokenHolder` in one transaction, and give
+the `TokenHolder` deploy update to `approveDeploy()`:
+
+#include_code deploy examples/zkapps/11-advanced-account-updates/src/main.ts ts title="src/main.ts"
+
+`tokenHolder.self.extractTree()` takes the `TokenHolder` deploy update out of
+the transaction as an `AccountUpdateTree`. `approveDeploy()` puts it back as a
+child of the `MyToken` account update.
+
+`AccountUpdate.fundNewAccount(feePayer, 4)` pays the account creation fee for
+four new accounts: `MyToken`, the token account that `init()` mints to,
+`TokenUser`, and `TokenHolder`.
+
+Then move 500 tokens to `TokenHolder`. `transfer()` calls `approveBase()`. The
+`MyToken` token account signs, because it sends the tokens:
+
+#include_code fund-holder examples/zkapps/11-advanced-account-updates/src/main.ts ts title="src/main.ts"
+
+### Send tokens from a zkApp
+
+`TokenUser` is a zkApp on the MINA token, and `TokenHolder` is a zkApp on the
+`MyToken` token. They have the same address. `TokenHolder` holds the tokens,
+and `TokenUser` sends them.
+
+#include_code token-holder examples/zkapps/11-advanced-account-updates/src/TokenUser.ts ts title="src/TokenUser.ts"
+
+`transferAway()` takes tokens away from the `TokenHolder` account. A zkApp has
+the `proof` permission for `send` by default, so only a proof of
+`transferAway()` can decrease the balance of `TokenHolder`.
+
+`TokenHolder` does not set `mayUseToken` itself. A contract instance that you
+make with a token ID, `new TokenHolder(address, tokenId)`, makes account
+updates with `mayUseToken` set to `parentsOwnToken`.
+
+#include_code token-user examples/zkapps/11-advanced-account-updates/src/TokenUser.ts ts title="src/TokenUser.ts"
+
+`sendMyTokens()` calls `transferAway()`, and then calls `approveTransfer()`
+on `MyToken` with the `TokenHolder` account update:
+
+#include_code approve-transfer examples/zkapps/11-advanced-account-updates/src/MyToken.ts ts title="src/MyToken.ts"
+
+`approveTransfer()` checks that the update is on the `MyToken` token, has no
+children, and has a negative balance change. Then it mints the same amount to
+the receiver. The total supply does not change.
+
+The token check is necessary. Without it, a MINA account update that sends 5
+MINA would mint 5 `MyToken` tokens.
+
+This transaction sends 100 tokens to the fee payer, which has no `MyToken`
+token account yet, so the transaction pays for one:
+
+#include_code send-my-tokens examples/zkapps/11-advanced-account-updates/src/main.ts ts title="src/main.ts"
+
+These are the account updates of the transaction, from the output of
+`npm start`. The indent is the call depth:
+
+```text
+AccountUpdate.fundNewAccount() [MINA -1000000000]
+TokenUser.sendMyTokens() [MINA 0]
+  MyToken.approveTransfer() [MINA 0]
+    TokenHolder.transferAway() [token -100]
+    MyToken.approveTransfer().token.mint() [token 100]
+```
+
+The transaction approves two account updates on the `MyToken` token:
+
+- `TokenHolder.transferAway()` takes 100 tokens away from `TokenHolder`.
+- `token.mint()` adds 100 tokens to the fee payer.
+
+Both updates have `mayUseToken` set to `parentsOwnToken`, and their parent is
+`MyToken`. The logic of `approveTransfer()` makes sure that the two balance
+changes cancel, so a valid proof can be made.
+
+A token update with no token contract as its parent is rejected. If its
+`mayUseToken` is `parentsOwnToken`, o1js refuses to send it (`Top-level
+account update can not use or pass on token permissions`). If its
+`mayUseToken` is `No`, the network rejects it (`Token_owner_not_caller`).
+
+:::note Changes since the 2023 version of this tutorial
+
+- An approval method gets an `AccountUpdateTree`, and checks
+  `children.isEmpty()`. `AccountUpdate.Layout.NoChildren` is not in o1js 3.
+- An approval method reads the fields of the update with
+  `accountUpdate.unhash()`. `Int64.fromObject(update.body.balanceChange)` is
+  not necessary: `update.balanceChange` is an `Int64`.
+- `TokenContract` replaces `SmartContract` for token contracts, and
+  `this.internal.mint()` replaces `this.token.mint()`.
+- All methods are `async`, and a caller must `await` them.
+
+:::
+
+## Wrapped MINA
+
+`WrappedMina` is a token contract for _wrapped MINA_ (wMINA): a token that
+always has the same value as MINA. Send it MINA, and it mints the same amount
+of wMINA to you. Burn wMINA, and it sends you the same amount of MINA. Other
+contracts can then use MINA with the token API, as one token among others.
+
+### State and the reducer
+
+#include_code state examples/zkapps/11-advanced-account-updates/src/WrappedMina.ts ts title="src/WrappedMina.ts"
+
+`wrap()` and `unwrap()` do not change `totalSupply`. Each of them _dispatches
+an action_: a value that is stored in the transaction and added to the
+_action state_ of the account. The action state is one hash of all the actions
+of the account. An action is an `Int64`, a signed 64-bit integer: positive for
+a mint, negative for a burn. Later, `settleTotalSupply()` adds up the pending
+actions and changes `totalSupply` one time.
+
+Why use actions? Two transactions that change the same state field in the
+same block cannot both succeed: the precondition of the second one is false
+after the first one. Two transactions that dispatch actions can both succeed.
+So two users can wrap in the same block, with transactions that they make
+against the same on-chain state.
+
+The property must be called `reducer`. o1js finds the reducer by that name. A
+`Reducer` that you keep in a property with a different name does not work.
+
+### Approve transfers
+
+#include_code approve-base examples/zkapps/11-advanced-account-updates/src/WrappedMina.ts ts title="src/WrappedMina.ts"
+
+`forEachUpdate()` goes through the account updates of the forest, and calls
+the function for each one. `usesToken` is true for an update that uses wMINA.
+The method adds up the wMINA balance changes, and requires that the sum is
+zero. It also calls `checkPermissionsUpdate()` for each update:
+
+#include_code check-permissions examples/zkapps/11-advanced-account-updates/src/WrappedMina.ts ts title="src/WrappedMina.ts"
+
+An account update can change the permissions of its account. If a wMINA
+token account sets `receive` to `impossible`, or `access` to `proof`, other
+contracts cannot send wMINA to it, or use it, in the normal way.
+`checkPermissionsUpdate()` refuses an update that changes the permissions,
+unless `access` and `receive` stay `none`.
+
+`forEachUpdate()` goes through at most `TokenContract.MAX_ACCOUNT_UPDATES`
+account updates (9 in o1js 3). A forest with more updates fails.
+
+### Wrap MINA
+
+#### `wrap()`
+
+#include_code wrap examples/zkapps/11-advanced-account-updates/src/WrappedMina.ts ts title="src/WrappedMina.ts"
+
+`sender` is the account update of the user on the MINA token. It sends MINA,
+so its balance change is negative, and the user must sign it. `wrap()`:
+
+1. Requires that `sender` has no children, and approves it.
+1. Requires that `sender` is on the MINA token, and that it sends a positive
+   amount.
+1. Adds the same amount to the balance of `WrappedMina`. The MINA balance
+   changes of the transaction add up to zero, so the MINA goes from the user
+   to `WrappedMina`.
+1. Mints the same amount of wMINA to the user.
+1. Dispatches the amount as an action.
+
+In `main.ts`, the user wraps 10 MINA:
+
+#include_code wrap examples/zkapps/11-advanced-account-updates/src/main.ts ts title="src/main.ts"
+
+`AccountUpdate.createSigned(user)` makes the account update of the user, and
+requires the user's signature for it. `sender.extractTree()` takes it out of
+the transaction, and `wrap()` puts it back as a child of `WrappedMina`. The
+user has no wMINA token account yet, so `fundNewAccount()` pays the account
+creation fee.
+
+#### `unwrap()`
+
+#include_code unwrap examples/zkapps/11-advanced-account-updates/src/WrappedMina.ts ts title="src/WrappedMina.ts"
+
+`unwrap()` does the opposite. `sender` is the account update of the user on
+the wMINA token, with a negative balance change: it burns wMINA. `unwrap()`
+sends the same amount of MINA from `WrappedMina` to the user.
+
+`receiver.body.implicitAccountCreationFee = Bool(true)` lets the MINA update
+pay the account creation fee out of its own balance change. So a user who has
+wMINA but no MINA account can unwrap: the network creates the MINA account,
+and the user gets the amount minus the account creation fee (1 MINA on a
+local blockchain).
+
+This works only on the MINA token. A new token account cannot pay its creation
+fee in tokens: the network rejects it (`Cannot_pay_creation_fee_in_token`).
+So `wrap()` does not use `implicitAccountCreationFee` for the wMINA that it
+mints, and the first `wrap()` of a user needs `fundNewAccount()`.
+
+The network rejects an unwrap of more wMINA than the user holds
+(`Overflow`): the balance of the token account cannot go below zero.
+
+#include_code unwrap examples/zkapps/11-advanced-account-updates/src/main.ts ts title="src/main.ts"
+
+### Settle the total supply
+
+#include_code settle examples/zkapps/11-advanced-account-updates/src/WrappedMina.ts ts title="src/WrappedMina.ts"
+
+`settleTotalSupply()`:
+
+1. Reads `totalSupply` and `actionState`, and requires that they are the
+   values on chain.
+1. Gets the actions that come after `actionState`.
+1. Adds them up with `reduce()`.
+1. Sets the new `totalSupply`, and sets `actionState` to the hash of the last
+   action that it added.
+
+Each action is counted one time. A second call starts at the new
+`actionState`, so it does not count the same actions again. If two
+transactions settle the same actions, the network applies the first one, and
+rejects the second one (`Account_app_state_precondition_unsatisfied`): it
+requires the old `totalSupply` and `actionState`.
+
+`maxUpdatesWithActions: 8` is the maximum number of pending account updates
+with actions that one call can reduce. If more are pending, the call fails.
+The o1js reducer API is not safe for production applications for this reason.
+
+:::caution
+
+In o1js `3.0.0`, `Mina.LocalBlockchain` keeps the actions of a transaction
+that the network rejected. The account's action state does not include them,
+but a reducer that runs after the rejected transaction reads them. A real
+network does not keep them. In a test with a reducer, do not send a rejected
+transaction that dispatches actions before the reducer runs.
+
+:::
+
+### Read a balance
+
+#include_code get-balance examples/zkapps/11-advanced-account-updates/src/WrappedMina.ts ts title="src/WrappedMina.ts"
+
+`getBalance()` returns the wMINA balance of an account. It also adds a
+precondition to the transaction: the balance must be the same value when the
+network applies the transaction. Another contract can call it, and use the
+value in its proof.
+
+## Run it
+
+```sh
+npm start
+```
+
+`npm start` runs `src/main.ts` with proofs off. Each line starts with the time
+since the start:
+
+```text
+[   1.3s] proofs are off
+[   1.3s] deploying MyToken, TokenUser and TokenHolder...
+           MyToken: 1000 tokens
+           TokenHolder: 0 tokens
+[  13.2s] transferring 500 tokens to TokenHolder...
+           MyToken: 500 tokens
+           TokenHolder: 500 tokens
+[  20.5s] TokenUser.sendMyTokens(100) to the fee payer...
+           AccountUpdate.fundNewAccount() [MINA -1000000000]
+           TokenUser.sendMyTokens() [MINA 0]
+             MyToken.approveTransfer() [MINA 0]
+               TokenHolder.transferAway() [token -100]
+               MyToken.approveTransfer().token.mint() [token 100]
+           TokenHolder: 400 tokens
+           fee payer: 100 tokens
+[  22.7s] deploying WrappedMina...
+[  23.7s] wrapping 10 MINA...
+           AccountUpdate.fundNewAccount() [MINA -1000000000]
+           WrappedMina.wrap() [MINA 10000000000]
+             user sends MINA [MINA -10000000000]
+             WrappedMina.wrap().token.mint() [token 10000000000]
+           user: 10 wMINA
+           WrappedMina: 10 MINA
+[  26.9s] unwrapping 4 wMINA...
+           WrappedMina.unwrap() [MINA -4000000000]
+             user burns wMINA [token -4000000000]
+             WrappedMina.unwrap().send() [MINA 4000000000]
+           user: 6 wMINA
+           WrappedMina: 6 MINA
+[  29.5s] settling the total supply...
+[  30.4s] wMINA total supply: 6
+[  30.4s] done
+```
+
+The times depend on your computer. With proofs off, the run takes less than
+a minute.
+
+### With proofs
+
+```sh
+npm run start:proofs
+```
+
+`npm run start:proofs` compiles the four contracts, and makes a proof for each
+contract account update. That takes much longer:
+
+| Step | Measured time |
+| --- | --- |
+| Compile `MyToken` | 29 s |
+| Compile `TokenHolder` | 13 s |
+| Compile `TokenUser` | 10 s |
+| Compile `WrappedMina` | 32 s |
+| Prove the deploy transaction | 145 s |
+| Prove `transfer()` | 63 s |
+| Prove `sendMyTokens()` (three proofs) | 121 s |
+| Prove the `WrappedMina` deploy transaction | 28 s |
+| Prove `wrap()` | 29 s |
+| Prove `unwrap()` | 38 s |
+| Prove `settleTotalSupply()` | 28 s |
+
+These times are from `src/AdvancedAccountUpdates.proofs.test.ts` on a Linux
+computer with 16 CPU cores and other work running at the same time. A full
+`npm run start:proofs` on the same computer took 13.5 minutes. Expect between
+5 and 15 minutes, as a function of your computer. o1js keeps the compile
+output in a cache (`~/.cache/o1js`), so the second run compiles faster.
+
+:::tip Is it stuck?
+
+Compiling and proving use all CPU cores, and print nothing while they run.
+`main.ts` prints a line with the time before and after each step, so that you
+can see which step is running:
+
+#include_code progress examples/zkapps/11-advanced-account-updates/src/main.ts ts title="src/main.ts"
+
+If the last line is `compiling MyToken, TokenHolder, TokenUser and
+WrappedMina...` or a transaction, and the time in the table above has not gone
+by, wait.
+
+:::
+
+## Which contract approves
+
+When `TokenUser` calls `new MyToken(tokenAddress).approveTransfer(...)`,
+o1js runs the `MyToken` code from your project to make the proof. The network
+then checks that proof against the verification key in the account at
+`tokenAddress`. A different contract at that address, with the same method
+name, makes a proof that is not valid for that key, and the network rejects
+the transaction (`Invalid proof for account update`).
+
+:::caution
+
+With proofs off, `Mina.LocalBlockchain` does not do this check. The test
+suite has a contract that approves any update and mints 1000 tokens. With
+proofs off, a local blockchain accepts its approval at the `MyToken` address,
+and mints the tokens. With proofs on, it rejects it. Test this type of claim
+with proofs on.
+
+:::
+
+## Test it
+
+The example project carries a test suite for the code on this page:
+
+```sh
+cd examples/zkapps/11-advanced-account-updates
+npm install
+npm test
+```
+
+`src/MyToken.test.ts` runs with proofs off. It checks that:
+
+- `init()` mints `1000` tokens, and `TokenContract.deploy()` sets `access` to
+  `proofOrSignature()`.
+- `approveDeploy()` deploys `TokenHolder` on a `MyToken` token account, with
+  its own verification key.
+- `transfer()` moves 500 tokens through `approveBase()`.
+- `sendMyTokens(100)` moves 100 tokens. `MyToken.approveTransfer()` is the
+  parent of both token updates, and both have `mayUseToken` set to
+  `parentsOwnToken`.
+
+It also checks that these are **rejected**, and that no balance changes:
+
+- A `TokenHolder` deployment with no approval (`Token_owner_not_caller`).
+- A deploy update that mints tokens, a deploy update with children, and an
+  update on a different token, given to `approveDeploy()`.
+- An `approveBase()` call whose balance changes do not add up to zero.
+- A `sendMyTokens()` of more tokens than `TokenHolder` holds (`Overflow`).
+- An update with a positive balance change, an update on the MINA token, and
+  an update with children, given to `approveTransfer()`.
+- A token update with no token contract as its parent, both the o1js check
+  and the network check.
+
+The last test records that, with proofs off, an approval from a different
+contract at the `MyToken` address is accepted.
+
+`src/WrappedMina.test.ts` runs with proofs off. It checks that:
+
+- `WrappedMina` deploys with `totalSupply` `0`.
+- `wrap()` takes exactly 10 MINA from the user and mints 10 wMINA.
+- `unwrap()` burns 4 wMINA and sends 4 MINA.
+- `transfer()` moves wMINA between users through `approveBase()`.
+- `unwrap()` from an address with no MINA account sends the amount minus the
+  account creation fee.
+- `settleTotalSupply()` applies `+10`, `-4` and `-2`, and the result is the
+  MINA that the contract holds. A second call does not count the actions
+  again.
+- `getBalance()` returns the wMINA balance.
+- `main()` runs end to end.
+
+It also checks that these are **rejected**:
+
+- A `wrap()` that the user did not sign.
+- A `wrap()` with an update on wMINA, with no MINA, or with children.
+- An `unwrap()` with an update on MINA, or with a change of the `receive`
+  permission.
+- An `unwrap()` of more wMINA than the user holds (`Overflow`).
+- An `approveBase()` call that mints wMINA with no MINA, that sets the
+  `receive` permission of a wMINA account, or that has more than 9 account
+  updates (`TokenContract.MAX_ACCOUNT_UPDATES`).
+- A new wMINA account that pays its creation fee in wMINA
+  (`Cannot_pay_creation_fee_in_token`).
+- A wMINA transfer that `WrappedMina` does not approve
+  (`Token_owner_not_caller`).
+- A second settlement of the same actions
+  (`Account_app_state_precondition_unsatisfied`).
+- A `settleTotalSupply()` with more than 8 pending account updates with
+  actions.
+- A `dispatch()` on a reducer in a property that is not called `reducer`.
+
+It also checks that two wraps made against the same on-chain state both
+succeed, and it records that `Mina.LocalBlockchain` keeps the action of a
+rejected transaction.
+
+`src/AdvancedAccountUpdates.proofs.test.ts` compiles the contracts and makes
+real proofs. It checks that:
+
+- `sendMyTokens(100)` makes three proofs: `TokenUser`, `MyToken` and
+  `TokenHolder`. The mint update has no proof, because its parent authorizes
+  it.
+- An approval from a different contract at the `MyToken` address is
+  **rejected** (`Invalid proof for account update`).
+- `wrap()`, `unwrap()` and `settleTotalSupply()` work with proofs, and the
+  total supply is 6 MINA.
+
+Compiling and proving take some minutes, so the test timeout is long. Each
+step prints its time. On the computer of the table above, the file took 12
+minutes.
+
+## Conclusion
+
+Congratulations! You have written token contracts that approve account
+updates: a deployment on a token account, a transfer from a zkApp, and the
+wrap and unwrap of MINA. You have seen that the token manager account must be
+the parent of each account update that uses its token, and that its approval
+method must check the balance change, the token ID and the children of each
+update that it approves.
+
+To learn about the account updates that a call makes, see
+[Account updates](https://docs.o1labs.org/o1js/zkapps/account-updates) in the
+o1Labs docs. To read the actions of a contract outside a contract, see
+[Fetch events and actions](/zkapps/writing-a-zkapp/feature-overview/fetch-events-and-actions).
+
+Next: [Tutorial 12: Cross-Contract Calls](cross-contract-calls) builds a
+transaction in which three contracts call each other.
