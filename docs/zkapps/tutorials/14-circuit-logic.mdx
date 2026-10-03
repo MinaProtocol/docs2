@@ -1,0 +1,524 @@
+---
+title: 'Tutorial 14: Logic in a Circuit'
+hide_title: true
+sidebar_label: 'Tutorial 14: Logic in a Circuit'
+description: How and how not to write logic in an o1js circuit. Constants and variables, Provable.if, loops, witnesses, toBigInt() and assertions, each with a test that shows the failure and a test that shows the fix.
+pagination_prev: zkapps/tutorials/anonymous-message-board
+keywords:
+  - o1js
+  - circuit
+  - provable code
+  - constants
+  - variables
+  - Provable.if
+  - Provable.witness
+  - loops
+  - assertions
+  - zero knowledge proof programming
+  - zk
+  - mina
+---
+
+# Tutorial 14: Logic in a Circuit
+
+The code in an o1js method looks like usual TypeScript, but it does not run
+like usual TypeScript. This tutorial shows the mistakes that this causes, and
+the correct code for each mistake.
+
+Each section has three parts:
+
+1. The wrong code.
+2. What goes wrong: the error message, or the wrong result. Each message on
+   this page is the real text from o1js `3.0.0`.
+3. The correct code.
+
+A test in the example project proves each claim on this page. The name of each
+test is the claim.
+
+The full source code for this tutorial is in the
+[examples/zkapps/14-circuit-logic](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/14-circuit-logic)
+directory on GitHub.
+
+## Prerequisites
+
+Make sure your environment meets the
+[Prerequisites](/zkapps/tutorials#prerequisites) for zkApp Developer
+Tutorials. o1js 3 requires Node.js 22 or later.
+
+You must know how to write a `ZkProgram`. To learn about `ZkProgram`, see
+[Tutorial 9: Recursion](recursion) or
+[ZkProgram](https://docs.o1labs.org/o1js/writing-constraint-systems/zk-program)
+in the o1Labs docs.
+
+This tutorial has been tested with:
+
+- [o1js](https://www.npmjs.com/package/o1js) version `3.0.0`
+- Node.js version `22`
+
+## Get the example project
+
+```sh
+git clone https://github.com/MinaProtocol/docs2.git
+cd docs2/examples/zkapps/14-circuit-logic
+npm install
+npm start
+```
+
+`npm start` runs `src/main.ts`. It shows the wrong result and the correct
+result for most sections of this page.
+
+## How o1js runs a method
+
+These terms are necessary for the rest of this page:
+
+- A _circuit_ is the list of equations that a proof must satisfy. Each
+  equation is a _constraint_. A _row_ is one line of the circuit, which holds
+  one or two constraints.
+- The _prover_ is the program that makes a proof. The _verifier_ is the
+  program that checks a proof. The verifier uses the _verification key_, which
+  `compile()` makes from the circuit.
+- A _variable_ is a value in the circuit that can be different in each proof,
+  for example a method input. While o1js makes the circuit, a variable has no
+  value.
+- A _constant_ is a value that is fixed in the circuit, for example
+  `Field(3)`. It is the same in each proof.
+- A _witness_ is a value that the prover computes outside the circuit and
+  gives to the circuit as a variable.
+
+o1js runs your method code at least two times:
+
+1. At compile time (`compile()` and `analyzeMethods()`), o1js runs the method
+   to record the circuit. The inputs are variables with no values.
+2. At proving time, o1js runs the method again with the real input values, to
+   compute each variable and make the proof.
+
+Your JavaScript code runs in both. A JavaScript `if`, `for` or `===` runs
+while o1js records the circuit, so the circuit keeps only the result. The
+circuit does not keep the JavaScript statement. Most mistakes on this page come
+from this fact.
+
+For more about circuits, see
+[What is a ZK constraint system?](https://docs.o1labs.org/o1js/getting-started/what-is-a-zk-constraint-system)
+in the o1Labs docs.
+
+## Constants and variables
+
+A JavaScript value in a method becomes a constant of the circuit. o1js does
+arithmetic on constants in JavaScript and adds no constraint. A product of two
+variables adds a constraint:
+
+#include_code constant-math examples/zkapps/14-circuit-logic/src/constants.ts ts title="src/constants.ts"
+
+`Provable.constraintSystem()` gives `0` rows for `constantMath()`, and more
+than `0` rows for `variableMath()`. A variable times a constant, plus a
+constant, also gives `0` rows: o1js keeps this linear combination as a formula,
+and uses it in the next constraint. `isConstant()` tells you which values are
+constants.
+
+### The wrong way: a JavaScript value as a rule
+
+This program proves that a secret is more than a minimum. The minimum is a
+JavaScript value:
+
+#include_code baked examples/zkapps/14-circuit-logic/src/constants.ts ts title="src/constants.ts"
+
+### What goes wrong
+
+`compile()` reads `config.minimum` one time and puts the value `10` into the
+circuit. The verification key is for the minimum `10` only.
+
+If you change `config.minimum` to `20` after `compile()`, the prover runs the
+method with `20`, but the circuit has `10`. The prover cannot make a proof, for
+any secret:
+
+```text
+the proof could not be constructed: rest of division by vanishing polynomial
+```
+
+A secret of `25` is more than both minimums, but the proof fails. If you
+compile again, you get a different verification key. A proof for the new key
+is not valid for the old key.
+
+Thus, a constant is a part of the circuit. To change a constant, you must
+compile again, and each verifier must get the new verification key.
+
+### The right way: a provable input
+
+When the value can change, make it a method input:
+
+#include_code input examples/zkapps/14-circuit-logic/src/constants.ts ts title="src/constants.ts"
+
+One verification key is valid for each minimum. Because `minimum` is a public
+input, the verifier reads from `proof.publicInput` which minimum the proof is
+for. A secret that is not more than the minimum gives the error
+`Constraint unsatisfied`.
+
+Use a constant only for a value that must be the same in each proof, for
+example the maximum length of a list.
+
+The tests are in `src/constants.test.ts`:
+
+- `adds no constraints for arithmetic on constants`
+- `adds no constraints for a variable times a constant plus a constant`
+- `marks a Field made from a JavaScript value as a constant, and a witness as a variable`
+- `proves a secret more than the minimum that was compiled in`
+- `cannot prove a secret that is not more than the minimum`
+- `cannot prove after the JavaScript value changes, until the program is compiled again`
+- `gives a different verification key for a different constant`
+- `proves against different minimums with one verification key`
+- `cannot prove a secret that is not more than the minimum input`
+
+## Branches: `Provable.if` and a JavaScript `if`
+
+### The wrong way: a JavaScript `if` on a `Bool`
+
+This program gives a bonus of `10` for a score of more than `100`:
+
+#include_code js-if examples/zkapps/14-circuit-logic/src/branching.ts ts title="src/branching.ts"
+
+### What goes wrong
+
+There is **no error**. TypeScript accepts the code, and `compile()` and
+proving are successful. But the result is wrong: a score of `5` gets the bonus
+of `10`.
+
+`score.greaterThan(100)` returns a `Bool`. A `Bool` is a JavaScript object, and
+JavaScript treats each object as true. The `if` runs one time, at compile
+time, and always takes the first branch. The circuit only has
+`bonus = Field(10)`.
+
+If you add `.toBoolean()` to get a JavaScript `boolean`, the mistake becomes an
+error at compile time:
+
+#include_code to-boolean examples/zkapps/14-circuit-logic/src/branching.ts ts title="src/branching.ts"
+
+```text
+b.toBoolean() was called on a variable Bool `b` in provable code.
+This is not supported, because variables represent an abstract computation,
+which only carries actual values during proving, but not during compiling.
+```
+
+### The right way: `Provable.if`
+
+`Provable.if(condition, a, b)` adds constraints that select `a` when the
+condition is true and `b` when the condition is false:
+
+#include_code provable-if examples/zkapps/14-circuit-logic/src/branching.ts ts title="src/branching.ts"
+
+A score of `5` gives `0` and a score of `150` gives `10`. Both proofs are
+valid for the same verification key.
+
+### `Provable.if` computes both branches
+
+`Provable.if` is not a JavaScript `if`. Both `a` and `b` are computed before
+`Provable.if` selects one, and the constraints of both are in the circuit. A
+constraint that fails in the branch that is not selected makes the proof fail:
+
+#include_code both-branches-wrong examples/zkapps/14-circuit-logic/src/branching.ts ts title="src/branching.ts"
+
+For `y = 0`, the division adds a constraint that has no solution:
+
+```text
+Constraint unsatisfied (unreduced):
+generic
+```
+
+Make each branch correct for all inputs. Here, the code divides by `1` when
+`y` is `0`, and then selects `0`:
+
+#include_code both-branches-right examples/zkapps/14-circuit-logic/src/branching.ts ts title="src/branching.ts"
+
+For more about conditions, see
+[Conditional logic](https://docs.o1labs.org/o1js/writing-constraint-systems/conditional-logic)
+in the o1Labs docs.
+
+The tests are in `src/branching.test.ts`:
+
+- `compiles with no error`
+- `always takes the true branch, so a score of 5 gets the bonus`
+- `fails at compile time with toBoolean()`
+- `selects the bonus in the proof for each score`
+- `computes both branches, so a division by 0 in the branch that is not selected fails`
+- `gives 0 for y = 0 and x / y otherwise when each branch is safe`
+
+## Loops
+
+### The wrong way: a loop bound that is a variable
+
+This program sums the first `n` items of a list. The number of steps comes
+from the input `n`:
+
+#include_code loop-wrong examples/zkapps/14-circuit-logic/src/loops.ts ts title="src/loops.ts"
+
+### What goes wrong
+
+`compile()` fails:
+
+```text
+x.toBigInt() was called on a variable field element `x` in provable code.
+This is not supported, because variables represent an abstract computation,
+which only carries actual values during proving, but not during compiling.
+```
+
+At compile time, `n` has no value, so the loop cannot know how many steps to
+run. A circuit has a fixed size. It cannot have more constraints for one proof
+and fewer for a different proof.
+
+### A JavaScript loop unrolls
+
+A `for` loop with a bound that is known at compile time is correct. The loop
+runs at compile time, and each step adds its own constraints to the circuit.
+This is _unrolling_:
+
+#include_code loop-unrolls examples/zkapps/14-circuit-logic/src/loops.ts ts title="src/loops.ts"
+
+`analyzeMethods()` shows the size of the circuit. A loop of `8` steps has two
+times the rows of a loop of `4` steps, and a loop of `16` steps has two times
+the rows of a loop of `8` steps. A long loop makes a large circuit, and a large
+circuit makes proving slower.
+
+### The right way: a fixed maximum and `Provable.if`
+
+Run the loop for a fixed maximum number of steps. For each step, compute in
+the circuit if the step is in use, and use `Provable.if` to add `0` for a step
+that is not in use:
+
+#include_code loop-right examples/zkapps/14-circuit-logic/src/loops.ts ts title="src/loops.ts"
+
+The circuit always has `MAX_LENGTH` steps. One verification key is valid for
+each `n` from `0` to `MAX_LENGTH`. The assertion on `n` is necessary: without
+it, an `n` of more than `MAX_LENGTH` gives the sum of all items, not an error.
+
+The tests are in `src/loops.test.ts`:
+
+- `fails at compile time when the loop bound depends on a variable`
+- `unrolls a JavaScript loop: twice the steps give twice the rows`
+- `sums the first n items for n from 0 to MAX_LENGTH, with one circuit`
+- `cannot prove for n more than MAX_LENGTH`
+
+## Find a value in a list
+
+This section uses the two mistakes above together. The task is: does a list
+of `Field` values include `x`?
+
+### The wrong way: the JavaScript array functions
+
+#include_code includes-wrong examples/zkapps/14-circuit-logic/src/includes.ts ts title="src/includes.ts"
+
+### What goes wrong
+
+There is no error, but both results are wrong. For the list `[1, 2, 3]`:
+
+- `includesWrong(list, 2)` is `false`. `Array.includes()` compares objects
+  with `===`. Each `Field` is a different object, so no item is the same object
+  as `x`.
+- `includesWithSomeWrong(list, 7)` is `true`. The callback returns a `Bool`
+  object, and JavaScript treats each object as true.
+
+Both functions return a JavaScript `boolean`. A JavaScript `boolean` in a
+method is a constant: o1js computes it one time at compile time, and it is the
+same in each proof.
+
+### The right way: `equals()` and `or()`
+
+#include_code includes-right examples/zkapps/14-circuit-logic/src/includes.ts ts title="src/includes.ts"
+
+The result is a `Bool` variable. You can assert it with `assertTrue()`, or use
+it in `Provable.if`. For the list `[1, 2, 3]`, the result is true for `2` and
+false for `7`.
+
+For more about arrays in a circuit, see
+[Arrays](https://docs.o1labs.org/o1js/basic-types/arrays) in the o1Labs docs.
+
+The tests are in `src/includes.test.ts`:
+
+- `is not found by Array.includes(), although the list has it`
+- `is found by Array.some() with equals(), although the list does not have it`
+- `is found by includes() with or() only when the list has it`
+
+## Witnesses
+
+`Provable.witness(type, compute)` makes a variable. The `compute` function
+runs only in the prover, outside the circuit. Use a witness when a value is
+difficult to compute in the circuit but easy to check, for example a square
+root.
+
+In this example, the prover code is in a separate object, so that a test can
+replace it:
+
+#include_code hints examples/zkapps/14-circuit-logic/src/witness.ts ts title="src/witness.ts"
+
+### The wrong way: a witness with no constraint
+
+#include_code unsafe-sqrt examples/zkapps/14-circuit-logic/src/witness.ts ts title="src/witness.ts"
+
+### What goes wrong
+
+The `compute` function is not a part of the circuit. The verifier does not
+know which function the prover used. The verification key is the same when
+you compile with a different `compute` function.
+
+A malicious prover replaces `hints.sqrt` with a function that returns `7`. The
+proof says that `7` is the square root of `9`. There is no error, and `verify()`
+returns `true`.
+
+:::danger
+
+A witness with no constraint is a value that the prover chooses. A proof says
+nothing about it.
+
+:::
+
+### The right way: constrain each witness
+
+Add a constraint that checks the witness:
+
+#include_code safe-sqrt examples/zkapps/14-circuit-logic/src/witness.ts ts title="src/witness.ts"
+
+An honest prover gets `3` (or the other square root of `9` in the field, which
+also satisfies `y * y = 9`). The malicious prover cannot make a proof:
+
+```text
+y is not a square root of x
+Constraint unsatisfied (unreduced):
+rule_main
+```
+
+For more about witnesses, see
+[Witnesses](https://docs.o1labs.org/o1js/writing-constraint-systems/witnesses)
+in the o1Labs docs.
+
+The tests are in `src/witness.test.ts`:
+
+- `gives an honest prover a square root`
+- `accepts any witness when there is no constraint: a malicious prover proves that 7 is the square root of 9`
+- `does not put the witness code in the verification key`
+- `rejects the same malicious witness when a constraint checks it`
+
+## `toBigInt()`, `toString()` and debugging
+
+### The wrong way: read a JavaScript value from a variable
+
+#include_code to-bigint-wrong examples/zkapps/14-circuit-logic/src/conversions.ts ts title="src/conversions.ts"
+
+#include_code to-string-wrong examples/zkapps/14-circuit-logic/src/conversions.ts ts title="src/conversions.ts"
+
+### What goes wrong
+
+`compile()` fails for both programs. The message for `toBigInt()` is:
+
+```text
+x.toBigInt() was called on a variable field element `x` in provable code.
+This is not supported, because variables represent an abstract computation,
+which only carries actual values during proving, but not during compiling.
+
+Also, reading out JS values means that whatever you're doing with those values will no longer be
+linked to the original variable in the proof, which makes this pattern prone to security holes.
+```
+
+The message for `toString()` starts with
+``x.toString() was called on a variable field element `x` in provable code.``
+`toBoolean()` on a `Bool` variable gives the same error. Outside a method, for
+example on `proof.publicOutput`, these functions work.
+
+### The right way: compute in the circuit
+
+To get information from a variable, use o1js functions that add constraints.
+For example, the lowest bit of `x` tells if `x` is even:
+
+#include_code to-bits-right examples/zkapps/14-circuit-logic/src/conversions.ts ts title="src/conversions.ts"
+
+`toBits(64)` also asserts that `x` is less than 2<sup>64</sup>.
+
+### The right way to debug: `Provable.asProver` and `Provable.log`
+
+To read or print a value while proving, use `Provable.asProver()` or
+`Provable.log()`:
+
+#include_code as-prover examples/zkapps/14-circuit-logic/src/conversions.ts ts title="src/conversions.ts"
+
+The callback of `Provable.asProver()` runs only when the prover has values.
+`compile()` does not run it. In the callback, `toBigInt()` and `toString()`
+work. `Provable.asProver()` and `Provable.log()` add no constraints, so a
+value that you compute in the callback is not in the proof. Do not use such a
+value to change the circuit.
+
+The tests are in `src/conversions.test.ts`:
+
+- `fails at compile time with toBigInt()`
+- `fails at compile time with toString()`
+- `proves if a number is even with constrained bits`
+- `runs Provable.asProver only when proving, with the values`
+- `adds no constraints for Provable.asProver and Provable.log`
+
+## Assertions and returned `Bool` values
+
+A method can return a `Bool`, or it can assert a condition. The two are not
+the same.
+
+### The wrong way: return a `Bool` that nobody checks
+
+#include_code returns-bool examples/zkapps/14-circuit-logic/src/assertions.ts ts title="src/assertions.ts"
+
+### What goes wrong
+
+For an age of `12`, the prover makes a proof, and `verify()` returns `true`.
+The output is `false`. A valid proof says only that the output is correct. It
+does not say that the output is `true`. If the verifier does not read
+`proof.publicOutput`, the verifier accepts the proof of a person who is `12`.
+
+A returned `Bool` is correct when the verifier, or the next method, must know
+the result in both cases. Then it must read the result.
+
+### The right way: assert the condition
+
+#include_code asserts examples/zkapps/14-circuit-logic/src/assertions.ts ts title="src/assertions.ts"
+
+For an age of `12`, the prover cannot make a proof:
+
+```text
+age is less than 18
+```
+
+A proof of this method exists only for an age of `18` or more. The second
+argument of an assertion is the message of the error. Give each assertion a
+message, so that you know which assertion failed.
+
+The tests are in `src/assertions.test.ts`:
+
+- `gives a valid proof for an age of 12 when the method returns a Bool: the output is false`
+- `cannot prove an age of 12 when the method asserts`
+- `proves an age of 30 when the method asserts`
+
+## Run the tests
+
+```sh
+npm test
+```
+
+The tests compile the programs and make real proofs. They take some minutes.
+
+## Summary
+
+| Wrong | Result | Right |
+| --- | --- | --- |
+| A JavaScript value for a rule that changes | Proving fails after the value changes. A new verification key for each value. | A method input |
+| `if (bool)` on a `Bool` | No error. The first branch always. | `Provable.if` |
+| `bool.toBoolean()`, `x.toBigInt()`, `x.toString()` in a method | Error at compile time | o1js functions, for example `toBits()`, `equals()`, `or()` |
+| A division or assertion in the branch of `Provable.if` that is not selected | Proving fails | Make each branch correct for all inputs |
+| A loop bound that is a variable | Error at compile time | A fixed maximum and `Provable.if` |
+| `Array.includes()`, `Array.some()` | No error. A wrong constant result. | `reduce()` with `equals()` and `or()` |
+| `Provable.witness` with no constraint | A malicious prover makes a valid proof of a false result | Add a constraint that checks the witness |
+| A returned `Bool` that nobody reads | A valid proof of a false condition | An assertion |
+
+## Conclusion
+
+You have seen that o1js runs your method code at compile time, with variables
+that have no value, and that a circuit keeps the result of JavaScript code, not
+the code. Each JavaScript value is a constant, each JavaScript branch and loop
+runs one time at compile time, and each witness is a value that the prover
+chooses until a constraint checks it.
+
+To see the size of your own circuits, see
+[Analyzing constraint systems](https://docs.o1labs.org/o1js/writing-constraint-systems/analyzing-constraint-systems)
+in the o1Labs docs.
