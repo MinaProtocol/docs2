@@ -30,6 +30,8 @@ const HEADER = `# Mina Protocol Documentation
 > Mina is a lightweight blockchain powered by zero-knowledge proofs (zk-SNARKs). Unlike traditional blockchains, Mina maintains a constant ~22KB chain size. Developers build privacy-preserving smart contracts called zkApps using o1js, a TypeScript-based zk framework. The protocol uses Ouroboros Samasika proof-of-stake consensus.
 
 This file is auto-generated from \`sidebars.js\` and the frontmatter of each documentation page. It indexes the docs for AI agents and other automation. The full content of every page is at [llms-full.txt](${SITE_URL}/llms-full.txt).
+
+Every page also has a markdown twin: add \`.md\` to its URL (for example ${SITE_URL}/zkapps/tutorials/hello-world.md).
 `;
 
 // Top-level sidebar entries that are too internal-process to surface to AI

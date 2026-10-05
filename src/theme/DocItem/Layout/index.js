@@ -14,6 +14,8 @@ import Button from '@site/src/components/common/Button';
 import ArrowRightSmall from '@site/static/svg/common/arrow_right_small.svg';
 import styles from './DocItemLayout.module.scss';
 import Link from '@docusaurus/Link';
+import Head from '@docusaurus/Head';
+import { markdownTwinPath } from '@site/scripts/markdown-twin-path.cjs';
 /**
  * Decide if the toc should be rendered, on mobile or desktop viewports
  */
@@ -39,7 +41,7 @@ export default function DocItemLayout({ children }) {
   const windowSize = useWindowSize();
 
   const {
-    metadata: { editUrl, slug },
+    metadata: { editUrl, slug, permalink },
   } = useDoc();
 
   function renderTOCDesktop() {
@@ -82,6 +84,14 @@ export default function DocItemLayout({ children }) {
 
   return (
     <div className="row">
+      <Head>
+        {/* The markdown twin of this page, written by plugins/markdown-twins.cjs */}
+        <link
+          rel="alternate"
+          type="text/markdown"
+          href={markdownTwinPath(permalink)}
+        />
+      </Head>
       <div className={clsx('col', !docTOC.hidden && styles.docItemCol)}>
         <DocVersionBanner />
         <div className={styles.docItemContainer}>

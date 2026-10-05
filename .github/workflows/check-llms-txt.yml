@@ -10,6 +10,10 @@ on:
       - 'scripts/generate-llms-txt.mjs'
       - 'scripts/include-code.cjs'
       - 'scripts/include-code.test.mjs'
+      - 'scripts/mdx-to-markdown.cjs'
+      - 'scripts/markdown-twin-path.cjs'
+      - 'scripts/markdown-twins.test.mjs'
+      - 'plugins/markdown-twins.cjs'
       # Pages include code regions from the examples with #include_code, so an
       # example change can change llms-full.txt.
       - 'examples/**'
@@ -28,8 +32,14 @@ jobs:
         uses: actions/setup-node@v7
         with:
           node-version: 22
+          cache: npm
 
-      - name: Test the #include_code resolver
+      # The markdown twin tests load the Docusaurus docs plugin to compute
+      # real routes.
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Test the #include_code resolver and the markdown twins
         run: npm run test:scripts
 
       - name: Regenerate llms-full.txt

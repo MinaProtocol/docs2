@@ -4,6 +4,8 @@
 
 This file is auto-generated from `sidebars.js` and the frontmatter of each documentation page. It indexes the docs for AI agents and other automation. The full content of every page is at [llms-full.txt](https://docs.minaprotocol.com/llms-full.txt).
 
+Every page also has a markdown twin: add `.md` to its URL (for example https://docs.minaprotocol.com/zkapps/tutorials/hello-world.md).
+
 ## Network Upgrades
 
 - [Network Upgrades](https://docs.minaprotocol.com/network-upgrades): History of Mina Protocol mainnet network upgrades (hard forks), including Berkeley and Mesa.
