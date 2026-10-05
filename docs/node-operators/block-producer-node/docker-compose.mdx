@@ -14,7 +14,7 @@ Run a Mina block producer node as a separate container, with control over resour
 
 The full Docker Compose configuration — including `docker-compose.yml`, example environment files for mainnet and devnet, a `Makefile`, and a `README` — is maintained in the Mina repository:
 
-**[`mina/src/app/cli/docker-compose/block-producer/`](https://github.com/MinaProtocol/mina/tree/develop/src/app/cli/docker-compose/block-producer)**
+**[`mina/src/app/cli/docker-compose/block-producer/`](https://github.com/MinaProtocol/mina/tree/compatible/src/app/cli/docker-compose/block-producer)**
 
 ## Quick start
 
@@ -60,8 +60,7 @@ All configuration is done through a single `.env` file. Key variables:
 |----------|-------------|
 | `MINA_DAEMON_IMAGE` | Mina daemon Docker image |
 
-For mainnet, the image is pulled from [Docker Hub](https://hub.docker.com/u/minaprotocol) (`minaprotocol/mina-daemon`).
-For devnet, the image is pulled from the o1Labs GCR registry.
+The image, for mainnet and devnet, is pulled from [Docker Hub](https://hub.docker.com/u/minaprotocol) (`minaprotocol/mina-daemon`).
 
 ### Network
 

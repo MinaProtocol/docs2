@@ -121,7 +121,7 @@ Every page also has a markdown twin: add `.md` to its URL (for example https://d
 - [Block Producers](https://docs.minaprotocol.com/node-operators/block-producer-node): The role of a block producer in Mina is to achieve consensus and provide security to the blockchain.
 - [Block Producer Getting Started](https://docs.minaprotocol.com/node-operators/block-producer-node/getting-started): Start producing blocks on the Mina network by running a daemon with your block producer key.
 - [Hot and Cold Block Production](https://docs.minaprotocol.com/node-operators/block-producer-node/hot-cold-block-production): Secure your stake by producing blocks with a hot wallet while keeping funds in a cold wallet.
-- [Docker Compose Block Producer Node](https://docs.minaprotocol.com/node-operators/block-producer-node/docker-compose): Example of how to run a Mina Block Producer node using Docker Compose.
+- [Docker Compose Block Producer Node](https://docs.minaprotocol.com/node-operators/block-producer-node/docker-compose): Run a Mina Block Producer node using Docker Compose.
 - [SNARK Workers](https://docs.minaprotocol.com/node-operators/snark-workers): SNARK workers produce zk-SNARK proofs that keep the Mina blockchain succinct.
 - [SNARK Workers Getting Started](https://docs.minaprotocol.com/node-operators/snark-workers/getting-started): How to run a SNARK worker or SNARK coordinator on the Mina network.
 - [Docker Compose Snark Workers](https://docs.minaprotocol.com/node-operators/snark-workers/docker-compose): Run a Mina SNARK Coordinator and SNARK Worker using Docker Compose.
@@ -129,12 +129,12 @@ Every page also has a markdown twin: add `.md` to its URL (for example https://d
 - [Archive Nodes Getting Started](https://docs.minaprotocol.com/node-operators/archive-node/getting-started): Mina archive nodes maintain historical information about the network, block, and transactions. A zkApp can retrieve events and actions from one or more Mina archive nodes.
 - [Archive Redundancy](https://docs.minaprotocol.com/node-operators/archive-node/archive-redundancy): Strategies for archive node redundancy, backup, and data recovery.
 - [Backfilling Missing Blocks](https://docs.minaprotocol.com/node-operators/archive-node/backfilling-missing-blocks): How to detect and repair gaps in a Mina archive database using archive dumps, precomputed blocks, mina-archive-blocks, and the mina-missing-blocks-auditor.
-- [Docker Compose Archive](https://docs.minaprotocol.com/node-operators/archive-node/docker-compose): Example of how to run a Mina archive node using Docker Compose.
+- [Docker Compose Archive](https://docs.minaprotocol.com/node-operators/archive-node/docker-compose): Run a Mina archive node using Docker Compose.
 - [Archive Replayer](https://docs.minaprotocol.com/node-operators/archive-node/replayer): Use the mina-replayer tool to verify a Mina archive database by replaying its transactions and reconstructing the ledger state.
 - [Seed Peers](https://docs.minaprotocol.com/node-operators/seed-peers): What are seed peers
 - [Seed Peers Getting Started](https://docs.minaprotocol.com/node-operators/seed-peers/getting-started): How to run a seed peer. Seed Peers help connect to the network.
 - [Generating a libp2p Key Pair](https://docs.minaprotocol.com/node-operators/seed-peers/generating-a-libp2p-keypair): Generate a libp2p key pair for seed node identity on the Mina gossip network.
-- [Docker Compose Seed Peers](https://docs.minaprotocol.com/node-operators/seed-peers/docker-compose): Example of how to run a Mina Seed node using Docker Compose.
+- [Docker Compose Seed Peers](https://docs.minaprotocol.com/node-operators/seed-peers/docker-compose): Run a Mina Seed node using Docker Compose.
 - [Blockchain Data and History](https://docs.minaprotocol.com/node-operators/data-and-history): How to find blockchain data and history
 - [Rosetta API](https://docs.minaprotocol.com/node-operators/data-and-history/rosetta): Install and run Mina's implementation of the Rosetta API for blockchain integration, historical data queries, and exchange support.
 - [Running with Docker](https://docs.minaprotocol.com/node-operators/rosetta/run-with-docker): Run Mina’s implementation of Rosetta API with Docker.

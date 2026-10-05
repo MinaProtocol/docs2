@@ -14,7 +14,7 @@ Run a Mina SNARK coordinator and SNARK worker as separate containers. The coordi
 
 The full Docker Compose configuration — including `docker-compose.yml`, example environment files for mainnet and devnet, a `Makefile`, and a `README` — is maintained in the Mina repository:
 
-**[`mina/src/app/cli/docker-compose/snark-worker/`](https://github.com/MinaProtocol/mina/tree/develop/src/app/cli/docker-compose/snark-worker)**
+**[`mina/src/app/cli/docker-compose/snark-worker/`](https://github.com/MinaProtocol/mina/tree/compatible/src/app/cli/docker-compose/snark-worker)**
 
 ## Quick start
 
@@ -53,7 +53,7 @@ make devnet
 
 ## Scaling workers
 
-To run multiple workers against the same coordinator, duplicate the `mina_snark_worker` service in `docker-compose.yml` with a different name (e.g. `mina_snark_worker_2`). See the [README](https://github.com/MinaProtocol/mina/tree/develop/src/app/cli/docker-compose/snark-worker) for the full snippet.
+To run multiple workers against the same coordinator, duplicate the `mina_snark_worker` service in `docker-compose.yml` with a different name (e.g. `mina_snark_worker_2`). See the [README](https://github.com/MinaProtocol/mina/tree/compatible/src/app/cli/docker-compose/snark-worker) for the full snippet.
 
 ## Configuration
 
@@ -65,8 +65,7 @@ All configuration is done through a single `.env` file. Key variables:
 |----------|-------------|
 | `MINA_DAEMON_IMAGE` | Mina daemon Docker image (used by both coordinator and worker) |
 
-For mainnet, images are pulled from [Docker Hub](https://hub.docker.com/u/minaprotocol).
-For devnet, images are pulled from the o1Labs GCR registry.
+Images, for mainnet and devnet, are pulled from [Docker Hub](https://hub.docker.com/u/minaprotocol).
 
 ### Network
 

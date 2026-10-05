@@ -13,7 +13,7 @@ Run a Mina seed node — a publicly reachable peer that bootstraps newcomers int
 
 The full Docker Compose configuration — including `docker-compose.yml`, example environment files for mainnet and devnet, a `Makefile`, and a `README` — is maintained in the Mina repository:
 
-**[`mina/src/app/cli/docker-compose/seed-peer/`](https://github.com/MinaProtocol/mina/tree/develop/src/app/cli/docker-compose/seed-peer)**
+**[`mina/src/app/cli/docker-compose/seed-peer/`](https://github.com/MinaProtocol/mina/tree/compatible/src/app/cli/docker-compose/seed-peer)**
 
 ## Quick start
 
@@ -57,8 +57,7 @@ make devnet
 |----------|-------------|
 | `MINA_DAEMON_IMAGE` | Mina daemon Docker image |
 
-For mainnet, the image is pulled from [Docker Hub](https://hub.docker.com/u/minaprotocol).
-For devnet, the image is pulled from the o1Labs GCR registry.
+The image, for mainnet and devnet, is pulled from [Docker Hub](https://hub.docker.com/u/minaprotocol).
 
 ### Network
 
