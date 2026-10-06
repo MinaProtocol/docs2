@@ -28,6 +28,8 @@ npm run account-balance
 | `track-deposits.ts` | [Tracking Deposits](track-deposits) |
 | `send-transaction.ts`, `offline-sign.ts` | [Sending Transactions](send-transactions) |
 
+Go examples for the read side (`account-balance`, `scan-blocks`, `track-deposits`) live under [`src/app/rosetta/examples/go`](https://github.com/MinaProtocol/mina/tree/compatible/src/app/rosetta/examples/go). They use [`coinbase/mesh-sdk-go`](https://github.com/coinbase/mesh-sdk-go) and need Go 1.21 or newer. There is no Go send-transaction example, because there is no pure-Go Pallas signer; sign with `mina-signer` as in the TypeScript examples.
+
 ## Why no TypeScript SDK?
 
 There is no upstream Coinbase-blessed TypeScript Rosetta/Mesh SDK — the only one they listed (`dfinity/rosetta-client`) was archived in August 2025. Mina ships its own at [`@o1-labs/mina-rosetta-sdk`](https://www.npmjs.com/package/@o1-labs/mina-rosetta-sdk), focused on the endpoints Mina's Rosetta server actually exposes plus the Mina-specific operation types. For Go integrators, [`coinbase/mesh-sdk-go`](https://github.com/coinbase/mesh-sdk-go) remains the canonical Mesh client.
