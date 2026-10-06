@@ -36,12 +36,16 @@ cp example.devnet.env .env
 vi .env
 
 # Start services
-docker compose up -d
+docker compose --env-file .env up -d
 
 # Or use make shortcuts
 make mainnet   # copies mainnet env and starts services
 make devnet    # copies devnet env and starts services
 ```
+
+:::note
+Every `docker compose` command on this page passes `--env-file .env`. Docker Compose reads `.env` on its own, but other runtimes, such as Podman, do not.
+:::
 
 ## Services overview
 
@@ -113,7 +117,7 @@ Once services are running and the daemon is connected to peers:
 ```bash
 make health
 
-docker compose exec mina_block_producer mina client status
+docker compose --env-file .env exec mina_block_producer mina client status
 
 curl -s http://localhost:3085/graphql -H 'Content-Type: application/json' \
   -d '{"query":"{ daemonStatus { syncStatus blockchainLength } }"}' | jq .
@@ -123,7 +127,7 @@ curl -s http://localhost:3085/graphql -H 'Content-Type: application/json' \
 
 ```bash
 make clean
-docker compose up -d
+docker compose --env-file .env up -d
 ```
 
 :::warning

@@ -36,12 +36,16 @@ cp example.devnet.env .env
 vi .env
 
 # Start services
-docker compose up -d
+docker compose --env-file .env up -d
 
 # Or use make shortcuts
 make mainnet
 make devnet
 ```
+
+:::note
+Every `docker compose` command on this page passes `--env-file .env`. Docker Compose reads `.env` on its own, but other runtimes, such as Podman, do not.
+:::
 
 ## Services overview
 
@@ -115,7 +119,7 @@ Images, for mainnet and devnet, are pulled from [Docker Hub](https://hub.docker.
 ```bash
 make health
 
-docker compose exec mina_snark_coordinator mina client status
+docker compose --env-file .env exec mina_snark_coordinator mina client status
 
 # Pending SNARK work in the pool
 curl -s http://localhost:3085/graphql -H 'Content-Type: application/json' \
@@ -126,7 +130,7 @@ curl -s http://localhost:3085/graphql -H 'Content-Type: application/json' \
 
 ```bash
 make clean
-docker compose up -d
+docker compose --env-file .env up -d
 ```
 
 :::warning

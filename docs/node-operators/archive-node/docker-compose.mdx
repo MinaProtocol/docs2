@@ -36,12 +36,16 @@ cp example.devnet.env .env
 vi .env
 
 # Start services
-docker compose up -d
+docker compose --env-file .env up -d
 
 # Or use make shortcuts
 make mainnet
 make devnet
 ```
+
+:::note
+Every `docker compose` command on this page passes `--env-file .env`. Docker Compose reads `.env` on its own, but other runtimes, such as Podman, do not.
+:::
 
 :::info
 The `bootstrap_db` service runs [mina-provision](https://github.com/MinaProtocol/mina-provision): it downloads the newest hourly archive dump for `MINA_NETWORK` and loads it into PostgreSQL. A mainnet dump is about 1 GiB compressed and several times that after extraction, so the first start takes a while. The archive node and the Mina daemon start after the import completes. On later starts, the database already holds an archive, and `bootstrap_db` leaves it alone without downloading anything.
@@ -134,7 +138,7 @@ Once services are running and the node is synced:
 ```bash
 make health
 
-docker compose exec mina_node mina client status
+docker compose --env-file .env exec mina_node mina client status
 
 # Mina node sync status
 curl -s http://localhost:3085/graphql -H 'Content-Type: application/json' \
@@ -148,14 +152,14 @@ psql postgres://postgres:postgres@localhost:5433/archive \
   -tAc "SELECT max(height) FROM blocks"
 
 # Missing-blocks guardian progress
-docker compose logs --tail=50 missing_blocks_guardian
+docker compose --env-file .env logs --tail=50 missing_blocks_guardian
 ```
 
 ## Clean start
 
 ```bash
 make clean
-docker compose up -d
+docker compose --env-file .env up -d
 ```
 
 :::warning

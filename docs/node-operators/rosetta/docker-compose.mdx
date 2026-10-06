@@ -39,12 +39,16 @@ cp example.devnet.env .env
 vi .env
 
 # Start all services
-docker compose up -d
+docker compose --env-file .env up -d
 
 # Or use make shortcuts
 make mainnet   # copies mainnet env and starts services
 make devnet    # copies devnet env and starts services
 ```
+
+:::note
+Every `docker compose` command on this page passes `--env-file .env`. Docker Compose reads `.env` on its own, but other runtimes, such as Podman, do not.
+:::
 
 :::info
 The `bootstrap_db` service runs [mina-provision](https://github.com/MinaProtocol/mina-provision): it downloads the newest hourly archive dump for `MINA_NETWORK` and loads it into PostgreSQL. A mainnet dump is about 1 GiB compressed and several times that after extraction, so the first start takes a while. The archive node, the Mina daemon and Rosetta start after the import completes. On later starts, the database already holds an archive, and `bootstrap_db` leaves it alone without downloading anything.
@@ -155,7 +159,7 @@ make status
 make health
 
 # Check sync status
-docker compose exec mina_node mina client status
+docker compose --env-file .env exec mina_node mina client status
 
 # Query Rosetta API
 curl -s http://localhost:3087/network/list \
@@ -171,5 +175,5 @@ To wipe all data and start fresh:
 
 ```bash
 make clean
-docker compose up -d
+docker compose --env-file .env up -d
 ```
