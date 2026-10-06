@@ -7,7 +7,7 @@ description: Poll Mina Rosetta for new blocks and inspect their transactions
 
 The pattern: query `/network/status` for the current chain tip, then fetch each block by index sequentially. When `/block` returns `{ block: null }` the height is not yet produced — wait and retry.
 
-This is the foundation of every other read-side integration (deposit tracking, search, custodial reconciliation). The full runnable version is at [`src/app/rosetta/examples/ts/scan-blocks.ts`](https://github.com/MinaProtocol/mina/blob/develop/src/app/rosetta/examples/ts/scan-blocks.ts). The core loop:
+This is the foundation of every other read-side integration (deposit tracking, search, custodial reconciliation). The full runnable version is at [`src/app/rosetta/examples/ts/scan-blocks.ts`](https://github.com/MinaProtocol/mina/blob/compatible/src/app/rosetta/examples/ts/scan-blocks.ts). The core loop:
 
 ```ts
 let height = (await client.networkStatus()).current_block_identifier.index;
@@ -34,4 +34,4 @@ while (true) {
 
 ## Want it in shell?
 
-A curl-based loop is in the mina repo at [`src/app/rosetta/test-curl/`](https://github.com/MinaProtocol/mina/tree/develop/src/app/rosetta/test-curl). Useful for exploration; not intended as production code.
+A curl-based loop is in the mina repo at [`src/app/rosetta/test-curl/`](https://github.com/MinaProtocol/mina/tree/compatible/src/app/rosetta/test-curl). Useful for exploration; not intended as production code.

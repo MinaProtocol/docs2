@@ -9356,7 +9356,7 @@ The easiest way to build Rosetta natively is to use the Nix development environm
     Clone the official [mina repository](https://github.com/MinaProtocol/mina.git) and switch to the `compatible` branch.
 
 1. 
-    If you don't already have Nix on your machine, install it following the steps in the [nix/README.md](https://github.com/MinaProtocol/mina/blob/develop/nix/README.md).
+    If you don't already have Nix on your machine, install it following the steps in the [nix/README.md](https://github.com/MinaProtocol/mina/blob/compatible/nix/README.md).
 
 1. 
     Run the `./nix/pin.sh` script to enable submodules to be available to the build:
@@ -9559,7 +9559,7 @@ To run Mina Rosetta on Apple silicon, you can use the steps in [Building and run
 
 :::note
 
-If you want to build your own docker image, you can find more details in [Mina's Rosetta repository](https://github.com/MinaProtocol/mina/blob/develop/src/app/rosetta/README.md). However, for most users, it's not necessary to build your own image in order to interact with the API.
+If you want to build your own docker image, you can find more details in [Mina's Rosetta repository](https://github.com/MinaProtocol/mina/blob/compatible/src/app/rosetta/README.md). However, for most users, it's not necessary to build your own image in order to interact with the API.
 
 :::
 
@@ -9598,7 +9598,7 @@ Then run the container with the following command:
         minaprotocol/mina-rosetta:<tag>
 ```
 
-Example environment files for public networks can be found in [this](https://github.com/MinaProtocol/mina/blob/develop/src/app/rosetta/scripts) directory of Mina's Rosetta repository.
+Example environment files for public networks can be found in [this](https://github.com/MinaProtocol/mina/blob/compatible/src/app/rosetta/scripts) directory of Mina's Rosetta repository.
 
 :::note
 
@@ -9620,7 +9620,7 @@ This section covers the Mina-specific bits of integrating with Rosetta. For each
 
 ## Runnable examples
 
-Working TypeScript scripts live in the mina repo under [`src/app/rosetta/examples/ts`](https://github.com/MinaProtocol/mina/tree/develop/src/app/rosetta/examples/ts). They use [`@o1-labs/mina-rosetta-sdk`](https://www.npmjs.com/package/@o1-labs/mina-rosetta-sdk) for the typed Rosetta HTTP surface and [`mina-signer`](https://www.npmjs.com/package/mina-signer) for transaction signing. The SDK is a light wrapper — typed endpoints Mina actually exposes plus the Mina-specific operation-builder helpers (`buildTransferOperations`, `buildDelegationOperations`).
+Working TypeScript scripts live in the mina repo under [`src/app/rosetta/examples/ts`](https://github.com/MinaProtocol/mina/tree/compatible/src/app/rosetta/examples/ts). They use [`@o1-labs/mina-rosetta-sdk`](https://www.npmjs.com/package/@o1-labs/mina-rosetta-sdk) for the typed Rosetta HTTP surface and [`mina-signer`](https://www.npmjs.com/package/mina-signer) for transaction signing. The SDK is a light wrapper — typed endpoints Mina actually exposes plus the Mina-specific operation-builder helpers (`buildTransferOperations`, `buildDelegationOperations`).
 
 Quickstart:
 
@@ -9858,7 +9858,7 @@ url: /node-operators/rosetta/samples/scan-blocks
 
 The pattern: query `/network/status` for the current chain tip, then fetch each block by index sequentially. When `/block` returns `{ block: null }` the height is not yet produced — wait and retry.
 
-This is the foundation of every other read-side integration (deposit tracking, search, custodial reconciliation). The full runnable version is at [`src/app/rosetta/examples/ts/scan-blocks.ts`](https://github.com/MinaProtocol/mina/blob/develop/src/app/rosetta/examples/ts/scan-blocks.ts). The core loop:
+This is the foundation of every other read-side integration (deposit tracking, search, custodial reconciliation). The full runnable version is at [`src/app/rosetta/examples/ts/scan-blocks.ts`](https://github.com/MinaProtocol/mina/blob/compatible/src/app/rosetta/examples/ts/scan-blocks.ts). The core loop:
 
 ```ts
 let height = (await client.networkStatus()).current_block_identifier.index;
@@ -9885,7 +9885,7 @@ while (true) {
 
 ## Want it in shell?
 
-A curl-based loop is in the mina repo at [`src/app/rosetta/test-curl/`](https://github.com/MinaProtocol/mina/tree/develop/src/app/rosetta/test-curl). Useful for exploration; not intended as production code.
+A curl-based loop is in the mina repo at [`src/app/rosetta/test-curl/`](https://github.com/MinaProtocol/mina/tree/compatible/src/app/rosetta/test-curl). Useful for exploration; not intended as production code.
 
 ---
 url: /node-operators/rosetta/samples/send-transactions
@@ -9908,7 +9908,7 @@ The full Construction API flow:
 
 For Mina, [`mina-signer`](https://www.npmjs.com/package/mina-signer) handles step 4 plus the formatting of step 5's input. The `rosettaCombinePayload(payloadsResponse, privateKey)` helper takes the result of `/construction/payloads` and produces the body for `/construction/combine` directly.
 
-The full runnable version is at [`src/app/rosetta/examples/ts/send-transaction.ts`](https://github.com/MinaProtocol/mina/blob/develop/src/app/rosetta/examples/ts/send-transaction.ts). Core flow:
+The full runnable version is at [`src/app/rosetta/examples/ts/send-transaction.ts`](https://github.com/MinaProtocol/mina/blob/compatible/src/app/rosetta/examples/ts/send-transaction.ts). Core flow:
 
 ```ts
 const operations = buildTransferOperations({ sender, receiver, amountNanomina, feeNanomina });
@@ -9933,7 +9933,7 @@ For exchanges that keep signing keys on an air-gapped machine, the Construction 
 - **Offline host** reads the persisted payload, signs it with `mina-signer`, persists the result
 - **Online host** reads the signed result, calls combine → submit
 
-See [`src/app/rosetta/examples/ts/offline-sign.ts`](https://github.com/MinaProtocol/mina/blob/develop/src/app/rosetta/examples/ts/offline-sign.ts) for the same flow split across the boundary, with on-disk handoff files standing in for the network gap.
+See [`src/app/rosetta/examples/ts/offline-sign.ts`](https://github.com/MinaProtocol/mina/blob/compatible/src/app/rosetta/examples/ts/offline-sign.ts) for the same flow split across the boundary, with on-disk handoff files standing in for the network gap.
 
 ## Mina-specific notes
 
@@ -9959,7 +9959,7 @@ The pattern: scan blocks (see [Scanning Blocks](scan-blocks)) and within each bl
 
 Each matching operation represents one credit to the address. Sum or record them per transaction depending on how your accounting works.
 
-The full runnable version is at [`src/app/rosetta/examples/ts/track-deposits.ts`](https://github.com/MinaProtocol/mina/blob/develop/src/app/rosetta/examples/ts/track-deposits.ts). The filter:
+The full runnable version is at [`src/app/rosetta/examples/ts/track-deposits.ts`](https://github.com/MinaProtocol/mina/blob/compatible/src/app/rosetta/examples/ts/track-deposits.ts). The filter:
 
 ```ts
 function isDeposit(op: Operation, address: string): boolean {

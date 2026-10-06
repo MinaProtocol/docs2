@@ -20,7 +20,7 @@ The full Construction API flow:
 
 For Mina, [`mina-signer`](https://www.npmjs.com/package/mina-signer) handles step 4 plus the formatting of step 5's input. The `rosettaCombinePayload(payloadsResponse, privateKey)` helper takes the result of `/construction/payloads` and produces the body for `/construction/combine` directly.
 
-The full runnable version is at [`src/app/rosetta/examples/ts/send-transaction.ts`](https://github.com/MinaProtocol/mina/blob/develop/src/app/rosetta/examples/ts/send-transaction.ts). Core flow:
+The full runnable version is at [`src/app/rosetta/examples/ts/send-transaction.ts`](https://github.com/MinaProtocol/mina/blob/compatible/src/app/rosetta/examples/ts/send-transaction.ts). Core flow:
 
 ```ts
 const operations = buildTransferOperations({ sender, receiver, amountNanomina, feeNanomina });
@@ -45,7 +45,7 @@ For exchanges that keep signing keys on an air-gapped machine, the Construction 
 - **Offline host** reads the persisted payload, signs it with `mina-signer`, persists the result
 - **Online host** reads the signed result, calls combine → submit
 
-See [`src/app/rosetta/examples/ts/offline-sign.ts`](https://github.com/MinaProtocol/mina/blob/develop/src/app/rosetta/examples/ts/offline-sign.ts) for the same flow split across the boundary, with on-disk handoff files standing in for the network gap.
+See [`src/app/rosetta/examples/ts/offline-sign.ts`](https://github.com/MinaProtocol/mina/blob/compatible/src/app/rosetta/examples/ts/offline-sign.ts) for the same flow split across the boundary, with on-disk handoff files standing in for the network gap.
 
 ## Mina-specific notes
 
