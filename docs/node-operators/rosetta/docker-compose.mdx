@@ -39,12 +39,20 @@ cp example.devnet.env .env
 vi .env
 
 # Start all services
-docker compose up -d
+docker compose --env-file .env up -d
 
 # Or use make shortcuts
 make mainnet   # copies mainnet env and starts services
 make devnet    # copies devnet env and starts services
 ```
+
+:::note
+Every `docker compose` command on this page passes `--env-file .env`. Docker Compose reads `.env` on its own, but other runtimes, such as Podman, do not.
+:::
+
+:::info
+The `bootstrap_db` service runs [mina-provision](https://github.com/MinaProtocol/mina-provision): it downloads the newest hourly archive dump for `MINA_NETWORK` and loads it into PostgreSQL. A mainnet dump is about 1 GiB compressed and several times that after extraction, so the first start takes a while. The archive node, the Mina daemon and Rosetta start after the import completes. On later starts, the database already holds an archive, and `bootstrap_db` leaves it alone without downloading anything.
+:::
 
 ## Services overview
 
@@ -53,11 +61,11 @@ The Docker Compose setup includes six services:
 | Service | Description | Default Port |
 |---------|-------------|--------------|
 | **postgres** | PostgreSQL 17 with health checks | 5432 (container), configurable host port |
-| **bootstrap_db** | One-shot: downloads and imports the latest daily archive dump | — |
+| **bootstrap_db** | One-shot: [mina-provision](https://github.com/MinaProtocol/mina-provision) loads the newest hourly archive dump. Skipped when the database already holds an archive | — |
 | **mina_archive** | Archive process, stores block data in PostgreSQL | 3086 |
 | **mina_node** | Mina daemon with GraphQL API | 3085 (GraphQL), 8302 (P2P) |
 | **mina_rosetta** | Rosetta API for exchange integration | 3087 |
-| **missing_blocks_guardian** | Monitors and recovers missing blocks between nightly dumps and chain tip | — |
+| **missing_blocks_guardian** | Fills in the blocks between the restored dump and the chain tip, and any later gaps, from the published precomputed blocks | — |
 
 ## Configuration
 
@@ -70,9 +78,17 @@ All configuration is done through a single `.env` file. Key variables:
 | `MINA_DAEMON_IMAGE` | Mina daemon Docker image |
 | `MINA_ARCHIVE_IMAGE` | Mina archive Docker image |
 | `MINA_ROSETTA_IMAGE` | Mina Rosetta Docker image |
+| `MINA_PROVISION_IMAGE` | [mina-provision](https://hub.docker.com/r/minaprotocol/mina-provision) image, used by `bootstrap_db` |
 
-For mainnet, images are pulled from [Docker Hub](https://hub.docker.com/u/minaprotocol) (`minaprotocol/mina-*`).
-For devnet, images are pulled from the o1Labs GCR registry.
+All images, for mainnet and devnet, are pulled from [Docker Hub](https://hub.docker.com/u/minaprotocol) (`minaprotocol/mina-*`). The example `.env` files pin a tested release of each.
+
+### Database
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `POSTGRES_DB` | `archive` | Database the archive node writes to. Keep `archive`: the published dumps always restore into a database of that name |
+| `POSTGRES_USER` | `postgres` | PostgreSQL user |
+| `POSTGRES_PASSWORD` | `postgres` | PostgreSQL password. Change it before you expose `POSTGRES_PORT` |
 
 ### Network
 
@@ -92,13 +108,21 @@ For devnet, images are pulled from the o1Labs GCR registry.
 | `MINA_ARCHIVE_PORT` | `3086` | Archive server port |
 | `MINA_ROSETTA_PORT` | `3087` | Rosetta API port |
 
+### Rosetta
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `MINA_ROSETTA_MAX_DB_POOL_SIZE` | `80` | Size of Rosetta's PostgreSQL connection pool. Required: Rosetta does not start without it |
+| `MINA_ROSETTA_PG_DATA_INTERVAL` | `30` | Seconds between the log lines in which Rosetta reports the PostgreSQL connection and lock counts |
+
 ### Archive bootstrap
 
 | Variable | Description |
 |----------|-------------|
-| `ARCHIVE_DUMP_BASE_URL` | Base URL for daily archive dumps |
-| `ARCHIVE_DUMP_PREFIX` | Dump filename prefix (`mainnet-archive-dump` or `devnet-archive-dump`) |
-| `GUARDIAN_PRECOMPUTED_BLOCKS_URL` | S3 bucket URL for precomputed blocks used by the missing blocks guardian |
+| `GUARDIAN_PRECOMPUTED_BLOCKS_URL` | Where the missing blocks guardian reads precomputed blocks (the public `mina_network_block_data` bucket) |
+| `GUARDIAN_SLEEP_INTERVAL` | Seconds between the guardian's checks (optional, default `600`) |
+
+The dump location is not configured here: mina-provision derives it from `MINA_NETWORK`. To read dumps from a mirror instead, mount a provider file into the `bootstrap_db` service and set `MINA_PROVISION_CONFIG` to its path. See [Writing a provider](https://github.com/MinaProtocol/mina-provision#writing-a-provider).
 
 ## Data persistence
 
@@ -135,7 +159,7 @@ make status
 make health
 
 # Check sync status
-docker compose exec mina_node mina client status
+docker compose --env-file .env exec mina_node mina client status
 
 # Query Rosetta API
 curl -s http://localhost:3087/network/list \
@@ -151,5 +175,5 @@ To wipe all data and start fresh:
 
 ```bash
 make clean
-docker compose up -d
+docker compose --env-file .env up -d
 ```
