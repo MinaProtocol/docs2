@@ -221,6 +221,7 @@ module.exports = {
             'zkapps/tutorials/cross-contract-calls',
             'zkapps/tutorials/upgrading-a-zkapp',
             'zkapps/tutorials/anonymous-message-board',
+            'zkapps/tutorials/circuit-logic',
             'zkapps/tutorials/interacting-with-zkapps-server-side',
           ],
         },
