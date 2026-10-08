@@ -22214,6 +22214,8 @@ The following example code for the ZkProgram tutorial is provided in the [Add.ts
 
 Ensure your environment meets the [Prerequisites](/zkapps/tutorials#prerequisites) for zkApp Developer Tutorials.
 
+This tutorial uses o1js 3.0.0. o1js 3.0.0 needs Node.js 22.19.5 or later (`engines.node` in the o1js package).
+
 In particular, make sure you have the zkApp CLI installed:
 
 ```sh
@@ -22245,8 +22247,8 @@ Like earlier tutorials, you can prepare your project by deleting the default fil
 
 Open `src/index.ts` in a text editor and import the `Add` smart contract, like:
 
-```ts src/index.ts
-
+```ts title="src/index.ts"
+import { Add } from './Add.js';
 export { Add };
 ```
 
@@ -22271,10 +22273,10 @@ The `import` statement brings in other packages and dependencies to use in your 
 
 All functions used inside a ZkProgram must operate on o1js compatible data types: `Field` types and other types built on top of `Field` types.
 
-:::info
+:::
 
-```ts src/Add.ts
-
+```ts title="src/Add.ts"
+import { Field, SelfProof, ZkProgram } from 'o1js';
 ```
 
 These items are:
@@ -22292,7 +22294,9 @@ To create a ZkProgram, start with the `init()` method.
 - For each method, declare the inputs it will receive.
 - The first argument of a ZkProgram method is always the state of the ZkProgram, named `publicInput` since it is public.
 
-```ts
+This block is the start of the program: the `init()` method in the `methods` object. Add the next two methods after `init`, in the same `methods` object. The example file then closes the `methods` object and the `ZkProgram()` call.
+
+```ts title="src/Add.ts"
 export const Add = ZkProgram({
   name: 'add-example',
   publicInput: Field,
@@ -22305,54 +22309,50 @@ export const Add = ZkProgram({
         state.assertEquals(Field(0));
       },
     },
-  },
-});
 ```
 
 Add another method that takes an existing proof, adds a new number to it, and produces a new proof:
 
-```ts
+```ts title="src/Add.ts"
+addNumber: {
+  privateInputs: [SelfProof, Field],
 
-   addNumber: {
-     privateInputs: [SelfProof, Field],
-
-     async method(
-       newState: Field,
-       earlierProof: SelfProof<Field, void>,
-       numberToAdd: Field
-     ) {
-       earlierProof.verify();
-       newState.assertEquals(earlierProof.publicInput.add(numberToAdd));
-     },
-   },
+  async method(
+    newState: Field,
+    earlierProof: SelfProof<Field, void>,
+    numberToAdd: Field
+  ) {
+    earlierProof.verify();
+    newState.assertEquals(earlierProof.publicInput.add(numberToAdd));
+  },
+},
 ```
 
 Use recursion to combine two proofs:
 
-```ts
+```ts title="src/Add.ts"
+add: {
+  privateInputs: [SelfProof, SelfProof],
 
-   add: {
-     privateInputs: [SelfProof, SelfProof],
-
-     async method(
-       newState: Field,
-       earlierProof1: SelfProof<Field, void>,
-       earlierProof2: SelfProof<Field, void>
-     ) {
-       earlierProof1.verify();
-       earlierProof2.verify();
-       newState.assertEquals(
-         earlierProof1.publicInput.add(earlierProof2.publicInput)
-       );
-     },
-   },
+  async method(
+    newState: Field,
+    earlierProof1: SelfProof<Field, void>,
+    earlierProof2: SelfProof<Field, void>
+  ) {
+    earlierProof1.verify();
+    earlierProof2.verify();
+    newState.assertEquals(
+      earlierProof1.publicInput.add(earlierProof2.publicInput)
+    );
+  },
+},
 ```
 
 To use ZkProgram, compile it and then call methods on it:
 
-```ts src/main.ts
-
-
+```ts title="src/main.ts"
+import { Field, verify } from 'o1js';
+import { Add } from './Add.js';
 
 async function main() {
   console.log('compiling...');
@@ -22407,8 +22407,10 @@ A community-contributed implementation distributes compute over AWS instances in
 
 ### Set up ZkProgram
 
-```ts
-class RollupState extends Struct({
+The public input of the rollup ZkProgram is a `RollupState`. A `RollupState` holds two Merkle roots: the root before the transactions (`initialRoot`) and the root after them (`latestRoot`).
+
+```ts title="src/rollup.ts"
+export class RollupState extends Struct({
   initialRoot: Field,
   latestRoot: Field,
 }) {
@@ -22437,6 +22439,76 @@ class RollupState extends Struct({
       latestRoot,
     });
   }
+
+  static createMerged(state1: RollupState, state2: RollupState) {
+    return new RollupState({
+      initialRoot: state1.initialRoot,
+      latestRoot: state2.latestRoot,
+    });
+  }
+
+  static assertEquals(state1: RollupState, state2: RollupState) {
+    state1.initialRoot.assertEquals(state2.initialRoot);
+    state1.latestRoot.assertEquals(state2.latestRoot);
+  }
+}
+```
+
+The `Rollup` ZkProgram has two methods, `oneStep()` and `merge()`:
+
+```ts title="src/rollup.ts"
+export const Rollup = ZkProgram({
+  name: 'rollup',
+  publicInput: RollupState,
+
+  methods: {
+    oneStep: {
+      privateInputs: [Field, Field, Field, Field, Field, MerkleMapWitness],
+
+      async method(
+        state: RollupState,
+        initialRoot: Field,
+        latestRoot: Field,
+        key: Field,
+        currentValue: Field,
+        incrementAmount: Field,
+        merkleMapWitness: MerkleMapWitness
+      ) {
+        const computedState = RollupState.createOneStep(
+          initialRoot,
+          latestRoot,
+          key,
+          currentValue,
+          incrementAmount,
+          merkleMapWitness
+        );
+        RollupState.assertEquals(computedState, state);
+      },
+    },
+
+    merge: {
+      privateInputs: [SelfProof, SelfProof],
+
+      async method(
+        newState: RollupState,
+        rollup1proof: SelfProof<RollupState, void>,
+        rollup2proof: SelfProof<RollupState, void>
+      ) {
+        rollup1proof.verify();
+        rollup2proof.verify();
+
+        rollup2proof.publicInput.initialRoot.assertEquals(
+          rollup1proof.publicInput.latestRoot
+        );
+        rollup1proof.publicInput.initialRoot.assertEquals(newState.initialRoot);
+        rollup2proof.publicInput.latestRoot.assertEquals(newState.latestRoot);
+      },
+    },
+  },
+});
+
+export let RollupProof_ = ZkProgram.Proof(Rollup);
+export class RollupProof extends RollupProof_ {}
 ```
 
 A proof generated by the `merge()` method indicates there is a valid sequence of transactions (for example, the applications of `oneStep`):
@@ -22444,12 +22516,14 @@ A proof generated by the `merge()` method indicates there is a valid sequence of
 - Get from an `initialRoot`, the root of a MerkleMap
 - To a `latestRoot` root of the Merkle map after transactions are applied
 
+`merge()` verifies the two proofs. It asserts that the second proof starts at the root where the first proof ends, that the new state starts at the `initialRoot` of the first proof, and that the new state ends at the `latestRoot` of the second proof.
+
 ### Consume the proofs
 
 To consume these proofs in a smart contract (`SmartContract`) that uses the recursive proof to update its internal state:
 
-```ts
-class RollupContract extends SmartContract {
+```ts title="src/rollup.ts"
+export class RollupContract extends SmartContract {
   @state(Field) state = State<Field>();
 
   async deploy(args: DeployArgs) {
@@ -22479,7 +22553,7 @@ class RollupContract extends SmartContract {
 
 ### Verify the value at account is incremented
 
-Fill in the previous methods, particularly `oneStep()` and `createOneStep()`.
+Look again at `oneStep()` and `createOneStep()`.
 
 This step of the rollup checks that the value at an account was incremented by a particular amount.
 
@@ -22487,63 +22561,58 @@ This step of the rollup checks that the value at an account was incremented by a
 - Then, asserting that the new state of the recursive SNARK is equivalent to the computed state.
 - Inside `createOneStep()`, a single step of the rollup is created.
 
-```ts
-class RollupState extends Struct({
-...
-}) {
-  static createOneStep(
+```ts title="src/rollup.ts"
+static createOneStep(
+  initialRoot: Field,
+  latestRoot: Field,
+  key: Field,
+  currentValue: Field,
+  incrementAmount: Field,
+  merkleMapWitness: MerkleMapWitness
+) {
+  const [witnessRootBefore, witnessKey] =
+    merkleMapWitness.computeRootAndKey(currentValue);
+  initialRoot.assertEquals(witnessRootBefore);
+
+  witnessKey.assertEquals(key);
+
+  const [witnessRootAfter] = merkleMapWitness.computeRootAndKey(
+    currentValue.add(incrementAmount)
+  );
+
+  latestRoot.assertEquals(witnessRootAfter);
+
+  return new RollupState({
+    initialRoot,
+    latestRoot,
+  });
+}
+```
+
+```ts title="src/rollup.ts"
+oneStep: {
+  privateInputs: [Field, Field, Field, Field, Field, MerkleMapWitness],
+
+  async method(
+    state: RollupState,
     initialRoot: Field,
     latestRoot: Field,
     key: Field,
     currentValue: Field,
     incrementAmount: Field,
-    merkleMapWitness: MerkleMapWitness,
+    merkleMapWitness: MerkleMapWitness
   ) {
-    const [ witnessRootBefore, witnessKey ] =
-      merkleMapWitness.computeRootAndKey(currentValue);
-    initialRoot.assertEquals(witnessRootBefore);
-    witnessKey.assertEquals(key);
-    const [ witnessRootAfter, _ ] =
-      merkleMapWitness.computeRootAndKey(currentValue.add(incrementAmount));
-    latestRoot.assertEquals(witnessRootAfter);
-
-    return new RollupState({
+    const computedState = RollupState.createOneStep(
       initialRoot,
-      latestRoot
-    });
-  }
-...
-}
-
-const Rollup = ZkProgram({
-  name: "rollup",
-  publicInput: RollupState,
-
-  methods: {
-	oneStep: {
-  	privateInputs: [ Field, Field, Field, Field, Field, MerkleMapWitness ],
-
-  	async method(
-      state: RollupState,
-      initialRoot: Field,
-      latestRoot: Field,
-      key: Field,
-      currentValue: Field,
-      incrementAmount: Field,
-      merkleMapWitness: MerkleMapWitness
-  	) {
-      const computedState = RollupState.createOneStep(
-        initialRoot,
-        latestRoot,
-        key,
-        currentValue,
-        incrementAmount,
-        merkleMapWitness
-      );
-      RollupState.assertEquals(computedState, state);
-  	}
+      latestRoot,
+      key,
+      currentValue,
+      incrementAmount,
+      merkleMapWitness
+    );
+    RollupState.assertEquals(computedState, state);
+  },
 },
-
 ```
 
 The `oneStep()` method returns a proof that acts as the leaf in a tree of recursive proofs. (`createOneStep()` returns the `RollupState` that the proof is about.)
@@ -22559,7 +22628,14 @@ You can reimplement the example code for more substantial functionality, just by
 
 ## Test it
 
-When you run `main.ts`, it prints:
+Build the project, then run `main.ts`:
+
+```sh
+npm run build
+node build/src/main.js
+```
+
+It prints:
 
 ```
 compiling...
@@ -22570,6 +22646,40 @@ verifying proof 2
 proof 2 data 4
 ok true
 ```
+
+The voting example and the rollup example run the same way. They make real proofs, so each run takes several minutes.
+
+```sh
+node build/src/vote.js
+```
+
+```
+compiling...
+making proof 0
+making proof 1
+making proof 2
+verifying proof 2
+1 1
+ok true
+```
+
+`1 1` is one vote for and one vote against.
+
+```sh
+node build/src/rollup.js
+```
+
+```
+compiling...
+generating transition information
+making first set of proofs
+merging proofs
+verifying rollup
+16681890329296260524727674720599141567461542680012070463181990759791426893085
+ok true
+```
+
+The long number is the `latestRoot` of the merged proof: the root of the MerkleMap after the four transitions in `main()`.
 
 The example project in this repository carries a test suite for the code on
 this page:
@@ -22680,11 +22790,21 @@ Now, you can start building an example zkApp to explore permissions, preconditio
 
 ### Visualize transactions
 
-To visualize transactions, use the `mina-transaction-visualizer` library. Install this library to use in your own zkApp:
+The pictures of transactions on this page were made with the [`mina-transaction-visualizer`](https://www.npmjs.com/package/mina-transaction-visualizer) library.
 
-```sh
-npm install mina-transaction-visualizer --save
+:::caution
+
+The latest version of `mina-transaction-visualizer` is 0.1.0 (2023). It declares a peer dependency on `snarkyjs` 0.9.x, the name of o1js before the rename. It does not support o1js 3, and the example project for this tutorial does not use it.
+
+:::
+
+With o1js 3, you can print the account updates of a transaction with `toPretty()`. Add this line after `txn1.prove()` in `src/main.ts`:
+
+```ts
+console.log(JSON.stringify(txn1.toPretty(), null, 2));
 ```
+
+The output is a list: the fee payer first, then each account update in the order of a pre-order traversal. A child account update has a `callDepth` field. The output shows the same `appState` changes, preconditions and authorization kinds as the pictures.
 
 ## Smart Contracts
 
@@ -22693,7 +22813,7 @@ In this tutorial, you build two smart contracts:
 - `ProofsOnlyZkApp`: Non-upgradeable proof only
 - `SecondaryZkApp`: the other zkApp
 
-The full source code for this tutorial is provided in the [examples/zkapps/10-account-updates](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/10-account-updates) directory on GitHub.
+The full source code for this tutorial is provided in the [examples/zkapps/10-account-updates](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/10-account-updates) directory on GitHub. The example project uses o1js 3.0.0, which needs Node.js 22.19.5 or later.
 
 ### Non-upgradeable proof only
 
@@ -22707,7 +22827,7 @@ This zkApp has methods that call other methods to let you explore the impacts to
 
 1. Start by adding the main contents of the zkApp:
 
-  ```ts
+  ```ts title="src/ProofsOnlyZkApp.ts"
   export class ProofsOnlyZkApp extends SmartContract {
     @state(Field) num = State<Field>();
     @state(Field) calls = State<Field>();
@@ -22731,15 +22851,12 @@ This zkApp has methods that call other methods to let you explore the impacts to
     }
 
     @method async init() {
-      this.account.provedState.getAndRequireEquals();
-      this.account.provedState.get().assertFalse();
+      this.account.provedState.getAndRequireEquals().assertFalse();
 
       super.init();
       this.num.set(Field(1));
       this.calls.set(Field(0));
     }
-
-    ...
   ```
 
   This code configures the zkApp as described and initializes the zkApp with the values you want.
@@ -22752,26 +22869,22 @@ This zkApp has methods that call other methods to let you explore the impacts to
 
 1. Next, add two functions:
 
-  ```ts
-    ...
-    @method async add(incrementBy: Field) {
-      this.account.provedState.getAndRequireEquals();
-      this.account.provedState.get().assertTrue();
+  ```ts title="src/ProofsOnlyZkApp.ts"
+  @method async add(incrementBy: Field) {
+    this.account.provedState.getAndRequireEquals().assertTrue();
 
-      const num = this.num.getAndRequireEquals();
-      this.num.set(num.add(incrementBy));
+    const num = this.num.getAndRequireEquals();
+    this.num.set(num.add(incrementBy));
 
-      await this.incrementCalls();
-    }
+    await this.incrementCalls();
+  }
 
-    @method async incrementCalls() {
-      this.account.provedState.getAndRequireEquals();
-      this.account.provedState.get().assertTrue();
+  @method async incrementCalls() {
+    this.account.provedState.getAndRequireEquals().assertTrue();
 
-      const calls = this.calls.getAndRequireEquals();
-      this.calls.set(calls.add(Field(1)));
-    }
-    ...
+    const calls = this.calls.getAndRequireEquals();
+    this.calls.set(calls.add(Field(1)));
+  }
   ```
 
   These methods also assert `provedState` is `true` to ensure the zkApp was initialized as expected because `provedState` becomes true after `init()` is invoked.
@@ -22784,23 +22897,19 @@ This zkApp has methods that call other methods to let you explore the impacts to
 
 1. Finally, add one more function, `callSecondary()`, that calls a different zkApp:
 
-  ```ts
-    ...
+  ```ts title="src/ProofsOnlyZkApp.ts"
+  @method async callSecondary(secondaryAddr: PublicKey) {
+    this.account.provedState.getAndRequireEquals().assertTrue();
 
-    @method async callSecondary(secondaryAddr: PublicKey) {
-      this.account.provedState.getAndRequireEquals();
-      this.account.provedState.get().assertTrue();
+    const secondaryContract = new SecondaryZkApp(secondaryAddr);
+    const num = this.num.getAndRequireEquals();
 
-      const secondaryContract = new SecondaryZkApp(secondaryAddr);
-      const num = this.num.getAndRequireEquals();
+    await secondaryContract.add(num);
 
-      await secondaryContract.add(num);
+    // NOTE this gets the state at the start of the transaction
+    this.num.set(secondaryContract.num.get());
 
-      // NOTE this gets the state at the start of the transaction
-      this.num.set(secondaryContract.num.get());
-
-      await this.incrementCalls();
-    }
+    await this.incrementCalls();
   }
   ```
 
@@ -22808,7 +22917,7 @@ This zkApp has methods that call other methods to let you explore the impacts to
 
 Finally, look briefly at [SecondaryZkApp.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/10-account-updates/src/SecondaryZkApp.ts) that contains:
 
-```ts
+```ts title="src/SecondaryZkApp.ts"
 export class SecondaryZkApp extends SmartContract {
   @state(Field) num = State<Field>();
 
@@ -22841,35 +22950,11 @@ You declare functions for initializing the account and the `add()` method that i
 
 ### Running Your Smart Contracts and Visualizing the AccountUpdates
 
-Now it's time to learn about the [main.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/10-account-updates/src/main.ts) file that creates transactions with the earlier smart contracts and the account update visualizations it creates.
+Now it's time to learn about the [main.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/10-account-updates/src/main.ts) file that creates transactions with the earlier smart contracts. `main.ts` runs on a local blockchain (`Mina.LocalBlockchain`), with proofs off.
 
-1. Import the transaction visualizer:
+1. Define a legend. A legend is a map from each public key to a human-readable name. The visualizer used a legend to show these names in the pictures in place of the public keys:
 
-  ```ts
-  ...
-  import { showTxn, saveTxn, printTxn } from 'mina-transaction-visualizer';
-  ...
-  ```
-
-  This provides three functions:
-
-  ```ts
-  // creates a png file of a transaction, and opens it in a local image viewer
-  async showTxn(txn: Mina.Transaction, name: string, legend: Legend)
-
-  // creates a png file of a transaction, and saves it to a path
-  saveTxn(txn: Mina.Transaction, name: string, legend: Legend, path: string)
-
-  // prints a nicely formatted view of a transaction
-  printTxn(txn: Mina.Transaction, name: string, legend: Legend)
-
-  // with legend type, to replace public keys with human readable strings:
-  type Legend = { [pk: string]: string };
-  ```
-
-1. Next, define the legend as follows:
-
-  ```ts
+  ```ts title="src/main.ts"
   const legend = {
     [proofsOnlyAddr.toBase58()]: 'proofsOnlyZkApp',
     [secondaryAddr.toBase58()]: 'secondaryZkApp',
@@ -22877,9 +22962,9 @@ Now it's time to learn about the [main.ts](https://github.com/MinaProtocol/docs2
   };
   ```
 
-1. Create and send a deploy transaction, then visualize it:
+1. Create, prove, sign and send a deploy transaction:
 
-  ```ts
+  ```ts title="src/main.ts"
   const deployTxn = await Mina.transaction(deployerAccount, async () => {
     AccountUpdate.fundNewAccount(deployerAccount, 2);
     await proofsOnlyInstance.deploy();
@@ -22889,12 +22974,10 @@ Now it's time to learn about the [main.ts](https://github.com/MinaProtocol/docs2
   await deployTxn.prove();
   deployTxn.sign([deployerKey, proofsOnlySk, secondarySk]);
 
-  await showTxn(deployTxn, 'deploy_txn', legend);
-
   await deployTxn.send();
   ```
 
-This yields the following visualization of `deployTxn`.
+The visualizer shows `deployTxn` like this:
 
 <img src="/img/tutorial-10-deploy_txn.png" width="100%" />
 
@@ -22918,19 +23001,17 @@ When the transaction is run on chain, these account updates are checked by the M
 
 1. Call `add()` on your instance of `proofsOnlyZkApp`:
 
-  ```ts
+  ```ts title="src/main.ts"
   const txn1 = await Mina.transaction(deployerAccount, async () => {
     await proofsOnlyInstance.add(Field(4));
   });
 
   await txn1.prove();
 
-  await showTxn(txn1, 'txn1', legend);
-
   await txn1.sign([deployerKey]).send();
   ```
 
-This returns the following visualization of `txn1`:
+The visualizer shows `txn1` like this:
 
 <img src="/img/tutorial-10-txn1.png" width="100%" />
 
@@ -22947,26 +23028,22 @@ One update is the child because it was called from the parent, which also implie
 
 As a reminder, this update corresponds to code:
 
-```ts
-  ...
-  @method async add(incrementBy: Field) {
-    this.account.provedState.getAndRequireEquals();
-    this.account.provedState.get().assertTrue();
+```ts title="src/ProofsOnlyZkApp.ts"
+@method async add(incrementBy: Field) {
+  this.account.provedState.getAndRequireEquals().assertTrue();
 
-    const num = this.num.getAndRequireEquals();
-    this.num.set(num.add(incrementBy));
+  const num = this.num.getAndRequireEquals();
+  this.num.set(num.add(incrementBy));
 
-    await this.incrementCalls();
-  }
+  await this.incrementCalls();
+}
 
-  @method async incrementCalls() {
-    this.account.provedState.getAndRequireEquals();
-    this.account.provedState.get().assertTrue();
+@method async incrementCalls() {
+  this.account.provedState.getAndRequireEquals().assertTrue();
 
-    const calls = this.calls.getAndRequireEquals();
-    this.calls.set(calls.add(Field(1)));
-  }
-  ...
+  const calls = this.calls.getAndRequireEquals();
+  this.calls.set(calls.add(Field(1)));
+}
 ```
 
 View the [account updates visualization](/img/tutorial-10-txn1.png) again.
@@ -22976,20 +23053,17 @@ View the [account updates visualization](/img/tutorial-10-txn1.png) again.
 
 Finally, call `callSecondary` on your instance of `proofsOnlyZkApp`:
 
-```ts
+```ts title="src/main.ts"
 const txn2 = await Mina.transaction(deployerAccount, async () => {
   await proofsOnlyInstance.callSecondary(secondaryAddr);
 });
 
 await txn2.prove();
 
-await showTxn(txn2, 'txn2', legend);
-await saveTxn(txn2, 'txn2', legend, './txn2.png');
-
 await txn2.sign([deployerKey]).send();
 ```
 
-This returns the following visualization of `txn2`:
+The visualizer shows `txn2` like this:
 
 <img src="/img/tutorial-10-txn2.png" width="100%" />
 
@@ -22997,21 +23071,20 @@ This [txn2 visualization](/img/tutorial-10-txn2.png) is best viewed in a new tab
 
 And a quick reminder of the code for `callSecondary()`:
 
-```ts
-  @method async callSecondary(secondaryAddr: PublicKey) {
-    this.account.provedState.getAndRequireEquals();
-    this.account.provedState.get().assertTrue();
+```ts title="src/ProofsOnlyZkApp.ts"
+@method async callSecondary(secondaryAddr: PublicKey) {
+  this.account.provedState.getAndRequireEquals().assertTrue();
 
-    const secondaryContract = new SecondaryZkApp(secondaryAddr);
-    const num = this.num.getAndRequireEquals();
+  const secondaryContract = new SecondaryZkApp(secondaryAddr);
+  const num = this.num.getAndRequireEquals();
 
-    await secondaryContract.add(num);
+  await secondaryContract.add(num);
 
-    // NOTE this gets the state at the start of the transaction
-    this.num.set(secondaryContract.num.get());
+  // NOTE this gets the state at the start of the transaction
+  this.num.set(secondaryContract.num.get());
 
-    await this.incrementCalls();
-  }
+  await this.incrementCalls();
+}
 ```
 
 This call produces three accountUpdates:

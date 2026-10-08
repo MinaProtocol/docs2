@@ -128,10 +128,12 @@ async function main() {
 
 // ===============================================================
 
+// docs:start rollup-state
 export class RollupState extends Struct({
   initialRoot: Field,
   latestRoot: Field,
 }) {
+  // docs:start create-one-step
   static createOneStep(
     initialRoot: Field,
     latestRoot: Field,
@@ -157,6 +159,7 @@ export class RollupState extends Struct({
       latestRoot,
     });
   }
+  // docs:end create-one-step
 
   static createMerged(state1: RollupState, state2: RollupState) {
     return new RollupState({
@@ -170,14 +173,17 @@ export class RollupState extends Struct({
     state1.latestRoot.assertEquals(state2.latestRoot);
   }
 }
+// docs:end rollup-state
 
 // ===============================================================
 
+// docs:start rollup-program
 export const Rollup = ZkProgram({
   name: 'rollup',
   publicInput: RollupState,
 
   methods: {
+    // docs:start one-step
     oneStep: {
       privateInputs: [Field, Field, Field, Field, Field, MerkleMapWitness],
 
@@ -201,6 +207,7 @@ export const Rollup = ZkProgram({
         RollupState.assertEquals(computedState, state);
       },
     },
+    // docs:end one-step
 
     merge: {
       privateInputs: [SelfProof, SelfProof],
@@ -225,9 +232,11 @@ export const Rollup = ZkProgram({
 
 export let RollupProof_ = ZkProgram.Proof(Rollup);
 export class RollupProof extends RollupProof_ {}
+// docs:end rollup-program
 
 // ===============================================================
 
+// docs:start rollup-contract
 export class RollupContract extends SmartContract {
   @state(Field) state = State<Field>();
 
@@ -254,6 +263,7 @@ export class RollupContract extends SmartContract {
     this.state.set(rollupStateProof.publicInput.latestRoot);
   }
 }
+// docs:end rollup-contract
 
 // ===============================================================
 

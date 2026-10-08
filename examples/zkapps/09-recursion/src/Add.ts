@@ -1,5 +1,8 @@
+// docs:start imports
 import { Field, SelfProof, ZkProgram } from 'o1js';
+// docs:end imports
 
+// docs:start init
 export const Add = ZkProgram({
   name: 'add-example',
   publicInput: Field,
@@ -12,7 +15,9 @@ export const Add = ZkProgram({
         state.assertEquals(Field(0));
       },
     },
+    // docs:end init
 
+    // docs:start add-number
     addNumber: {
       privateInputs: [SelfProof, Field],
 
@@ -25,7 +30,9 @@ export const Add = ZkProgram({
         newState.assertEquals(earlierProof.publicInput.add(numberToAdd));
       },
     },
+    // docs:end add-number
 
+    // docs:start add
     add: {
       privateInputs: [SelfProof, SelfProof],
 
@@ -41,5 +48,6 @@ export const Add = ZkProgram({
         );
       },
     },
+    // docs:end add
   },
 });
