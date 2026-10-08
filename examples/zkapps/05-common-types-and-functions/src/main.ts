@@ -1,3 +1,6 @@
+// `docs:start` / `docs:end` comments mark the regions that
+// docs/zkapps/tutorials/05-common-types-and-functions.mdx includes with
+// #include_code.
 import {
   Mina,
   UInt32,
@@ -19,11 +22,13 @@ import {
 } from 'o1js';
 
 import { LedgerContract } from './LedgerContract.js';
+import { BasicMerkleMapContract } from './BasicMerkleMapContract.js';
 import { BasicMerkleTreeContract } from './BasicMerkleTreeContract.js';
 
 // --------------------------------------
 console.log('--------------------------------------');
 
+// docs:start basic-types
 const num1 = UInt32.from(40);
 const num2 = UInt64.from(40);
 
@@ -51,11 +56,13 @@ const char1EqualsChar2: Bool = char1.toField().equals(char2.toField());
 console.log(`char1: ${char1}`);
 console.log(`char1 === char2: ${char1EqualsChar2.toString()}`);
 console.log(`Fields in char1: ${Character.toFields(char1).length}`);
+// docs:end basic-types
 
 console.log('--------------------------------------');
 
 // --------------------------------------
 
+// docs:start advanced-types
 const str1 = CircuitString.fromString('abc..xyz');
 console.log(`str1: ${str1}`);
 console.log(`Fields in str1: ${CircuitString.toFields(str1).length}`);
@@ -82,10 +89,12 @@ console.log(`signature verified for data1: ${verifiedData1}`);
 console.log(`signature verified for data2: ${verifiedData2}`);
 
 console.log(`Fields in signature: ${signature.toFields().length}`);
+// docs:end advanced-types
 console.log('--------------------------------------');
 
 // --------------------------------------
 
+// docs:start struct
 class Point extends Struct({ x: Field, y: Field }) {
   static add(a: Point, b: Point) {
     return { x: a.x.add(b.x), y: a.y.add(b.y) };
@@ -109,10 +118,12 @@ const points = new Array(8)
 const points8: Points8 = { points };
 
 console.log(`points8 JSON: ${JSON.stringify(points8)}`);
+// docs:end struct
 console.log('--------------------------------------');
 
 // --------------------------------------
 
+// docs:start control-flow
 const input1 = Int64.from(10);
 const input2 = Int64.from(-15);
 
@@ -149,6 +160,7 @@ const largest = Provable.switch(
 );
 
 console.log(`largest: ${largest}`);
+// docs:end control-flow
 console.log('--------------------------------------');
 
 // --------------------------------------
@@ -168,13 +180,16 @@ const senderPrivateKey = senderPublicKey.key;
   const basicTreeZkAppPrivateKey = PrivateKey.random();
   const basicTreeZkAppAddress = basicTreeZkAppPrivateKey.toPublicKey();
 
+  // docs:start merkle-tree-interaction
   // initialize the zkapp
   const zkApp = new BasicMerkleTreeContract(basicTreeZkAppAddress);
   await BasicMerkleTreeContract.compile();
 
   // create a new tree
+  // docs:start merkle-tree-create
   const height = 20;
   const tree = new MerkleTree(height);
+  // docs:end merkle-tree-create
   class MerkleWitness20 extends MerkleWitness(height) {}
 
   // deploy the smart contract
@@ -227,6 +242,7 @@ const senderPrivateKey = senderPublicKey.key;
   console.log(
     `BasicMerkleTree: smart contract root hash after send1: ${zkApp.treeRoot.get()}`
   );
+  // docs:end merkle-tree-interaction
 }
 
 console.log('--------------------------------------');
@@ -383,6 +399,7 @@ console.log('--------------------------------------');
 // --------------------------------------
 console.log('--------------------------------------');
 
+// docs:start merkle-map
 const map = new MerkleMap();
 
 const key = Field(100);
@@ -391,3 +408,54 @@ const value = Field(50);
 map.set(key, value);
 
 console.log(`value for key ${key}: ${map.get(key)}`);
+// docs:end merkle-map
+
+// --------------------------------------
+// create a new merkle map and BasicMerkleMapContract zkapp account
+
+{
+  const basicMapZkAppPrivateKey = PrivateKey.random();
+  const basicMapZkAppAddress = basicMapZkAppPrivateKey.toPublicKey();
+
+  const zkapp = new BasicMerkleMapContract(basicMapZkAppAddress);
+  await BasicMerkleMapContract.compile();
+
+  // docs:start merkle-map-interaction
+  const map = new MerkleMap();
+
+  const rootBefore = map.getRoot();
+
+  const key = Field(100);
+
+  // deploy the smart contract with the root of the empty map
+  const deployTxn = await Mina.transaction(deployerAccount, async () => {
+    AccountUpdate.fundNewAccount(deployerAccount);
+    await zkapp.deploy();
+    await zkapp.initState(rootBefore);
+  });
+  await deployTxn.prove();
+  await deployTxn.sign([deployerKey, basicMapZkAppPrivateKey]).send();
+
+  // get the witness for the key, then update the value locally
+  const witness = map.getWitness(key);
+  map.set(key, Field(5));
+
+  // update the smart contract
+  const txn1 = await Mina.transaction(deployerAccount, async () => {
+    await zkapp.update(
+      witness,
+      key,
+      Field(0), // keys in a new map start at a value of 0
+      Field(5)
+    );
+  });
+  await txn1.prove();
+  await txn1.sign([deployerKey]).send();
+
+  // compare the root of the smart contract map to our local map
+  console.log(`BasicMerkleMap: local map root after update: ${map.getRoot()}`);
+  console.log(
+    `BasicMerkleMap: smart contract root after update: ${zkapp.mapRoot.get()}`
+  );
+  // docs:end merkle-map-interaction
+}

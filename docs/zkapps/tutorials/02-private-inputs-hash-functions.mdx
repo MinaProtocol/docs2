@@ -32,7 +32,7 @@ In this tutorial, you build a smart contract with a piece of private state that 
 
 ## Prerequisites
 
-This tutorial has been tested with [zkApp CLI](https://www.npmjs.com/package/zkapp-cli) version `0.20.1`.
+This tutorial has been tested with [o1js](https://www.npmjs.com/package/o1js) version `3.0.0` and [zkApp CLI](https://www.npmjs.com/package/zkapp-cli) version `0.23.0`. o1js 3.0.0 requires Node.js `22.19.5` or later.
 
 Ensure your environment meets the [Prerequisites](/zkapps/tutorials#prerequisites) for zkApp Developer Tutorials.
 
@@ -40,32 +40,22 @@ Ensure your environment meets the [Prerequisites](/zkapps/tutorials#prerequisite
 
 1. Create or change to a directory where you have write privileges.
 
-2. Create a project by using the `zk project` command:
+1. Create a project by using the `zk project` command:
 
   ```sh
-  $ zk project 02-private-inputs-and-hash-functions
+  $ zk project 02-private-inputs-and-hash-functions --ui none
   ```
 
-  The `zk project` command has the ability to scaffold the UI for your project. For this tutorial, select `none`:
+  The `zk project` command can also scaffold a UI for your project. This tutorial does not use a UI, so the `--ui none` option skips it. If you do not give the `--ui` option, the command asks you to select a UI type. Select `none`.
 
-  ```
-  ? Create an accompanying UI project too? …
-    next
-    svelte
-    nuxt
-    empty
-  > none
-  ```
   The expected output is:
 
   ```sh
-  ✔ Create an accompanying UI project too? · none
-  ✔ UI: Set up project
   ✔ Initialize Git repo
   ✔ Set up project
+  ✔ Set project name
   ✔ NPM install
   ✔ NPM build contract
-  ✔ Set project name
   ✔ Git init commit
 
   Success!
@@ -76,12 +66,18 @@ Ensure your environment meets the [Prerequisites](/zkapps/tutorials#prerequisite
     git push -u origin main
   ```
 
-  The `zk project` command creates the `02-private-inputs-and-hash-functions` directory that contains the scaffolding for your project, including tools such as the Prettier code formatting tool, the ESLint static code analysis tool, and the Jest Javascript testing framework.
+  The `zk project` command creates the `02-private-inputs-and-hash-functions` directory that contains the scaffolding for your project, including tools such as the Prettier code formatting tool and the ESLint static code analysis tool. The `npm test` script uses the Node.js built-in test runner.
 
-1. Change into the `02-private-inputs-and-hash-functions` directory and list the contents:
+1. The zkApp CLI `0.23.0` creates a project for o1js 2. To use o1js 3.0.0, the same as the [example project](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/02-private-inputs-and-hash-functions), open `package.json` and change the `o1js` entry in `peerDependencies` from `"^2.*"` to `"^3.0.0"`. Then install it:
 
   ```sh
   $ cd 02-private-inputs-and-hash-functions
+  $ npm install
+  ```
+
+1. List the contents of the `02-private-inputs-and-hash-functions` directory:
+
+  ```sh
   $ ls
   ```
 
@@ -92,13 +88,12 @@ Ensure your environment meets the [Prerequisites](/zkapps/tutorials#prerequisite
   README.md
   babel.config.cjs
   build
+  cache
   config.json
-  jest-resolver.cjs
-  jest.config.js
-  keys
   node_modules
   package-lock.json
   package.json
+  scripts
   src
   tsconfig.json
   ```
@@ -116,6 +111,7 @@ Start by deleting the default files that come with the new project.
   ```sh
   $ rm src/Add.ts
   $ rm src/Add.test.ts
+  $ rm src/AddZkProgram.ts
   $ rm src/interact.ts
   ```
 
@@ -131,11 +127,7 @@ Start by deleting the default files that come with the new project.
 
 1. Now, open `src/index.ts` in a text editor and change it to look like:
 
-  ```ts
-  import { IncrementSecret } from './IncrementSecret.js';
-
-  export { IncrementSecret };
-  ```
+  #include_code index examples/zkapps/02-private-inputs-and-hash-functions/src/index.ts ts title="src/index.ts"
 
   The `src/index.ts` file contains all of the exports you want to make available for consumption from outside your smart contract project, such as from a UI.
 
@@ -165,22 +157,15 @@ The `import` statement in the `IncrementSecret.ts` file brings in other packages
 
 All functions used inside a smart contract must operate on o1js compatible data types: `Field` types and other types built on top of `Field` types.
 
-:::info
+:::
 
-```ts ignore
-1 import { Field, SmartContract, state, State, method, Poseidon } from 'o1js';
-```
+#include_code imports examples/zkapps/02-private-inputs-and-hash-functions/src/IncrementSecret.ts ts title="src/IncrementSecret.ts"
 
 ### Exports
 
 The smart contract called `IncrementSecret` has one element of on-chain state named `x` of type `Field` as defined by following code:
 
-```ts ignore
-...
-  3 export class IncrementSecret extends SmartContract {
-  4  @state(Field) x = State<Field>();
-  5 }
-```
+#include_code class-state examples/zkapps/02-private-inputs-and-hash-functions/src/IncrementSecret.ts ts title="src/IncrementSecret.ts"
 
 This code adds the basic structure for the smart contract. You are familiar with the import and export code from [Tutorial 01: Hello World](hello-world).
 
@@ -188,13 +173,7 @@ This code adds the basic structure for the smart contract. You are familiar with
 
 The `initState()` method is intended to run once to set up the initial state on the zkApp account.
 
-```ts ignore
-...
-  5
-  6   @method async initState(salt: Field, firstSecret: Field) {
-  7     this.x.set(Poseidon.hash([ salt, firstSecret ]));
-  8   }
-```
+#include_code init-state examples/zkapps/02-private-inputs-and-hash-functions/src/IncrementSecret.ts ts title="src/IncrementSecret.ts"
 
 The `initState()` method accepts your secret and adds a `salt` value.
 
@@ -204,20 +183,9 @@ These inputs to the `initState()` method are private to whoever initializes the 
 
 This method updates the state:
 
-```ts ignore
-...
-  9
- 10   @method async incrementSecret(salt: Field, secret: Field) {
- 11     const x = this.x.get();
- 12     this.x.requireEquals(x);
- 13
- 14     Poseidon.hash([ salt, secret ]).assertEquals(x);
- 15     this.x.set(Poseidon.hash([ salt, secret.add(1) ]));
- 16   }
- 17 }
-```
+#include_code increment-secret examples/zkapps/02-private-inputs-and-hash-functions/src/IncrementSecret.ts ts title="src/IncrementSecret.ts"
 
-Mina uses the Poseidon hash function that is optimized for fast performance inside zero knowledge proof systems. The Poseidon hash function takes in an array of Fields and returns a single Field as output.
+Mina uses the Poseidon hash function that is optimized for fast performance inside zero knowledge proof systems. The Poseidon hash function takes in an array of Fields and returns a single Field as output. For more about hash functions in o1js, see [Hashing](https://docs.o1labs.org/o1js/basic-types/hashing) in the o1js documentation.
 
 This smart contract uses a secret number and the second Field, `salt`.
 
@@ -243,32 +211,19 @@ The `src/main.ts` file is similar to the Hello World tutorial. For a full versio
 
 For this tutorial, the key parts to discuss are initializing our contract and using the poseidon hash.
 
+The salt is a random `Field`:
+
+#include_code salt examples/zkapps/02-private-inputs-and-hash-functions/src/main.ts ts title="src/main.ts"
+
 The smart contract initialization this time is:
 
-```ts ignore
-...
- 24 const salt = Field.random();
-...
- 28 const deployTxn = await Mina.transaction(deployerAccount, async () => {
- 29   AccountUpdate.fundNewAccount(deployerAccount);
- 30   await zkAppInstance.deploy();
- 31   await zkAppInstance.initState(salt, Field(750));
- 32 });
- 33 await deployTxn.prove();
-...
-```
+#include_code deploy examples/zkapps/02-private-inputs-and-hash-functions/src/main.ts ts title="src/main.ts"
 
 Note that the `initState()` method accepts the salt and the secret. In this case, the secret is the number `750`.
 
 This code creates a user transaction to update the on-chain state:
 
-```ts
-...
- 42 const txn1 = await Mina.transaction(senderAccount, async () => {
- 43   await zkAppInstance.incrementSecret(salt, Field(750));
- 44 });
-...
-```
+#include_code txn1 examples/zkapps/02-private-inputs-and-hash-functions/src/main.ts ts title="src/main.ts"
 
 Call the zkApp smart contract with both the salt and the secret (the number `750`).
 
@@ -285,8 +240,8 @@ $ npm run build && node build/src/main.js
 The output looks something like this:
 
 ```text
-state after init: 3116464240601550031577632290308565252747064306168758166756574536757280262269
-state after txn1: 15333363135506653312218020664441564145350761288169575380089681962972642150348
+state after init: 23550325085366129189717132755196644361022196796445325283916855715034087760727
+state after txn1: 3862582281777914218165481333613805684592130064784051986586001318806512141915
 ```
 
 The `state` strings are different because `Field.random()` generates the salt.

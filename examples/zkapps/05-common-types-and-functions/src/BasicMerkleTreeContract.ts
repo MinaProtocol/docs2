@@ -7,6 +7,10 @@ import {
   MerkleWitness,
 } from 'o1js';
 
+// `docs:start` / `docs:end` comments mark the regions that
+// docs/zkapps/tutorials/05-common-types-and-functions.mdx includes with
+// #include_code.
+// docs:start merkle-tree-contract
 class MerkleWitness20 extends MerkleWitness(20) {}
 
 export class BasicMerkleTreeContract extends SmartContract {
@@ -39,3 +43,4 @@ export class BasicMerkleTreeContract extends SmartContract {
     this.treeRoot.set(rootAfter);
   }
 }
+// docs:end merkle-tree-contract
