@@ -6,10 +6,13 @@ import styles from '../styles/Home.module.css';
 import './reactCOIServiceWorker';
 import ZkappWorkerClient from './zkappWorkerClient';
 
+// docs:start config
 let transactionFee = 0.1;
 const ZKAPP_ADDRESS = 'B62qpXPvmKDf4SaFJynPsT6DyvuxMS9H1pT4TGonDT26m599m7dS9gP';
+// docs:end config
 
 export default function Home() {
+  // docs:start use-state
   const [zkappWorkerClient, setZkappWorkerClient] = useState<null | ZkappWorkerClient>(null);
   const [hasWallet, setHasWallet] = useState<null | boolean>(null);
   const [hasBeenSetup, setHasBeenSetup] = useState(false);
@@ -19,6 +22,7 @@ export default function Home() {
   const [creatingTransaction, setCreatingTransaction] = useState(false);
   const [displayText, setDisplayText] = useState('');
   const [transactionlink, setTransactionLink] = useState('');
+  // docs:end use-state
   
   const displayStep = (step: string) => {
     setDisplayText(step)
@@ -32,6 +36,7 @@ export default function Home() {
     const setup = async () => {
       try {
         if (!hasBeenSetup) {
+          // docs:start setup-worker
           displayStep('Loading web worker...')
           const zkappWorkerClient = new ZkappWorkerClient();
           setZkappWorkerClient(zkappWorkerClient);
@@ -39,7 +44,9 @@ export default function Home() {
           displayStep('Done loading web worker')
 
           await zkappWorkerClient.setActiveInstanceToDevnet();
+          // docs:end setup-worker
 
+          // docs:start setup-wallet
           const mina = (window as any).mina;
           if (mina == null) {
             setHasWallet(false);
@@ -57,7 +64,9 @@ export default function Home() {
           );
           const accountExists = res.error === null;
           setAccountExists(accountExists);
+          // docs:end setup-wallet
 
+          // docs:start setup-contract
           await zkappWorkerClient.loadContract();
 
           displayStep('Compiling zkApp...');
@@ -71,12 +80,13 @@ export default function Home() {
           const currentNum = await zkappWorkerClient.getNum();
           setCurrentNum(currentNum);
           console.log(`Current state in zkApp: ${currentNum}`);
+          // docs:end setup-contract
 
-          
+          // docs:start setup-done
           setHasBeenSetup(true);
           setHasWallet(true);
           setDisplayText('');
-          
+          // docs:end setup-done
         }
       } catch (error: any) {
         displayStep(`Error during setup: ${error.message}`);
@@ -89,6 +99,7 @@ export default function Home() {
   // -------------------------------------------------------
   // Wait for account to exist, if it didn't
 
+  // docs:start wait-for-account
   useEffect(() => {
     const checkAccountExists = async () => {
       if (hasBeenSetup && !accountExists) {
@@ -113,39 +124,45 @@ export default function Home() {
 
     checkAccountExists();
   }, [zkappWorkerClient, hasBeenSetup, accountExists]);
+  // docs:end wait-for-account
 
   // -------------------------------------------------------
   // Send a transaction
 
+  // docs:start handlers
   const onSendTransaction = async () => {
     setCreatingTransaction(true);
-    displayStep('Creating a transaction...');
-   
-    console.log('publicKeyBase58 sending to worker', publicKeyBase58);
-    await zkappWorkerClient!.fetchAccount(publicKeyBase58);
+    try {
+      displayStep('Creating a transaction...');
 
-    await zkappWorkerClient!.createUpdateTransaction();
+      console.log('publicKeyBase58 sending to worker', publicKeyBase58);
+      await zkappWorkerClient!.fetchAccount(publicKeyBase58);
 
-    displayStep('Creating proof...');
-    await zkappWorkerClient!.proveUpdateTransaction();
+      await zkappWorkerClient!.createUpdateTransaction();
 
-    displayStep('Requesting send transaction...');
-    const transactionJSON = await zkappWorkerClient!.getTransactionJSON();
+      displayStep('Creating proof...');
+      await zkappWorkerClient!.proveUpdateTransaction();
 
-    displayStep('Getting transaction JSON...');
-    const { hash } = await (window as any).mina.sendTransaction({
-      transaction: transactionJSON,
-      feePayer: {
-        fee: transactionFee,
-        memo: '',
-      },
-    });
+      displayStep('Getting transaction JSON...');
+      const transactionJSON = await zkappWorkerClient!.getTransactionJSON();
 
-    const transactionLink = `https://minascan.io/devnet/tx/${hash}`;
-    setTransactionLink(transactionLink);
-    setDisplayText(transactionLink);
+      displayStep('Requesting send transaction...');
+      const { hash } = await (window as any).mina.sendTransaction({
+        transaction: transactionJSON,
+        feePayer: {
+          fee: transactionFee,
+          memo: '',
+        },
+      });
 
-    setCreatingTransaction(true);
+      const transactionLink = `https://minascan.io/devnet/tx/${hash}`;
+      setTransactionLink(transactionLink);
+      setDisplayText(transactionLink);
+    } catch (error: any) {
+      displayStep(`Error sending transaction: ${error.message}`);
+    } finally {
+      setCreatingTransaction(false);
+    }
   };
 
   // -------------------------------------------------------
@@ -163,17 +180,19 @@ export default function Home() {
       displayStep(`Error refreshing state: ${error.message}`);
     }
   };
+  // docs:end handlers
 
   // -------------------------------------------------------
   // Create UI elements
 
+  // docs:start markup
   let auroLinkElem;
   if (hasWallet === false) {
     const auroLink = 'https://www.aurowallet.com/';
     auroLinkElem = (
       <div>
         Could not find a wallet.{' '}
-        <a href="https://www.aurowallet.com/" target="_blank" rel="noreferrer">
+        <a href={auroLink} target="_blank" rel="noreferrer">
           Install Auro wallet here
         </a>
       </div>
@@ -206,7 +225,7 @@ export default function Home() {
   let accountDoesNotExist;
   if (hasBeenSetup && !accountExists) {
     const faucetLink =
-      `https://faucet.minaprotocol.com/?address='${publicKeyBase58}`;
+      `https://faucet.minaprotocol.com/?address=${publicKeyBase58}`;
     accountDoesNotExist = (
       <div>
         <span style={{ paddingRight: '1rem' }}>Account does not exist.</span>
@@ -231,7 +250,11 @@ export default function Home() {
         >
           Send Transaction
         </button>
-        <button className={styles.card} onClick={onRefreshCurrentNum}>
+        <button
+          className={styles.card}
+          onClick={onRefreshCurrentNum}
+          disabled={creatingTransaction}
+        >
           Get Latest State
         </button>
       </div>
@@ -249,4 +272,5 @@ export default function Home() {
       </div>
     </GradientBG>
   );
+  // docs:end markup
 }

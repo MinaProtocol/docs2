@@ -4,18 +4,23 @@ import type { Add } from '../../contracts/src/Add';
 
 type Transaction = Awaited<ReturnType<typeof Mina.transaction>>;
 
+// docs:start state
 const state = {
   AddInstance: null as null | typeof Add,
   zkappInstance: null as null | Add,
   transaction: null as null | Transaction,
 };
+// docs:end state
 
+// docs:start api
 export const api = {
+  // docs:start network
   async setActiveInstanceToDevnet() {
     const Network = Mina.Network('https://devnet-plain-1.gcp.o1test.net/graphql');
     console.log('Devnet network instance configured');
     Mina.setActiveInstance(Network);
   },
+  // docs:end network
   async loadContract() {
     const { Add } = await import('../../contracts/build/src/Add.js');
     state.AddInstance = Add;
@@ -47,6 +52,9 @@ export const api = {
     return state.transaction!.toJSON();
   },
 };
+// docs:end api
 
+// docs:start expose
 // Expose the API to be used by the main thread
 Comlink.expose(api);
+// docs:end expose

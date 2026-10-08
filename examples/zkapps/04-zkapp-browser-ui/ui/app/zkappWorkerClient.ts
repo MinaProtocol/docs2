@@ -1,19 +1,23 @@
 import { Field } from 'o1js';
 import * as Comlink from "comlink";
 
+// docs:start client-class
 export default class ZkappWorkerClient {
-  // ---------------------------------------------------------------------------------------
   worker: Worker;
   // Proxy to interact with the worker's methods as if they were local
   remoteApi: Comlink.Remote<typeof import('./zkappWorker').api>;
+// docs:end client-class
 
+  // docs:start client-constructor
   constructor() {
     // Initialize the worker from the zkappWorker module
-    const worker = new Worker(new URL('./zkappWorker.ts', import.meta.url), { type: 'module' });
+    this.worker = new Worker(new URL('./zkappWorker.ts', import.meta.url), { type: 'module' });
     // Wrap the worker with Comlink to enable direct method invocation
-    this.remoteApi = Comlink.wrap(worker);
+    this.remoteApi = Comlink.wrap(this.worker);
   }
+  // docs:end client-constructor
 
+  // docs:start client-methods
   async setActiveInstanceToDevnet() {
     return this.remoteApi.setActiveInstanceToDevnet();
   }
@@ -50,5 +54,5 @@ export default class ZkappWorkerClient {
   async getTransactionJSON() {
     return this.remoteApi.getTransactionJSON();
   }
-
+  // docs:end client-methods
 }
