@@ -1,3 +1,4 @@
+// docs:start main
 import { fileURLToPath } from 'node:url';
 import { AccountUpdate, Field, Mina, PrivateKey } from 'o1js';
 import { Adder } from './Adder.js';
@@ -81,3 +82,4 @@ export async function main(proofsEnabled = false) {
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   await main();
 }
+// docs:end main

@@ -19328,12 +19328,12 @@ This tutorial reuses the `Square` contract that you created in [Tutorial 1: Hell
 
 ## Prerequisites
 
-This tutorial has been tested with:
-
-- [zkApp CLI](https://www.npmjs.com/package/zkapp-cli) version `0.20.1`
-- [o1js](https://www.npmjs.com/package/o1js) version `1.1.0`.
-
 Ensure your environment meets the [Prerequisites](/zkapps/tutorials#prerequisites) for zkApp Developer Tutorials.
+
+- The latest version of the [zkApp CLI](https://www.npmjs.com/package/zkapp-cli)
+- Node.js 22.19.5 or later, which is what o1js 3 requires
+
+The [example project](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/03-deploying-to-a-network) for this tutorial uses o1js `^3.0.0`. CI builds and tests it on every pull request.
 
 If you have earlier versions of the zkApp CLI and o1js installed, be sure to [Update the zkApp CLI](/zkapps/writing-a-zkapp/introduction-to-zkapps/install-zkapp-cli#update-the-zkapp-cli) to the latest version:
 
@@ -19593,7 +19593,7 @@ You requested tMINA to fund your fee payer account and pay your deploy transacti
 You ran the `zk deploy` command to:
 
 - Generate a verification key for your smart contract
-- Add send the deploy transaction to the network
+- Send the deploy transaction to the network
 
 Congratulations!
 
@@ -19609,9 +19609,10 @@ The [03-deploying-to-a-network](https://github.com/MinaProtocol/docs2/tree/main/
 example performs the same deployment against `Mina.LocalBlockchain`. Run it with
 `npm start`:
 
-```
+```text
 compiling, which produces the verification key...
 verification key hash: 20021371132375169602207214090137759500284758560498520816669802639450232755426
+fee payer balance before: 1000000000000
 
 deploying...
 
@@ -19621,6 +19622,24 @@ the zkApp account now holds:
   initial state num:     3
 
 fee payer paid: 1100000000 nanomina (1 MINA account creation + the transaction fee)
+
+updating state to 9, which needs a proof...
+state is now: 9
+```
+
+The deployment transaction is the same one that `zk deploy` builds for you:
+
+```ts title="src/main.ts"
+const deployTx = await Mina.transaction(
+  { sender: feePayer, fee: 1e8 },
+  async () => {
+    // A new account costs 1 MINA, which the fee payer covers.
+    AccountUpdate.fundNewAccount(feePayer);
+    await zkApp.deploy();
+  }
+);
+await deployTx.prove();
+await deployTx.sign([feePayer.key, zkAppKey]).send();
 ```
 
 Three things to note, because they are the same on Devnet:
@@ -19632,9 +19651,12 @@ Three things to note, because they are the same on Devnet:
 - **`init()` runs as part of the deployment**, so the state is set before anyone
   interacts with the contract.
 
+The last step updates the state from 3 to 9. The `editState` permission is
+`Proof`, so the update transaction must carry a proof of the `update()` method.
+
 ## About the Smart Contract Transactions
 
-Because this tutorial used the smart contract from `Tutorial 1: Hello World`, the smart contract's `editState` permissions require that the transaction must contain a valid zk proof that was created by the private key associated with this zkApp account.
+Because this tutorial used the smart contract from `Tutorial 1: Hello World`, the smart contract's `editState` permission requires that a transaction that changes the state contains a valid zero knowledge proof. The network checks that proof against the verification key that is stored in this zkApp account.
 
 - When a user interacts with this smart contract by providing a proof, the proof is generated locally on the user's device and included in a transaction.
 - When the transaction is submitted to the network, the proof is checked to ensure it is correct and matches the on-chain verification key.
@@ -19649,7 +19671,7 @@ For a typical smart contract, permissions are set to only allow proof authorizat
 Watch this tutorial for a step-by-step guide and extra explanations on how to deploy a zkApp.
 
 
-The video is provided for educational purposes and uses earlier versions of the zkApp CLI and o1js, so there are some differences. This tutorial is tested with a specific version of the zkApp CLI and o1js.
+The video is provided for educational purposes and uses earlier versions of the zkApp CLI and o1js, so there are some differences. The example project for this tutorial uses o1js 3.
 
 ## Conclusion
 
@@ -20918,7 +20940,7 @@ url: /zkapps/tutorials/offchain-storage
 
 In [Tutorial 5: Common Types and Functions](common-types-and-functions), you learned how to use Merkle trees to refer to large amounts of data stored off-chain.
 
-A zkApp account holds eight field elements of state. This tutorial shows how to keep much more than that, with only a commitment on chain, using the offchain state API that o1js provides.
+A zkApp account holds 32 field elements of state. This tutorial shows how to keep much more than that, with only a commitment on chain, using the offchain state API that o1js provides.
 
 The full example is in [examples/zkapps/06-offchain-storage](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/06-offchain-storage). It runs on a local blockchain, so you need no network, no faucet and no funded accounts:
 
@@ -20980,11 +21002,28 @@ The offchain state API is exported under `Experimental`, so its shape can change
 
 Declare what the contract stores. A map from an index to a value takes the place of the Merkle tree of the earlier version of this tutorial, and a field counts the entries:
 
-```ts
-
+```ts title="src/NumberStorageContract.ts"
+import {
+  Experimental,
+  Field,
+  method,
+  SmartContract,
+  state,
+  UInt64,
+} from 'o1js';
 
 const { OffchainState } = Experimental;
 
+/**
+ * The offchain state this contract keeps.
+ *
+ * `numbers` is a map from an index to a value, the same shape the earlier
+ * version of this tutorial kept in a Merkle tree on a storage server. `total`
+ * counts how many entries have been written.
+ *
+ * Only a commitment to all of this lives on chain. The data itself travels as
+ * actions, and a settlement proof folds those actions into the commitment.
+ */
 export const offchainState = OffchainState(
   {
     numbers: OffchainState.Map(Field, Field),
@@ -20997,6 +21036,7 @@ export const offchainState = OffchainState(
   }
 );
 
+/** The proof that `settle()` consumes. */
 export class StateProof extends offchainState.Proof {}
 ```
 
@@ -21006,8 +21046,9 @@ export class StateProof extends offchainState.Proof {}
 
 The contract holds one piece of on-chain state, the commitment, and binds the offchain state to itself:
 
-```ts
+```ts title="src/NumberStorageContract.ts"
 export class NumberStorageContract extends SmartContract {
+  /** The only onchain state: commitments to everything held offchain. */
   @state(OffchainState.Commitments) offchainStateCommitments =
     offchainState.emptyCommitments();
 
@@ -21016,81 +21057,105 @@ export class NumberStorageContract extends SmartContract {
 
 Add a method that writes a new entry. `update` takes the value it expects to find. Passing `undefined` as `from` requires that the entry is empty, so this method cannot overwrite an entry that already holds a value:
 
-```ts
-  @method async setNumber(index: Field, value: Field) {
-    this.offchainState.fields.numbers.update(index, {
-      from: undefined,
-      to: value,
-    });
+```ts title="src/NumberStorageContract.ts"
+@method async setNumber(index: Field, value: Field) {
+  this.offchainState.fields.numbers.update(index, {
+    from: undefined,
+    to: value,
+  });
 
-    const total = await this.offchainState.fields.total.get();
-    this.offchainState.fields.total.update({
-      from: total,
-      to: total.orElse(0n).add(1),
-    });
-  }
+  const total = await this.offchainState.fields.total.get();
+  this.offchainState.fields.total.update({
+    from: total,
+    to: total.orElse(0n).add(1),
+  });
+}
 ```
 
 Add a method that replaces a value, where the caller names the value being replaced:
 
-```ts
-  @method async updateNumber(index: Field, from: Field, to: Field) {
-    this.offchainState.fields.numbers.update(index, { from, to });
-  }
+```ts title="src/NumberStorageContract.ts"
+@method async updateNumber(index: Field, from: Field, to: Field) {
+  this.offchainState.fields.numbers.update(index, { from, to });
+}
 ```
 
-Finally, add the method that settles. It takes the proof and hands it to the offchain state:
+Finally, add the method that settles. It takes the proof and hands it to the offchain state. Then close the class with `}`:
 
-```ts
-  @method async settle(proof: StateProof) {
-    await this.offchainState.settle(proof);
-  }
+```ts title="src/NumberStorageContract.ts"
+@method async settle(proof: StateProof) {
+  await this.offchainState.settle(proof);
 }
 ```
 
 ## Run it
 
-Bind the state to the contract instance, then compile both the offchain state program and the contract:
+`src/main.ts` runs the contract on a local blockchain, with the first test account as the deployer. Bind the state to the contract instance, then compile both the offchain state program and the contract:
 
-```ts
-const contract = new NumberStorageContract(zkAppAddress);
+```ts title="src/main.ts"
+const contract = new NumberStorageContract(zkAppKey.toPublicKey());
+
+// `init()` in the contract binds the offchain state to the contract class;
+// the instance has to be named too, so the state knows which account to read
+// actions from.
 const state = contract.offchainState;
 state.setContractInstance(contract);
 
+console.log('compiling...');
 await offchainState.compile();
 await NumberStorageContract.compile();
 ```
 
-Write a value. At this point the write is an action, and reading the entry returns none:
+After the deployment, write a value. At this point the write is an action, and reading the entry returns none:
 
-```ts
-const writeTx = await Mina.transaction(sender, async () => {
+```ts title="src/main.ts"
+// A write is an action first. Nothing is readable until it is settled.
+console.log('writing 42 at index 1...');
+const writeTx = await Mina.transaction(deployer, async () => {
   await contract.setNumber(Field(1), Field(42));
 });
 await writeTx.prove();
-await writeTx.sign([senderKey]).send();
+await writeTx.sign([deployer.key]).send();
 
-const before = await state.fields.numbers.get(Field(1));
-before.isSome.toBoolean(); // false
+const beforeSettle = await state.fields.numbers.get(Field(1));
+console.log(
+  'before settling, index 1 is:',
+  beforeSettle.isSome.toBoolean() ? beforeSettle.value.toString() : 'not set yet'
+);
+```
+
+A settlement makes a proof over the pending actions and sends it to `settle()`. `main.ts` puts this in a function, because it settles more than once:
+
+```ts title="src/main.ts"
+async function settle() {
+  const proof = await state.createSettlementProof();
+  const tx = await Mina.transaction(deployer, async () => {
+    await contract.settle(proof);
+  });
+  await tx.prove();
+  await tx.sign([deployer.key]).send();
+}
 ```
 
 Settle, and the value becomes readable:
 
-```ts
-const proof = await state.createSettlementProof();
-const settleTx = await Mina.transaction(sender, async () => {
-  await contract.settle(proof);
-});
-await settleTx.prove();
-await settleTx.sign([senderKey]).send();
+```ts title="src/main.ts"
+console.log('settling...');
+await settle();
 
-const after = await state.fields.numbers.get(Field(1));
-after.value.toString(); // '42'
+const stored = await state.fields.numbers.get(Field(1));
+console.log('after settling, index 1 is:', stored.value.toString());
+console.log(
+  'entries written:',
+  (await state.fields.total.get()).value.toString()
+);
 ```
 
 Running `npm start` in the example prints the whole sequence:
 
-```
+```text
+compiling...
+deploying...
 writing 42 at index 1...
 before settling, index 1 is: not set yet
 settling...
@@ -21104,13 +21169,17 @@ index 1 is now: 43
 
 `update` is the reason to prefer this API over keeping a tree yourself. Two users who read the same value and both write are not a lost update: the settlement applies the first and drops the second, because the second names a value that is no longer there.
 
-The example asserts this. After index 1 has moved from 42 to 43, an update that still expects 42 changes nothing:
+The example's test suite asserts this. After index 1 has moved from 42 to 43, an update that still expects 42 changes nothing. `call()` sends a transaction from the deployer, and `numberAt()` reads an entry:
 
-```ts
-await contract.updateNumber(Field(1), Field(42), Field(99));
+```ts title="src/NumberStorageContract.test.ts"
+await call(async () => contract.updateNumber(Field(1), Field(42), Field(99)));
 await settle();
 
-(await state.fields.numbers.get(Field(1))).value.toString(); // still '43'
+assert.strictEqual(
+  (await numberAt(1)).value.toString(),
+  '43',
+  'a stale update overwrote a newer value'
+);
 ```
 
 `overwrite` is the other option, and it does exactly what its name says: it ignores the previous value. Use it only where a lost update does not matter.
@@ -23996,12 +24065,10 @@ directory on GitHub.
 
 Make sure your environment meets the
 [Prerequisites](/zkapps/tutorials#prerequisites) for zkApp Developer
-Tutorials. o1js 3 requires Node.js 22 or later.
+Tutorials. o1js 3 requires Node.js 22.19.5 or later.
 
-This tutorial has been tested with:
-
-- [o1js](https://www.npmjs.com/package/o1js) version `3.0.0`
-- Node.js version `22`
+The example project uses o1js `^3.0.0`. CI builds it, runs it and runs its
+tests on every pull request.
 
 ## Get the example project
 
@@ -24024,8 +24091,8 @@ The contracts are in the `src` directory, one contract in each file:
 `Incrementer` has one method. The method adds 1 to its argument and returns
 the result:
 
-```ts
-
+```ts title="src/Incrementer.ts"
+import { Field, SmartContract, method } from 'o1js';
 
 // A contract that adds 1 to a number and returns the result.
 export class Incrementer extends SmartContract {
@@ -24050,9 +24117,9 @@ Like all methods in o1js 3, `increment()` is `async`, so a caller must
 
 `Adder` computes `x + y`, and then calls `Incrementer` to add 1:
 
-```ts
-
-
+```ts title="src/Adder.ts"
+import { Field, PublicKey, SmartContract, method } from 'o1js';
+import { Incrementer } from './Incrementer.js';
 
 // A contract that adds two numbers, adds 1 to the sum, and returns the result.
 // It does not add the 1 itself: it calls the Incrementer contract to do it.
@@ -24094,9 +24161,9 @@ that calls `Adder` chooses which account to call.
   archive node keeps them, and a user interface can read them.
 - It stores the result in its on-chain state field `sum`.
 
-```ts
-
-
+```ts title="src/Caller.ts"
+import { Field, PublicKey, SmartContract, State, method, state } from 'o1js';
+import { Adder } from './Adder.js';
 
 // A contract that calls the Adder contract, stores the result on chain and
 // emits it as an event.
@@ -24133,12 +24200,12 @@ value. `this.emitEvent('sum', sum)` emits it.
 needs no network, no faucet and no funded accounts: it has test accounts that
 already hold MINA.
 
-```ts
-
-
-
-
-
+```ts title="src/main.ts"
+import { fileURLToPath } from 'node:url';
+import { AccountUpdate, Field, Mina, PrivateKey } from 'o1js';
+import { Adder } from './Adder.js';
+import { Caller } from './Caller.js';
+import { Incrementer } from './Incrementer.js';
 
 export async function main(proofsEnabled = false) {
   // A local blockchain, so this runs with no network, no faucet and no funds.
@@ -24361,10 +24428,9 @@ In particular, make sure you have the zkApp CLI installed:
 $ npm install -g zkapp-cli
 ```
 
-This tutorial has been tested with:
+o1js 3 requires Node.js 22.19.5 or later.
 
-- [zkApp CLI](https://www.npmjs.com/package/zkapp-cli) version `0.20.1`
-- [o1js](https://www.npmjs.com/package/o1js) version `1.1.0`
+The [example project](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/13-anonymous-message-board) uses o1js `^3.0.0`. CI builds it, runs it and runs its tests on every pull request.
 
 ## Create the message-board project
 
@@ -24405,7 +24471,7 @@ Example smart contract files come with the new project, you can delete them if y
 
 1. Copy the entire contents of the [message.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/13-anonymous-message-board/src/message.ts) example file into your local `message-board/src/message.ts` file.
 
-  ```ts
+  ```ts title="src/message.ts"
   import {
     Field,
     SmartContract,
@@ -24448,6 +24514,11 @@ Example smart contract files come with the new project, you can delete them if y
     @state(PublicKey) user3 = State<PublicKey>();
 
     init() {
+      // Reset the whole state first. Without this the zkApp never gains the
+      // `provedState === true` status, which is what certifies that the state
+      // was produced by proofs rather than set by the developer.
+      super.init();
+
       // Define initial values of on-chain state
       this.user1.set(users['Bob'].toPublicKey());
       this.user2.set(users['SuperBob'].toPublicKey());
@@ -24461,22 +24532,22 @@ Example smart contract files come with the new project, you can delete them if y
       const signerPublicKey = signerPrivateKey.toPublicKey();
 
       // Get approved public keys
-      const user1 = this.user1.get();
-      const user2 = this.user2.get();
-      const user3 = this.user3.get();
+      const user1 = this.user1.getAndRequireEquals();
+      const user2 = this.user2.getAndRequireEquals();
+      const user3 = this.user3.getAndRequireEquals();
 
       // Assert that signerPublicKey is one of the approved public keys
       signerPublicKey
         .equals(user1)
         .or(signerPublicKey.equals(user2))
         .or(signerPublicKey.equals(user3))
-        .assertEquals(true);
+        .assertTrue();
 
       // Update on-chain message state
       this.message.set(message);
 
       // Compute new messageHistoryHash
-      const oldHash = this.messageHistoryHash.get();
+      const oldHash = this.messageHistoryHash.getAndRequireEquals();
       const newHash = Poseidon.hash([message, oldHash]);
 
       // Update on-chain messageHistoryHash
@@ -24485,7 +24556,7 @@ Example smart contract files come with the new project, you can delete them if y
   }
   ```
 
-This code serves as the scaffolding for the rest of the tutorial and contains a smart contract called `message` with two methods:
+This code serves as the scaffolding for the rest of the tutorial and contains a smart contract called `Message` with two methods:
 
 - `init()` - Similar to the `constructor` in Solidity, it's where you define any set up that needs to happen before users begin interacting with the contract.
 - `publishMessage()` - The method that users invoke when they want to create a new message.
@@ -24509,7 +24580,7 @@ In this smart contract, one state variable stores the last message. Another stor
 
 It's possible to store additional public keys by Merkelizing them, but for simplicity this tutorial uses only three keys:
 
-```ts
+```ts title="src/message.ts"
 export class Message extends SmartContract {
   // On-chain state definitions
   @state(Field) message = State<Field>();
@@ -24529,9 +24600,11 @@ o1js also provides `UInt32`, `UInt64`, and `Int64` types. All o1js types are com
 
 The `init` method is similar to the `constructor` in Solidity. It's where you define any setup that needs to happen before users begin interacting with the contract. In this case, set the public keys of users who can post and initialize `message` and `messageHistoryHash` as zero. The front end interprets the zero value to mean that no messages have been posted yet.
 
-```ts
+```ts title="src/message.ts"
 init() {
-  // Reset the whole state first
+  // Reset the whole state first. Without this the zkApp never gains the
+  // `provedState === true` status, which is what certifies that the state
+  // was produced by proofs rather than set by the developer.
   super.init();
 
   // Define initial values of on-chain state
@@ -24554,7 +24627,7 @@ The `publishMessage` method allows an approved user to publish a message. The `@
 
 For this example, pass in `message` and `signerPrivateKey` arguments to check that the user holds a private key associated with one of the three on-chain public keys before allowing them to update the message:
 
-```ts
+```ts title="src/message.ts"
 @method async publishMessage(message: Field, signerPrivateKey: PrivateKey) {
 ```
 
@@ -24566,21 +24639,21 @@ The smart contract sends only values that are stored as state to the Mina blockc
 
 Now that you have the user's private key, you need to derive the associated public key to check it against the list of approved publishers. The `PrivateKey` type in o1js includes a `toPublicKey()` method:
 
-```ts
+```ts title="src/message.ts"
 // Compute signerPublicKey from signerPrivateKey argument
 const signerPublicKey = signerPrivateKey.toPublicKey();
 ```
 
-To check if this public key matches one of the keys stored on-chain:.
+To check if this public key matches one of the keys stored on-chain, read the three approved keys:
 
-```ts
+```ts title="src/message.ts"
 // Get approved public keys
-const user1 = this.user1.get();
-const user2 = this.user2.get();
-const user3 = this.user3.get();
+const user1 = this.user1.getAndRequireEquals();
+const user2 = this.user2.getAndRequireEquals();
+const user3 = this.user3.getAndRequireEquals();
 ```
 
-Calling the `get()` method retrieves these values from the zkApp account on-chain state.
+The `getAndRequireEquals()` method reads each value from the on-chain state of the zkApp account. It also adds a precondition to the transaction: the network accepts the transaction only if the on-chain value is still the value that the proof used. If you use `get()` without a precondition, o1js shows a warning, because a proof made with an old value could then change the state.
 
 :::note
 o1js uses a single network request to retrieve all on-chain state values simultaneously.
@@ -24588,24 +24661,24 @@ o1js uses a single network request to retrieve all on-chain state values simulta
 
 Finally, check if `signerPublicKey` is equal to one of the allowed public keys contained in the `user` variables:
 
-```ts
+```ts title="src/message.ts"
 // Assert that signerPublicKey is one of the approved public keys
-  signerPublicKey
-    .equals(user1)
-    .or(signerPublicKey.equals(user2))
-    .or(signerPublicKey.equals(user3))
-    .assertEquals(true);
+signerPublicKey
+  .equals(user1)
+  .or(signerPublicKey.equals(user2))
+  .or(signerPublicKey.equals(user3))
+  .assertTrue();
 ```
 
-Notice the `equals()` and `or()` methods are used instead of the JavaScript operators (`===`, and `||`). The built-in o1js methods have the same effect, but they work with o1js types and their execution can be verified using a zero knowledge proof.
+Notice the `equals()` and `or()` methods are used instead of the JavaScript operators (`===`, and `||`). `equals()` and `or()` return a `Bool`, and `assertTrue()` makes the proof fail if that `Bool` is false. The built-in o1js methods have the same effect, but they work with o1js types and their execution can be verified using a zero knowledge proof.
 
-`assertEquals(true)` at the end means that a valid proof is not generated unless `signerPublicKey` is equal to one of the pre-approved users. The Mina network rejects any transaction sent to a zkApp account that doesn't include a valid zero knowledge proof for that account. So it is impossible for users to post new messages unless they have a private key associated with one of the three pre-approved public keys.
+`assertTrue()` at the end means that a valid proof is not generated unless `signerPublicKey` is equal to one of the pre-approved users. The Mina network rejects any transaction sent to a zkApp account that doesn't include a valid zero knowledge proof for that account. So it is impossible for users to post new messages unless they have a private key associated with one of the three pre-approved public keys.
 
 ### Update `message`
 
 Up to this point, the contract ensures that only approved users can call `publishMessage()`. When they do, the contract updates the on-chain `message` variable to their new message:
 
-```ts
+```ts title="src/message.ts"
 // Update on-chain message state
 this.message.set(message);
 ```
@@ -24618,12 +24691,12 @@ There's one more thing to do. If you want users to be able to keep track of what
 
 There are a few ways to do this, but the simplest way is to store a hash of your new `message` and your old `messageHistoryHash` every time you call `publishMessage`:
 
-```ts
+```ts title="src/message.ts"
 // Compute new messageHistoryHash
-const oldHash = this.messageHistoryHash.get();
+const oldHash = this.messageHistoryHash.getAndRequireEquals();
 const newHash = Poseidon.hash([message, oldHash]);
 
-// Update on-chain state
+// Update on-chain messageHistoryHash
 this.messageHistoryHash.set(newHash);
 ```
 
@@ -24647,22 +24720,33 @@ npm install
 npm start
 ```
 
-```
+```text
 deploying the message board...
 approved posters:
   user1: B62qkCkKQ5vSRkTQyEEj22vnHH4hVKfp4pc3QYd4GPSv7u6S4aBE4Fx
-  ...
-Bob publishes a message...       message: 42
-SuperBob publishes another...    message: 99
+  user2: B62qrvaafH1F812QFRF1Us8FjouuetZjU5ZpUUYEBBBA9tG9LogYuRB
+  user3: B62qkF6VsNiacd4WHjBpgX7Z4riBsjqbHYK5Z295t9yE3krK74sLYx9
+message: 0
+
+Bob publishes a message...
+message: 42
+history hash: 19021527552571990502182546635536113945580344348338130036510755963756352285063
+
+SuperBob publishes another...
+message: 99
+history hash: 17709100552276219157770164754333945343219873229290323097995828490618509796710
 history hash is the chain of both messages: true
-Jack tries to publish...         rejected, as it should be
+
+Jack tries to publish...
+rejected, as it should be
+message is still: 99
 ```
 
 The deployment is an ordinary zkApp deployment — the account creation fee, the
 verification key, and `init()` running as part of it, exactly as in
 [Tutorial 3](deploying-to-a-network):
 
-```ts
+```ts title="src/main.ts"
 const deployTx = await Mina.transaction(deployer, async () => {
   AccountUpdate.fundNewAccount(deployer);
   await zkApp.deploy();
@@ -25651,14 +25735,17 @@ Interacting with zkApps server-side is useful for some use cases. For example, i
 
 ## Prerequisites
 
-Ensure your environment meets the [Prerequisites](/zkapps/tutorials#prerequisites) for zkApp Developer Tutorials.
+Ensure your environment meets the [Prerequisites](/zkapps/tutorials#prerequisites) for zkApp Developer Tutorials. o1js 3 requires Node.js 22.19.5 or later.
 
-Before you start this tutorial, you must deploy a smart contract. To do this, read and complete [Tutorial 3: Deploy to a Live Network](deploying-to-a-network) that reuses the smart contract `Square` from [Tutorial 1: Hello World](hello-world).
+The script on this page connects to Devnet. Before you start, complete [Tutorial 3: Deploy to a Live Network](deploying-to-a-network), which reuses the smart contract `Square` from [Tutorial 1: Hello World](hello-world). Tutorial 3 gives you these items, which this script uses:
 
-This tutorial has been tested with:
+- A deploy alias in `config.json`, made with the `zk config` command
+- A fee payer account that has tMINA from the faucet
+- A zkApp account where `zk deploy` deployed the `Square` contract
 
-- [zkApp CLI](https://www.npmjs.com/package/zkapp-cli) version `0.17.2`
-- [o1js](https://www.npmjs.com/package/o1js) version `0.16.2`
+To try the same flow without a network, a funded account or key files, go to [Run it without a network](#run-it-without-a-network).
+
+The [example project](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/interacting-with-zkApps-server-side) uses o1js `^3.0.0`. CI builds it on every pull request, and runs and tests its local version (`src/local.ts`). CI does not run the Devnet script (`src/main.ts`), because that script needs funds and keys.
 
 ## Interact with the deployed Smart Contract
 
@@ -25666,7 +25753,7 @@ Now that you successfully created and deployed your project following [Tutorial 
 
 ### Building on Tutorial 3
 
-For this tutorial, you update the smart contract that you already built for [Tutorial 3: Deploy to a Live Network](/zkapps/tutorials/deploying-to-a-network).
+For this tutorial, you add a script to the project that you already built for [Tutorial 3: Deploy to a Live Network](/zkapps/tutorials/deploying-to-a-network).
 
 You run commands from the root of the `03-deploying-to-a-live-network` directory as you work in the `src` directory on files that contain the TypeScript code for the smart contract.
 
@@ -25674,7 +25761,7 @@ Each time you make updates, then build or deploy, the TypeScript code is compile
 
 ### Helper functions in utils.ts
 
-To make this more script convenient to write, use the provided helper functions.
+To make this script more convenient to write, use the provided helper functions.
 
 1. Download the [utils.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/interacting-with-zkApps-server-side/src/utils.ts) file.
 
@@ -25684,77 +25771,87 @@ To make this more script convenient to write, use the provided helper functions.
 
   The `utils.ts` file contains two functions:
 
-  - `loopUntilAccountExists()` waits until an account exists on Devnet
-  - `deploy()` programmatically deploys your zkApp
+  - `loopUntilAccountExists()` waits until an account exists on the network
+  - `deploy()` deploys your zkApp programmatically, if no verification key is on the zkApp account yet
 
-### Connect to a remote network
+### Read the deploy alias
 
 1. Download the [main.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/interacting-with-zkApps-server-side/src/main.ts) example file.
 
 1. Because you are building on your earlier work, place the `main.ts` file in the project `03-deploying-to-a-live-network/src` folder.
 
-1. Review the code that adds the imports and o1js setup:
+1. Review the imports:
 
-  ```ts
-  import { Square } from './Square.js';
+  ```ts title="src/main.ts"
   import { Mina, PrivateKey } from 'o1js';
+  import { Square } from './Square.js';
+
+  import fs from 'fs';
+  import { deploy, loopUntilAccountExists } from './utils.js';
   ```
 
-1. Now, set the active instance to the remote Devnet network. Earlier tutorials set the active instance to a simulated local blockchain, which is fast for development but only available on your local machine and is not decentralized.
+1. Review the code that reads the deploy alias. The name of the alias is the first argument on the command line (`process.argv[2]`). The `zk config` command wrote the alias to `config.json` in Tutorial 3:
 
-  The connection is made through the GraphQL endpoint exposed by the Mina node connected to the Devnet network. By connecting to the remote Devnet network, you can provide smart contracts that are globally accessible and provide strong guarantees around state due to both Mina's decentralization and its succinct state proof.
-
-  Review the code that connects to Devnet:
-
-  ```ts
-  ...
-  const Network = Mina.Network(
-    'https://devnet-plain-1.gcp.o1test.net/graphql'
-  );
-  Mina.setActiveInstance(Network);
-  ...
-  ```
-
-1. Set a transaction fee that you use to pay for access to sending transactions and deploying smart contracts on Mina.
-
-  Transaction fees in code are declared as nanomina. Review the code that sets the default transaction fee to 0.1 MINA (100,000,000 nanomina):
-
-  ```ts
-  ...
-  const transactionFee = 100_000_000;
-  ...
-  ```
-
-This example connects to a remote RPC served by `devnet-plain-1.gcp.o1test.net`. You could also run a Mina node locally and instead use its GraphQL endpoint. In other blockchains a local Mina node would be very heavyweight, but because Mina is succinct this is actually a reasonable option. See the Node Operator [Getting Started](/node-operators/block-producer-node/getting-started) docs.
-
-### Public/private key pair
-
-You already generated a public/private key pair when you ran the `zk config` command to configure the deployment in [Tutorial 3: Deploy to a Live Network](/zkapps/tutorials/deploying-to-a-network#deploy-alias) the `zk config` command.
-
-The public/private key pair was created in `keys/devnet.json`. Public and private keys in Mina are commonly stored in Base58 for easily readability. In Mina, public keys start with `B62` and private keys start with `EK` for easy differentiability.
-
-1. Still in the `main.ts` file, review the code that specifies that the name of the key file must be provided through an argument on the command line: (`process.argv[2]`):
-
-  ```ts
-  ...
-  const transactionFee = 100_000_000;
-
+  ```ts title="src/main.ts"
+  // `zk config` (Tutorial 3) wrote a deploy alias to config.json. The alias names
+  // the GraphQL endpoint, the network kind, the fee, the zkApp key file and the
+  // fee payer key file.
   const deployAlias = process.argv[2];
-  const deployerKeysFileContents = fs.readFileSync(
-    'keys/' + deployAlias + '.json',
-    'utf8'
-  );
-  const deployerPrivateKeyBase58 = JSON.parse(
-    deployerKeysFileContents
-  ).privateKey;
-  const deployerPrivateKey = PrivateKey.fromBase58(deployerPrivateKeyBase58);
-  const deployerPublicKey = deployerPrivateKey.toPublicKey();
-
-  const zkAppPrivateKey = PrivateKey.fromBase58(
-    'EKFTMuvTirzrwpeHP8RKe7bGufBGiKs27nTMzD5XyMV8NcK3upt2'
-  );
-  ...
+  if (!deployAlias) {
+    throw Error('usage: node build/src/main.js <deploy-alias>');
+  }
+  const config = JSON.parse(fs.readFileSync('config.json', 'utf8'));
+  const alias = config.deployAliases?.[deployAlias];
+  if (!alias) {
+    throw Error(`config.json has no deploy alias "${deployAlias}"`);
+  }
   ```
+
+### Connect to a remote network
+
+Set the active instance to the remote network of the deploy alias. Earlier tutorials set the active instance to a simulated local blockchain, which is fast for development but only available on your local machine and is not decentralized.
+
+The connection is made through the GraphQL endpoint exposed by a Mina node. For the `devnet` alias of Tutorial 3, the endpoint is `https://devnet-plain-1.gcp.o1test.net/graphql`. By connecting to the remote Devnet network, you can provide smart contracts that are globally accessible and provide strong guarantees around state due to both Mina's decentralization and its succinct state proof.
+
+The deploy alias also sets the transaction fee, in MINA. Transaction fees in code are declared in nanomina, so the script converts the value. For the fee of `0.1` from Tutorial 3, the result is 100,000,000 nanomina:
+
+```ts title="src/main.ts"
+const Network = Mina.Network({ networkId: alias.networkId, mina: alias.url });
+Mina.setActiveInstance(Network);
+
+// The fee in config.json is in MINA. Transaction fees in code are in nanomina.
+const transactionFee = Math.round(Number(alias.fee) * 1e9);
+```
+
+You could also run a Mina node locally and instead use its GraphQL endpoint. In other blockchains a local node would be very heavyweight, but because Mina is succinct this is actually a reasonable option. See the Node Operator [Getting Started](/node-operators/block-producer-node/getting-started) docs.
+
+### Public/private key pairs
+
+You already generated two key pairs when you ran the `zk config` command in [Tutorial 3: Deploy to a Live Network](/zkapps/tutorials/deploying-to-a-network#deploy-alias):
+
+- The zkApp key pair, in `keys/devnet.json`. `zk deploy` deployed the `Square` contract to this account.
+- The fee payer key pair, in `${HOME}/.cache/zkapp-cli/keys/03-deploy.json`. You funded this account at the faucet.
+
+The deploy alias in `config.json` holds the path of each file, as `keyPath` and `feepayerKeyPath`. Public and private keys in Mina are commonly stored in Base58 for easy readability. In Mina, public keys start with `B62` and private keys start with `EK` for easy differentiability.
+
+Review the code that reads the two private keys:
+
+```ts title="src/main.ts"
+function readPrivateKey(path: string) {
+  return PrivateKey.fromBase58(JSON.parse(fs.readFileSync(path, 'utf8')).privateKey);
+}
+
+// The fee payer pays for every transaction. It is the account that you funded
+// at the faucet in Tutorial 3.
+const deployerPrivateKey = readPrivateKey(alias.feepayerKeyPath);
+const deployerPublicKey = deployerPrivateKey.toPublicKey();
+
+// The zkApp has its own key, not the fee payer's. `zk deploy` deployed the
+// Square contract to this key in Tutorial 3.
+const zkAppPrivateKey = readPrivateKey(alias.keyPath);
+```
+
+The fee payer and the zkApp are two different accounts. The fee payer signs and pays for each transaction. The zkApp account holds the contract and its state.
 
 You can run this code now with:
 
@@ -25762,51 +25859,36 @@ You can run this code now with:
 $ npm run build && node build/src/main.js devnet
 ```
 
-The expected output is:
-
-```text
-> 03-deploying-to-a-live-network@0.1.0 build
-> tsc
-
-state after init: 3
-state after txn1: 9
-Field.assertEquals(): 75 != 81
-state after txn2: 9
-state after txn3: 81
-```
-
 - The `npm run build` command creates JavaScript code in the `build` directory.
 - The `&&` operator links two commands together.
-- The `node build/src/main.js` command runs the code in `src/main.ts`.
-- The keys are read from `keys/devnet.json`.
-
-The SmartContract is also deployed to the same account you deployed from, set with `zkAppPrivateKey = deployerPrivateKey`. Depending on the application, it can also be useful to have separate keys for the zkApp and deployer accounts.
+- The `node build/src/main.js devnet` command runs the code in `src/main.ts` with the `devnet` deploy alias.
 
 ### Wait for accounts to be ready
 
-Next, review the code that waits for the deployer account to be ready.
+Next, review the code that waits for the fee payer account to be ready. If the fee payer account does not exist yet, because the faucet transaction is not in a block yet, the script waits and shows the faucet URL. When the account exists, the script shows its nonce and its balance:
 
-In `main.ts`, the import to use the `loopUntilAccountExists()` function from `utils.ts` goes here:
+```ts title="src/main.ts"
+let account = await loopUntilAccountExists({
+  account: deployerPublicKey,
+  eachTimeNotExist: () => {
+    console.log(
+      'Deployer account does not exist. ' +
+        'Request funds at faucet ' +
+        'https://faucet.minaprotocol.com/?address=' +
+        deployerPublicKey.toBase58()
+    );
+  },
+  isZkAppAccount: false,
+});
 
-```ts
-
-
-
-
-
-...
+console.log(
+  `Using fee payer account with nonce ${account.nonce}, balance ${account.balance}`
+);
 ```
 
-Wait until the new deployment account exists.
+Then the script compiles the smart contract and makes sure that the zkApp is deployed:
 
-If the key created from the `zk deploy` command earlier in this tutorial has already been funded, then find the account and move on. If that transaction hasn't finished yet, then wait until that has completed.
-
-After the account is found, print out its nonce and its balance. This code compiles the smart contract and waits for it to be deployed:
-
-```ts
-...
-// ----------------------------------------------------
-
+```ts title="src/main.ts"
 console.log('Compiling smart contract...');
 let { verificationKey } = await Square.compile();
 
@@ -25829,25 +25911,19 @@ await loopUntilAccountExists({
 
 let num = (await zkapp.num.fetch())!;
 console.log(`current value of num is ${num}`);
-
-// ----------------------------------------------------
-...
 ```
 
-To do this, reuse the helper function `loopUntilAccountExists()` from `utils.js`. This time, pass in `isZkappAccount: true` checks if the account exists and that there is a verification key on the account. An existing verification key indicates that the zkApp has been successfully deployed.
+The `deploy()` function from `utils.ts` first reads the zkApp account. You deployed the contract with `zk deploy` in Tutorial 3, so the account has a verification key: `deploy()` shows that the zkApp is found deployed, and does not send a transaction. If the account has no verification key, `deploy()` sends a deploy transaction, signed with the fee payer key and the zkApp key. To see how this works, see the code in [utils.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/interacting-with-zkApps-server-side/src/utils.ts).
 
-The smart contract was already deployed with `zk deploy` so a programmatic deploy is not required and is commented out here. If you want to see how this works, or it's useful for your application, see the code in [utils.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/interacting-with-zkApps-server-side/src/utils.ts).
+Then the script calls `loopUntilAccountExists()` with `isZkAppAccount: true`. This checks that the account exists and that it has zkApp state, which shows that the zkApp was deployed successfully.
 
-After the zkApp has been deployed, fetch the current value of `zkapp.num` (the on-chain defined on the `SmartContract`) and log it. If this is the first time you have run this script, the value is `3` because that's how it is set in the smart contract's `init()` function. The `init()` function is called automatically during the first deploy (not during re-deploys).
+After the zkApp has been deployed, the script fetches the current value of `zkapp.num` (the on-chain state defined on the `SmartContract`) and shows it. If you did not update the contract after Tutorial 3, the value is `3`, because that's how it is set in the smart contract's `init()` function. The `init()` function is called automatically during the first deploy (not during re-deploys).
 
 ### Send an update transaction
 
-Finally, here is code that sends an update to the transaction. If the zkApp was just initialized, this calls an update on the newly initialized account. Otherwise, it calls an update on whatever the current account state happens to be.
+Finally, here is code that sends an update transaction. It calls `update()` with the square of the current value of `num`:
 
-```ts
-...
-// ----------------------------------------------------
-
+```ts title="src/main.ts"
 let transaction = await Mina.transaction(
   { sender: deployerPublicKey, fee: transactionFee },
   async () => {
@@ -25867,9 +25943,6 @@ transaction.sign([deployerPrivateKey]);
 
 console.log('Sending the transaction...');
 let pendingTransaction = await transaction.send();
-
-// ----------------------------------------------------
-...
 ```
 
 To send an update transaction, perform the following steps:
@@ -25880,8 +25953,8 @@ To send an update transaction, perform the following steps:
 
 When sending the transaction using `transaction.send()`, an object called `pendingTransaction` is returned and provides information about how the transaction went and waits for inclusion in a block:
 
-```ts
-if (pendingTransaction.status === "rejected") {
+```ts title="src/main.ts"
+if (pendingTransaction.status === 'rejected') {
   console.log('error sending transaction (see above)');
   process.exit(0);
 }
@@ -25897,18 +25970,18 @@ console.log(`updated state! ${await zkapp.num.fetch()}`);
 
 This code uses several functionalities of the pending transaction:
 
-- `pendingTransaction.status indicates the initial processing status of the transaction, with pending signifying that the transaction has been accepted for processing by the network, and rejected indicating that the transaction was immediately deemed invalid and rejected by the GraphQL endpoint.
-- `pendingTransaction.hash` is the transaction hash that you can use to look up the transaction in a block explorer. If the transaction failed, it returns `undefined`.
-- `pendingTransaction.wait()` is especially useful as it returns a promise that resolves whether a transaction is included into a block or rejected. This takes several minutes, so you might not want to block the main thread on this in a real application.
+- `pendingTransaction.status` indicates the initial processing status of the transaction, with `pending` signifying that the transaction has been accepted for processing by the network, and `rejected` indicating that the transaction was immediately deemed invalid and rejected by the GraphQL endpoint.
+- `pendingTransaction.hash` is the transaction hash that you can use to look up the transaction in a block explorer.
+- `pendingTransaction.wait()` is especially useful as it returns a promise that resolves when a transaction is included into a block, and rejects when the transaction fails. This takes several minutes, so you might not want to block the main thread on this in a real application.
 
 Finally, after the transaction was successfully applied on the Mina blockchain, you can double-check that your state was updated by fetching it again with `zkapp.num.fetch()`.
 
 ## Run it without a network
 
-Everything above needs a funded account, a key file and a live node, so you
+The Devnet script needs a funded account, a key file and a live node, so you
 cannot try it until you have all three, and neither can CI. The example
-project in this repository carries a second entry point that runs the same
-flow against a local blockchain:
+project in this repository carries a second entry point, `src/local.ts`, that
+runs the same flow against a local blockchain:
 
 ```sh
 cd examples/zkapps/interacting-with-zkApps-server-side
@@ -25916,9 +25989,11 @@ npm install
 npm start
 ```
 
-```
-fee payer : B62qj64ad7nEkz7GMTug7YQH7WD7QkuDjHv5yeMDZhFW3mtmv8fnxoA
-zkApp     : B62qkrhrMr6ibTJkReuTgxTKwub8NUXYQCb1ex9Z2ZemUWtY1VeJSBf
+The two addresses change on each run, because the test accounts and the zkApp key are random:
+
+```text
+fee payer : B62q...
+zkApp     : B62q...
 
 deploying...
 current value of num is 3
@@ -25936,7 +26011,24 @@ the fee payer's, and driving it from a script — and drops only what needs a
 network. In particular there is no `loopUntilAccountExists`. A remote node is
 eventually consistent, so the account is not readable the moment the
 transaction is sent; a local blockchain applies the transaction as it is sent,
-so there is nothing to poll for.
+so there is nothing to poll for:
+
+```ts title="src/local.ts"
+const deployTx = await Mina.transaction(deployer, async () => {
+  // The fee payer pays the account creation fee for the new zkApp account.
+  AccountUpdate.fundNewAccount(deployer);
+  await zkApp.deploy();
+});
+await deployTx.prove();
+await deployTx.sign([deployer.key, zkAppPrivateKey]).send();
+
+// `main.ts` polls `loopUntilAccountExists` here. A remote node is eventually
+// consistent, so the account is not readable the instant the transaction is
+// sent. A local blockchain applies the transaction as it is sent, so there is
+// nothing to wait for.
+const num = zkApp.num.get();
+console.log(`current value of num is ${num.toString()}`);
+```
 
 `npm test` asserts the same ground, including the account creation fee the fee
 payer pays for the zkApp account and the rejection of an update that is not
@@ -25944,7 +26036,7 @@ the square.
 
 ## Conclusion
 
-You have finished writing a script to initialize the state and interact with it! You can also run this script multiple times to update `x` to its square.
+You have finished writing a script to initialize the state and interact with it! You can also run this script multiple times to update `num` to its square.
 
 Check out other tutorials and documentation to keep going!
 

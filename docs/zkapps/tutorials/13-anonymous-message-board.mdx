@@ -35,10 +35,9 @@ In particular, make sure you have the zkApp CLI installed:
 $ npm install -g zkapp-cli
 ```
 
-This tutorial has been tested with:
+o1js 3 requires Node.js 22.19.5 or later.
 
-- [zkApp CLI](https://www.npmjs.com/package/zkapp-cli) version `0.20.1`
-- [o1js](https://www.npmjs.com/package/o1js) version `1.1.0`
+The [example project](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/13-anonymous-message-board) uses o1js `^3.0.0`. CI builds it, runs it and runs its tests on every pull request.
 
 ## Create the message-board project
 
@@ -79,87 +78,9 @@ Example smart contract files come with the new project, you can delete them if y
 
 1. Copy the entire contents of the [message.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/13-anonymous-message-board/src/message.ts) example file into your local `message-board/src/message.ts` file.
 
-  ```ts
-  import {
-    Field,
-    SmartContract,
-    state,
-    State,
-    method,
-    PrivateKey,
-    PublicKey,
-    Poseidon,
-  } from 'o1js';
+  #include_code message examples/zkapps/13-anonymous-message-board/src/message.ts ts title="src/message.ts"
 
-  // These private keys are exported so that experimenting with the contract is
-  // easy. Three of them (the Bobs) are used when the contract is deployed to
-  // generate the public keys that are allowed to post new messages. Jack's key
-  // is never added to the contract. So he won't be able to add new messages. In
-  // real life, we would only use the Bobs' public keys to configure the contract,
-  // and only they would know their private keys.
-
-  export const users = {
-    Bob: PrivateKey.fromBase58(
-      'EKFAdBGSSXrBbaCVqy4YjwWHoGEnsqYRQTqz227Eb5bzMx2bWu3F'
-    ),
-    SuperBob: PrivateKey.fromBase58(
-      'EKEitxmNYYMCyumtKr8xi1yPpY3Bq6RZTEQsozu2gGf44cNxowmg'
-    ),
-    MegaBob: PrivateKey.fromBase58(
-      'EKE9qUDcfqf6Gx9z6CNuuDYPe4XQQPzFBCfduck2X4PeFQJkhXtt'
-    ), // This one says duck in it :)
-    Jack: PrivateKey.fromBase58(
-      'EKFS9v8wxyrrEGfec4HXycCC2nH7xf79PtQorLXXsut9WUrav4Nw'
-    ),
-  };
-
-  export class Message extends SmartContract {
-    // On-chain state definitions
-    @state(Field) message = State<Field>();
-    @state(Field) messageHistoryHash = State<Field>();
-    @state(PublicKey) user1 = State<PublicKey>();
-    @state(PublicKey) user2 = State<PublicKey>();
-    @state(PublicKey) user3 = State<PublicKey>();
-
-    init() {
-      // Define initial values of on-chain state
-      this.user1.set(users['Bob'].toPublicKey());
-      this.user2.set(users['SuperBob'].toPublicKey());
-      this.user3.set(users['MegaBob'].toPublicKey());
-      this.message.set(Field(0));
-      this.messageHistoryHash.set(Field(0));
-    }
-
-    @method async publishMessage(message: Field, signerPrivateKey: PrivateKey) {
-      // Compute signerPublicKey from signerPrivateKey argument
-      const signerPublicKey = signerPrivateKey.toPublicKey();
-
-      // Get approved public keys
-      const user1 = this.user1.get();
-      const user2 = this.user2.get();
-      const user3 = this.user3.get();
-
-      // Assert that signerPublicKey is one of the approved public keys
-      signerPublicKey
-        .equals(user1)
-        .or(signerPublicKey.equals(user2))
-        .or(signerPublicKey.equals(user3))
-        .assertEquals(true);
-
-      // Update on-chain message state
-      this.message.set(message);
-
-      // Compute new messageHistoryHash
-      const oldHash = this.messageHistoryHash.get();
-      const newHash = Poseidon.hash([message, oldHash]);
-
-      // Update on-chain messageHistoryHash
-      this.messageHistoryHash.set(newHash);
-    }
-  }
-  ```
-
-This code serves as the scaffolding for the rest of the tutorial and contains a smart contract called `message` with two methods:
+This code serves as the scaffolding for the rest of the tutorial and contains a smart contract called `Message` with two methods:
 
 - `init()` - Similar to the `constructor` in Solidity, it's where you define any set up that needs to happen before users begin interacting with the contract.
 - `publishMessage()` - The method that users invoke when they want to create a new message.
@@ -183,15 +104,7 @@ In this smart contract, one state variable stores the last message. Another stor
 
 It's possible to store additional public keys by Merkelizing them, but for simplicity this tutorial uses only three keys:
 
-```ts
-export class Message extends SmartContract {
-  // On-chain state definitions
-  @state(Field) message = State<Field>();
-  @state(Field) messageHistoryHash = State<Field>();
-  @state(PublicKey) user1 = State<PublicKey>();
-  @state(PublicKey) user2 = State<PublicKey>();
-  @state(PublicKey) user3 = State<PublicKey>();
-```
+#include_code class-state examples/zkapps/13-anonymous-message-board/src/message.ts ts title="src/message.ts"
 
 The `@state(Field)` decorator tells o1js that the variable is stored on-chain as a `Field` type.
 
@@ -203,19 +116,7 @@ o1js also provides `UInt32`, `UInt64`, and `Int64` types. All o1js types are com
 
 The `init` method is similar to the `constructor` in Solidity. It's where you define any setup that needs to happen before users begin interacting with the contract. In this case, set the public keys of users who can post and initialize `message` and `messageHistoryHash` as zero. The front end interprets the zero value to mean that no messages have been posted yet.
 
-```ts
-init() {
-  // Reset the whole state first
-  super.init();
-
-  // Define initial values of on-chain state
-  this.user1.set(users['Bob'].toPublicKey());
-  this.user2.set(users['SuperBob'].toPublicKey());
-  this.user3.set(users['MegaBob'].toPublicKey());
-  this.message.set(Field(0));
-  this.messageHistoryHash.set(Field(0));
-}
-```
+#include_code init examples/zkapps/13-anonymous-message-board/src/message.ts ts title="src/message.ts"
 
 Start with `super.init()`. It resets every state field to its default, and
 without it o1js warns that the zkApp will lack the `provedState === true`
@@ -228,9 +129,7 @@ The `publishMessage` method allows an approved user to publish a message. The `@
 
 For this example, pass in `message` and `signerPrivateKey` arguments to check that the user holds a private key associated with one of the three on-chain public keys before allowing them to update the message:
 
-```ts
-@method async publishMessage(message: Field, signerPrivateKey: PrivateKey) {
-```
+#include_code publish-signature examples/zkapps/13-anonymous-message-board/src/message.ts ts title="src/message.ts"
 
 Note that all inputs are private by default and exist only on the user's local machine when the smart contract runs. The Mina network never sees private inputs.
 
@@ -240,21 +139,13 @@ The smart contract sends only values that are stored as state to the Mina blockc
 
 Now that you have the user's private key, you need to derive the associated public key to check it against the list of approved publishers. The `PrivateKey` type in o1js includes a `toPublicKey()` method:
 
-```ts
-// Compute signerPublicKey from signerPrivateKey argument
-const signerPublicKey = signerPrivateKey.toPublicKey();
-```
+#include_code signer-public-key examples/zkapps/13-anonymous-message-board/src/message.ts ts title="src/message.ts"
 
-To check if this public key matches one of the keys stored on-chain:.
+To check if this public key matches one of the keys stored on-chain, read the three approved keys:
 
-```ts
-// Get approved public keys
-const user1 = this.user1.get();
-const user2 = this.user2.get();
-const user3 = this.user3.get();
-```
+#include_code get-users examples/zkapps/13-anonymous-message-board/src/message.ts ts title="src/message.ts"
 
-Calling the `get()` method retrieves these values from the zkApp account on-chain state.
+The `getAndRequireEquals()` method reads each value from the on-chain state of the zkApp account. It also adds a precondition to the transaction: the network accepts the transaction only if the on-chain value is still the value that the proof used. If you use `get()` without a precondition, o1js shows a warning, because a proof made with an old value could then change the state.
 
 :::note
 o1js uses a single network request to retrieve all on-chain state values simultaneously.
@@ -262,27 +153,17 @@ o1js uses a single network request to retrieve all on-chain state values simulta
 
 Finally, check if `signerPublicKey` is equal to one of the allowed public keys contained in the `user` variables:
 
-```ts
-// Assert that signerPublicKey is one of the approved public keys
-  signerPublicKey
-    .equals(user1)
-    .or(signerPublicKey.equals(user2))
-    .or(signerPublicKey.equals(user3))
-    .assertEquals(true);
-```
+#include_code assert-signer examples/zkapps/13-anonymous-message-board/src/message.ts ts title="src/message.ts"
 
-Notice the `equals()` and `or()` methods are used instead of the JavaScript operators (`===`, and `||`). The built-in o1js methods have the same effect, but they work with o1js types and their execution can be verified using a zero knowledge proof.
+Notice the `equals()` and `or()` methods are used instead of the JavaScript operators (`===`, and `||`). `equals()` and `or()` return a `Bool`, and `assertTrue()` makes the proof fail if that `Bool` is false. The built-in o1js methods have the same effect, but they work with o1js types and their execution can be verified using a zero knowledge proof.
 
-`assertEquals(true)` at the end means that a valid proof is not generated unless `signerPublicKey` is equal to one of the pre-approved users. The Mina network rejects any transaction sent to a zkApp account that doesn't include a valid zero knowledge proof for that account. So it is impossible for users to post new messages unless they have a private key associated with one of the three pre-approved public keys.
+`assertTrue()` at the end means that a valid proof is not generated unless `signerPublicKey` is equal to one of the pre-approved users. The Mina network rejects any transaction sent to a zkApp account that doesn't include a valid zero knowledge proof for that account. So it is impossible for users to post new messages unless they have a private key associated with one of the three pre-approved public keys.
 
 ### Update `message`
 
 Up to this point, the contract ensures that only approved users can call `publishMessage()`. When they do, the contract updates the on-chain `message` variable to their new message:
 
-```ts
-// Update on-chain message state
-this.message.set(message);
-```
+#include_code update-message examples/zkapps/13-anonymous-message-board/src/message.ts ts title="src/message.ts"
 
 The `set()` method asks the Mina nodes to update the value of their on-chain state, but only if the associated proof is valid.
 
@@ -292,14 +173,7 @@ There's one more thing to do. If you want users to be able to keep track of what
 
 There are a few ways to do this, but the simplest way is to store a hash of your new `message` and your old `messageHistoryHash` every time you call `publishMessage`:
 
-```ts
-// Compute new messageHistoryHash
-const oldHash = this.messageHistoryHash.get();
-const newHash = Poseidon.hash([message, oldHash]);
-
-// Update on-chain state
-this.messageHistoryHash.set(newHash);
-```
+#include_code update-hash examples/zkapps/13-anonymous-message-board/src/message.ts ts title="src/message.ts"
 
 That's it! Save the file. Now, to make sure everything compiles:
 
@@ -321,29 +195,33 @@ npm install
 npm start
 ```
 
-```
+```text
 deploying the message board...
 approved posters:
   user1: B62qkCkKQ5vSRkTQyEEj22vnHH4hVKfp4pc3QYd4GPSv7u6S4aBE4Fx
-  ...
-Bob publishes a message...       message: 42
-SuperBob publishes another...    message: 99
+  user2: B62qrvaafH1F812QFRF1Us8FjouuetZjU5ZpUUYEBBBA9tG9LogYuRB
+  user3: B62qkF6VsNiacd4WHjBpgX7Z4riBsjqbHYK5Z295t9yE3krK74sLYx9
+message: 0
+
+Bob publishes a message...
+message: 42
+history hash: 19021527552571990502182546635536113945580344348338130036510755963756352285063
+
+SuperBob publishes another...
+message: 99
+history hash: 17709100552276219157770164754333945343219873229290323097995828490618509796710
 history hash is the chain of both messages: true
-Jack tries to publish...         rejected, as it should be
+
+Jack tries to publish...
+rejected, as it should be
+message is still: 99
 ```
 
 The deployment is an ordinary zkApp deployment — the account creation fee, the
 verification key, and `init()` running as part of it, exactly as in
 [Tutorial 3](deploying-to-a-network):
 
-```ts
-const deployTx = await Mina.transaction(deployer, async () => {
-  AccountUpdate.fundNewAccount(deployer);
-  await zkApp.deploy();
-});
-await deployTx.prove();
-await deployTx.sign([deployer.key, zkAppKey]).send();
-```
+#include_code deploy examples/zkapps/13-anonymous-message-board/src/main.ts ts title="src/main.ts"
 
 `npm test` runs the same flow as assertions, including the two cases worth
 proving rather than describing: the history hash commits to every message in

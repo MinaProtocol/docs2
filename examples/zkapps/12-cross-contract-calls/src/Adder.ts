@@ -1,3 +1,4 @@
+// docs:start adder
 import { Field, PublicKey, SmartContract, method } from 'o1js';
 import { Incrementer } from './Incrementer.js';
 
@@ -14,3 +15,4 @@ export class Adder extends SmartContract {
     return await incrementer.increment(sum);
   }
 }
+// docs:end adder

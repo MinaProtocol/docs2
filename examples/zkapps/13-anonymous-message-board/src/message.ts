@@ -1,3 +1,4 @@
+// docs:start message
 import {
   Field,
   SmartContract,
@@ -31,6 +32,7 @@ export const users = {
   ),
 };
 
+// docs:start class-state
 export class Message extends SmartContract {
   // On-chain state definitions
   @state(Field) message = State<Field>();
@@ -38,7 +40,9 @@ export class Message extends SmartContract {
   @state(PublicKey) user1 = State<PublicKey>();
   @state(PublicKey) user2 = State<PublicKey>();
   @state(PublicKey) user3 = State<PublicKey>();
+  // docs:end class-state
 
+  // docs:start init
   init() {
     // Reset the whole state first. Without this the zkApp never gains the
     // `provedState === true` status, which is what certifies that the state
@@ -52,31 +56,45 @@ export class Message extends SmartContract {
     this.message.set(Field(0));
     this.messageHistoryHash.set(Field(0));
   }
+  // docs:end init
 
+  // docs:start publish-signature
   @method async publishMessage(message: Field, signerPrivateKey: PrivateKey) {
+    // docs:end publish-signature
+    // docs:start signer-public-key
     // Compute signerPublicKey from signerPrivateKey argument
     const signerPublicKey = signerPrivateKey.toPublicKey();
+    // docs:end signer-public-key
 
+    // docs:start get-users
     // Get approved public keys
     const user1 = this.user1.getAndRequireEquals();
     const user2 = this.user2.getAndRequireEquals();
     const user3 = this.user3.getAndRequireEquals();
+    // docs:end get-users
 
+    // docs:start assert-signer
     // Assert that signerPublicKey is one of the approved public keys
     signerPublicKey
       .equals(user1)
       .or(signerPublicKey.equals(user2))
       .or(signerPublicKey.equals(user3))
       .assertTrue();
+    // docs:end assert-signer
 
+    // docs:start update-message
     // Update on-chain message state
     this.message.set(message);
+    // docs:end update-message
 
+    // docs:start update-hash
     // Compute new messageHistoryHash
     const oldHash = this.messageHistoryHash.getAndRequireEquals();
     const newHash = Poseidon.hash([message, oldHash]);
 
     // Update on-chain messageHistoryHash
     this.messageHistoryHash.set(newHash);
+    // docs:end update-hash
   }
 }
+// docs:end message

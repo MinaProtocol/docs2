@@ -27,6 +27,7 @@ const balanceBefore = Mina.getBalance(feePayer);
 console.log('fee payer balance before:', balanceBefore.toString());
 
 console.log('\ndeploying...');
+// docs:start deploy
 const deployTx = await Mina.transaction(
   { sender: feePayer, fee: 1e8 },
   async () => {
@@ -37,6 +38,7 @@ const deployTx = await Mina.transaction(
 );
 await deployTx.prove();
 await deployTx.sign([feePayer.key, zkAppKey]).send();
+// docs:end deploy
 
 const account = Mina.getAccount(zkAppAddress);
 console.log('\nthe zkApp account now holds:');

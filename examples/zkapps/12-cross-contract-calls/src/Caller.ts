@@ -1,3 +1,4 @@
+// docs:start caller
 import { Field, PublicKey, SmartContract, State, method, state } from 'o1js';
 import { Adder } from './Adder.js';
 
@@ -23,3 +24,4 @@ export class Caller extends SmartContract {
     this.sum.set(sum);
   }
 }
+// docs:end caller

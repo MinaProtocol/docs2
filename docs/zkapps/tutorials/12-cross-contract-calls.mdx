@@ -48,12 +48,10 @@ directory on GitHub.
 
 Make sure your environment meets the
 [Prerequisites](/zkapps/tutorials#prerequisites) for zkApp Developer
-Tutorials. o1js 3 requires Node.js 22 or later.
+Tutorials. o1js 3 requires Node.js 22.19.5 or later.
 
-This tutorial has been tested with:
-
-- [o1js](https://www.npmjs.com/package/o1js) version `3.0.0`
-- Node.js version `22`
+The example project uses o1js `^3.0.0`. CI builds it, runs it and runs its
+tests on every pull request.
 
 ## Get the example project
 
@@ -76,19 +74,7 @@ The contracts are in the `src` directory, one contract in each file:
 `Incrementer` has one method. The method adds 1 to its argument and returns
 the result:
 
-```ts
-import { Field, SmartContract, method } from 'o1js';
-
-// A contract that adds 1 to a number and returns the result.
-export class Incrementer extends SmartContract {
-  // `@method.returns` declares the type of the value that the method returns.
-  // A caller can use that value only because it is declared here.
-  @method.returns(Field)
-  async increment(x: Field) {
-    return x.add(1);
-  }
-}
-```
+#include_code incrementer examples/zkapps/12-cross-contract-calls/src/Incrementer.ts ts title="src/Incrementer.ts"
 
 A method that returns a value must declare the type of that value with
 `@method.returns(Type)` in place of `@method`. The value becomes part of the
@@ -102,24 +88,7 @@ Like all methods in o1js 3, `increment()` is `async`, so a caller must
 
 `Adder` computes `x + y`, and then calls `Incrementer` to add 1:
 
-```ts
-import { Field, PublicKey, SmartContract, method } from 'o1js';
-import { Incrementer } from './Incrementer.js';
-
-// A contract that adds two numbers, adds 1 to the sum, and returns the result.
-// It does not add the 1 itself: it calls the Incrementer contract to do it.
-export class Adder extends SmartContract {
-  @method.returns(Field)
-  async addPlus1(incrementerAddress: PublicKey, x: Field, y: Field) {
-    // Compute the sum
-    const sum = x.add(y);
-
-    // Call the Incrementer contract at `incrementerAddress` to add 1
-    const incrementer = new Incrementer(incrementerAddress);
-    return await incrementer.increment(sum);
-  }
-}
-```
+#include_code adder examples/zkapps/12-cross-contract-calls/src/Adder.ts ts title="src/Adder.ts"
 
 To call another contract, a method does two things:
 
@@ -146,33 +115,7 @@ that calls `Adder` chooses which account to call.
   archive node keeps them, and a user interface can read them.
 - It stores the result in its on-chain state field `sum`.
 
-```ts
-import { Field, PublicKey, SmartContract, State, method, state } from 'o1js';
-import { Adder } from './Adder.js';
-
-// A contract that calls the Adder contract, stores the result on chain and
-// emits it as an event.
-export class Caller extends SmartContract {
-  @state(Field) sum = State<Field>();
-
-  events = { sum: Field };
-
-  @method async callAddAndEmit(
-    adderAddress: PublicKey,
-    incrementerAddress: PublicKey,
-    x: Field,
-    y: Field
-  ) {
-    // Call the Adder contract, which calls the Incrementer contract
-    const adder = new Adder(adderAddress);
-    const sum = await adder.addPlus1(incrementerAddress, x, y);
-
-    // Emit the result as an event and store it on chain
-    this.emitEvent('sum', sum);
-    this.sum.set(sum);
-  }
-}
-```
+#include_code caller examples/zkapps/12-cross-contract-calls/src/Caller.ts ts title="src/Caller.ts"
 
 `events = { sum: Field }` declares one event type, `sum`, with a `Field`
 value. `this.emitEvent('sum', sum)` emits it.
@@ -185,91 +128,7 @@ value. `this.emitEvent('sum', sum)` emits it.
 needs no network, no faucet and no funded accounts: it has test accounts that
 already hold MINA.
 
-```ts
-import { fileURLToPath } from 'node:url';
-import { AccountUpdate, Field, Mina, PrivateKey } from 'o1js';
-import { Adder } from './Adder.js';
-import { Caller } from './Caller.js';
-import { Incrementer } from './Incrementer.js';
-
-export async function main(proofsEnabled = false) {
-  // A local blockchain, so this runs with no network, no faucet and no funds.
-  const Local = await Mina.LocalBlockchain({ proofsEnabled });
-  Mina.setActiveInstance(Local);
-
-  // A test account that pays all the fees
-  const feePayer = Local.testAccounts[0];
-
-  // One key pair, and so one address, for each contract
-  const incrementerKey = PrivateKey.randomKeypair();
-  const adderKey = PrivateKey.randomKeypair();
-  const callerKey = PrivateKey.randomKeypair();
-
-  const incrementer = new Incrementer(incrementerKey.publicKey);
-  const adder = new Adder(adderKey.publicKey);
-  const caller = new Caller(callerKey.publicKey);
-
-  // With proofs on, compile each contract to get its prover and its
-  // verification key
-  if (proofsEnabled) {
-    console.log('compiling...');
-    await Incrementer.compile();
-    await Adder.compile();
-    await Caller.compile();
-  }
-
-  // Deploy the three contracts in one transaction
-  console.log('deploying the three contracts...');
-  const deployTx = await Mina.transaction(feePayer, async () => {
-    AccountUpdate.fundNewAccount(feePayer, 3);
-    await incrementer.deploy();
-    await adder.deploy();
-    await caller.deploy();
-  });
-  await deployTx.prove();
-  await deployTx.sign([
-    feePayer.key,
-    incrementerKey.privateKey,
-    adderKey.privateKey,
-    callerKey.privateKey,
-  ]).send();
-
-  // Call Caller, which calls Adder, which calls Incrementer
-  console.log('calling Caller.callAddAndEmit(5, 6)...');
-  const callTx = await Mina.transaction(feePayer, async () => {
-    await caller.callAddAndEmit(
-      adderKey.publicKey,
-      incrementerKey.publicKey,
-      Field(5),
-      Field(6)
-    );
-  });
-  // One proof for each of the three contracts
-  await callTx.prove();
-  await callTx.sign([feePayer.key]).send();
-
-  // The account updates of the call, one line for each
-  for (const update of callTx.transaction.accountUpdates) {
-    const indent = '  '.repeat(update.body.callDepth);
-    console.log(`${indent}${update.label}`);
-  }
-
-  const sum = caller.sum.get();
-  console.log('sum on chain:', sum.toString());
-
-  const events = await caller.fetchEvents();
-  for (const event of events) {
-    console.log(`event '${event.type}':`, event.event.data.toString());
-  }
-
-  return sum;
-}
-
-// Run main() only when this file is the entry point, not when a test imports it
-if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  await main();
-}
-```
+#include_code main examples/zkapps/12-cross-contract-calls/src/main.ts ts title="src/main.ts"
 
 The deploy transaction creates three new accounts, so
 `AccountUpdate.fundNewAccount(feePayer, 3)` pays three account creation fees.
