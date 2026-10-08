@@ -2,7 +2,9 @@ import {
   AccountUpdateForest,
   Bool,
   DeployArgs,
+  Experimental,
   Field,
+  Int64,
   method,
   Permissions,
   Poseidon,
@@ -61,7 +63,7 @@ const tokenSymbol = 'WLTKN';
  * A token with a rule around it: only whitelisted addresses may hold or move it.
  *
  * This is the same shape as `BasicTokenContract`, with a membership check added
- * to `mint()` and `sendTokens()`.
+ * to `mint()`, `sendTokens()` and `approveBase()`.
  */
 export class WhitelistedTokenContract extends TokenContract {
   @state(UInt64) totalAmountInCirculation = State<UInt64>();
@@ -88,9 +90,55 @@ export class WhitelistedTokenContract extends TokenContract {
     this.whitelistCommitment.set(Field(0));
   }
 
-  async approveBase(forest: AccountUpdateForest) {
-    this.checkZeroBalanceChange(forest);
+  /**
+   * The whitelist that `approveBase()` checks against. It is not on-chain
+   * state: the prover supplies it, and `approveBase()` checks its hash against
+   * `whitelistCommitment`. Set it before you call `transfer()`,
+   * `approveAccountUpdate()` or `approveAccountUpdates()`.
+   */
+  whitelist?: Whitelist;
+
+  /**
+   * Approve the account updates of a transaction that moves this token.
+   *
+   * It does what `checkZeroBalanceChange()` does, so an approved transaction
+   * cannot create tokens, and it also requires that every account update that
+   * uses this token belongs to a whitelisted address. Because of that second
+   * check, it can be a `@method`, and token holders can call the inherited
+   * `transfer()` helper without a way around the whitelist.
+   */
+  // docs:start approve-base
+  @method async approveBase(forest: AccountUpdateForest) {
+    // The whitelist is a private input that approveBase() cannot take as an
+    // argument. memoizeWitness() keeps the value from the transaction for the
+    // proof.
+    const whitelist = new Whitelist(
+      Experimental.memoizeWitness(Whitelist, () => {
+        if (this.whitelist === undefined) {
+          throw Error('set `whitelist` on the contract before you approve updates');
+        }
+        return this.whitelist;
+      })
+    );
+    whitelist
+      .hash()
+      .assertEquals(
+        this.whitelistCommitment.getAndRequireEquals(),
+        'the whitelist given is not the one this contract committed to'
+      );
+
+    let totalBalanceChange = Int64.zero;
+    this.forEachUpdate(forest, (update, usesToken) => {
+      usesToken
+        .implies(whitelist.contains(update.publicKey))
+        .assertTrue('the address is not on the whitelist');
+      totalBalanceChange = totalBalanceChange.add(
+        Provable.if(usesToken, update.balanceChange, Int64.zero)
+      );
+    });
+    totalBalanceChange.assertEquals(0);
   }
+  // docs:end approve-base
 
   /** Replace the whitelist. Only the holder of the zkApp key may do this. */
   @method async setWhitelist(commitment: Field, adminSignature: Signature) {

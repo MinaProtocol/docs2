@@ -168,12 +168,14 @@ describe('token concepts', () => {
     });
 
     it('moves tokens with transfer(), which calls approveBase()', async () => {
+      // docs:start transfer
       const tx = await Mina.transaction(alice, async () => {
-        AccountUpdate.fundNewAccount(alice);
+        AccountUpdate.fundNewAccount(alice); // only if bob has no token account yet
         await token.transfer(alice, bob, UInt64.from(400));
       });
       await tx.prove();
       await tx.sign([alice.key]).send();
+      // docs:end transfer
 
       assert.strictEqual(Mina.getBalance(alice, tokenId).toString(), '1100');
       assert.strictEqual(Mina.getBalance(bob, tokenId).toString(), '400');

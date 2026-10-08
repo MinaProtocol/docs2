@@ -2,6 +2,7 @@ import assert from 'node:assert';
 import { before, describe, it } from 'node:test';
 import {
   AccountUpdate,
+  Int64,
   Mina,
   PrivateKey,
   PublicKey,
@@ -158,5 +159,80 @@ describe('WhitelistedTokenContract', () => {
       token.totalAmountInCirculation.get().toString(),
       '100000'
     );
+  });
+
+  // transfer() and approveAccountUpdate() are inherited from TokenContract and
+  // end in approveBase(). approveBase() is a @method that checks the whitelist,
+  // so these helpers do not give a way around it.
+  describe('transfer(), through approveBase()', () => {
+    async function transfer(
+      to: PublicKey,
+      amount: UInt64,
+      list: Whitelist | null = whitelist
+    ) {
+      token.whitelist = list ?? undefined;
+      try {
+        const tx = await Mina.transaction(alice, async () => {
+          if (!Mina.hasAccount(to, token.deriveTokenId())) {
+            AccountUpdate.fundNewAccount(alice);
+          }
+          await token.transfer(alice, to, amount);
+        });
+        await tx.prove();
+        await tx.sign([alice.key]).send();
+      } finally {
+        token.whitelist = undefined;
+      }
+    }
+
+    it('moves tokens between two whitelisted addresses', async () => {
+      await transfer(bob, UInt64.from(5_000));
+
+      assert.strictEqual(balanceOf(alice).toString(), '70000');
+      assert.strictEqual(balanceOf(bob).toString(), '30000');
+    });
+
+    it('refuses a transfer to an address that is not on the list', async () => {
+      await assert.rejects(
+        () => transfer(mallory, UInt64.from(1_000)),
+        /the address is not on the whitelist/
+      );
+      assert.strictEqual(Mina.hasAccount(mallory, token.deriveTokenId()), false);
+      assert.strictEqual(balanceOf(alice).toString(), '70000');
+    });
+
+    it('refuses a whitelist that does not match the commitment', async () => {
+      await assert.rejects(
+        () => transfer(mallory, UInt64.from(1_000), Whitelist.from([alice, mallory])),
+        /the whitelist given is not the one this contract committed to/
+      );
+      assert.strictEqual(Mina.hasAccount(mallory, token.deriveTokenId()), false);
+    });
+
+    it('needs the whitelist from the caller', async () => {
+      await assert.rejects(
+        () => transfer(bob, UInt64.from(1_000), null),
+        /set `whitelist` on the contract/
+      );
+      assert.strictEqual(balanceOf(bob).toString(), '30000');
+    });
+
+    it('refuses updates whose balance changes do not sum to zero', async () => {
+      token.whitelist = whitelist;
+      try {
+        await assert.rejects(async () => {
+          const tx = await Mina.transaction(alice, async () => {
+            const update = AccountUpdate.create(alice, token.deriveTokenId());
+            update.balanceChange = Int64.from(1_000_000);
+            await token.approveAccountUpdate(update);
+          });
+          await tx.prove();
+          await tx.sign([alice.key]).send();
+        }, /Field\.assertEquals\(\): 1000000 != 0/);
+      } finally {
+        token.whitelist = undefined;
+      }
+      assert.strictEqual(balanceOf(alice).toString(), '70000');
+    });
   });
 });
