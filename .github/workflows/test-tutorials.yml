@@ -32,6 +32,7 @@ jobs:
           - examples/zkapps/08-custom-tokens
           - examples/zkapps/09-recursion
           - examples/zkapps/10-account-updates
+          - examples/zkapps/11-advanced-account-updates
           - examples/zkapps/12-cross-contract-calls
           - examples/zkapps/14-circuit-logic
           - examples/zkapps/13-anonymous-message-board
@@ -91,6 +92,7 @@ jobs:
           - examples/zkapps/07-oracles/contracts
           - examples/zkapps/interacting-with-zkApps-server-side
           - examples/zkapps/10-account-updates
+          - examples/zkapps/11-advanced-account-updates
           - examples/zkapps/12-cross-contract-calls
           - examples/zkapps/14-circuit-logic
 
@@ -168,6 +170,7 @@ jobs:
           - examples/zkapps/08-custom-tokens
           - examples/zkapps/09-recursion
           - examples/zkapps/10-account-updates
+          - examples/zkapps/11-advanced-account-updates
           - examples/zkapps/12-cross-contract-calls
           - examples/zkapps/14-circuit-logic
           - examples/zkapps/feature-overview
