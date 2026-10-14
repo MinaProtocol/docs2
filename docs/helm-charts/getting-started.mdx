@@ -1,0 +1,36 @@
+---
+title: Getting Started with Helm Charts
+hide_title: true
+sidebar_level: Getting Started
+description: Helm charts are kubernetes package manager and versioned deployment tools that allows Mina nodes to be set up using Kubernetes.
+keywords:
+    - helm charts
+    - kubernetes
+    - mina
+    - nodes
+---
+
+:::info
+
+Provides a general overview on using Helm charts for Mina Protocol. For more information about [Helm Charts](https://github.com/MinaFoundation/helm-charts)
+
+# Prerequisites
+
+- Kubernetes cluster (on-premise or cloud platforms such as AWS, Azure or GCP)
+- Helm (>= v3.14.3)
+- (Optional) helmfile >= v0.162.0 to install charts
+
+## Deploying a local chart
+
+This tutorial will provide an example on how to deploy a local chart.
+
+1. Download the chart files for the `leaderboard` chart from the Mina Foundation Git repository.
+2. Extract the files from the downloaded archive to a local directory.
+3. Install the chart using the `helm install` command and passing in the path to the chart directory. For example:
+
+```bash
+helm install leaderboard ./leaderboard
+```
+
+This command installs the `leaderboard` chart using the local files in the `leaderboard directory`. You can adjust the command to fit your environment and specific requirements.
+
