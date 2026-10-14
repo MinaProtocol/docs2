@@ -90,6 +90,8 @@ curl -s "$ROSETTA_URL/search/transactions" \
   -d "{\"network_identifier\":$NETWORK,\"address\":\"B62qr...\"}" | jq .
 ```
 
+A search response lists user commands first, then internal commands, then zkApp commands. `total_count` is the size of the whole result, whatever `limit` and `offset` the request carries, and successive pages add up to the whole result.
+
 Search for a specific transaction by hash:
 
 ```bash

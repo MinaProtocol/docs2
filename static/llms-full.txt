@@ -7446,11 +7446,15 @@ Some of the internal data look like this:
 
 This JSON evolves as the format of the block and transaction payloads evolve in the network.
 
+### Write block data to a directory
+
+Start the daemon with `--precomputed-blocks-dir <dir>` and it writes each block it sees to its own file in that directory. The file is named `<network>-<height>-<state-hash>.json`, with all the fields of a block. These files are called precomputed blocks. The name is the one the public block buckets use, so the directory can be uploaded to a bucket as it is, and `mina-missing-blocks-guardian` and `mina-archive-blocks` read the files as they are.
+
+The directory must exist; the daemon does not start without it. Each block is written under a temporary name and renamed into place, so a reader never sees a half-written file. Blocks are written by a background job, so a slow disk does not delay block processing. If the writer falls more than 16 blocks behind, the daemon drops the oldest queued blocks and logs an error for each dropped block, naming the block. A gap in the directory is therefore visible in the daemon log.
+
 ### Upload block data to Google Cloud Storage
 
-The daemon generates a file for each block with the name `<network-name>-<protocol-state-hash>.json` . These files are called precomputed blocks and have all the fields of a block.
-
-To specify a daemon to upload block data to Google Cloud Storage, pass the flag `--upload-blocks-to-gcloud`. 
+The daemon can also upload each block to a Google Cloud Storage bucket, under the same `<network>-<height>-<state-hash>.json` name. Pass the flag `--upload-blocks-to-gcloud`.
 
 Set the following environment variables:
 
@@ -7575,7 +7579,7 @@ Swap `single-run` for `daemon` to run the loop continuously alongside your archi
 
 To fill a gap you need the block(s) that the auditor reports as missing in one of two formats:
 
-- **Precomputed blocks** — the full block JSON the daemon serializes, named `<network>-<height>-<state_hash>.json`. Use these whenever possible.
+- **Precomputed blocks** — the full block JSON the daemon serializes, named `<network>-<height>-<state_hash>.json`. Use these whenever possible. A daemon started with `--precomputed-blocks-dir` writes them under this name, ready to import.
 - **Extensional blocks** — a slimmer JSON generated from an existing archive database via `mina-extract-blocks`. Sufficient to repair an archive but lacks the SNARK and other fields that are not stored in PostgreSQL.
 
 How to *store* these files (uploading blocks from a daemon, saving them from logs, extracting them from another archive, scheduling database dumps) is covered on [Archive Redundancy](./archive-redundancy#back-up-block-data). This page assumes the files already exist somewhere and only documents *where to read them from* for a backfill.
@@ -10468,7 +10472,7 @@ curl -s http://localhost:3087/account/balance \
 
 ## Transaction metadata
 
-In `/block` and `/search/transactions` responses, each payment, delegation, and zkApp command has a `metadata` object:
+In `/block` and `/search/transactions` responses, each payment, delegation, and zkApp command has a `metadata` object. A `/search/transactions` response lists user commands, then internal commands, then zkApp commands, and its `total_count` is the size of the whole result on every page.
 
 | Field | Description |
 |--|--|
@@ -12504,9 +12508,23 @@ Mina daemon
                                                        (default: 0.2)
                                                        (alias:
                                                        -peer-protection-rate)
-  [--precomputed-blocks-file PATH]                     Path to write precomputed
-                                                       blocks to, for replay or
-                                                       archiving
+  [--precomputed-blocks-dir DIR]                       Write each precomputed
+                                                       block to its own file in
+                                                       this directory, named
+                                                       <network>-<height>-<state-hash>.json,
+                                                       the same name the
+                                                       precomputed block bucket
+                                                       uses. The directory must
+                                                       exist
+                                                       (alias:
+                                                       -precomputed-blocks-dir)
+  [--precomputed-blocks-file PATH]                     Deprecated, use
+                                                       --precomputed-blocks-dir.
+                                                       Append every precomputed
+                                                       block as one JSON line to
+                                                       this file. The file grows
+                                                       without limit and nothing
+                                                       rotates it
                                                        (alias:
                                                        -precomputed-blocks-file)
   [--proof-level full|check|none]                      Internal, for testing.
@@ -12664,7 +12682,6 @@ Mina daemon
   [-help]                                              print this help text and
                                                        exit
                                                        (alias: -?)
-
 ```
 
 ## mina advanced
@@ -14210,6 +14227,8 @@ curl -s "$ROSETTA_URL/search/transactions" \
   -H 'Content-Type: application/json' \
   -d "{\"network_identifier\":$NETWORK,\"address\":\"B62qr...\"}" | jq .
 ```
+
+A search response lists user commands first, then internal commands, then zkApp commands. `total_count` is the size of the whole result, whatever `limit` and `offset` the request carries, and successive pages add up to the whole result.
 
 Search for a specific transaction by hash:
 
@@ -15881,7 +15900,7 @@ For pre-release builds, see the [Mina Releases](https://github.com/MinaProtocol/
 sudo rm /etc/apt/sources.list.d/mina*.list
 echo "deb [trusted=yes] http://packages.o1test.net $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/mina.list
 sudo apt-get update
-sudo apt-get install --yes curl unzip mina-mainnet=4.0.0-6850301
+sudo apt-get install --yes unzip mina-mainnet=4.0.0-6850301
 ```
 
 </TabItem>
@@ -15892,7 +15911,7 @@ sudo rm /etc/apt/sources.list.d/mina*.list
 echo "deb [trusted=yes] http://packages.o1test.net $(lsb_release -cs) alpha" | sudo tee /etc/apt/sources.list.d/mina-devnet.list
 sudo apt-get install --yes apt-transport-https
 sudo apt-get update
-sudo apt-get install --yes curl unzip mina-devnet=4.0.0-6965b50
+sudo apt-get install --yes unzip mina-devnet=4.0.0-6965b50
 ```
 
 </TabItem>
@@ -16243,6 +16262,10 @@ Please note the following are the hardware requirements for each node type after
 ## Software
 
 Supported environments include macOS, Linux (Debian 10, 11 and Ubuntu 20.04 LTS), and any host machine with Docker. Only x86-64 CPU architecture is supported.
+
+## Proving-key cache
+
+Block producers and SNARK workers hold several large proving keys. The daemon loads them from memory-mapped files, named with a `.mmap` suffix, which lets the operating system drop those pages under memory pressure and lets processes on the same host share them. Keys shipped with the package are read from `/var/lib/coda`; keys the node generates or converts are written to `coda_cache_dir` under the temporary directory, `/tmp/coda_cache_dir` unless `TMPDIR` is set. Mapping only saves memory when that directory is on a disk-backed filesystem: on a `tmpfs` the pages stay in RAM. To share the pages between containers, mount the same disk-backed volume at that path in each of them. Set `MINA_USE_MMAP_CACHE=0` to load the keys into the heap instead.
 
 ## Clock Synchronization
 

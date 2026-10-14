@@ -28,6 +28,10 @@ Please note the following are the hardware requirements for each node type after
 
 Supported environments include macOS, Linux (Debian 10, 11 and Ubuntu 20.04 LTS), and any host machine with Docker. Only x86-64 CPU architecture is supported.
 
+## Proving-key cache
+
+Block producers and SNARK workers hold several large proving keys. The daemon loads them from memory-mapped files, named with a `.mmap` suffix, which lets the operating system drop those pages under memory pressure and lets processes on the same host share them. Keys shipped with the package are read from `/var/lib/coda`; keys the node generates or converts are written to `coda_cache_dir` under the temporary directory, `/tmp/coda_cache_dir` unless `TMPDIR` is set. Mapping only saves memory when that directory is on a disk-backed filesystem: on a `tmpfs` the pages stay in RAM. To share the pages between containers, mount the same disk-backed volume at that path in each of them. Set `MINA_USE_MMAP_CACHE=0` to load the keys into the heap instead.
+
 ## Clock Synchronization
 
 Your server must run a clock synchronization protocol such as [NTP](https://en.wikipedia.org/wiki/Network_Time_Protocol) to participate in consensus. Most Linux distributions include NTP by default.

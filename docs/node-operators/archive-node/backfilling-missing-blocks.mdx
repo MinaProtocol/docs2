@@ -64,7 +64,7 @@ Swap `single-run` for `daemon` to run the loop continuously alongside your archi
 
 To fill a gap you need the block(s) that the auditor reports as missing in one of two formats:
 
-- **Precomputed blocks** — the full block JSON the daemon serializes, named `<network>-<height>-<state_hash>.json`. Use these whenever possible.
+- **Precomputed blocks** — the full block JSON the daemon serializes, named `<network>-<height>-<state_hash>.json`. Use these whenever possible. A daemon started with `--precomputed-blocks-dir` writes them under this name, ready to import.
 - **Extensional blocks** — a slimmer JSON generated from an existing archive database via `mina-extract-blocks`. Sufficient to repair an archive but lacks the SNARK and other fields that are not stored in PostgreSQL.
 
 How to *store* these files (uploading blocks from a daemon, saving them from logs, extracting them from another archive, scheduling database dumps) is covered on [Archive Redundancy](./archive-redundancy#back-up-block-data). This page assumes the files already exist somewhere and only documents *where to read them from* for a backfill.

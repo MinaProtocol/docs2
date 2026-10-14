@@ -195,7 +195,7 @@ curl -s http://localhost:3087/account/balance \
 
 ## Transaction metadata
 
-In `/block` and `/search/transactions` responses, each payment, delegation, and zkApp command has a `metadata` object:
+In `/block` and `/search/transactions` responses, each payment, delegation, and zkApp command has a `metadata` object. A `/search/transactions` response lists user commands, then internal commands, then zkApp commands, and its `total_count` is the size of the whole result on every page.
 
 | Field | Description |
 |--|--|

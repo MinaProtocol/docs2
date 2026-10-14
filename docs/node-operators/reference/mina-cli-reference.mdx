@@ -866,9 +866,23 @@ Mina daemon
                                                        (default: 0.2)
                                                        (alias:
                                                        -peer-protection-rate)
-  [--precomputed-blocks-file PATH]                     Path to write precomputed
-                                                       blocks to, for replay or
-                                                       archiving
+  [--precomputed-blocks-dir DIR]                       Write each precomputed
+                                                       block to its own file in
+                                                       this directory, named
+                                                       <network>-<height>-<state-hash>.json,
+                                                       the same name the
+                                                       precomputed block bucket
+                                                       uses. The directory must
+                                                       exist
+                                                       (alias:
+                                                       -precomputed-blocks-dir)
+  [--precomputed-blocks-file PATH]                     Deprecated, use
+                                                       --precomputed-blocks-dir.
+                                                       Append every precomputed
+                                                       block as one JSON line to
+                                                       this file. The file grows
+                                                       without limit and nothing
+                                                       rotates it
                                                        (alias:
                                                        -precomputed-blocks-file)
   [--proof-level full|check|none]                      Internal, for testing.
@@ -1026,7 +1040,6 @@ Mina daemon
   [-help]                                              print this help text and
                                                        exit
                                                        (alias: -?)
-
 ```
 
 ## mina advanced

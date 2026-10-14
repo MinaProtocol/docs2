@@ -57,11 +57,15 @@ Some of the internal data look like this:
 
 This JSON evolves as the format of the block and transaction payloads evolve in the network.
 
+### Write block data to a directory
+
+Start the daemon with `--precomputed-blocks-dir <dir>` and it writes each block it sees to its own file in that directory. The file is named `<network>-<height>-<state-hash>.json`, with all the fields of a block. These files are called precomputed blocks. The name is the one the public block buckets use, so the directory can be uploaded to a bucket as it is, and `mina-missing-blocks-guardian` and `mina-archive-blocks` read the files as they are.
+
+The directory must exist; the daemon does not start without it. Each block is written under a temporary name and renamed into place, so a reader never sees a half-written file. Blocks are written by a background job, so a slow disk does not delay block processing. If the writer falls more than 16 blocks behind, the daemon drops the oldest queued blocks and logs an error for each dropped block, naming the block. A gap in the directory is therefore visible in the daemon log.
+
 ### Upload block data to Google Cloud Storage
 
-The daemon generates a file for each block with the name `<network-name>-<protocol-state-hash>.json` . These files are called precomputed blocks and have all the fields of a block.
-
-To specify a daemon to upload block data to Google Cloud Storage, pass the flag `--upload-blocks-to-gcloud`. 
+The daemon can also upload each block to a Google Cloud Storage bucket, under the same `<network>-<height>-<state-hash>.json` name. Pass the flag `--upload-blocks-to-gcloud`.
 
 Set the following environment variables:
 
