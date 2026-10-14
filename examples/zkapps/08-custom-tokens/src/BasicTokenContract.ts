@@ -36,6 +36,9 @@ export class BasicTokenContract extends TokenContract {
       setTokenSymbol: permissionToEdit,
       send: permissionToEdit,
       receive: permissionToEdit,
+      // `Permissions.default()` sets `access` to `none()`, which would undo
+      // `TokenContract.deploy()` and let anyone mint the token.
+      access: Permissions.proofOrSignature(),
     });
   }
   // docs:end imports-and-structure

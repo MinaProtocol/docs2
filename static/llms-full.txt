@@ -23319,6 +23319,9 @@ export class BasicTokenContract extends TokenContract {
       setTokenSymbol: permissionToEdit,
       send: permissionToEdit,
       receive: permissionToEdit,
+      // `Permissions.default()` sets `access` to `none()`, which would undo
+      // `TokenContract.deploy()` and let anyone mint the token.
+      access: Permissions.proofOrSignature(),
     });
   }
 ```
@@ -23328,6 +23331,12 @@ o1js base class for a token manager: it supplies the `this.internal` helpers use
 below, sets the `access` permission so that nobody can bypass this contract and
 mint the token themselves, and requires one method that says which account
 updates the contract approves.
+
+`deploy()` sets the other permissions after `super.deploy()`.
+`Permissions.default()` sets `access` back to `none()`, so the contract sets
+`access` to `proofOrSignature()` again. Without that line, anyone can mint the
+token with an account update for the token manager that has no proof and no
+signature.
 
 ### init() and mint() methods
 

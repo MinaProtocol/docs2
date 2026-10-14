@@ -80,6 +80,9 @@ export class WhitelistedTokenContract extends TokenContract {
       setTokenSymbol: permissionToEdit,
       send: permissionToEdit,
       receive: permissionToEdit,
+      // `Permissions.default()` sets `access` to `none()`, which would undo
+      // `TokenContract.deploy()` and let anyone mint the token.
+      access: Permissions.proofOrSignature(),
     });
   }
 

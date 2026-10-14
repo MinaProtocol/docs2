@@ -3,6 +3,7 @@ import { before, describe, it } from 'node:test';
 import {
   AccountUpdate,
   Mina,
+  Permissions,
   PrivateKey,
   PublicKey,
   Signature,
@@ -151,6 +152,31 @@ describe('token concepts', () => {
 
       assert.strictEqual(Mina.getBalance(alice, tokenId).toString(), '1500');
       assert.strictEqual(Mina.hasAccount(bob, tokenId), false);
+    });
+
+    it('keeps the access permission of the token manager at proofOrSignature()', () => {
+      assert.strictEqual(
+        JSON.stringify(Mina.getAccount(token.address).permissions.access),
+        JSON.stringify(Permissions.proofOrSignature())
+      );
+    });
+
+    it('refuses a mint that does not go through the token manager', async () => {
+      // An account update for the token manager with no proof and no
+      // signature, approving a token update that creates tokens. Only the
+      // `access` permission of the token manager account stops this.
+      await assert.rejects(async () => {
+        const tx = await Mina.transaction(alice, async () => {
+          const manager = AccountUpdate.create(token.address);
+          const minted = AccountUpdate.create(alice, tokenId);
+          minted.balance.addInPlace(UInt64.from(1_000_000));
+          manager.approve(minted);
+        });
+        await tx.prove();
+        await tx.sign([alice.key]).send();
+      }, /Update_not_permitted_access/);
+
+      assert.strictEqual(Mina.getBalance(alice, tokenId).toString(), '1500');
     });
 
     it('refuses to approve updates whose balance changes do not sum to zero', async () => {

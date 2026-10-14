@@ -163,6 +163,12 @@ below, sets the `access` permission so that nobody can bypass this contract and
 mint the token themselves, and requires one method that says which account
 updates the contract approves.
 
+`deploy()` sets the other permissions after `super.deploy()`.
+`Permissions.default()` sets `access` back to `none()`, so the contract sets
+`access` to `proofOrSignature()` again. Without that line, anyone can mint the
+token with an account update for the token manager that has no proof and no
+signature.
+
 ### init() and mint() methods
 
 Next, add an init method and a method that mints tokens.

@@ -120,6 +120,25 @@ describe('WhitelistedTokenContract', () => {
     );
   });
 
+  it('refuses a mint that does not go through the token manager', async () => {
+    // No proof and no signature for the token manager, so neither the
+    // whitelist nor the admin key is checked. Only the `access` permission of
+    // the token manager account stops this.
+    await assert.rejects(async () => {
+      const tx = await Mina.transaction(mallory, async () => {
+        AccountUpdate.fundNewAccount(mallory);
+        const manager = AccountUpdate.create(token.address);
+        const minted = AccountUpdate.create(mallory, token.deriveTokenId());
+        minted.balance.addInPlace(UInt64.from(1_000_000));
+        manager.approve(minted);
+      });
+      await tx.prove();
+      await tx.sign([mallory.key]).send();
+    }, /Update_not_permitted_access/);
+
+    assert.strictEqual(Mina.hasAccount(mallory, token.deriveTokenId()), false);
+  });
+
   it('refuses a whitelist that does not match the commitment', async () => {
     const forged = Whitelist.from([mallory, alice]);
 
