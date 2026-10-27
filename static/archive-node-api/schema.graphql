@@ -1,4 +1,4 @@
-# Archive Node API GraphQL schema, version 2.0 (Archive Node API 2.0.0).
+# Archive Node API GraphQL schema, version 2.1 (Archive Node API 2.1.1).
 # Source of truth: https://github.com/o1-labs/Archive-Node-API/blob/main/schema.graphql
 # This copy is served at https://docs.minaprotocol.com/archive-node-api/schema.graphql
 # and embedded in https://docs.minaprotocol.com/node-operators/data-and-history/archive-node-api-schema
@@ -70,6 +70,30 @@ input ActionFilterOptionsInput {
   Filter for actions that happened before this action state, inclusive
   """
   endActionState: String
+}
+
+"""
+Find the user commands (payments and delegations) of one account.
+
+The block range is required and limited by the server's configured maximum.
+`from` is inclusive and `to` is exclusive. A range that holds more than the
+server's user command limit for the account is rejected.
+"""
+input UserCommandFilterInput {
+  """
+  Public key of the account. A command is returned when the account is its fee
+  payer, its source or its receiver.
+  """
+  address: String!
+  """
+  Mina block height to search from, inclusive
+  """
+  from: Int!
+  """
+  Mina block height to search to, exclusive
+  """
+  to: Int!
+  status: BlockStatusFilter
 }
 
 """
@@ -146,6 +170,39 @@ type TransactionInfo {
   authorizationKind: String!
   sequenceNumber: Int!
   zkappAccountUpdateIds: [Int!]!
+}
+
+"""
+A payment or a stake delegation that involves an account, with the block that
+carries it. A command that sits in several blocks of the result, such as two
+competing pending blocks, is returned once for each block.
+"""
+type UserCommandOutput {
+  blockInfo: BlockInfo!
+  """
+  Position of the command in its block
+  """
+  sequenceNumber: Int!
+  hash: String!
+  """
+  `payment` or `delegation`
+  """
+  kind: String!
+  feePayer: String!
+  from: String!
+  to: String!
+  """
+  Amount in nanomina. `0` for a delegation.
+  """
+  amount: String!
+  fee: String!
+  memo: String!
+  nonce: Int!
+  """
+  `applied` or `failed`
+  """
+  status: String!
+  failureReason: String
 }
 
 type VerificationKeyUpdate {
@@ -336,6 +393,7 @@ type Query {
     input: VerificationKeyUpdateFilterInput!
   ): [VerificationKeyUpdate!]!
   zkappCommands(input: ZkappCommandFilterOptionsInput!): [ZkappCommandOutput!]!
+  userCommands(input: UserCommandFilterInput!): [UserCommandOutput!]!
   networkState: NetworkStateOutput!
   blocks(
     query: BlockQueryInput

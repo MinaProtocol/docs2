@@ -1,7 +1,7 @@
 ---
 title: Archive Node API schema
 hide_title: true
-description: The complete GraphQL schema (SDL) of the Archive Node API 2.0, with every root query, input and output type, and the URL where agents and tools can fetch it as a file.
+description: The complete GraphQL schema (SDL) of the Archive Node API 2.1, with every root query, input and output type, and the URL where agents and tools can fetch it as a file.
 keywords:
   - archive node
   - GraphQL
@@ -18,14 +18,14 @@ keywords:
 import Subhead from "@site/src/components/common/Subhead";
 
 <Subhead>
-The GraphQL schema definition of the Archive Node API, schema version 2.0.
+The GraphQL schema definition of the Archive Node API, schema version 2.1.
 </Subhead>
 
-This page is the schema that the [Archive Node API](/node-operators/data-and-history/archive-node-api) 2.0.0 serves. The schema definition language (SDL) below is the full contract: every root query under `type Query`, every input type and every output type.
+This page is the schema that the [Archive Node API](/node-operators/data-and-history/archive-node-api) 2.1.1 serves. The schema definition language (SDL) below is the full contract: every root query under `type Query`, every input type and every output type.
 
 ## Fetch the schema as a file
 
-GraphQL has no separate description document like OpenAPI. The schema is the contract, in one of two forms that the GraphQL specification defines: the SDL text, and the JSON that an introspection query returns. Both forms of the 2.0 schema are published here.
+GraphQL has no separate description document like OpenAPI. The schema is the contract, in one of two forms that the GraphQL specification defines: the SDL text, and the JSON that an introspection query returns. Both forms of the 2.1 schema are published here.
 
 | Source | URL | Use it for |
 |---|---|---|
@@ -35,7 +35,7 @@ GraphQL has no separate description document like OpenAPI. The schema is the con
 | Your own instance | `http://localhost:8080` with `ENABLE_INTROSPECTION=true` | The schema that one deployment serves |
 
 ```sh
-# The published 2.0 schema, as SDL and as introspection JSON
+# The published 2.1 schema, as SDL and as introspection JSON
 curl -sO https://docs.minaprotocol.com/archive-node-api/schema.graphql
 curl -sO https://docs.minaprotocol.com/archive-node-api/schema.json
 

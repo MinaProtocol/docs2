@@ -52,7 +52,7 @@ const OPERATOR_FACTS = [
     label: "Archive Node API GraphQL schema",
     url: `${SITE_URL}/archive-node-api/schema.graphql`,
     description:
-      "The complete schema (SDL) of the Archive Node API 2.0 as a plain-text file; the introspection JSON is at /archive-node-api/schema.json. Root queries events, actions, blocks, networkState, verificationKeyUpdates, zkappCommands, schemaVersion. GraphQL endpoint is the root path of a server; introspection is off by default.",
+      "The complete schema (SDL) of the Archive Node API 2.1 as a plain-text file; the introspection JSON is at /archive-node-api/schema.json. Root queries events, actions, blocks, networkState, verificationKeyUpdates, zkappCommands, userCommands, schemaVersion. GraphQL endpoint is the root path of a server; introspection is off by default.",
   },
   {
     label: "Daemon defaults",
