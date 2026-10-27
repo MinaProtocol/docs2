@@ -84,7 +84,7 @@ docker run --rm -p 8080:8080 \
   ghcr.io/o1-labs/archive-node-api:2
 ```
 
-Tags `2`, `2.0` and `2.0.0` follow the major, the minor and one exact release. Use `2` or an exact tag in production, not `latest`.
+Tags `2`, `2.1` and `2.1.1` follow the major, the minor and one exact release. Use `2` or an exact tag in production, not `latest`.
 
 </TabItem>
 <TabItem value="compose" label="Docker Compose">
@@ -113,7 +113,7 @@ curl -s -X POST http://localhost:8080 \
 
 ## The query surface
 
-Seven root fields. The authoritative definition is the [schema reference](/node-operators/data-and-history/archive-node-api-schema), which also gives the schema as a file to download.
+Eight root fields. The authoritative definition is the [schema reference](/node-operators/data-and-history/archive-node-api-schema), which also gives the schema as a file to download.
 
 | Query | Returns |
 |---|---|
@@ -123,6 +123,7 @@ Seven root fields. The authoritative definition is the [schema reference](/node-
 | `networkState` | The archive's maximum canonical and pending block heights |
 | `verificationKeyUpdates(input:)` | Applied account updates that set a given verification key, over a required block range |
 | `zkappCommands(input:)` | zkApp commands and their account updates over a block range, optionally filtered by account and token. Off unless `ENABLE_ZKAPP_COMMANDS_QUERY=true` |
+| `userCommands(input:)` | Payments and delegations of one account over a required block range, whether the account is the fee payer, the source or the receiver. Off unless `ENABLE_USER_COMMANDS_QUERY=true`. Added in schema 2.1 |
 | `schemaVersion` | The `MAJOR.MINOR` version of the schema this server speaks. Always served |
 
 The examples below run against your own instance from [Quick start](#quick-start). The addresses, heights and hashes are real Devnet values, so they return data on a Devnet archive, and the responses shown are what a Devnet archive returned. Block ranges are `from` inclusive and `to` exclusive on every query.
@@ -149,7 +150,7 @@ query {
 ```json
 {
   "data": {
-    "schemaVersion": "2.0",
+    "schemaVersion": "2.1",
     "networkState": {
       "maxBlockHeight": {
         "canonicalMaxBlockHeight": 573702,
@@ -605,6 +606,90 @@ query {
 
 `balanceChange` is a signed string in nanomina. `appState`, `events` and `actions` are the raw field arrays from the archive database. The query is off by default: set `ENABLE_ZKAPP_COMMANDS_QUERY=true` on the server, and expect a `Cannot query field "zkappCommands"` error from a server that has not.
 
+### User commands
+
+The payments and stake delegations of one account in a required block range, added in schema 2.1. A command is returned when the account is its fee payer, its source or its receiver, so this serves a wallet or an explorer that shows an account's transaction history. This Devnet account sent one payment in the range, at block 470040:
+
+```graphql
+query {
+  userCommands(
+    input: {
+      address: "B62qmDKQHMLby5TtqjfwswaT91M5G5JhHTfHFmNUWiTJJC7RUqsBjZL"
+      from: 470000
+      to: 470100
+      status: CANONICAL
+    }
+  ) {
+    blockInfo {
+      height
+      stateHash
+      timestamp
+    }
+    sequenceNumber
+    hash
+    kind
+    feePayer
+    from
+    to
+    amount
+    fee
+    memo
+    nonce
+    status
+    failureReason
+  }
+}
+```
+
+<details>
+<summary>Response</summary>
+
+```json
+{
+  "data": {
+    "userCommands": [
+      {
+        "blockInfo": {
+          "height": 470040,
+          "stateHash": "3NKmQbbB5Xffdjz4A2MR83pVG5fauA8sGpW1uzWkPcUBA2BAWbvt",
+          "timestamp": "1762353180000"
+        },
+        "sequenceNumber": 7,
+        "hash": "5Jus2nkQVSaKeRyXRmP7XcXTo8SrYbKkW257v3wtyDkH3V9U4RYQ",
+        "kind": "payment",
+        "feePayer": "B62qmDKQHMLby5TtqjfwswaT91M5G5JhHTfHFmNUWiTJJC7RUqsBjZL",
+        "from": "B62qmDKQHMLby5TtqjfwswaT91M5G5JhHTfHFmNUWiTJJC7RUqsBjZL",
+        "to": "B62qke1Vor6Wi34KTXjRgkCYg1cYkhAJYYMfX9A2JUJYr373UV6QFpC",
+        "amount": "1000",
+        "fee": "55000000",
+        "memo": "E4YM2vTHhWEg66xpj52JErHUBU4pZ1yageL4TVDDpTTSsv8mK6YaH",
+        "nonce": 125,
+        "status": "applied",
+        "failureReason": null
+      }
+    ]
+  }
+}
+```
+
+</details>
+
+`kind` is `payment` or `delegation`, and `amount` is `0` for a delegation. `sequenceNumber` is the position of the command in its block. `status` is `applied` or `failed`, and `failureReason` is set only for a failed command. A command that sits in several blocks of the result, such as two competing pending blocks, is returned once for each block, so pass `status: CANONICAL` unless you want the pending chain too.
+
+Both bounds are required. The range may span at most `BLOCK_RANGE_SIZE` blocks, and a range that holds more than `USER_COMMAND_LIMIT` commands for the account (5000 by default) is rejected with a message that says so; halve the range and retry.
+
+The query is off by default: set `ENABLE_USER_COMMANDS_QUERY=true` on the server, and expect a `Cannot query field "userCommands"` error from a server that has not.
+
+:::caution
+`userCommands` looks up commands by account through three indexes on the archive's `user_commands` table that Mina's archive schema creates from Mina 5.0.0: `idx_user_commands_fee_payer_id`, `idx_user_commands_source_id` and `idx_user_commands_receiver_id`. Without them the query returns the correct result, but each request reads the whole table. The server logs a warning at startup for each missing index. To add them to a live archive without blocking inserts:
+
+```sql
+CREATE INDEX CONCURRENTLY idx_user_commands_fee_payer_id ON user_commands(fee_payer_id);
+CREATE INDEX CONCURRENTLY idx_user_commands_source_id    ON user_commands(source_id);
+CREATE INDEX CONCURRENTLY idx_user_commands_receiver_id  ON user_commands(receiver_id);
+```
+:::
+
 ### Send a query with variables
 
 Any GraphQL client works. With `curl`, send the query and its variables as JSON to `/`:
@@ -663,6 +748,7 @@ Range limits differ by query, so a client reads a long history one range at a ti
 - `events` and `actions` search at most `BLOCK_RANGE_SIZE` blocks (10000 by default). The server shortens a wider range **without an error**: it keeps `from` and moves `to` to `from + BLOCK_RANGE_SIZE`. With only `to`, it searches the `BLOCK_RANGE_SIZE` blocks below `to`. With neither, it searches the last `BLOCK_RANGE_SIZE` blocks only, so an older event does not appear.
 - `verificationKeyUpdates` rejects a range wider than `BLOCK_RANGE_SIZE`.
 - `zkappCommands` rejects a range wider than `ZKAPP_COMMAND_RANGE_SIZE` (1000 by default).
+- `userCommands` rejects a range wider than `BLOCK_RANGE_SIZE`, and also a range that holds more than `USER_COMMAND_LIMIT` commands (5000 by default) for the account. On the second error, halve the range and retry.
 
 Always send both `from` and `to`, and step `from` by the range size. This TypeScript loop collects every canonical event of an address between two heights:
 
@@ -711,7 +797,7 @@ Without an `archive` endpoint, fetching events or actions raises an error. For t
 
 ## Client SDKs
 
-Typed clients wrap the same endpoint with configurable retries and timeouts. Each has one method for each of `events`, `actions`, `blocks`, `networkState` and `verificationKeyUpdates`; reach `zkappCommands` and `schemaVersion` through the SDK's raw-query method.
+Typed clients wrap the same endpoint with configurable retries and timeouts. Each has one method for each of `events`, `actions`, `blocks`, `networkState`, `verificationKeyUpdates` and, from SDK 2.1.0, `userCommands`; reach `zkappCommands` and `schemaVersion` through the SDK's raw-query method. An SDK reports the schema it was built for through its `SCHEMA_VERSION` constant (`SchemaVersion` in Go); compare it with the server's `schemaVersion` to know which queries the SDK can wrap.
 
 Pass the server's base URL as-is. The Archive Node API serves GraphQL at `/`, and the SDKs do not append a path.
 
@@ -804,6 +890,8 @@ Boolean variables accept `true`/`false`, `1`/`0`, `yes`/`no`, or `on`/`off`, cas
 | `ENABLE_ZKAPP_COMMANDS_QUERY` | `false` | Expose the `zkappCommands` root query |
 | `ZKAPP_COMMAND_RANGE_SIZE` | `1000` | Maximum block span of one `zkappCommands` query |
 | `ZKAPP_COMMAND_ACCOUNT_UPDATE_LIMIT` | `5000` | Maximum account updates one `zkappCommands` query may expand |
+| `ENABLE_USER_COMMANDS_QUERY` | `false` | Expose the `userCommands` root query. Needs the archive's `user_commands` account indexes, see [User commands](#user-commands) |
+| `USER_COMMAND_LIMIT` | `5000` | Maximum user commands one `userCommands` query may return |
 
 ### Database
 
@@ -828,6 +916,7 @@ For redundancy, `PG_CONN` accepts several hosts — `postgres://host1:5432,host2
 | `GRAPHQL_MAX_ALIASES` | `15` | Maximum aliases in one operation |
 | `GRAPHQL_MAX_TOKENS` | `1000` | Maximum lexical tokens in a query document |
 | `GRAPHQL_MAX_COST` | `5000` | Maximum estimated query cost |
+| `MAX_REQUEST_BODY_BYTES` | *(off)* | Maximum request body in bytes. A larger declared `Content-Length` gets `413`, and a `POST` without `Content-Length` gets `411`. Set `262144` (256 KiB) on a public deployment |
 
 :::caution
 `TRUST_PROXY` has no default, and the rate limiter stays **disabled** until you set it. Neither reading is safe to assume: keying on the socket address behind a load balancer collapses every client into one bucket, while trusting `X-Forwarded-For` without a hop count lets any caller mint a fresh bucket per request. A bare GCP external Application Load Balancer is `TRUST_PROXY=2`; add one per additional proxy. Use `TRUST_PROXY=0` only for a directly exposed server.
@@ -852,6 +941,7 @@ Point your orchestrator's liveness probe at `/healthcheck` and its readiness pro
 Two things to keep in mind when you deploy it:
 
 - `/metrics` is unauthenticated. Do not publish it on the same address as the API.
+- The query-cost limits bound a query's shape, not its size. Set `MAX_REQUEST_BODY_BYTES=262144` on a public deployment so that one request cannot make the server parse an arbitrarily large body. It is off by default, because turning it on changes what the server accepts.
 - On `SIGTERM` the server drains in-flight requests before exiting, bounded by `SHUTDOWN_TIMEOUT_MS` (20000 by default). Keep the orchestrator's grace period above that value or it will kill the process mid-drain.
 
 Reference Kubernetes manifests, a production Compose file, and an operations runbook covering SLOs, capacity, and failover are published in the repository under [`deploy/`](https://github.com/o1-labs/Archive-Node-API/tree/main/deploy) and [`docs/`](https://github.com/o1-labs/Archive-Node-API/tree/main/docs).
@@ -860,7 +950,7 @@ Reference Kubernetes manifests, a production Compose file, and an operations run
 
 The GraphQL schema follows semantic versioning. A new root field or a new optional argument is a minor release; removing or renaming anything a client can select is a major one, and never happens silently — a schema check gates every change to the repository.
 
-The server, its schema and the client SDKs share one major version. **The same major means compatible**: a 2.x SDK works against any 2.x server, and a higher server minor only adds what the SDK does not wrap yet. Minor and patch versions move independently.
+The server, its schema and the client SDKs share one major version. **The same major means compatible**: a 2.x SDK works against any 2.x server, and a higher server minor only adds what the SDK does not wrap yet. Minor and patch versions move independently. Schema 2.1, served from Archive Node API 2.1.0, added the `userCommands` query and nothing else; a 2.0 client keeps working against it.
 
 A client can ask the server which schema it speaks:
 
@@ -870,6 +960,6 @@ query {
 }
 ```
 
-`schemaVersion` reports the contract, not the queries a given deployment exposes. `ENABLED_QUERIES` and `ENABLE_ZKAPP_COMMANDS_QUERY` can still switch data queries off, so detect a missing query from the `Cannot query field` error.
+`schemaVersion` reports the contract, not the queries a given deployment exposes. `ENABLED_QUERIES`, `ENABLE_ZKAPP_COMMANDS_QUERY` and `ENABLE_USER_COMMANDS_QUERY` can still switch data queries off, so detect a missing query from the `Cannot query field` error.
 
-The full policy, including what counts as a breaking change, is in the repository's [versioning guide](https://github.com/o1-labs/Archive-Node-API/blob/main/docs/versioning.md). The 2.0 schema is on the [schema reference](/node-operators/data-and-history/archive-node-api-schema) page and at `https://docs.minaprotocol.com/archive-node-api/schema.graphql` as a file.
+The full policy, including what counts as a breaking change, is in the repository's [versioning guide](https://github.com/o1-labs/Archive-Node-API/blob/main/docs/versioning.md). The 2.1 schema is on the [schema reference](/node-operators/data-and-history/archive-node-api-schema) page and at `https://docs.minaprotocol.com/archive-node-api/schema.graphql` as a file.

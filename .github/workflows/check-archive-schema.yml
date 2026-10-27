@@ -20,8 +20,8 @@ on:
 
 env:
   # The upstream revision the docs copy follows. Move it to the release tag
-  # (for example v2.0.0) once the release is tagged.
-  ARCHIVE_NODE_API_REF: main
+  # (for example v2.1.1) with each schema release.
+  ARCHIVE_NODE_API_REF: v2.1.1
 
 jobs:
   check-archive-schema:
