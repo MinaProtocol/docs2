@@ -244,10 +244,10 @@ She checks her explorer UI to confirm new Mesa blocks are appearing and the hist
 **Weeks before the fork** — Frank updates his o1js dependency to the Mesa-compatible version and tests his zkApp on the [Mesa Trail test network](/network-upgrades/mesa/mesa-trail):
 
 ```bash
-npm install o1js@3.0.0-mesa.rc2
+npm install o1js@^3.1.0
 ```
 
-This release targets the Mesa transaction protocol. `o1js@latest` currently resolves to a pre-Mesa version and will produce transactions that Mesa nodes reject. See [Mesa Trail Network](/network-upgrades/mesa/mesa-trail) for the matching daemon/archive/rosetta release.
+o1js 3 targets the Mesa transaction protocol; earlier versions produce transactions that Mesa nodes reject. See [Mesa Trail Network](/network-upgrades/mesa/mesa-trail) for the matching daemon/archive/rosetta release.
 
 He verifies that:
 - His contract recompiles cleanly against Mesa-compatible o1js and deploys on Mesa Trail
@@ -258,16 +258,23 @@ He verifies that:
 
 **Hours before the fork (State Finalization)** — Frank does **nothing**. His deployed zkApp keeps running on the Berkeley chain. No transactions can be submitted during this phase anyway.
 
-**Fork day (Upgrade)** — Frank does **nothing during the network halt**. His zkApp account and on-chain state values carry over to the Mesa chain automatically (including state fields at indexes `0–7`). However, the verification key generated for Berkeley is no longer valid under the Mesa protocol — the contract cannot process transactions on Mesa until it is redeployed.
+**Fork day (Upgrade)** — Frank does **nothing during the network halt**. His zkApp account and on-chain state values carry over to the Mesa chain automatically (including state fields at indexes `0–7`). However, the verification key generated for Berkeley is no longer valid under the Mesa protocol — the contract cannot process transactions on Mesa until its verification key is updated.
 
-**After the fork (Post-Upgrade)** — Block production resumes on Mesa. Frank **must redeploy his zkApp** before it can accept transactions, regardless of whether he uses the new state fields:
+**After the fork (Post-Upgrade)** — Block production resumes on Mesa. Frank **must update his zkApp's verification key** before it can accept transactions, regardless of whether he uses the new state fields. He compiles the contract with o1js 3 and sends a transaction, signed with the zkApp key, that sets the new verification key:
 
-```bash
-# Required for every zkApp — the Mesa protocol version bump invalidates the Berkeley verification key
-zkapp deploy --network mainnet
+```ts
+// Required for every zkApp — the Mesa protocol version bump invalidates the Berkeley verification key
+Mina.setActiveInstance(Mina.Network({ networkId: 'mainnet', mina: graphqlUrl }));
+const { verificationKey } = await MyContract.compile();
+
+const tx = await Mina.transaction({ sender, fee }, async () => {
+  const update = AccountUpdate.createSigned(zkAppAddress);
+  update.account.verificationKey.set(verificationKey);
+});
+await tx.sign([senderKey, zkAppKey]).send();
 ```
 
-If he is also adopting the expanded `8–31` state slots, this same deployment step ships the updated contract version that declares the new fields.
+If he is also adopting the expanded `8–31` state slots, he compiles the updated contract version that declares the new fields, and this same transaction sets its verification key. For how each permission setting behaves during this update, see [Upgrading zkApps to Mesa](https://docs.o1labs.org/o1js/zkapps/upgrade-mesa) in the o1js documentation.
 
 > For post-upgrade details, see [Post-Upgrade](/network-upgrades/mesa/upgrade-steps/post-upgrade).
 

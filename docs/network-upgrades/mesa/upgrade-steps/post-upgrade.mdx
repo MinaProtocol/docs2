@@ -23,14 +23,14 @@ This page helps you **verify your node is healthy** and running on the Mesa chai
 
 ## Per-actor summary
 
-| Actor                      | During this phase                                                                                                                                                                                   |
-| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Block Producers**        | Verify your node is on the Mesa chain (`mina client status`). If using automode, check the `activated` file. Monitor block production.                                                              |
-| **SNARK Workers**          | Reconnect workers to the upgraded coordinator. Standalone workers must already be on the Mesa binary. Verify SNARK work is being produced.                                                          |
-| **Archive Node Operators** | Verify the archive database is in sync. Run [validation checks](#in-depth-validation). Fix any missing blocks.                                                                                      |
-| **Rosetta Operators**      | Complete the archive node checks first, then verify Rosetta is responding. Run `rosetta-cli` validation.                                                                                            |
-| **Exchanges**              | **Re-enable MINA deposits and withdrawals** once block production is confirmed and your systems are verified end to end.                                                                            |
-| **zkApp Developers**       | **Redeploy every zkApp** on Mesa — the protocol version bump invalidates Berkeley verification keys. Verify your contracts against o1js v3 / protocol v5. Use the expanded 32-field on-chain state. |
+| Actor                      | During this phase                                                                                                                                                                                                         |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Block Producers**        | Verify your node is on the Mesa chain (`mina client status`). If using automode, check the `activated` file. Monitor block production.                                                                                    |
+| **SNARK Workers**          | Reconnect workers to the upgraded coordinator. Standalone workers must already be on the Mesa binary. Verify SNARK work is being produced.                                                                                |
+| **Archive Node Operators** | Verify the archive database is in sync. Run [validation checks](#in-depth-validation). Fix any missing blocks.                                                                                                            |
+| **Rosetta Operators**      | Complete the archive node checks first, then verify Rosetta is responding. Run `rosetta-cli` validation.                                                                                                                  |
+| **Exchanges**              | **Re-enable MINA deposits and withdrawals** once block production is confirmed and your systems are verified end to end.                                                                                                  |
+| **zkApp Developers**       | **Update the verification key of every zkApp** on Mesa — the protocol version bump invalidates Berkeley verification keys. Verify your contracts against o1js v3 / protocol v5. Use the expanded 32-field on-chain state. |
 
 The checks are split into separate tabs for **Rosetta API** and **Exchange** because the two roles overlap but are not the same. _Rosetta API_ here means an operator running the `mina-rosetta` integration layer (typically alongside an archive node). _Exchange_ means an operator running the customer-facing platform that ingests Mina balances and submits payments. Most exchanges use Rosetta, so they will work through both tabs; a handful operate without Rosetta (custom GraphQL integrations) and can skip the Rosetta tab.
 

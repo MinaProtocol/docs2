@@ -89,7 +89,7 @@ Before the fork, each actor type must complete specific preparations. Complete t
 
 ### zkApp Developers
 
-- Update to the Mesa-compatible o1js version (`o1js@3.0.0-mesa.rc2` for the Mesa Trail chain).
+- Update to o1js 3.1.0 or later (`npm install o1js@^3.1.0`). o1js 3 targets the Mesa transaction protocol; earlier versions produce transactions that Mesa nodes reject.
 - Recompile your contracts and verify them on the [Mesa Trail test network](/network-upgrades/mesa/mesa-trail).
-- Plan to redeploy every zkApp on Mesa — each must be redeployed because the protocol version bump changes the verification key.
-  Your zkApp account and its on-chain state carry over to Mesa automatically, including the state fields at indexes `0-7`. The redeploy replaces the verification key; it does not reset your state. {/* TODO(PR #1133): Link to the official o1js Mesa upgrade guide once published (cjjdespres #3220525842). */}
+- Plan to update the verification key of every zkApp on Mesa — the protocol version bump changes it. Send a transaction, signed with the zkApp key, that sets the verification key compiled with o1js 3. Until the verification key is updated, the protocol accepts a signature for this change even if the account's `setVerificationKey` permission required a proof or was impossible. See [Upgrading zkApps to Mesa](https://docs.o1labs.org/o1js/zkapps/upgrade-mesa) in the o1js documentation.
+  Your zkApp account and its on-chain state carry over to Mesa automatically, including the state fields at indexes `0-7`. The update replaces the verification key; it does not reset your state.
