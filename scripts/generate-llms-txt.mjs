@@ -19,6 +19,12 @@ const { mdxToMarkdown } = mdxToMarkdownModule;
 const DOCS_DIR = new URL('../docs', import.meta.url).pathname;
 const OUTPUT_FILE = new URL('../static/llms-full.txt', import.meta.url).pathname;
 
+// Directories (relative to docs/) left out of llms-full.txt. The generated
+// daemon GraphQL reference is one page per schema type; the schema itself,
+// served at /graphql-api/schema.graphql, is the better artifact for an agent
+// and the orientation page (node-developers/graphql-api) points to it.
+const EXCLUDED_DIRS = ['node-developers/graphql-api/reference'];
+
 async function collectFiles(dir) {
   const entries = await readdir(dir, { withFileTypes: true });
   const files = [];
@@ -26,6 +32,7 @@ async function collectFiles(dir) {
   for (const entry of entries) {
     const fullPath = join(dir, entry.name);
     if (entry.isDirectory()) {
+      if (EXCLUDED_DIRS.includes(relative(DOCS_DIR, fullPath))) continue;
       files.push(...await collectFiles(fullPath));
     } else if (entry.name.endsWith('.md') || entry.name.endsWith('.mdx')) {
       files.push(fullPath);

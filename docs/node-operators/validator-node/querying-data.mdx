@@ -16,33 +16,33 @@ keywords:
 
 # Interacting with the Node via GraphQL API
 
-The Mina daemon exposes a [GraphQL API](/node-developers/graphql-api) that you can use to query recent blockchain data and submit signed transactions.
+The Mina daemon exposes a [GraphQL API](/node-developers/graphql-api) that you can use to query recent blockchain data and submit signed transactions. That page is the contract: the schema of the current release, the ports and flags, the limited read-only port, and the WebSocket requirement for subscriptions. This page is the worked examples.
 
 ## Setup
 
-Once your node is [connected to the network](./connecting-to-the-network), the GraphQL server is available at `localhost:3085` by default.
+Once your node is [connected to the network](./connecting-to-the-network), the GraphQL server is available at `http://localhost:3085/graphql` by default, and the same URL opens the GraphiQL IDE in a browser.
 
 To use a different port:
 
 ```sh
-mina daemon ... -rest-server-port <PORT>
+mina daemon ... --rest-port <PORT>
 ```
 
 To make the server accessible from outside `localhost`:
 
 ```sh
-mina daemon ... -insecure-rest-server
+mina daemon ... --insecure-rest-server
 ```
 
 :::caution
-If you expose the GraphQL server externally, ensure your firewall is configured properly. See [GraphQL API](/node-developers/graphql-api) for details.
+The full API includes mutations that spend from the accounts the daemon has unlocked and reconfigure the node. If you expose it beyond `localhost`, put a firewall or an authenticating proxy in front of the port, or serve the read-only [limited port](/node-developers/graphql-api#the-limited-port) instead.
 :::
 
-If you want to archive historical data beyond what the node keeps in memory, see [Archive Node](/node-operators/archive-node/getting-started).
+If you want historical data beyond the last `k` blocks (290) that the node keeps in memory, use an [archive node](/node-operators/archive-node/getting-started) through the [Archive Node API](/node-operators/data-and-history/archive-node-api).
 
 ## Querying data
 
-The examples below query _recent_ chain data -- approximately the last 290 blocks (~10 hours of activity). To explore all available fields, open the GraphQL sandbox at `http://localhost:3085/graphql` in your browser.
+The examples below query _recent_ chain data: the last 290 blocks, about 10 hours of activity on Mainnet. Every field each query can return is in the [schema reference](/node-developers/graphql-api/reference/operations/queries), and the GraphiQL IDE at `http://localhost:3085/graphql` completes them as you type.
 
 ### Block data
 

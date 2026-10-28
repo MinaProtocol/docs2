@@ -25,6 +25,36 @@ module.exports = {
 
   plugins: [
     'docusaurus-plugin-sass',
+    // Generates the daemon GraphQL API reference under
+    // docs/node-developers/graphql-api/reference from the pinned schema copy in
+    // static/graphql-api. Run `npm run generate-graphql-reference`; the output
+    // is committed. See .github/workflows/check-daemon-schema.yml.
+    [
+      '@graphql-markdown/docusaurus',
+      /** @type {import('@graphql-markdown/types').ConfigOptions} */
+      {
+        schema: './static/graphql-api/schema.graphql',
+        rootPath: './docs',
+        baseURL: 'node-developers/graphql-api/reference',
+        linkRoot: '/',
+        homepage: false,
+        loaders: {
+          GraphQLFileLoader: '@graphql-tools/graphql-file-loader',
+        },
+        diffMethod: 'FORCE',
+        printTypeOptions: {
+          deprecated: 'group',
+          hierarchy: 'api',
+        },
+        docOptions: {
+          index: true,
+        },
+        // Writes heading ids in the form this Docusaurus version understands;
+        // see the header of the module.
+        formatter: require.resolve('./scripts/graphql-markdown-formatter.cjs'),
+        telemetry: false,
+      },
+    ],
     // Writes build/<route>.md, a markdown twin of every doc page, for agents.
     // See plugins/markdown-twins.cjs.
     require.resolve('./plugins/markdown-twins.cjs'),

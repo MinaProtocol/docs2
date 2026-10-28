@@ -1,127 +1,168 @@
 ---
-title: "GraphQL API"
+title: GraphQL API
 hide_title: true
+description: The Mina daemon GraphQL API — the contract a running node serves on port 3085 for querying recent chain state and submitting transactions, with the schema of the current release published as SDL and introspection JSON, a generated reference, and the limits and flags that govern access.
+keywords:
+  - GraphQL
+  - API
+  - daemon
+  - node
+  - schema
+  - SDL
+  - introspection
+  - subscriptions
+  - rest-port
+  - limited-graphql-port
 ---
 
 # GraphQL API
 
+import Subhead from "@site/src/components/common/Subhead";
+
+<Subhead>
+The interface a running Mina node serves: query the recent chain and the node itself, and submit signed transactions.
+</Subhead>
+
+Every Mina daemon serves a [GraphQL](https://graphql.org/) API. Wallets, the [Mina SDKs](/integrations), [o1js](/zkapps/o1js) and the `mina client` command all talk to a node through it. The API is defined by a schema that the daemon generates from its own source code, so the schema and the daemon cannot disagree.
+
+This page is the contract: which schema the current release serves, where to get it as a file, how to reach a node, and what the daemon does and does not expose. The [schema reference](/node-developers/graphql-api/reference/operations) lists every operation and type. [Querying data](/node-operators/validator-node/querying-data) has worked examples.
+
+## Schema version
+
+| | |
+|---|---|
+| Daemon release | **mina 4.0.3** (Mesa). Releases 4.0.2 and 4.0.3 serve an identical schema |
+| Root fields | 41 queries, 29 mutations, 3 subscriptions, 210 types |
+| Source of truth | [`graphql_schema.json`](https://github.com/MinaProtocol/mina/blob/4.0.3/graphql_schema.json) at the release tag in the `MinaProtocol/mina` repository |
+
+The daemon is code-first: the OCaml source defines the schema, `make update-graphql` dumps it, and a CI job in the mina repository fails any change that leaves the dump stale. The copy on this site is pinned to the release tag above and a weekly check compares the two, so the reference here describes the schema the released daemon serves, not a development branch.
+
+Changes to the schema arrive with daemon releases. A field that is going away is first marked `@deprecated` with a reason that names its replacement, and it keeps working while it carries that mark. The [deprecated section](/node-developers/graphql-api/reference/deprecated) of the reference lists the current ones: the `wallet` and `ownedWallets` queries and the `addWallet`, `unlockWallet`, `lockWallet`, `deleteWallet` and `reloadWallets` mutations, all replaced by their `account` equivalents. Ask the running node for its own version with the `version` query, which returns the git commit it was built from.
+
+## Fetch the schema as a file
+
+GraphQL has no separate description document like OpenAPI. The schema is the contract, in the two forms the GraphQL specification defines: SDL text and the JSON that an introspection query returns. Both are published here.
+
+| Source | URL | Use it for |
+|---|---|---|
+| SDL on this site | `https://docs.minaprotocol.com/graphql-api/schema.graphql` | Code generation, AI agents, IDE plugins and documentation tools. Plain text, no authentication |
+| Introspection JSON on this site | `https://docs.minaprotocol.com/graphql-api/schema.json` | Tools that read a `schema.json` (`{ "__schema": ... }`) instead of SDL |
+| The repository | `https://github.com/MinaProtocol/mina/blob/4.0.3/graphql_schema.json` | The dump the daemon build produced, with its history. Wrapped in `{ "data": ... }` |
+| Your own node | `http://localhost:3085/graphql` | The schema that one daemon serves. Introspection is always on |
+
+```sh
+# The published schema of the current release, as SDL and as introspection JSON
+curl -sO https://docs.minaprotocol.com/graphql-api/schema.graphql
+curl -sO https://docs.minaprotocol.com/graphql-api/schema.json
+
+# The schema of your own node, through introspection
+npx get-graphql-schema http://localhost:3085/graphql > schema.graphql
+```
+
+To generate TypeScript types for your queries with [GraphQL Code Generator](https://the-guild.dev/graphql/codegen), point it at the published URL:
+
+```ts title="codegen.ts"
+import type { CodegenConfig } from '@graphql-codegen/cli';
+
+const config: CodegenConfig = {
+  schema: 'https://docs.minaprotocol.com/graphql-api/schema.graphql',
+  documents: ['src/**/*.graphql'],
+  generates: {
+    'src/generated/mina.ts': {
+      plugins: ['typescript', 'typescript-operations'],
+    },
+  },
+};
+
+export default config;
+```
+
+## Reach a node
+
+A daemon serves the API over HTTP on the port that `--rest-port` sets. The default is `3085`, bound to `localhost` only.
+
+| Request | What the daemon does |
+|---|---|
+| `POST /graphql` with a JSON body `{"query": "...", "variables": {...}}` | Executes a query or a mutation |
+| `GET /graphql` from a browser (`Accept: text/html`) | Serves the built-in [GraphiQL](https://github.com/graphql/graphiql) IDE |
+| `GET /graphql` with a WebSocket upgrade | Opens a subscription connection (see [Subscriptions](#subscriptions)) |
+
+```sh
+curl -s -X POST http://localhost:3085/graphql \
+  -H 'Content-Type: application/json' \
+  --data '{"query":"{ version networkID daemonStatus { syncStatus blockchainLength } }"}'
+```
+
+Two flags change who can reach the node:
+
+| Flag | Effect |
+|---|---|
+| `--rest-port PORT` | Serve the API on another port. Default `3085` |
+| `--insecure-rest-server` | Listen on all addresses instead of `localhost` only |
+
 :::caution
-
-- Mina APIs are still under construction, so these endpoints may change.
-- By default, the GraphQL port is bound to localhost. Exposing the GraphQL API to the internet allows anyone to send Mina from the accounts known to the daemon.
-
+The full API includes mutations that spend from the accounts the daemon has unlocked, stop and reconfigure the node, and change its peers. Exposing it beyond `localhost` lets anyone who can reach the port do those things. Put a firewall or an authenticating proxy in front of the port, or use the limited port below.
 :::
 
-The Mina daemon exposes a [GraphQL API](https://graphql.org/) used to request information from and submit commands to a running node. 
+### The limited port
 
-To use the GraphQL API, connect your GraphQL client to `http://localhost:3085/graphql` or open in your browser to use the [GraphiQL IDE](https://github.com/graphql/graphiql). 
+For a node that has to answer questions from the Internet, the daemon can serve a second, read-only endpoint:
 
-- By default, an HTTP server runs on port `3085`. You can configure a different port, use the `-rest-port` flag with the daemon startup command.
+```sh
+mina daemon ... --limited-graphql-port 3086 --open-limited-graphql-port
+```
 
-- The default security permits only connections from `localhost`. To listen on all interfaces, add the `-insecure-rest-server` flag to the daemon startup command.
+The limited endpoint serves exactly three queries and nothing else: `daemonStatus`, `block` and `version`. No mutations, no subscriptions, no account or pool queries. `--open-limited-graphql-port` makes it listen on all addresses; without that flag it is also bound to `localhost`.
 
-In addition to information about the running node, the GraphQL API can return data about the network's latest blocks. However, as the blockchain's historical state is not persisted in Mina, only blocks in the node's transition frontier are returned, i.e., the last `k` blocks. For other historical data, use the [Archive Node](/node-operators/archive-node/getting-started) that is designed to retain and retrieve historical data.
+### Public endpoints
 
-The full Mina GraphQL schema is available [https://github.com/MinaProtocol/mina/blob/develop/graphql_schema.json](https://github.com/MinaProtocol/mina/blob/develop/graphql_schema.json).
+o1Labs operates nodes whose full API is open. They are for development and testing, with no uptime guarantee, and they accept signed transactions, which is how the [zkApp tutorials](/zkapps/tutorials/deploying-to-a-network) deploy.
+
+| Network | Endpoint |
+|---|---|
+| Devnet | `https://devnet-plain-1.gcp.o1test.net/graphql` |
+| Mainnet | `https://mainnet-plain-1.gcp.o1test.net/graphql` |
+
+For production, run your own node, or use a provider's endpoint.
+
+## What the daemon exposes
+
+The daemon keeps only the blocks in its transition frontier, the last `k` blocks (290). `bestChain`, `block` and the transaction queries answer from that window. For anything older, use an [archive node](/node-operators/archive-node) through the [Archive Node API](/node-operators/data-and-history/archive-node-api). The [Integrations](/integrations) page compares the data paths.
 
 ### Queries
 
-The Mina GraphQL API has a number of [queries](/node-operators/validator-node/querying-data) to extract data from a running node. [GraphQL queries](https://graphql.org/learn/queries/) allow specifying the data to be returned in the response. For example, to get the latest block and creator information known to the daemon:
+Queries read the node and the recent chain. The ones most integrations use:
 
-```
-query {
-  bestChain(maxLength: 1) {
-    creator
-    stateHash
-    protocolState {
-      consensusState {
-        blockHeight
-      }
-      previousStateHash
-    }
-    transactions {
-      coinbase
-    }
-  }
-}
-```
+| Query | Returns |
+|---|---|
+| `daemonStatus` | Sync status, chain id, block height, peers, uptime and the node's configuration |
+| `syncStatus` | The sync status alone, the cheapest health check |
+| `account(publicKey:, token:)` | Balance, nonce, delegate, permissions and zkApp state of one account, at the best tip |
+| `bestChain(maxLength:)` | The most recent blocks on the best chain, newest last, with their transactions |
+| `block(stateHash:)` / `block(height:)` | One block in the frontier |
+| `pooledUserCommands`, `pooledZkappCommands` | The transaction pool, for fee estimation and for finding a transaction that is not yet in a block |
+| `transactionStatus(payment:)` / `transactionStatus(zkappTransaction:)` | Whether a transaction is `PENDING`, `INCLUDED` or `UNKNOWN` |
+| `genesisConstants`, `networkID`, `version` | What the node is and what it was built from |
 
-The following query requests all pending transactions in the transaction pool together with their fees. This query can be used to generate an estimate of a suggested fee for a transaction:
-
-```
-query {
-  pooledUserCommands {
-    id,
-    fee
-  }
-}
-```
-
-:::tip
-
-The memo field returned for a transaction is [Base58Check encoded](https://en.bitcoin.it/wiki/Base58Check_encoding).
-
-:::
-
-```
-query {
-  account(publicKey: "<B62...>") {
-    balance {
-      total
-    }
-    delegate
-    nonce
-  }
-}
-```
-
-You can submit GraphQL requests from the command line of a node. For example, to use cURL to get the last ten block creators known to the node:
-
-```
-curl -d '{"query": "{
-  bestChain(maxLength: 10) {
-    creator
-  }
-}"}' -H 'Content-Type: application/json' http://localhost:3085/graphql
-```
+Every query, with its arguments and the types it returns, is in the [queries reference](/node-developers/graphql-api/reference/operations/queries).
 
 ### Mutations
 
-GraphQL mutations modify the running node in some way. For example, mutations may be used to send a payment, create a new account, or to add additional peers.
-
-Consult the GraphQL schema for all available mutations.
-
-Adding a new peer:
-
-```
-mutation {
-   addPeers(peers:{
-      libp2p_port:10511,
-      host:"34.73.68.198",
-      peer_id:"12D3KooWSJB2gZWi3ruVmtTF9JBCEBpCrJfuWCWzzRr8mMQWFQ9U"
-   })
-}
-```
-
-Update a SNARK worker to use a fee of 0.1 MINA:
-
-```
-mutation {
-  setSnarkWorkFee(input: {fee: "100000000"})
-}
-```
+Mutations change the node or submit transactions. `sendPayment`, `sendDelegation` and `sendZkapp` take a transaction that was signed elsewhere, with [mina-signer](/node-operators/mina-signer) or o1js, so a node that only relays transactions never holds a key. The other mutations manage accounts the daemon stores, set the SNARK worker and its fee, set the coinbase receiver, add peers and manage logs. All of them are in the [mutations reference](/node-developers/graphql-api/reference/operations/mutations).
 
 ### Subscriptions
 
-A GraphQL subscription allows a GraphQL client to have data pushed to it when an event occurs. In Mina, there are subscriptions for:
+Three subscriptions push events to a client:
 
-- _newSyncUpdate_ - occurs when the sync status of the node changes.
-- _newBlock_ - occurs when a new block is received.
-- chainReorganisation - occurs when the best tip of the node changes in a non-trivial way.
+| Subscription | Fires when |
+|---|---|
+| `newBlock(publicKey:)` | The node adds a block to its frontier, optionally only blocks a given producer made |
+| `newSyncUpdate` | The sync status changes |
+| `chainReorganization` | The best tip moves to a block that is not a child of the previous one |
 
-For example, to subscribe to all new blocks produced:
+Subscriptions run only over WebSocket. A subscription sent as an HTTP `POST` is rejected with `Subscriptions are only supported via websocket transport`. The daemon speaks the [subscriptions-transport-ws](https://github.com/apollographql/subscriptions-transport-ws) protocol (subprotocol name `graphql-ws`), the one the bundled GraphiQL uses. Clients that implement only the newer `graphql-transport-ws` protocol of the [graphql-ws](https://github.com/enisdenjo/graphql-ws) library do not connect; most of them can be configured to fall back to the older protocol.
 
-```
+```graphql
 subscription {
   newBlock {
     creator
@@ -130,21 +171,23 @@ subscription {
       consensusState {
         blockHeight
       }
-      previousStateHash
     }
   }
 }
 ```
 
-The new block subscription can also be limited to return only new blocks created by a defined public key with the `publicKey` argument.
+## Encodings
 
-### GraphQL API and public Internet
+A few conventions apply across the schema. Scalars are documented individually in the [scalars reference](/node-developers/graphql-api/reference/types/scalars).
 
-Exposing the GraphQL endpoint with full API support to the public Internet **is not** recommended.  
-However, you can start the Mina Daemon node with the `--open-limited-graphql-port` and `--limited-graphql-port <port-number>` CLI arguments to expose the GraphQL endpoint with limited API support.
+- Amounts and fees (`Amount`, `Fee`) are strings of nanomina: `"1000000000"` is 1 MINA. An account's `balance` is an object whose `total`, `liquid` and `locked` fields are `Balance` strings in the same unit.
+- Public keys are Base58Check strings beginning with `B62`. Transaction hashes, state hashes and ledger hashes are Base58Check strings too.
+- `memo` on a transaction is Base58Check encoded, not plain text.
+- Block heights (`Length`), slots (`Globalslot`, `Slot`) and epochs (`Epoch`) are strings. A transaction's `nonce` is an `Int`.
 
-### Resources
+## Tools
 
-- [5-minute introduction video on Mina GraphQL API](http://bit.ly/GraphQLAPIin5) Coda
-- [First steps with the Mina GraphQL API](https://garethtdavies.com/crypto/first-steps-with-coda-graphql-api.html)
-- [Introduction to GraphQL](https://graphql.org/learn/)
+- The `mina client` subcommands that take `--rest-server` talk to the node through this API; see the [CLI reference](/node-operators/reference/mina-cli-reference).
+- The [Mina SDKs](/integrations) for Rust, Go and Python wrap the queries and mutations above.
+- [Health checks](/node-operators/reference/health-checks) shows which queries a load balancer or an alert should poll.
+- [Introduction to GraphQL](https://graphql.org/learn/) explains queries, variables and fragments.

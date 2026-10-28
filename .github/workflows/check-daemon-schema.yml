@@ -1,0 +1,104 @@
+name: Check the daemon GraphQL schema copy
+
+# static/graphql-api/schema.json is a copy of graphql_schema.json from the
+# MinaProtocol/mina repository at the release tag MINA_REF, in the
+# `{ "__schema": ... }` form that GraphQL tools read. schema.graphql and the
+# reference pages under docs/node-developers/graphql-api/reference are
+# generated from it. This job fails when the copy no longer matches the tag,
+# or when the derived files are stale.
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'static/graphql-api/**'
+      - 'docs/node-developers/graphql-api/reference/**'
+      - 'scripts/generate-daemon-schema-sdl.mjs'
+      - 'scripts/generate-graphql-reference.mjs'
+      - 'docusaurus.config.js'
+      - '.github/workflows/check-daemon-schema.yml'
+  schedule:
+    # Mondays 06:00 UTC, so a daemon release that changes the schema is
+    # noticed within a week.
+    - cron: '0 6 * * 1'
+  workflow_dispatch: {}
+
+env:
+  # The mina release tag the docs copy follows. Move it when a new release
+  # reaches mainnet, then run `npm run generate-graphql-reference` and
+  # commit the result. docs/node-developers/graphql-api.mdx names the same
+  # version in prose; update it in the same change.
+  MINA_REF: 4.0.3
+
+jobs:
+  check-daemon-schema:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Fetch the schema at the pinned mina release
+        run: |
+          curl -fsSL \
+            "https://raw.githubusercontent.com/MinaProtocol/mina/${MINA_REF}/graphql_schema.json" \
+            -o /tmp/upstream.json
+
+      - name: Compare the JSON copy with the pinned release
+        run: |
+          # The daemon dumps `{ "data": { "__schema": ... } }`; the docs copy
+          # keeps only the `__schema` object, so both are compared normalized.
+          node -e '
+            const fs = require("fs");
+            const norm = (p) => { const d = JSON.parse(fs.readFileSync(p, "utf8")); return JSON.stringify(d.data ?? d, null, 2); };
+            fs.writeFileSync("/tmp/upstream.norm.json", norm("/tmp/upstream.json"));
+            fs.writeFileSync("/tmp/local.norm.json", norm("static/graphql-api/schema.json"));
+          '
+          if ! diff -u /tmp/upstream.norm.json /tmp/local.norm.json > /tmp/schema.diff; then
+            head -80 /tmp/schema.diff
+            echo ""
+            echo "❌ static/graphql-api/schema.json differs from MinaProtocol/mina@${MINA_REF}."
+            echo "Copy graphql_schema.json from that tag (its \"data\" object) into static/graphql-api/schema.json,"
+            echo "then run 'npm run generate-graphql-reference' and commit the result."
+            exit 1
+          fi
+
+      - name: Regenerate the SDL and the reference pages
+        run: npm run generate-graphql-reference
+
+      - name: Check the generated files for differences
+        run: |
+          if ! git diff --exit-code --stat static/graphql-api/schema.graphql docs/node-developers/graphql-api/reference; then
+            echo ""
+            echo "❌ The generated daemon GraphQL files are out of date."
+            echo "Run 'npm run generate-graphql-reference' and commit the result."
+            exit 1
+          fi
+          if [ -n "$(git status --porcelain docs/node-developers/graphql-api/reference)" ]; then
+            git status --porcelain docs/node-developers/graphql-api/reference
+            echo ""
+            echo "❌ The generator produced pages that are not committed. Commit them."
+            exit 1
+          fi
+
+      - name: Report a newer mina release
+        # Informational: the latest release tag may be ahead of MINA_REF.
+        # The schema of a newer release may be identical; the diff above is
+        # what decides whether the docs are stale.
+        run: |
+          LATEST=$(curl -fsSL -H 'Accept: application/vnd.github+json' \
+            "https://api.github.com/repos/MinaProtocol/mina/releases/latest" | node -pe 'JSON.parse(require("fs").readFileSync(0,"utf8")).tag_name')
+          echo "Pinned: ${MINA_REF}; latest GitHub release: ${LATEST}"
+          if [ "$LATEST" != "$MINA_REF" ]; then
+            echo "::notice::MinaProtocol/mina latest release is ${LATEST}; the docs schema copy is pinned to ${MINA_REF}. Compare the two schemas and move MINA_REF if they differ."
+          fi
