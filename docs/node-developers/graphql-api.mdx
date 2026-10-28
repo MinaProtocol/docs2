@@ -351,25 +351,31 @@ Three subscriptions push events to a client:
 | `newSyncUpdate` | The sync status changes |
 | `chainReorganization` | The best tip moves to a block that is not a child of the previous one |
 
-Subscriptions run only over WebSocket. A subscription sent as an HTTP `POST` is rejected with `Subscriptions are only supported via websocket transport`. The daemon speaks the [subscriptions-transport-ws](https://github.com/apollographql/subscriptions-transport-ws) protocol (subprotocol name `graphql-ws`), the one the bundled GraphiQL uses. Clients that implement only the newer `graphql-transport-ws` protocol of the [graphql-ws](https://github.com/enisdenjo/graphql-ws) library do not connect; most of them can be configured to fall back to the older protocol. The daemon understands the `connection_init`, `start`, `stop` and `connection_terminate` messages and answers with `connection_ack`, `data`, `error` and `complete`. It sends no keep-alive messages, so a client that expects `ka` frames must not time out on their absence.
+Subscriptions run only over WebSocket. A `newBlock` subscription on a synced Mainnet node delivers a `data` message within a second of the node accepting the block; the example client below received block 566941 that way. A subscription sent as an HTTP `POST` is rejected with `Subscriptions are only supported via websocket transport`. The daemon speaks the [subscriptions-transport-ws](https://github.com/apollographql/subscriptions-transport-ws) protocol (subprotocol name `graphql-ws`), the one the bundled GraphiQL uses. Clients that implement only the newer `graphql-transport-ws` protocol of the [graphql-ws](https://github.com/enisdenjo/graphql-ws) library do not connect; most of them can be configured to fall back to the older protocol. The daemon understands the `connection_init`, `start`, `stop` and `connection_terminate` messages and answers with `connection_ack`, `data`, `error` and `complete`. It sends no keep-alive messages, so a client that expects `ka` frames must not time out on their absence.
 
 Two details of the daemon's WebSocket handling trip up common clients:
 
 - **Header values are matched case-sensitively.** The upgrade request must carry exactly `Connection: Upgrade` and `Upgrade: websocket`. A request with `Connection: upgrade` or `Upgrade: WebSocket` is treated as a plain HTTP request and gets the `400` above. Browsers, the Node `ws` package and the Python `websockets` package send the exact values. The `WebSocket` class built into Node.js 22 sends lowercase values and cannot connect.
 - **The daemon does not answer WebSocket ping frames.** A client that sends pings and expects pongs closes the connection after its pong timeout. Turn that off, for example `ping_interval=None` in Python `websockets`.
+- **`stop` gets no `complete` reply.** The daemon closes the server-side stream but, in testing against a 4.0.2 node, sent no `complete` message afterwards. Do not wait for one; close the connection instead.
 
-```graphql
-subscription {
-  newBlock {
-    creator
-    stateHash
-    protocolState {
-      consensusState {
-        blockHeight
-      }
-    }
-  }
-}
+```python title="subscribe.py"
+import asyncio, json
+import websockets  # pip install websockets
+
+
+async def main():
+    # ping_interval=None: the daemon does not answer ping frames.
+    async with websockets.connect("ws://localhost:3085/graphql", subprotocols=["graphql-ws"], ping_interval=None) as ws:
+        await ws.send(json.dumps({"type": "connection_init", "payload": {}}))
+        print(await ws.recv())  # {"type":"connection_ack",...}
+        query = "subscription { newBlock { stateHash protocolState { consensusState { blockHeight } } } }"
+        await ws.send(json.dumps({"id": "1", "type": "start", "payload": {"query": query}}))
+        while True:
+            print(await ws.recv())  # {"type":"data","id":"1","payload":{"data":{"newBlock":{...}}}}
+
+
+asyncio.run(main())
 ```
 
 ## Encodings
