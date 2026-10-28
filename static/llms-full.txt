@@ -6838,6 +6838,8 @@ url: /node-developers/graphql-api
 
 
 
+
+
 <Subhead>
 The interface a running Mina node serves: query the recent chain and the node itself, and submit signed transactions.
 </Subhead>
@@ -6878,23 +6880,222 @@ curl -sO https://docs.minaprotocol.com/graphql-api/schema.json
 npx get-graphql-schema http://localhost:3085/graphql > schema.graphql
 ```
 
-To generate TypeScript types for your queries with [GraphQL Code Generator](https://the-guild.dev/graphql/codegen), point it at the published URL:
+### Generate types for your queries
+
+The schema uses many custom scalars: `PublicKey`, `Balance`, `AccountNonce`, `Fee`, `StateHash` and more. The daemon encodes nearly all of them as strings (see [Encodings](#encodings)), but a code generator cannot know that from the schema alone. Each example below maps the scalars its queries use. Add a mapping for every other scalar your own queries touch.
+
+All examples use this operations file:
+
+```graphql title="queries.graphql"
+query DaemonStatus {
+  version
+  networkID
+  daemonStatus {
+    syncStatus
+    blockchainLength
+  }
+}
+
+query Account($publicKey: PublicKey!) {
+  account(publicKey: $publicKey) {
+    nonce
+    balance {
+      total
+      liquid
+      locked
+    }
+  }
+}
+```
+
+<Tabs groupId="codegen-language">
+<TabItem value="typescript" label="TypeScript">
+
+[GraphQL Code Generator](https://the-guild.dev/graphql/codegen) reads the schema from the published URL and writes one type per operation.
+
+```sh
+npm install -D @graphql-codegen/cli @graphql-codegen/typescript @graphql-codegen/typescript-operations graphql@16
+```
+
+:::note
+Pin `graphql` to version 16. The 4.0.3 schema marks `feePayer` as deprecated on `UserCommandPayment` and `UserCommandDelegation` but not on the `UserCommand` interface they implement. graphql-js 17 treats that as a schema error and the generator stops before it writes anything.
+:::
 
 ```ts title="codegen.ts"
 
 
 const config: CodegenConfig = {
   schema: 'https://docs.minaprotocol.com/graphql-api/schema.graphql',
-  documents: ['src/**/*.graphql'],
+  documents: ['queries.graphql'],
   generates: {
     'src/generated/mina.ts': {
       plugins: ['typescript', 'typescript-operations'],
+      config: {
+        scalars: {
+          PublicKey: 'string',
+          AccountNonce: 'string',
+          Balance: 'string',
+        },
+      },
     },
   },
 };
 
 
 ```
+
+```sh
+npx graphql-codegen
+```
+
+</TabItem>
+<TabItem value="go" label="Go">
+
+[genqlient](https://github.com/Khan/genqlient) generates one typed function per operation plus the response structs. It refuses to guess a type for a custom scalar, so the `bindings` block is required. The `go tool` form needs Go 1.24 or later.
+
+```sh
+curl -sO https://docs.minaprotocol.com/graphql-api/schema.graphql
+go get -tool github.com/Khan/genqlient@latest
+go get github.com/Khan/genqlient/graphql
+```
+
+```yaml title="genqlient.yaml"
+schema: schema.graphql
+operations:
+  - queries.graphql
+generated: generated.go
+package: main
+
+# Custom scalars the daemon encodes as strings.
+bindings:
+  PublicKey:
+    type: string
+  AccountNonce:
+    type: string
+  Balance:
+    type: string
+```
+
+```go title="gen.go"
+package main
+
+//go:generate go tool genqlient
+```
+
+`go generate ./...` writes `generated.go`. A call then looks like this:
+
+```go title="main.go"
+package main
+
+
+	"context"
+	"fmt"
+	"net/http"
+
+	"github.com/Khan/genqlient/graphql"
+)
+
+func main() {
+	client := graphql.NewClient("http://localhost:3085/graphql", http.DefaultClient)
+	resp, err := DaemonStatus(context.Background(), client)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(resp.Version, resp.DaemonStatus.SyncStatus, resp.DaemonStatus.BlockchainLength)
+}
+```
+
+</TabItem>
+<TabItem value="rust" label="Rust">
+
+[graphql_client](https://github.com/graphql-rust/graphql-client) generates the types at compile time from a derive macro. Every custom scalar the queries use must be a Rust type with the same name in scope, otherwise the build fails with an unresolved type.
+
+```toml title="Cargo.toml"
+[dependencies]
+graphql_client = "0.14"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+```
+
+```rust title="src/main.rs"
+use graphql_client::GraphQLQuery;
+
+// Custom scalars the daemon encodes as strings.
+type PublicKey = String;
+type AccountNonce = String;
+type Balance = String;
+
+#[derive(GraphQLQuery)]
+#[graphql(
+    schema_path = "schema.graphql",
+    query_path = "queries.graphql",
+    response_derives = "Debug"
+)]
+pub struct DaemonStatus;
+
+#[derive(GraphQLQuery)]
+#[graphql(
+    schema_path = "schema.graphql",
+    query_path = "queries.graphql",
+    response_derives = "Debug"
+)]
+pub struct Account;
+
+fn main() {
+    // The request body to POST to http://localhost:3085/graphql with any HTTP client.
+    let body = DaemonStatus::build_query(daemon_status::Variables {});
+    println!("{}", serde_json::to_string(&body).unwrap());
+    // Decode the reply with
+    // `let data: graphql_client::Response<daemon_status::ResponseData> = ...;`
+}
+```
+
+The macro generates one module per operation (`daemon_status`, `account`) with `Variables` and `ResponseData` types. The `graphql_client` crate also has a `reqwest` feature that adds a ready-made `post_graphql` helper.
+
+</TabItem>
+<TabItem value="python" label="Python">
+
+[ariadne-codegen](https://github.com/mirumee/ariadne-codegen) generates a typed async client with [Pydantic](https://docs.pydantic.dev/) models. It needs Python 3.10 or later. A scalar without a mapping becomes `Any`.
+
+```sh
+pip install ariadne-codegen
+```
+
+```toml title="pyproject.toml"
+[tool.ariadne-codegen]
+schema_path = "schema.graphql"
+queries_path = "queries.graphql"
+target_package_name = "mina_client"
+
+# Custom scalars the daemon encodes as strings.
+[tool.ariadne-codegen.scalars.PublicKey]
+type = "str"
+
+[tool.ariadne-codegen.scalars.AccountNonce]
+type = "str"
+
+[tool.ariadne-codegen.scalars.Balance]
+type = "str"
+```
+
+`ariadne-codegen` writes the `mina_client` package with one method per operation:
+
+```python
+
+from mina_client import Client
+
+
+async def main():
+    async with Client("http://localhost:3085/graphql") as client:
+        status = await client.daemon_status()
+        print(status.version, status.daemon_status.sync_status, status.daemon_status.blockchain_length)
+
+
+asyncio.run(main())
+```
+
+</TabItem>
+</Tabs>
 
 ## Reach a node
 
@@ -6904,6 +7105,7 @@ A daemon serves the API over HTTP on the port that `--rest-port` sets. The defau
 |---|---|
 | `POST /graphql` with a JSON body `{"query": "...", "variables": {...}}` | Executes a query or a mutation |
 | `GET /graphql` from a browser (`Accept: text/html`) | Serves the built-in [GraphiQL](https://github.com/graphql/graphiql) IDE |
+| `GET /graphql?query=...` without `Accept: text/html` | Executes the query given in the URL parameters `query`, `variables` and `operationName` |
 | `GET /graphql` with a WebSocket upgrade | Opens a subscription connection (see [Subscriptions](#subscriptions)) |
 
 ```sh
@@ -6932,17 +7134,6 @@ mina daemon ... --limited-graphql-port 3086 --open-limited-graphql-port
 ```
 
 The limited endpoint serves exactly three queries and nothing else: `daemonStatus`, `block` and `version`. No mutations, no subscriptions, no account or pool queries. `--open-limited-graphql-port` makes it listen on all addresses; without that flag it is also bound to `localhost`.
-
-### Public endpoints
-
-o1Labs operates nodes whose full API is open. They are for development and testing, with no uptime guarantee, and they accept signed transactions, which is how the [zkApp tutorials](/zkapps/tutorials/deploying-to-a-network) deploy.
-
-| Network | Endpoint |
-|---|---|
-| Devnet | `https://devnet-plain-1.gcp.o1test.net/graphql` |
-| Mainnet | `https://mainnet-plain-1.gcp.o1test.net/graphql` |
-
-For production, run your own node, or use a provider's endpoint.
 
 ## What the daemon exposes
 
@@ -6979,7 +7170,12 @@ Three subscriptions push events to a client:
 | `newSyncUpdate` | The sync status changes |
 | `chainReorganization` | The best tip moves to a block that is not a child of the previous one |
 
-Subscriptions run only over WebSocket. A subscription sent as an HTTP `POST` is rejected with `Subscriptions are only supported via websocket transport`. The daemon speaks the [subscriptions-transport-ws](https://github.com/apollographql/subscriptions-transport-ws) protocol (subprotocol name `graphql-ws`), the one the bundled GraphiQL uses. Clients that implement only the newer `graphql-transport-ws` protocol of the [graphql-ws](https://github.com/enisdenjo/graphql-ws) library do not connect; most of them can be configured to fall back to the older protocol.
+Subscriptions run only over WebSocket. A subscription sent as an HTTP `POST` is rejected with `Subscriptions are only supported via websocket transport`. The daemon speaks the [subscriptions-transport-ws](https://github.com/apollographql/subscriptions-transport-ws) protocol (subprotocol name `graphql-ws`), the one the bundled GraphiQL uses. Clients that implement only the newer `graphql-transport-ws` protocol of the [graphql-ws](https://github.com/enisdenjo/graphql-ws) library do not connect; most of them can be configured to fall back to the older protocol. The daemon understands the `connection_init`, `start`, `stop` and `connection_terminate` messages and answers with `connection_ack`, `data`, `error` and `complete`. It sends no keep-alive messages, so a client that expects `ka` frames must not time out on their absence.
+
+Two details of the daemon's WebSocket handling trip up common clients:
+
+- **Header values are matched case-sensitively.** The upgrade request must carry exactly `Connection: Upgrade` and `Upgrade: websocket`. A request with `Connection: upgrade` or `Upgrade: WebSocket` is treated as a plain HTTP request and gets the `400` above. Browsers, the Node `ws` package and the Python `websockets` package send the exact values. The `WebSocket` class built into Node.js 22 sends lowercase values and cannot connect.
+- **The daemon does not answer WebSocket ping frames.** A client that sends pings and expects pongs closes the connection after its pong timeout. Turn that off, for example `ping_interval=None` in Python `websockets`.
 
 ```graphql
 subscription {
