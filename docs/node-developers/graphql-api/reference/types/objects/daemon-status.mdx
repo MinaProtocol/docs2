@@ -1,0 +1,168 @@
+---
+id: daemon-status
+title: DaemonStatus
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type DaemonStatus {
+  addrsAndPorts: AddrsAndPorts!
+  blockProductionKeys: [String!]!
+  blockchainLength: Int
+  catchupStatus: [String!]
+  chainId: String!
+  coinbaseReceiver: String
+  commitId: String!
+  confDir: String!
+  consensusConfiguration: ConsensusConfiguration!
+  consensusMechanism: String!
+  consensusTimeBestTip: ConsensusTime
+  consensusTimeNow: ConsensusTime!
+  globalSlotSinceGenesisBestTip: Int
+  highestBlockLengthReceived: Int!
+  highestUnvalidatedBlockLengthReceived: Int!
+  histograms: Histograms
+  ledgerMerkleRoot: String
+  metrics: Metrics!
+  nextBlockProduction: BlockProducerTimings
+  numAccounts: Int
+  peers: [Peer!]!
+  snarkWorkFee: Int!
+  snarkWorker: String
+  stateHash: String
+  syncStatus: SyncStatus!
+  uptimeSecs: Int!
+  userCommandsSent: Int!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>DaemonStatus.<b>addrsAndPorts</b></code>](#addrs-and-ports)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>AddrsAndPorts!</b></code>](/node-developers/graphql-api/reference/types/objects/addrs-and-ports.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#addrs-and-ports\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>DaemonStatus.<b>blockProductionKeys</b></code>](#block-production-keys)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>[String!]!</b></code>](/node-developers/graphql-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#block-production-keys\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>DaemonStatus.<b>blockchainLength</b></code>](#blockchain-length)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#blockchain-length\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>DaemonStatus.<b>catchupStatus</b></code>](#catchup-status)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>[String!]</b></code>](/node-developers/graphql-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary " text="list"/> <Badge class="badge badge--secondary " text="scalar"/> \{#catchup-status\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>DaemonStatus.<b>chainId</b></code>](#chain-id)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String!</b></code>](/node-developers/graphql-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#chain-id\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>DaemonStatus.<b>coinbaseReceiver</b></code>](#coinbase-receiver)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String</b></code>](/node-developers/graphql-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#coinbase-receiver\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>DaemonStatus.<b>commitId</b></code>](#commit-id)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String!</b></code>](/node-developers/graphql-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#commit-id\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>DaemonStatus.<b>confDir</b></code>](#conf-dir)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String!</b></code>](/node-developers/graphql-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#conf-dir\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>DaemonStatus.<b>consensusConfiguration</b></code>](#consensus-configuration)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>ConsensusConfiguration!</b></code>](/node-developers/graphql-api/reference/types/objects/consensus-configuration.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#consensus-configuration\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>DaemonStatus.<b>consensusMechanism</b></code>](#consensus-mechanism)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String!</b></code>](/node-developers/graphql-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#consensus-mechanism\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>DaemonStatus.<b>consensusTimeBestTip</b></code>](#consensus-time-best-tip)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>ConsensusTime</b></code>](/node-developers/graphql-api/reference/types/objects/consensus-time.mdx) <Badge class="badge badge--secondary " text="object"/> \{#consensus-time-best-tip\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>DaemonStatus.<b>consensusTimeNow</b></code>](#consensus-time-now)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>ConsensusTime!</b></code>](/node-developers/graphql-api/reference/types/objects/consensus-time.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#consensus-time-now\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>DaemonStatus.<b>globalSlotSinceGenesisBestTip</b></code>](#global-slot-since-genesis-best-tip)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#global-slot-since-genesis-best-tip\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>DaemonStatus.<b>highestBlockLengthReceived</b></code>](#highest-block-length-received)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#highest-block-length-received\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>DaemonStatus.<b>highestUnvalidatedBlockLengthReceived</b></code>](#highest-unvalidated-block-length-received)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#highest-unvalidated-block-length-received\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>DaemonStatus.<b>histograms</b></code>](#histograms)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Histograms</b></code>](/node-developers/graphql-api/reference/types/objects/histograms.mdx) <Badge class="badge badge--secondary " text="object"/> \{#histograms\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>DaemonStatus.<b>ledgerMerkleRoot</b></code>](#ledger-merkle-root)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String</b></code>](/node-developers/graphql-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#ledger-merkle-root\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>DaemonStatus.<b>metrics</b></code>](#metrics)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Metrics!</b></code>](/node-developers/graphql-api/reference/types/objects/metrics.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#metrics\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>DaemonStatus.<b>nextBlockProduction</b></code>](#next-block-production)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>BlockProducerTimings</b></code>](/node-developers/graphql-api/reference/types/objects/block-producer-timings.mdx) <Badge class="badge badge--secondary " text="object"/> \{#next-block-production\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>DaemonStatus.<b>numAccounts</b></code>](#num-accounts)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#num-accounts\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>DaemonStatus.<b>peers</b></code>](#peers)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>[Peer!]!</b></code>](/node-developers/graphql-api/reference/types/objects/peer.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#peers\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>DaemonStatus.<b>snarkWorkFee</b></code>](#snark-work-fee)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#snark-work-fee\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>DaemonStatus.<b>snarkWorker</b></code>](#snark-worker)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String</b></code>](/node-developers/graphql-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#snark-worker\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>DaemonStatus.<b>stateHash</b></code>](#state-hash)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String</b></code>](/node-developers/graphql-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#state-hash\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>DaemonStatus.<b>syncStatus</b></code>](#sync-status)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>SyncStatus!</b></code>](/node-developers/graphql-api/reference/types/enums/sync-status.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="enum"/> \{#sync-status\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>DaemonStatus.<b>uptimeSecs</b></code>](#uptime-secs)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#uptime-secs\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>DaemonStatus.<b>userCommandsSent</b></code>](#user-commands-sent)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#user-commands-sent\} 
+
+
+
+
+
+### Returned By
+
+[`daemonStatus`](/node-developers/graphql-api/reference/operations/queries/daemon-status.mdx)  <Badge class="badge badge--secondary badge--relation" text="query"/>

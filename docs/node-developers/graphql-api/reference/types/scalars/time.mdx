@@ -1,0 +1,28 @@
+---
+id: time
+title: Time
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+scalar Time
+```
+
+
+### Member Of
+
+[`ConsensusConfiguration`](/node-developers/graphql-api/reference/types/objects/consensus-configuration.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`TrustStatusPayload`](/node-developers/graphql-api/reference/types/objects/trust-status-payload.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

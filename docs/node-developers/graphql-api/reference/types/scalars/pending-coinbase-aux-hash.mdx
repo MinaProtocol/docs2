@@ -1,0 +1,28 @@
+---
+id: pending-coinbase-aux-hash
+title: PendingCoinbaseAuxHash
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+Base58Check-encoded hash of a pending coinbase auxiliary hash
+
+
+```graphql
+scalar PendingCoinbaseAuxHash
+```
+
+
+### Member Of
+
+[`BlockchainState`](/node-developers/graphql-api/reference/types/objects/blockchain-state.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

@@ -1,0 +1,58 @@
+---
+id: consensus-time
+title: ConsensusTime
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type ConsensusTime {
+  endTime: BlockTime!
+  epoch: UInt32!
+  globalSlot: GlobalSlotSinceHardFork!
+  slot: UInt32!
+  startTime: BlockTime!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>ConsensusTime.<b>endTime</b></code>](#end-time)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>BlockTime!</b></code>](/node-developers/graphql-api/reference/types/scalars/block-time.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#end-time\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ConsensusTime.<b>epoch</b></code>](#epoch)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>UInt32!</b></code>](/node-developers/graphql-api/reference/types/scalars/uint-32.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#epoch\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ConsensusTime.<b>globalSlot</b></code>](#global-slot)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>GlobalSlotSinceHardFork!</b></code>](/node-developers/graphql-api/reference/types/scalars/global-slot-since-hard-fork.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#global-slot\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ConsensusTime.<b>slot</b></code>](#slot)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>UInt32!</b></code>](/node-developers/graphql-api/reference/types/scalars/uint-32.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#slot\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ConsensusTime.<b>startTime</b></code>](#start-time)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>BlockTime!</b></code>](/node-developers/graphql-api/reference/types/scalars/block-time.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#start-time\} 
+
+
+
+
+
+### Member Of
+
+[`BlockProducerTimings`](/node-developers/graphql-api/reference/types/objects/block-producer-timings.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`ConsensusTimeGlobalSlot`](/node-developers/graphql-api/reference/types/objects/consensus-time-global-slot.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`DaemonStatus`](/node-developers/graphql-api/reference/types/objects/daemon-status.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

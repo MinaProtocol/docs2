@@ -1,0 +1,48 @@
+---
+id: zkapp-command
+title: ZkappCommand
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type ZkappCommand {
+  accountUpdates: [ZkappAccountUpdate!]!
+  feePayer: ZkappFeePayer!
+  memo: Memo!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>ZkappCommand.<b>accountUpdates</b></code>](#account-updates)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>[ZkappAccountUpdate!]!</b></code>](/node-developers/graphql-api/reference/types/objects/zkapp-account-update.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#account-updates\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ZkappCommand.<b>feePayer</b></code>](#fee-payer)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>ZkappFeePayer!</b></code>](/node-developers/graphql-api/reference/types/objects/zkapp-fee-payer.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#fee-payer\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ZkappCommand.<b>memo</b></code>](#memo)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Memo!</b></code>](/node-developers/graphql-api/reference/types/scalars/memo.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#memo\} 
+
+
+
+
+
+### Member Of
+
+[`ZkappCommandResult`](/node-developers/graphql-api/reference/types/objects/zkapp-command-result.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

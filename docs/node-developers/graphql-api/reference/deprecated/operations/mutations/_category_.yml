@@ -1,0 +1,8 @@
+label: Mutations
+position: 5
+link: 
+  type: generated-index
+  title: 'Mutations overview'
+  slug: /node-developers/graphql-api/reference/deprecated/operations/mutations
+collapsible: true
+collapsed: true

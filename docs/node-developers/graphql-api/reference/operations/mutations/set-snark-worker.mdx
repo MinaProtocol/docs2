@@ -1,0 +1,38 @@
+---
+id: set-snark-worker
+title: setSnarkWorker
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+Set key you wish to snark work with or disable snark working
+
+
+```graphql
+setSnarkWorker(
+  input: SetSnarkWorkerInput!
+): SetSnarkWorkerPayload!
+```
+
+
+### Arguments
+
+#### [<code style={{ fontWeight: 'normal' }}>setSnarkWorker.<b>input</b></code>](#input)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>SetSnarkWorkerInput!</b></code>](/node-developers/graphql-api/reference/types/inputs/set-snark-worker-input.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="input"/> \{#input\} 
+
+
+
+
+
+### Type
+
+#### [<code style={{ fontWeight: 'normal' }}><b>SetSnarkWorkerPayload</b></code>](/node-developers/graphql-api/reference/types/objects/set-snark-worker-payload.mdx) <Badge class="badge badge--secondary " text="object"/>

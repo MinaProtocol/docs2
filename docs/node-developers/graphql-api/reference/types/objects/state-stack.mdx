@@ -1,0 +1,43 @@
+---
+id: state-stack
+title: StateStack
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type StateStack {
+  current: FieldElem!
+  initial: FieldElem!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>StateStack.<b>current</b></code>](#current)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>FieldElem!</b></code>](/node-developers/graphql-api/reference/types/scalars/field-elem.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#current\} 
+Current hash
+
+
+#### [<code style={{ fontWeight: 'normal' }}>StateStack.<b>initial</b></code>](#initial)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>FieldElem!</b></code>](/node-developers/graphql-api/reference/types/scalars/field-elem.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#initial\} 
+Initial hash
+
+
+
+
+### Member Of
+
+[`PendingCoinbaseStack`](/node-developers/graphql-api/reference/types/objects/pending-coinbase-stack.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

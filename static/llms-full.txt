@@ -5442,7 +5442,7 @@ sudo apt-get install mina-mainnet-automode=4.x.x
 She starts her node normally. The dispatcher (installed as `/usr/local/bin/mina`) needs one automode-specific setting: **`MINA_HARDFORK_STATE_DIR` must point at her config directory** — it must match `--config-directory`, because that is where the dispatcher looks for the `auto-fork-mesa-mainnet/activated` marker to choose between the pre-fork and Mesa runtime. Export the variable and pass the matching flag:
 
 ```bash
-export MINA_HARDFORK_STATE_DIR=~/.mina-config
+
 
 mina daemon \
   --block-producer-key ~/keys/my-wallet \
@@ -6836,123 +6836,152 @@ url: /node-developers/graphql-api
 
 # GraphQL API
 
+
+
+<Subhead>
+The interface a running Mina node serves: query the recent chain and the node itself, and submit signed transactions.
+</Subhead>
+
+Every Mina daemon serves a [GraphQL](https://graphql.org/) API. Wallets, the [Mina SDKs](/integrations), [o1js](/zkapps/o1js) and the `mina client` command all talk to a node through it. The API is defined by a schema that the daemon generates from its own source code, so the schema and the daemon cannot disagree.
+
+This page is the contract: which schema the current release serves, where to get it as a file, how to reach a node, and what the daemon does and does not expose. The [schema reference](/node-developers/graphql-api/reference/operations) lists every operation and type. [Querying data](/node-operators/validator-node/querying-data) has worked examples.
+
+## Schema version
+
+| | |
+|---|---|
+| Daemon release | **mina 4.0.3** (Mesa). Releases 4.0.2 and 4.0.3 serve an identical schema |
+| Root fields | 41 queries, 29 mutations, 3 subscriptions, 210 types |
+| Source of truth | [`graphql_schema.json`](https://github.com/MinaProtocol/mina/blob/4.0.3/graphql_schema.json) at the release tag in the `MinaProtocol/mina` repository |
+
+The daemon is code-first: the OCaml source defines the schema, `make update-graphql` dumps it, and a CI job in the mina repository fails any change that leaves the dump stale. The copy on this site is pinned to the release tag above and a weekly check compares the two, so the reference here describes the schema the released daemon serves, not a development branch.
+
+Changes to the schema arrive with daemon releases. A field that is going away is first marked `@deprecated` with a reason that names its replacement, and it keeps working while it carries that mark. The [deprecated section](/node-developers/graphql-api/reference/deprecated) of the reference lists the current ones: the `wallet` and `ownedWallets` queries and the `addWallet`, `unlockWallet`, `lockWallet`, `deleteWallet` and `reloadWallets` mutations, all replaced by their `account` equivalents. Ask the running node for its own version with the `version` query, which returns the git commit it was built from.
+
+## Fetch the schema as a file
+
+GraphQL has no separate description document like OpenAPI. The schema is the contract, in the two forms the GraphQL specification defines: SDL text and the JSON that an introspection query returns. Both are published here.
+
+| Source | URL | Use it for |
+|---|---|---|
+| SDL on this site | `https://docs.minaprotocol.com/graphql-api/schema.graphql` | Code generation, AI agents, IDE plugins and documentation tools. Plain text, no authentication |
+| Introspection JSON on this site | `https://docs.minaprotocol.com/graphql-api/schema.json` | Tools that read a `schema.json` (`{ "__schema": ... }`) instead of SDL |
+| The repository | `https://github.com/MinaProtocol/mina/blob/4.0.3/graphql_schema.json` | The dump the daemon build produced, with its history. Wrapped in `{ "data": ... }` |
+| Your own node | `http://localhost:3085/graphql` | The schema that one daemon serves. Introspection is always on |
+
+```sh
+# The published schema of the current release, as SDL and as introspection JSON
+curl -sO https://docs.minaprotocol.com/graphql-api/schema.graphql
+curl -sO https://docs.minaprotocol.com/graphql-api/schema.json
+
+# The schema of your own node, through introspection
+npx get-graphql-schema http://localhost:3085/graphql > schema.graphql
+```
+
+To generate TypeScript types for your queries with [GraphQL Code Generator](https://the-guild.dev/graphql/codegen), point it at the published URL:
+
+```ts title="codegen.ts"
+
+
+const config: CodegenConfig = {
+  schema: 'https://docs.minaprotocol.com/graphql-api/schema.graphql',
+  documents: ['src/**/*.graphql'],
+  generates: {
+    'src/generated/mina.ts': {
+      plugins: ['typescript', 'typescript-operations'],
+    },
+  },
+};
+
+
+```
+
+## Reach a node
+
+A daemon serves the API over HTTP on the port that `--rest-port` sets. The default is `3085`, bound to `localhost` only.
+
+| Request | What the daemon does |
+|---|---|
+| `POST /graphql` with a JSON body `{"query": "...", "variables": {...}}` | Executes a query or a mutation |
+| `GET /graphql` from a browser (`Accept: text/html`) | Serves the built-in [GraphiQL](https://github.com/graphql/graphiql) IDE |
+| `GET /graphql` with a WebSocket upgrade | Opens a subscription connection (see [Subscriptions](#subscriptions)) |
+
+```sh
+curl -s -X POST http://localhost:3085/graphql \
+  -H 'Content-Type: application/json' \
+  --data '{"query":"{ version networkID daemonStatus { syncStatus blockchainLength } }"}'
+```
+
+Two flags change who can reach the node:
+
+| Flag | Effect |
+|---|---|
+| `--rest-port PORT` | Serve the API on another port. Default `3085` |
+| `--insecure-rest-server` | Listen on all addresses instead of `localhost` only |
+
 :::caution
-
-- Mina APIs are still under construction, so these endpoints may change.
-- By default, the GraphQL port is bound to localhost. Exposing the GraphQL API to the internet allows anyone to send Mina from the accounts known to the daemon.
-
+The full API includes mutations that spend from the accounts the daemon has unlocked, stop and reconfigure the node, and change its peers. Exposing it beyond `localhost` lets anyone who can reach the port do those things. Put a firewall or an authenticating proxy in front of the port, or use the limited port below.
 :::
 
-The Mina daemon exposes a [GraphQL API](https://graphql.org/) used to request information from and submit commands to a running node. 
+### The limited port
 
-To use the GraphQL API, connect your GraphQL client to `http://localhost:3085/graphql` or open in your browser to use the [GraphiQL IDE](https://github.com/graphql/graphiql). 
+For a node that has to answer questions from the Internet, the daemon can serve a second, read-only endpoint:
 
-- By default, an HTTP server runs on port `3085`. You can configure a different port, use the `-rest-port` flag with the daemon startup command.
+```sh
+mina daemon ... --limited-graphql-port 3086 --open-limited-graphql-port
+```
 
-- The default security permits only connections from `localhost`. To listen on all interfaces, add the `-insecure-rest-server` flag to the daemon startup command.
+The limited endpoint serves exactly three queries and nothing else: `daemonStatus`, `block` and `version`. No mutations, no subscriptions, no account or pool queries. `--open-limited-graphql-port` makes it listen on all addresses; without that flag it is also bound to `localhost`.
 
-In addition to information about the running node, the GraphQL API can return data about the network's latest blocks. However, as the blockchain's historical state is not persisted in Mina, only blocks in the node's transition frontier are returned, i.e., the last `k` blocks. For other historical data, use the [Archive Node](/node-operators/archive-node/getting-started) that is designed to retain and retrieve historical data.
+### Public endpoints
 
-The full Mina GraphQL schema is available [https://github.com/MinaProtocol/mina/blob/develop/graphql_schema.json](https://github.com/MinaProtocol/mina/blob/develop/graphql_schema.json).
+o1Labs operates nodes whose full API is open. They are for development and testing, with no uptime guarantee, and they accept signed transactions, which is how the [zkApp tutorials](/zkapps/tutorials/deploying-to-a-network) deploy.
+
+| Network | Endpoint |
+|---|---|
+| Devnet | `https://devnet-plain-1.gcp.o1test.net/graphql` |
+| Mainnet | `https://mainnet-plain-1.gcp.o1test.net/graphql` |
+
+For production, run your own node, or use a provider's endpoint.
+
+## What the daemon exposes
+
+The daemon keeps only the blocks in its transition frontier, the last `k` blocks (290). `bestChain`, `block` and the transaction queries answer from that window. For anything older, use an [archive node](/node-operators/archive-node) through the [Archive Node API](/node-operators/data-and-history/archive-node-api). The [Integrations](/integrations) page compares the data paths.
 
 ### Queries
 
-The Mina GraphQL API has a number of [queries](/node-operators/validator-node/querying-data) to extract data from a running node. [GraphQL queries](https://graphql.org/learn/queries/) allow specifying the data to be returned in the response. For example, to get the latest block and creator information known to the daemon:
+Queries read the node and the recent chain. The ones most integrations use:
 
-```
-query {
-  bestChain(maxLength: 1) {
-    creator
-    stateHash
-    protocolState {
-      consensusState {
-        blockHeight
-      }
-      previousStateHash
-    }
-    transactions {
-      coinbase
-    }
-  }
-}
-```
+| Query | Returns |
+|---|---|
+| `daemonStatus` | Sync status, chain id, block height, peers, uptime and the node's configuration |
+| `syncStatus` | The sync status alone, the cheapest health check |
+| `account(publicKey:, token:)` | Balance, nonce, delegate, permissions and zkApp state of one account, at the best tip |
+| `bestChain(maxLength:)` | The most recent blocks on the best chain, newest last, with their transactions |
+| `block(stateHash:)` / `block(height:)` | One block in the frontier |
+| `pooledUserCommands`, `pooledZkappCommands` | The transaction pool, for fee estimation and for finding a transaction that is not yet in a block |
+| `transactionStatus(payment:)` / `transactionStatus(zkappTransaction:)` | Whether a transaction is `PENDING`, `INCLUDED` or `UNKNOWN` |
+| `genesisConstants`, `networkID`, `version` | What the node is and what it was built from |
 
-The following query requests all pending transactions in the transaction pool together with their fees. This query can be used to generate an estimate of a suggested fee for a transaction:
-
-```
-query {
-  pooledUserCommands {
-    id,
-    fee
-  }
-}
-```
-
-:::tip
-
-The memo field returned for a transaction is [Base58Check encoded](https://en.bitcoin.it/wiki/Base58Check_encoding).
-
-:::
-
-```
-query {
-  account(publicKey: "<B62...>") {
-    balance {
-      total
-    }
-    delegate
-    nonce
-  }
-}
-```
-
-You can submit GraphQL requests from the command line of a node. For example, to use cURL to get the last ten block creators known to the node:
-
-```
-curl -d '{"query": "{
-  bestChain(maxLength: 10) {
-    creator
-  }
-}"}' -H 'Content-Type: application/json' http://localhost:3085/graphql
-```
+Every query, with its arguments and the types it returns, is in the [queries reference](/node-developers/graphql-api/reference/operations/queries).
 
 ### Mutations
 
-GraphQL mutations modify the running node in some way. For example, mutations may be used to send a payment, create a new account, or to add additional peers.
-
-Consult the GraphQL schema for all available mutations.
-
-Adding a new peer:
-
-```
-mutation {
-   addPeers(peers:{
-      libp2p_port:10511,
-      host:"34.73.68.198",
-      peer_id:"12D3KooWSJB2gZWi3ruVmtTF9JBCEBpCrJfuWCWzzRr8mMQWFQ9U"
-   })
-}
-```
-
-Update a SNARK worker to use a fee of 0.1 MINA:
-
-```
-mutation {
-  setSnarkWorkFee(input: {fee: "100000000"})
-}
-```
+Mutations change the node or submit transactions. `sendPayment`, `sendDelegation` and `sendZkapp` take a transaction that was signed elsewhere, with [mina-signer](/node-operators/mina-signer) or o1js, so a node that only relays transactions never holds a key. The other mutations manage accounts the daemon stores, set the SNARK worker and its fee, set the coinbase receiver, add peers and manage logs. All of them are in the [mutations reference](/node-developers/graphql-api/reference/operations/mutations).
 
 ### Subscriptions
 
-A GraphQL subscription allows a GraphQL client to have data pushed to it when an event occurs. In Mina, there are subscriptions for:
+Three subscriptions push events to a client:
 
-- _newSyncUpdate_ - occurs when the sync status of the node changes.
-- _newBlock_ - occurs when a new block is received.
-- chainReorganisation - occurs when the best tip of the node changes in a non-trivial way.
+| Subscription | Fires when |
+|---|---|
+| `newBlock(publicKey:)` | The node adds a block to its frontier, optionally only blocks a given producer made |
+| `newSyncUpdate` | The sync status changes |
+| `chainReorganization` | The best tip moves to a block that is not a child of the previous one |
 
-For example, to subscribe to all new blocks produced:
+Subscriptions run only over WebSocket. A subscription sent as an HTTP `POST` is rejected with `Subscriptions are only supported via websocket transport`. The daemon speaks the [subscriptions-transport-ws](https://github.com/apollographql/subscriptions-transport-ws) protocol (subprotocol name `graphql-ws`), the one the bundled GraphiQL uses. Clients that implement only the newer `graphql-transport-ws` protocol of the [graphql-ws](https://github.com/enisdenjo/graphql-ws) library do not connect; most of them can be configured to fall back to the older protocol.
 
-```
+```graphql
 subscription {
   newBlock {
     creator
@@ -6961,24 +6990,26 @@ subscription {
       consensusState {
         blockHeight
       }
-      previousStateHash
     }
   }
 }
 ```
 
-The new block subscription can also be limited to return only new blocks created by a defined public key with the `publicKey` argument.
+## Encodings
 
-### GraphQL API and public Internet
+A few conventions apply across the schema. Scalars are documented individually in the [scalars reference](/node-developers/graphql-api/reference/types/scalars).
 
-Exposing the GraphQL endpoint with full API support to the public Internet **is not** recommended.  
-However, you can start the Mina Daemon node with the `--open-limited-graphql-port` and `--limited-graphql-port <port-number>` CLI arguments to expose the GraphQL endpoint with limited API support.
+- Amounts and fees (`Amount`, `Fee`) are strings of nanomina: `"1000000000"` is 1 MINA. An account's `balance` is an object whose `total`, `liquid` and `locked` fields are `Balance` strings in the same unit.
+- Public keys are Base58Check strings beginning with `B62`. Transaction hashes, state hashes and ledger hashes are Base58Check strings too.
+- `memo` on a transaction is Base58Check encoded, not plain text.
+- Block heights (`Length`), slots (`Globalslot`, `Slot`) and epochs (`Epoch`) are strings. A transaction's `nonce` is an `Int`.
 
-### Resources
+## Tools
 
-- [5-minute introduction video on Mina GraphQL API](http://bit.ly/GraphQLAPIin5) Coda
-- [First steps with the Mina GraphQL API](https://garethtdavies.com/crypto/first-steps-with-coda-graphql-api.html)
-- [Introduction to GraphQL](https://graphql.org/learn/)
+- The `mina client` subcommands that take `--rest-server` talk to the node through this API; see the [CLI reference](/node-operators/reference/mina-cli-reference).
+- The [Mina SDKs](/integrations) for Rust, Go and Python wrap the queries and mutations above.
+- [Health checks](/node-operators/reference/health-checks) shows which queries a load balancer or an alert should poll.
+- [Introduction to GraphQL](https://graphql.org/learn/) explains queries, variables and fragments.
 
 ---
 url: /node-developers
@@ -7572,10 +7603,10 @@ Optional overrides (`MISSING_BLOCKS_AUDITOR`, `ARCHIVE_BLOCKS`, `BLOCKS_FORMAT`,
 A minimal one-shot repair:
 
 ```bash
-export DB_USERNAME=postgres DB_HOST=localhost DB_PORT=5432 DB_NAME=archive
-export PGPASSWORD=postgres
-export PRECOMPUTED_BLOCKS_URL=https://storage.googleapis.com/mina_network_block_data
-export MINA_NETWORK=mainnet
+
+
+
+
 
 mina-missing-blocks-guardian single-run
 ```
@@ -9048,7 +9079,7 @@ const config: CodegenConfig = {
   },
 };
 
-export default config;
+
 ```
 
 ```sh
@@ -11756,8 +11787,8 @@ An exchange that uses Rosetta depends on the daemon, the archive node, and the R
 
 ```sh
 #!/bin/sh
-export MINA_ROSETTA_URI=http://localhost:3087
-export MINA_ROSETTA_NETWORK=mainnet
+
+
 
 if ! rosetta-healthcheck ready --max-age 600 --json > /tmp/rosetta-health.json; then
   echo "Rosetta not ready, pausing deposits and withdrawals" >&2
@@ -15764,7 +15795,7 @@ Create `~/.mina-env`:
 <TabItem value="mainnet" label="Mainnet">
 
 ```sh
-export MINA_PRIVKEY_PASS="My_V3ry_S3cure_Password"
+
 LOG_LEVEL=Info
 FILE_LOG_LEVEL=Debug
 PEER_LIST_URL=https://bootnodes.minaprotocol.com/networks/mainnet.txt
@@ -15774,7 +15805,7 @@ PEER_LIST_URL=https://bootnodes.minaprotocol.com/networks/mainnet.txt
 <TabItem value="devnet" label="Devnet">
 
 ```sh
-export MINA_PRIVKEY_PASS="My_V3ry_S3cure_Password"
+
 LOG_LEVEL=Info
 FILE_LOG_LEVEL=Debug
 PEER_LIST_URL=https://bootnodes.minaprotocol.com/networks/devnet.txt
@@ -16234,33 +16265,33 @@ url: /node-operators/validator-node/querying-data
 
 # Interacting with the Node via GraphQL API
 
-The Mina daemon exposes a [GraphQL API](/node-developers/graphql-api) that you can use to query recent blockchain data and submit signed transactions.
+The Mina daemon exposes a [GraphQL API](/node-developers/graphql-api) that you can use to query recent blockchain data and submit signed transactions. That page is the contract: the schema of the current release, the ports and flags, the limited read-only port, and the WebSocket requirement for subscriptions. This page is the worked examples.
 
 ## Setup
 
-Once your node is [connected to the network](./connecting-to-the-network), the GraphQL server is available at `localhost:3085` by default.
+Once your node is [connected to the network](./connecting-to-the-network), the GraphQL server is available at `http://localhost:3085/graphql` by default, and the same URL opens the GraphiQL IDE in a browser.
 
 To use a different port:
 
 ```sh
-mina daemon ... -rest-server-port <PORT>
+mina daemon ... --rest-port <PORT>
 ```
 
 To make the server accessible from outside `localhost`:
 
 ```sh
-mina daemon ... -insecure-rest-server
+mina daemon ... --insecure-rest-server
 ```
 
 :::caution
-If you expose the GraphQL server externally, ensure your firewall is configured properly. See [GraphQL API](/node-developers/graphql-api) for details.
+The full API includes mutations that spend from the accounts the daemon has unlocked and reconfigure the node. If you expose it beyond `localhost`, put a firewall or an authenticating proxy in front of the port, or serve the read-only [limited port](/node-developers/graphql-api#the-limited-port) instead.
 :::
 
-If you want to archive historical data beyond what the node keeps in memory, see [Archive Node](/node-operators/archive-node/getting-started).
+If you want historical data beyond the last `k` blocks (290) that the node keeps in memory, use an [archive node](/node-operators/archive-node/getting-started) through the [Archive Node API](/node-operators/data-and-history/archive-node-api).
 
 ## Querying data
 
-The examples below query _recent_ chain data -- approximately the last 290 blocks (~10 hours of activity). To explore all available fields, open the GraphQL sandbox at `http://localhost:3085/graphql` in your browser.
+The examples below query _recent_ chain data: the last 290 blocks, about 10 hours of activity on Mainnet. Every field each query can return is in the [schema reference](/node-developers/graphql-api/reference/operations/queries), and the GraphiQL IDE at `http://localhost:3085/graphql` completes them as you type.
 
 ### Block data
 
@@ -17161,7 +17192,7 @@ should be public or private, depending on the requirements of their application.
 ```ts
 
 
-export class Add extends SmartContract {
+
   /* The state decorator tells o1js to store/retrieve num from the Mina
   blockchain */
   /* The Field type represents elements of a finite field (similar to uint256
@@ -17507,7 +17538,7 @@ npm run build
   styleUrl: './app.component.css'
 })
 
-export class AppComponent {
+
   // replace with your project name!
   title = '<project-name>';
 
@@ -17880,7 +17911,7 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+
 ```
 
 #### (Alternative) Update Headers in Vercel Config
@@ -17932,7 +17963,7 @@ For now, let's put some boilerplate in these files:
 
 
 
-export const api = {
+
   async sayHi() {
     return "Hello from the worker!";
   }
@@ -17946,7 +17977,7 @@ Comlink.expose(api);
 
 
 
-export default class TodoListWorkerClient {
+
   worker!: Worker;
   remoteApi: Comlink.Remote<typeof import("./todoListWorker").api>;
 
@@ -17973,7 +18004,7 @@ Only client-side rendered code will have access to web workers.  Server-rendered
 'use client' // <---- Add this line to tell next to render this page client-side
 
 
-export default function Home() {
+
   return (
 ```
 
@@ -17984,7 +18015,7 @@ Then, import the web worker and confirm that it is working:
 
 
 
-export default function Home() {
+
   /**
    * Add this code to the top of the page confirm that the worker is functioning
    */
@@ -18016,7 +18047,7 @@ mkdir -p src/lib && touch src/lib/zkTodoList.ts
 
 
 
-export { IndexedMerkleMap8, ZkTodoList, ZkTodoListProof };
+
 
 class IndexedMerkleMap8 extends Experimental.IndexedMerkleMap(8) {}
 
@@ -18039,7 +18070,7 @@ class ZkTodoListProof extends ZkProgram.Proof(ZkTodoList) {}
 Next let's add the data structure for a todo item.  We want to track the text of the todo and the status, whether it's been completed or not.
 
 ```ts
-export { 
+
   IndexedMerkleMap8, 
   Todo, // <---- Add this line to export the Todo class
   ZkTodoList, 
@@ -18139,7 +18170,7 @@ We will also track some state in the web worker for convenience.
   ZkTodoListProof,
 } from "../lib/zkTodoList";
 
-export type TodoObjectRepr = {
+
   text: string;
   status: boolean;
 };
@@ -18151,7 +18182,7 @@ const state = {
   index: 0,
 };
 
-export const api = {
+
   async init() {
     console.time("Compiling zkTodoList");
     await ZkTodoList.compile();
@@ -18244,7 +18275,7 @@ And add the relevant wrappers to the worker client.
 
 
 
-export default class TodoListWorkerClient {
+
   worker!: Worker;
   remoteApi: Comlink.Remote<typeof import("./todoListWorker").api>;
 
@@ -18289,7 +18320,7 @@ touch src/components/PendingTodoItem.tsx src/components/PendingTodosQueue.tsx sr
 ```tsx
 // PendingTodoItem.tsx
 
-export default function PendingTodoItem({ todo }: { todo: string }) {
+
     return (
         <li className="flex flex-row items-center gap-4 p-2 border-b border-gray-200">
             <div className="flex-1">
@@ -18304,7 +18335,7 @@ export default function PendingTodoItem({ todo }: { todo: string }) {
 // PendingTodosQueue.tsx
 
 
-export default function TodosQueue({ title, subheading, todos }: { title: string, subheading: string, todos: Array<string> }) {
+
     return (
         <div className="flex flex-col gap-2 w-3/4">
             <h1 className="text-2xl font-bold">{title}</h1>
@@ -18328,7 +18359,7 @@ export default function TodosQueue({ title, subheading, todos }: { title: string
 // ProvenTodoItem.tsx
 
 
-export default function ProvenTodoItem({ todo, index, completeTodo }: { todo: TodoObjectRepr, index: number, completeTodo: (index: number) => void }) {
+
     return (
         <li className="flex flex-row items-center gap-4 p-2 border-b border-gray-200">
             <div className="flex-1">
@@ -18355,7 +18386,7 @@ export default function ProvenTodoItem({ todo, index, completeTodo }: { todo: To
 
 
 
-export default function ProvenTodosQueue({ title, subheading, todos, completeTodo }: { title: string, subheading: string, todos: Record<number, TodoObjectRepr>, completeTodo: (index: number) => void }) {
+
     return (
         <div className="flex flex-col gap-2 w-3/4">
             <h1 className="text-2xl font-bold">{title}</h1>
@@ -18400,7 +18431,7 @@ Now that these files are created, let's use them in our main `page.tsx`.
 
 
 
-export default function Home() {
+
   const [todoListWorkerClient, setTodoListWorkerClient] =
     useState<TodoListWorkerClient | null>(null);
   const [hasBeenInitialized, setHasBeenInitialized] = useState(false);
@@ -27696,7 +27727,7 @@ for how to choose.
 `AddV1` keeps one state field and adds 2 to it:
 
 ```ts
-export class AddV1 extends SmartContract {
+
   @state(Field) num = State<Field>();
 
   init() {
@@ -27743,7 +27774,7 @@ writes it changed.
 different amounts. It declares the new field **after** the existing one:
 
 ```ts
-export class AddV3 extends SmartContract {
+
   @state(Field) num = State<Field>();
   @state(Field) callCount = State<Field>();
 ```
@@ -27757,7 +27788,7 @@ existing value is still where the new contract expects it.
 round:
 
 ```ts
-export class AddV3Unsafe extends SmartContract {
+
   @state(Field) callCount = State<Field>();
   @state(Field) num = State<Field>();
 ```
@@ -28882,7 +28913,7 @@ In `index.ts`:
 ```ts
 
 
-export { YourSmartContract };
+
 ```
 
 ### Local development

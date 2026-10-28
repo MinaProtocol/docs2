@@ -1,0 +1,48 @@
+---
+id: authorization-kind-structured
+title: AuthorizationKindStructured
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type AuthorizationKindStructured {
+  isProved: Boolean!
+  isSigned: Boolean!
+  verificationKeyHash: Field!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>AuthorizationKindStructured.<b>isProved</b></code>](#is-proved)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Boolean!</b></code>](/node-developers/graphql-api/reference/types/scalars/boolean.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#is-proved\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AuthorizationKindStructured.<b>isSigned</b></code>](#is-signed)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Boolean!</b></code>](/node-developers/graphql-api/reference/types/scalars/boolean.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#is-signed\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AuthorizationKindStructured.<b>verificationKeyHash</b></code>](#verification-key-hash)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Field!</b></code>](/node-developers/graphql-api/reference/types/scalars/field.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#verification-key-hash\} 
+
+
+
+
+
+### Member Of
+
+[`AccountUpdateBody`](/node-developers/graphql-api/reference/types/objects/account-update-body.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

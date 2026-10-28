@@ -1,0 +1,43 @@
+---
+id: global-slot-since-genesis-interval
+title: GlobalSlotSinceGenesisInterval
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type GlobalSlotSinceGenesisInterval {
+  lower: GlobalSlotSinceGenesis!
+  upper: GlobalSlotSinceGenesis!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>GlobalSlotSinceGenesisInterval.<b>lower</b></code>](#lower)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>GlobalSlotSinceGenesis!</b></code>](/node-developers/graphql-api/reference/types/scalars/global-slot-since-genesis.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#lower\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>GlobalSlotSinceGenesisInterval.<b>upper</b></code>](#upper)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>GlobalSlotSinceGenesis!</b></code>](/node-developers/graphql-api/reference/types/scalars/global-slot-since-genesis.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#upper\} 
+
+
+
+
+
+### Member Of
+
+[`NetworkPrecondition`](/node-developers/graphql-api/reference/types/objects/network-precondition.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`Preconditions`](/node-developers/graphql-api/reference/types/objects/preconditions.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

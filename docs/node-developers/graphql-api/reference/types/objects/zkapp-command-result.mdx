@@ -1,0 +1,57 @@
+---
+id: zkapp-command-result
+title: ZkappCommandResult
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type ZkappCommandResult {
+  failureReason: [ZkappCommandFailureReason]
+  hash: TransactionHash!
+  id: TransactionId!
+  zkappCommand: ZkappCommand!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>ZkappCommandResult.<b>failureReason</b></code>](#failure-reason)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>[ZkappCommandFailureReason]</b></code>](/node-developers/graphql-api/reference/types/objects/zkapp-command-failure-reason.mdx) <Badge class="badge badge--secondary " text="list"/> <Badge class="badge badge--secondary " text="object"/> \{#failure-reason\} 
+The reason for the zkApp transaction failure; null means success or the status is unknown
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ZkappCommandResult.<b>hash</b></code>](#hash)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>TransactionHash!</b></code>](/node-developers/graphql-api/reference/types/scalars/transaction-hash.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#hash\} 
+A cryptographic hash of the zkApp command
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ZkappCommandResult.<b>id</b></code>](#id)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>TransactionId!</b></code>](/node-developers/graphql-api/reference/types/scalars/transaction-id.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#id\} 
+A Base64 string representing the zkApp command
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ZkappCommandResult.<b>zkappCommand</b></code>](#zkapp-command)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>ZkappCommand!</b></code>](/node-developers/graphql-api/reference/types/objects/zkapp-command.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#zkapp-command\} 
+zkApp command representing the transaction
+
+
+
+
+### Returned By
+
+[`pooledZkappCommands`](/node-developers/graphql-api/reference/operations/queries/pooled-zkapp-commands.mdx)  <Badge class="badge badge--secondary badge--relation" text="query"/>
+
+### Member Of
+
+[`SendZkappPayload`](/node-developers/graphql-api/reference/types/objects/send-zkapp-payload.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`Transactions`](/node-developers/graphql-api/reference/types/objects/transactions.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

@@ -1,0 +1,43 @@
+---
+id: send-payment
+title: sendPayment
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+Send a payment
+
+
+```graphql
+sendPayment(
+  input: SendPaymentInput!
+  signature: SignatureInput
+): SendPaymentPayload!
+```
+
+
+### Arguments
+
+#### [<code style={{ fontWeight: 'normal' }}>sendPayment.<b>input</b></code>](#input)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>SendPaymentInput!</b></code>](/node-developers/graphql-api/reference/types/inputs/send-payment-input.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="input"/> \{#input\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>sendPayment.<b>signature</b></code>](#signature)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>SignatureInput</b></code>](/node-developers/graphql-api/reference/types/inputs/signature-input.mdx) <Badge class="badge badge--secondary " text="input"/> \{#signature\} 
+If a signature is provided, this transaction is considered signed and will be broadcasted to the network without requiring a private key
+
+
+
+
+### Type
+
+#### [<code style={{ fontWeight: 'normal' }}><b>SendPaymentPayload</b></code>](/node-developers/graphql-api/reference/types/objects/send-payment-payload.mdx) <Badge class="badge badge--secondary " text="object"/>
