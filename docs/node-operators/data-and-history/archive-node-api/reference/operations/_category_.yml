@@ -1,0 +1,9 @@
+label: Operations
+position: 1
+className: graphql-markdown-api-section
+link: 
+  type: generated-index
+  title: 'Operations overview'
+  slug: /node-operators/data-and-history/archive-node-api/reference/operations
+collapsible: false
+collapsed: false

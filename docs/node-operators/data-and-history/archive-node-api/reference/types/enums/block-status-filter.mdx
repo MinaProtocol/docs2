@@ -1,0 +1,48 @@
+---
+id: block-status-filter
+title: BlockStatusFilter
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+Filter for the consensus status of the block
+
+
+```graphql
+enum BlockStatusFilter {
+  ALL
+  PENDING
+  CANONICAL
+}
+```
+
+
+### Values
+
+#### [<code style={{ fontWeight: 'normal' }}>BlockStatusFilter.<b>ALL</b></code>](#all) \{#all\} 
+All blocks
+
+
+#### [<code style={{ fontWeight: 'normal' }}>BlockStatusFilter.<b>PENDING</b></code>](#pending) \{#pending\} 
+Only pending blocks
+
+
+#### [<code style={{ fontWeight: 'normal' }}>BlockStatusFilter.<b>CANONICAL</b></code>](#canonical) \{#canonical\} 
+Only canonical (finalized) blocks
+
+
+
+
+### Member Of
+
+[`ActionFilterOptionsInput`](/node-operators/data-and-history/archive-node-api/reference/types/inputs/action-filter-options-input.mdx)  <Badge class="badge badge--secondary badge--relation" text="input"/><Bullet />[`EventFilterOptionsInput`](/node-operators/data-and-history/archive-node-api/reference/types/inputs/event-filter-options-input.mdx)  <Badge class="badge badge--secondary badge--relation" text="input"/><Bullet />[`UserCommandFilterInput`](/node-operators/data-and-history/archive-node-api/reference/types/inputs/user-command-filter-input.mdx)  <Badge class="badge badge--secondary badge--relation" text="input"/><Bullet />[`VerificationKeyUpdateFilterInput`](/node-operators/data-and-history/archive-node-api/reference/types/inputs/verification-key-update-filter-input.mdx)  <Badge class="badge badge--secondary badge--relation" text="input"/><Bullet />[`ZkappCommandFilterOptionsInput`](/node-operators/data-and-history/archive-node-api/reference/types/inputs/zkapp-command-filter-options-input.mdx)  <Badge class="badge badge--secondary badge--relation" text="input"/>

@@ -1,0 +1,53 @@
+---
+id: action-output
+title: ActionOutput
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type ActionOutput {
+  blockInfo: BlockInfo
+  transactionInfo: TransactionInfo
+  actionData: [ActionData!]
+  actionState: ActionStates!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>ActionOutput.<b>blockInfo</b></code>](#block-info)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>BlockInfo</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/objects/block-info.mdx) <Badge class="badge badge--secondary " text="object"/> \{#block-info\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ActionOutput.<b>transactionInfo</b></code>](#transaction-info)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>TransactionInfo</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/objects/transaction-info.mdx) <Badge class="badge badge--secondary " text="object"/> \{#transaction-info\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ActionOutput.<b>actionData</b></code>](#action-data)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>[ActionData!]</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/objects/action-data.mdx) <Badge class="badge badge--secondary " text="list"/> <Badge class="badge badge--secondary " text="object"/> \{#action-data\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ActionOutput.<b>actionState</b></code>](#action-state)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>ActionStates!</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/objects/action-states.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#action-state\} 
+
+
+
+
+
+### Returned By
+
+[`actions`](/node-operators/data-and-history/archive-node-api/reference/operations/queries/actions.mdx)  <Badge class="badge badge--secondary badge--relation" text="query"/>

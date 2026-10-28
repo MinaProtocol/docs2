@@ -1,0 +1,48 @@
+---
+id: blocks
+title: blocks
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+blocks(
+  query: BlockQueryInput
+  limit: Int
+  sortBy: BlockSortByInput
+): [Block!]!
+```
+
+
+### Arguments
+
+#### [<code style={{ fontWeight: 'normal' }}>blocks.<b>query</b></code>](#query)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>BlockQueryInput</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/inputs/block-query-input.mdx) <Badge class="badge badge--secondary " text="input"/> \{#query\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>blocks.<b>limit</b></code>](#limit)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#limit\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>blocks.<b>sortBy</b></code>](#sort-by)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>BlockSortByInput</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/enums/block-sort-by-input.mdx) <Badge class="badge badge--secondary " text="enum"/> \{#sort-by\} 
+
+
+
+
+
+### Type
+
+#### [<code style={{ fontWeight: 'normal' }}><b>Block</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/objects/block.mdx) <Badge class="badge badge--secondary " text="object"/>

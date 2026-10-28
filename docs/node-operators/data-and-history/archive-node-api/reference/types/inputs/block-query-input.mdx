@@ -1,0 +1,63 @@
+---
+id: block-query-input
+title: BlockQueryInput
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+Filter for blocks by date range, canonical status, and other criteria
+
+
+```graphql
+input BlockQueryInput {
+  blockHeight_gte: Int
+  blockHeight_lt: Int
+  dateTime_gte: DateTime
+  dateTime_lt: DateTime
+  canonical: Boolean
+  inBestChain: Boolean
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>BlockQueryInput.<b>blockHeight&#x005F;gte</b></code>](#block-height-gte)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#block-height-gte\} 
+Filter blocks from this height, inclusive
+
+
+#### [<code style={{ fontWeight: 'normal' }}>BlockQueryInput.<b>blockHeight&#x005F;lt</b></code>](#block-height-lt)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#block-height-lt\} 
+Filter blocks to this height, exclusive
+
+
+#### [<code style={{ fontWeight: 'normal' }}>BlockQueryInput.<b>dateTime&#x005F;gte</b></code>](#date-time-gte)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>DateTime</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/date-time.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#date-time-gte\} 
+Filter blocks from this date/time, inclusive
+
+
+#### [<code style={{ fontWeight: 'normal' }}>BlockQueryInput.<b>dateTime&#x005F;lt</b></code>](#date-time-lt)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>DateTime</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/date-time.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#date-time-lt\} 
+Filter blocks to this date/time, exclusive
+
+
+#### [<code style={{ fontWeight: 'normal' }}>BlockQueryInput.<b>canonical</b></code>](#canonical)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Boolean</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/boolean.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#canonical\} 
+Filter for canonical (finalized) blocks only
+
+
+#### [<code style={{ fontWeight: 'normal' }}>BlockQueryInput.<b>inBestChain</b></code>](#in-best-chain)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Boolean</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/boolean.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#in-best-chain\} 
+Filter for blocks in best chain only
+
+
+
+
+### Member Of
+
+[`blocks`](/node-operators/data-and-history/archive-node-api/reference/operations/queries/blocks.mdx)  <Badge class="badge badge--secondary badge--relation" text="query"/>
