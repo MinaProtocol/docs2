@@ -21,7 +21,7 @@ import Subhead from "@site/src/components/common/Subhead";
 The GraphQL schema definition of the Archive Node API, schema version 2.1.
 </Subhead>
 
-This page is the schema that the [Archive Node API](/node-operators/data-and-history/archive-node-api) 2.1.1 serves. The schema definition language (SDL) below is the full contract: every root query under `type Query`, every input type and every output type.
+This page is the schema that the [Archive Node API](/node-operators/data-and-history/archive-node-api) 2.1.1 serves. The schema definition language (SDL) below is the full contract: every root query under `type Query`, every input type and every output type. The [schema reference](/node-operators/data-and-history/archive-node-api/reference/operations) is generated from the same file, with one page per query and per type.
 
 ## Fetch the schema as a file
 
@@ -31,7 +31,7 @@ GraphQL has no separate description document like OpenAPI. The schema is the con
 |---|---|---|
 | SDL on this site | `https://docs.minaprotocol.com/archive-node-api/schema.graphql` | Code generation, AI agents, IDE plugins, and documentation tools. Plain text, no authentication |
 | Introspection JSON on this site | `https://docs.minaprotocol.com/archive-node-api/schema.json` | Tools that read a `schema.json` (`{ "__schema": ... }`) instead of SDL |
-| The repository | `https://github.com/o1-labs/Archive-Node-API/blob/main/schema.graphql` | The source of truth, with its history |
+| The repository | `https://github.com/o1-labs/Archive-Node-API/blob/v2.1.1/schema.graphql` | The source of truth at the 2.1.1 release tag, with its history |
 | Your own instance | `http://localhost:8080` with `ENABLE_INTROSPECTION=true` | The schema that one deployment serves |
 
 ```sh
@@ -43,7 +43,7 @@ curl -sO https://docs.minaprotocol.com/archive-node-api/schema.json
 npx get-graphql-schema http://localhost:8080 > schema.graphql
 ```
 
-Introspection is off by default. The server answers an introspection query only when `ENABLE_INTROSPECTION=true`. Keep it off on a public instance and use the published files instead. A check in the docs repository compares the published copy with the repository's `schema.graphql` every week, so the two do not drift apart.
+Introspection is off by default. The server answers an introspection query only when `ENABLE_INTROSPECTION=true`. Keep it off on a public instance and use the published files instead. A check in the docs repository compares the published copy with `schema.graphql` at the 2.1.1 release tag every week, regenerates the JSON form and the reference pages, and reports when a newer release is tagged, so the copy does not drift from the release it names.
 
 ## Use the schema in your project
 

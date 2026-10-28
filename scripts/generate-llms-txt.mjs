@@ -23,7 +23,10 @@ const OUTPUT_FILE = new URL('../static/llms-full.txt', import.meta.url).pathname
 // daemon GraphQL reference is one page per schema type; the schema itself,
 // served at /graphql-api/schema.graphql, is the better artifact for an agent
 // and the orientation page (node-developers/graphql-api) points to it.
-const EXCLUDED_DIRS = ['node-developers/graphql-api/reference'];
+const EXCLUDED_DIRS = [
+  'node-developers/graphql-api/reference',
+  'node-operators/data-and-history/archive-node-api/reference',
+];
 
 async function collectFiles(dir) {
   const entries = await readdir(dir, { withFileTypes: true });
