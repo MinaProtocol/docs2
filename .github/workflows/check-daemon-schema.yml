@@ -29,7 +29,7 @@ env:
   # reaches mainnet, then run `npm run generate-graphql-reference` and
   # commit the result. docs/node-developers/graphql-api.mdx names the same
   # version in prose; update it in the same change.
-  MINA_REF: 4.0.3
+  MINA_REF: 4.0.4
 
 jobs:
   check-daemon-schema:

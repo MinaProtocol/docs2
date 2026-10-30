@@ -498,6 +498,60 @@ A reference to how the block header refers to the body of the block as a hex-enc
 """
 scalar BodyReference
 
+"""The step a node is in on its way to reaching the network's chain"""
+enum BootstrapPhase {
+  """
+  Bootstrap: building the root's staged ledger, which checks the scan state against the snarked ledger
+  """
+  BUILDING_STAGED_LEDGER
+
+  """Bootstrap: downloading the root's scan state and pending coinbases"""
+  DOWNLOADING_SCAN_STATE
+
+  """
+  Asking peers for their best tip, while loading the transition frontier from disk
+  """
+  FETCHING_BEST_TIP
+
+  """Bootstrap: loading a transition frontier at the new root"""
+  LOADING_FRONTIER
+
+  """The transition frontier is running"""
+  PARTICIPATING
+
+  """Initialisation has not begun"""
+  STARTING
+
+  """Syncing the staking and next epoch ledgers"""
+  SYNCING_EPOCH_LEDGERS
+
+  """Bootstrap: syncing the root's snarked ledger"""
+  SYNCING_ROOT_LEDGER
+
+  """The chain has not started yet"""
+  WAITING_FOR_GENESIS
+
+  """Connecting to enough peers to begin"""
+  WAITING_FOR_PEERS
+}
+
+"""What a node is doing to reach the network's chain"""
+type BootstrapStatus {
+  """How many attempts the current or most recent bootstrap has started"""
+  bootstrapAttempts: Int!
+
+  """When the current or most recent bootstrap started"""
+  bootstrapStartedAt: Time
+
+  """Why that bootstrap's last failed attempt failed"""
+  lastAttemptFailure: String
+
+  """The most recent sync of each ledger"""
+  ledgerSyncs: [LedgerSync!]!
+  phase: BootstrapPhase!
+  phaseStartedAt: Time!
+}
+
 """Base58Check-encoded chain hash"""
 scalar ChainHash
 
@@ -842,6 +896,64 @@ scalar JSON
 """Base58Check-encoded ledger hash"""
 scalar LedgerHash
 
+"""The most recent sync of a ledger from peers"""
+type LedgerSync {
+  """Whether the sync is still running"""
+  active: Boolean!
+  ledger: SyncedLedger!
+
+  """For a sync that has ended, its progress when it ended"""
+  progress: LedgerSyncProgress!
+
+  """The root the sync is reaching"""
+  target: LedgerHash
+}
+
+"""How far a ledger sync has progressed"""
+type LedgerSyncProgress {
+  """How many accounts peers have sent, over all targets"""
+  accountsReceived: Int!
+
+  """
+  How many of the current target's accounts the ledger is known to hold, whether received or already present. A sync whose ledger already matched its target can finish before any are counted, so a synced ledger should be read as complete.
+  """
+  accountsSettled: Int!
+
+  """
+  How many answers from peers have added to the ledger or confirmed part of it
+  """
+  answersAccepted: Int!
+
+  """
+  How many answers have arrived for queries the sync no longer needed, such as those for an earlier target
+  """
+  answersIgnored: Int!
+
+  """How many answers have been invalid, and their queries asked again"""
+  answersRejected: Int!
+
+  """When an answer was last accepted"""
+  lastAcceptedAnswerAt: Time
+
+  """How many accounts the current target holds, once a peer has said"""
+  numAccounts: Int
+
+  """How many inner nodes the sync is waiting for the children of"""
+  pendingChildHashes: Int!
+
+  """How many account subtrees the sync is waiting for the accounts of"""
+  pendingContents: Int!
+
+  """Whether the ledger has reached the current target"""
+  synced: Boolean!
+
+  """When the current target was set"""
+  targetSetAt: Time
+
+  """How many times the sync has been given a new root to reach"""
+  targets: Int!
+}
+
 """length"""
 scalar Length
 
@@ -1142,6 +1254,27 @@ type RpcTimings {
   getTransitionChainProof: RpcPair!
 }
 
+"""Status of the scan state as of a block"""
+type ScanState {
+  """State hash of the block whose scan state this is"""
+  stateHash: StateHash!
+
+  """Status of each tree in the scan state, oldest first"""
+  trees: [ScanStateTree!]!
+}
+
+"""Free space and outstanding snark work in one tree of the scan state"""
+type ScanStateTree {
+  """Number of transaction slots still free in this tree"""
+  availableSpace: Int!
+
+  """Number of base jobs in this tree that are yet to be done"""
+  baseJobsTodo: Int!
+
+  """Number of merge jobs in this tree that are yet to be done"""
+  mergeJobsTodo: Int!
+}
+
 input SendDelegationInput {
   """Fee amount in order to send a stake delegation"""
   fee: UInt64!
@@ -1395,6 +1528,18 @@ enum SyncStatus {
   SYNCED
 }
 
+"""A ledger that a node syncs from its peers"""
+enum SyncedLedger {
+  """The next epoch ledger"""
+  NEXT_EPOCH
+
+  """The snarked ledger at the root of the transition frontier"""
+  ROOT_SNARKED
+
+  """The staking epoch ledger"""
+  STAKING_EPOCH
+}
+
 type TarFile {
   tarfile: String!
 }
@@ -1425,6 +1570,22 @@ scalar TransactionHash
 
 """Base64-encoded transaction"""
 scalar TransactionId
+
+"""
+Occupancy of the transaction pool. When the pool is full, admitting a new command evicts the command with the lowest fee per weight unit, together with every later-nonce command from the same fee payer
+"""
+type TransactionPoolStatus {
+  """Number of commands the pool holds before it starts evicting commands"""
+  maxSize: Int!
+
+  """
+  The lowest fee per weight unit of any command in the pool, in nanomina, as a decimal integer or a fraction 'n/d'. Null if the pool is empty. Once the pool is full, a new command must pay strictly more than this to be admitted. Payments and stake delegations have weight 1
+  """
+  minimumFeePerWeightUnit: String
+
+  """Number of commands currently in the pool"""
+  size: Int!
+}
 
 """Status of a transaction"""
 enum TransactionStatus {
@@ -1715,6 +1876,11 @@ input VerificationKeyWithHashInput {
   hash: Field!
 }
 
+"""
+Block encoded in precomputed block format, of any version the archive reads
+"""
+scalar VersionedPrecomputedBlock
+
 """A witness to a vrf evaluation, which may be externally verified"""
 type VrfEvaluation {
   c: VrfScalar!
@@ -1938,6 +2104,14 @@ type mutation {
   ): Applied!
 
   """
+  Send a precomputed block of any version the archive reads to the archive, which reads it by the rules of its own version. The block is forwarded as given.
+  """
+  archiveVersionedPrecomputedBlock(
+    """Block encoded in precomputed block format, with its version"""
+    block: VersionedPrecomputedBlock!
+  ): Applied!
+
+  """
   Create a new account - this will create a new keypair and store it in the daemon
   """
   createAccount(input: AddAccountInput!): AddAccountPayload!
@@ -2131,6 +2305,11 @@ type query {
   blockchainVerificationKey: JSON!
 
   """
+  What the node is doing to reach the network's chain: its step of initialisation or bootstrap, and its ledger syncs
+  """
+  bootstrapStatus: BootstrapStatus!
+
+  """
   Check a vrf evaluation commitment. This can be used to check vrf evaluations without needing to reveal the private key, in the format returned by evaluateVrf
   """
   checkVrf(input: VrfEvaluationInput!): VrfEvaluation!
@@ -2244,6 +2423,14 @@ type query {
   """The runtime configuration passed to the daemon at start-up"""
   runtimeConfig: JSON!
 
+  """
+  Free space and outstanding snark work in each tree of the scan state as of the given block, or of the best tip if no block is given. Returns an error if the block is not in the transition frontier or if the system is bootstrapping.
+  """
+  scanState(
+    """The state hash of the desired block"""
+    stateHash: String
+  ): ScanState!
+
   """The signature kind that this daemon instance is using"""
   signatureKind: String!
 
@@ -2301,6 +2488,11 @@ type query {
 
   """Accounts for which the daemon tracks the private key"""
   trackedAccounts: [Account!]!
+
+  """
+  Occupancy of this daemon's transaction pool, and the fee a new command must beat once the pool is full. Cheap enough to poll before each submission, as a back-pressure signal
+  """
+  transactionPoolStatus: TransactionPoolStatus!
 
   """Get the status of a transaction"""
   transactionStatus(
