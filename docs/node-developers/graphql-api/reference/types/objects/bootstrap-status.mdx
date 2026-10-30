@@ -1,0 +1,63 @@
+---
+id: bootstrap-status
+title: BootstrapStatus
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+What a node is doing to reach the network's chain
+
+
+```graphql
+type BootstrapStatus {
+  bootstrapAttempts: Int!
+  bootstrapStartedAt: Time
+  lastAttemptFailure: String
+  ledgerSyncs: [LedgerSync!]!
+  phase: BootstrapPhase!
+  phaseStartedAt: Time!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>BootstrapStatus.<b>bootstrapAttempts</b></code>](#bootstrap-attempts)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#bootstrap-attempts\} 
+How many attempts the current or most recent bootstrap has started
+
+
+#### [<code style={{ fontWeight: 'normal' }}>BootstrapStatus.<b>bootstrapStartedAt</b></code>](#bootstrap-started-at)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Time</b></code>](/node-developers/graphql-api/reference/types/scalars/time.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#bootstrap-started-at\} 
+When the current or most recent bootstrap started
+
+
+#### [<code style={{ fontWeight: 'normal' }}>BootstrapStatus.<b>lastAttemptFailure</b></code>](#last-attempt-failure)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String</b></code>](/node-developers/graphql-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#last-attempt-failure\} 
+Why that bootstrap's last failed attempt failed
+
+
+#### [<code style={{ fontWeight: 'normal' }}>BootstrapStatus.<b>ledgerSyncs</b></code>](#ledger-syncs)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>[LedgerSync!]!</b></code>](/node-developers/graphql-api/reference/types/objects/ledger-sync.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#ledger-syncs\} 
+The most recent sync of each ledger
+
+
+#### [<code style={{ fontWeight: 'normal' }}>BootstrapStatus.<b>phase</b></code>](#phase)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>BootstrapPhase!</b></code>](/node-developers/graphql-api/reference/types/enums/bootstrap-phase.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="enum"/> \{#phase\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>BootstrapStatus.<b>phaseStartedAt</b></code>](#phase-started-at)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Time!</b></code>](/node-developers/graphql-api/reference/types/scalars/time.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#phase-started-at\} 
+
+
+
+
+
+### Returned By
+
+[`bootstrapStatus`](/node-developers/graphql-api/reference/operations/queries/bootstrap-status.mdx)  <Badge class="badge badge--secondary badge--relation" text="query"/>

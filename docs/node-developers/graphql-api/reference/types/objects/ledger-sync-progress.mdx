@@ -1,0 +1,93 @@
+---
+id: ledger-sync-progress
+title: LedgerSyncProgress
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+How far a ledger sync has progressed
+
+
+```graphql
+type LedgerSyncProgress {
+  accountsReceived: Int!
+  accountsSettled: Int!
+  answersAccepted: Int!
+  answersIgnored: Int!
+  answersRejected: Int!
+  lastAcceptedAnswerAt: Time
+  numAccounts: Int
+  pendingChildHashes: Int!
+  pendingContents: Int!
+  synced: Boolean!
+  targetSetAt: Time
+  targets: Int!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>LedgerSyncProgress.<b>accountsReceived</b></code>](#accounts-received)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#accounts-received\} 
+How many accounts peers have sent, over all targets
+
+
+#### [<code style={{ fontWeight: 'normal' }}>LedgerSyncProgress.<b>accountsSettled</b></code>](#accounts-settled)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#accounts-settled\} 
+How many of the current target's accounts the ledger is known to hold, whether received or already present. A sync whose ledger already matched its target can finish before any are counted, so a synced ledger should be read as complete.
+
+
+#### [<code style={{ fontWeight: 'normal' }}>LedgerSyncProgress.<b>answersAccepted</b></code>](#answers-accepted)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#answers-accepted\} 
+How many answers from peers have added to the ledger or confirmed part of it
+
+
+#### [<code style={{ fontWeight: 'normal' }}>LedgerSyncProgress.<b>answersIgnored</b></code>](#answers-ignored)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#answers-ignored\} 
+How many answers have arrived for queries the sync no longer needed, such as those for an earlier target
+
+
+#### [<code style={{ fontWeight: 'normal' }}>LedgerSyncProgress.<b>answersRejected</b></code>](#answers-rejected)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#answers-rejected\} 
+How many answers have been invalid, and their queries asked again
+
+
+#### [<code style={{ fontWeight: 'normal' }}>LedgerSyncProgress.<b>lastAcceptedAnswerAt</b></code>](#last-accepted-answer-at)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Time</b></code>](/node-developers/graphql-api/reference/types/scalars/time.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#last-accepted-answer-at\} 
+When an answer was last accepted
+
+
+#### [<code style={{ fontWeight: 'normal' }}>LedgerSyncProgress.<b>numAccounts</b></code>](#num-accounts)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#num-accounts\} 
+How many accounts the current target holds, once a peer has said
+
+
+#### [<code style={{ fontWeight: 'normal' }}>LedgerSyncProgress.<b>pendingChildHashes</b></code>](#pending-child-hashes)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#pending-child-hashes\} 
+How many inner nodes the sync is waiting for the children of
+
+
+#### [<code style={{ fontWeight: 'normal' }}>LedgerSyncProgress.<b>pendingContents</b></code>](#pending-contents)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#pending-contents\} 
+How many account subtrees the sync is waiting for the accounts of
+
+
+#### [<code style={{ fontWeight: 'normal' }}>LedgerSyncProgress.<b>synced</b></code>](#synced)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Boolean!</b></code>](/node-developers/graphql-api/reference/types/scalars/boolean.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#synced\} 
+Whether the ledger has reached the current target
+
+
+#### [<code style={{ fontWeight: 'normal' }}>LedgerSyncProgress.<b>targetSetAt</b></code>](#target-set-at)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Time</b></code>](/node-developers/graphql-api/reference/types/scalars/time.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#target-set-at\} 
+When the current target was set
+
+
+#### [<code style={{ fontWeight: 'normal' }}>LedgerSyncProgress.<b>targets</b></code>](#targets)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#targets\} 
+How many times the sync has been given a new root to reach
+
+
+
+
+### Member Of
+
+[`LedgerSync`](/node-developers/graphql-api/reference/types/objects/ledger-sync.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

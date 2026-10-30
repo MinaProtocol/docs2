@@ -6852,9 +6852,10 @@ This page is the contract: which schema the current release serves, where to get
 
 | | |
 |---|---|
-| Daemon release | **mina 4.0.3** (Mesa). Releases 4.0.2 and 4.0.3 serve an identical schema |
-| Root fields | 41 queries, 29 mutations, 3 subscriptions, 210 types |
-| Source of truth | [`graphql_schema.json`](https://github.com/MinaProtocol/mina/blob/4.0.3/graphql_schema.json) at the release tag in the `MinaProtocol/mina` repository |
+| Daemon release | **mina 4.0.4** (Mesa) |
+| Root fields | 44 queries, 30 mutations, 3 subscriptions, 219 types |
+| Source of truth | [`graphql_schema.json`](https://github.com/MinaProtocol/mina/blob/4.0.4/graphql_schema.json) at the release tag in the `MinaProtocol/mina` repository |
+| Since 4.0.3 | Added the queries `bootstrapStatus`, `scanState` and `transactionPoolStatus` and the mutation `archiveVersionedPrecomputedBlock`. Nothing was removed or renamed. Releases 4.0.2 and 4.0.3 serve the same schema as each other |
 
 The daemon is code-first: the OCaml source defines the schema, `make update-graphql` dumps it, and a CI job in the mina repository fails any change that leaves the dump stale. The copy on this site is pinned to the release tag above and a weekly check compares the two, so the reference here describes the schema the released daemon serves, not a development branch.
 
@@ -6868,7 +6869,7 @@ GraphQL has no separate description document like OpenAPI. The schema is the con
 |---|---|---|
 | SDL on this site | `https://docs.minaprotocol.com/graphql-api/schema.graphql` | Code generation, AI agents, IDE plugins and documentation tools. Plain text, no authentication |
 | Introspection JSON on this site | `https://docs.minaprotocol.com/graphql-api/schema.json` | Tools that read a `schema.json` (`{ "__schema": ... }`) instead of SDL |
-| The repository | `https://github.com/MinaProtocol/mina/blob/4.0.3/graphql_schema.json` | The dump the daemon build produced, with its history. Wrapped in `{ "data": ... }` |
+| The repository | `https://github.com/MinaProtocol/mina/blob/4.0.4/graphql_schema.json` | The dump the daemon build produced, with its history. Wrapped in `{ "data": ... }` |
 | Your own node | `http://localhost:3085/graphql` | The schema that one daemon serves. Introspection is always on |
 
 ```sh
@@ -6918,7 +6919,7 @@ npm install -D @graphql-codegen/cli @graphql-codegen/typescript @graphql-codegen
 ```
 
 :::note
-Pin `graphql` to version 16. The 4.0.3 schema marks `feePayer` as deprecated on `UserCommandPayment` and `UserCommandDelegation` but not on the `UserCommand` interface they implement. graphql-js 17 treats that as a schema error and the generator stops before it writes anything.
+Pin `graphql` to version 16. The 4.0.4 schema marks `feePayer` as deprecated on `UserCommandPayment` and `UserCommandDelegation` but not on the `UserCommand` interface they implement. graphql-js 17 treats that as a schema error and the generator stops before it writes anything.
 :::
 
 ```ts title="codegen.ts"
@@ -7151,6 +7152,9 @@ Queries read the node and the recent chain. The ones most integrations use:
 | `bestChain(maxLength:)` | The most recent blocks on the best chain, newest last, with their transactions |
 | `block(stateHash:)` / `block(height:)` | One block in the frontier |
 | `pooledUserCommands`, `pooledZkappCommands` | The transaction pool, for fee estimation and for finding a transaction that is not yet in a block |
+| `transactionPoolStatus` | How full the pool is and the fee per weight unit a new command must beat once it is full. Cheap enough to poll before each submission. New in 4.0.4 |
+| `bootstrapStatus` | What a node that is not yet synced is doing: its bootstrap phase, attempts, the last failure, and the progress of each ledger sync. Tells a stalled sync from a slow one. New in 4.0.4 |
+| `scanState(stateHash:)` | Free space and outstanding SNARK work in each tree of the scan state at a block, for SNARK workers. New in 4.0.4 |
 | `transactionStatus(payment:)` / `transactionStatus(zkappTransaction:)` | Whether a transaction is `PENDING`, `INCLUDED` or `UNKNOWN` |
 | `genesisConstants`, `networkID`, `version` | What the node is and what it was built from |
 
@@ -7158,7 +7162,7 @@ Every query, with its arguments and the types it returns, is in the [queries ref
 
 ### Mutations
 
-Mutations change the node or submit transactions. `sendPayment`, `sendDelegation` and `sendZkapp` take a transaction that was signed elsewhere, with [mina-signer](/node-operators/mina-signer) or o1js, so a node that only relays transactions never holds a key. The other mutations manage accounts the daemon stores, set the SNARK worker and its fee, set the coinbase receiver, add peers and manage logs. All of them are in the [mutations reference](/node-developers/graphql-api/reference/operations/mutations).
+Mutations change the node or submit transactions. `sendPayment`, `sendDelegation` and `sendZkapp` take a transaction that was signed elsewhere, with [mina-signer](/node-operators/mina-signer) or o1js, so a node that only relays transactions never holds a key. The other mutations manage accounts the daemon stores, set the SNARK worker and its fee, set the coinbase receiver, add peers, manage logs and, since 4.0.4, forward a precomputed block of any version to the archive with `archiveVersionedPrecomputedBlock`. All of them are in the [mutations reference](/node-developers/graphql-api/reference/operations/mutations).
 
 ### Subscriptions
 

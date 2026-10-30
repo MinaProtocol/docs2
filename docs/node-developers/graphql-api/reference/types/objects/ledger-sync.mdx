@@ -1,0 +1,53 @@
+---
+id: ledger-sync
+title: LedgerSync
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+The most recent sync of a ledger from peers
+
+
+```graphql
+type LedgerSync {
+  active: Boolean!
+  ledger: SyncedLedger!
+  progress: LedgerSyncProgress!
+  target: LedgerHash
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>LedgerSync.<b>active</b></code>](#active)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Boolean!</b></code>](/node-developers/graphql-api/reference/types/scalars/boolean.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#active\} 
+Whether the sync is still running
+
+
+#### [<code style={{ fontWeight: 'normal' }}>LedgerSync.<b>ledger</b></code>](#ledger)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>SyncedLedger!</b></code>](/node-developers/graphql-api/reference/types/enums/synced-ledger.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="enum"/> \{#ledger\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>LedgerSync.<b>progress</b></code>](#progress)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>LedgerSyncProgress!</b></code>](/node-developers/graphql-api/reference/types/objects/ledger-sync-progress.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#progress\} 
+For a sync that has ended, its progress when it ended
+
+
+#### [<code style={{ fontWeight: 'normal' }}>LedgerSync.<b>target</b></code>](#target)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>LedgerHash</b></code>](/node-developers/graphql-api/reference/types/scalars/ledger-hash.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#target\} 
+The root the sync is reaching
+
+
+
+
+### Member Of
+
+[`BootstrapStatus`](/node-developers/graphql-api/reference/types/objects/bootstrap-status.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

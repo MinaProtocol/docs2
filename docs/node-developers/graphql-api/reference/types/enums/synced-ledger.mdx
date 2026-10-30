@@ -1,0 +1,48 @@
+---
+id: synced-ledger
+title: SyncedLedger
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+A ledger that a node syncs from its peers
+
+
+```graphql
+enum SyncedLedger {
+  NEXT_EPOCH
+  ROOT_SNARKED
+  STAKING_EPOCH
+}
+```
+
+
+### Values
+
+#### [<code style={{ fontWeight: 'normal' }}>SyncedLedger.<b>NEXT&#x005F;EPOCH</b></code>](#next-epoch) \{#next-epoch\} 
+The next epoch ledger
+
+
+#### [<code style={{ fontWeight: 'normal' }}>SyncedLedger.<b>ROOT&#x005F;SNARKED</b></code>](#root-snarked) \{#root-snarked\} 
+The snarked ledger at the root of the transition frontier
+
+
+#### [<code style={{ fontWeight: 'normal' }}>SyncedLedger.<b>STAKING&#x005F;EPOCH</b></code>](#staking-epoch) \{#staking-epoch\} 
+The staking epoch ledger
+
+
+
+
+### Member Of
+
+[`LedgerSync`](/node-developers/graphql-api/reference/types/objects/ledger-sync.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>
