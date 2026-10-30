@@ -1,0 +1,68 @@
+---
+id: zkapp-command-output
+title: ZkappCommandOutput
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type ZkappCommandOutput {
+  blockInfo: BlockInfo!
+  hash: String!
+  feePayer: String!
+  fee: String!
+  memo: String!
+  sequenceNumber: Int!
+  accountUpdates: [ZkappAccountUpdateOutput!]!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>ZkappCommandOutput.<b>blockInfo</b></code>](#block-info)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>BlockInfo!</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/objects/block-info.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#block-info\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ZkappCommandOutput.<b>hash</b></code>](#hash)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String!</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#hash\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ZkappCommandOutput.<b>feePayer</b></code>](#fee-payer)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String!</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#fee-payer\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ZkappCommandOutput.<b>fee</b></code>](#fee)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String!</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#fee\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ZkappCommandOutput.<b>memo</b></code>](#memo)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String!</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#memo\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ZkappCommandOutput.<b>sequenceNumber</b></code>](#sequence-number)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#sequence-number\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ZkappCommandOutput.<b>accountUpdates</b></code>](#account-updates)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>[ZkappAccountUpdateOutput!]!</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/objects/zkapp-account-update-output.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#account-updates\} 
+
+
+
+
+
+### Returned By
+
+[`zkappCommands`](/node-operators/data-and-history/archive-node-api/reference/operations/queries/zkapp-commands.mdx)  <Badge class="badge badge--secondary badge--relation" text="query"/>

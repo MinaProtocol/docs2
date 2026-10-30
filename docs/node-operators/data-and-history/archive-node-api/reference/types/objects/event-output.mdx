@@ -1,0 +1,43 @@
+---
+id: event-output
+title: EventOutput
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type EventOutput {
+  blockInfo: BlockInfo
+  eventData: [EventData!]
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>EventOutput.<b>blockInfo</b></code>](#block-info)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>BlockInfo</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/objects/block-info.mdx) <Badge class="badge badge--secondary " text="object"/> \{#block-info\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>EventOutput.<b>eventData</b></code>](#event-data)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>[EventData!]</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/objects/event-data.mdx) <Badge class="badge badge--secondary " text="list"/> <Badge class="badge badge--secondary " text="object"/> \{#event-data\} 
+
+
+
+
+
+### Returned By
+
+[`events`](/node-operators/data-and-history/archive-node-api/reference/operations/queries/events.mdx)  <Badge class="badge badge--secondary badge--relation" text="query"/>
