@@ -1,0 +1,32 @@
+---
+id: int
+title: Int
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.
+
+
+```graphql
+scalar Int
+```
+
+
+### Returned By
+
+[`sendTestPayments`](/node-developers/graphql-api/reference/operations/mutations/send-test-payments.mdx)  <Badge class="badge badge--secondary badge--relation" text="mutation"/><Bullet />[`timeOffset`](/node-developers/graphql-api/reference/operations/queries/time-offset.mdx)  <Badge class="badge badge--secondary badge--relation" text="query"/>
+
+### Member Of
+
+[`Account`](/node-developers/graphql-api/reference/types/objects/account.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`accountActions`](/node-developers/graphql-api/reference/operations/queries/account-actions.mdx)  <Badge class="badge badge--secondary badge--relation" text="query"/><Bullet />[`AccountUpdateBody`](/node-developers/graphql-api/reference/types/objects/account-update-body.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`AccountUpdateBodyInput`](/node-developers/graphql-api/reference/types/inputs/account-update-body-input.mdx)  <Badge class="badge badge--secondary badge--relation" text="input"/><Bullet />[`ActionState`](/node-developers/graphql-api/reference/types/objects/action-state.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`AddrsAndPorts`](/node-developers/graphql-api/reference/types/objects/addrs-and-ports.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`bestChain`](/node-developers/graphql-api/reference/operations/queries/best-chain.mdx)  <Badge class="badge badge--secondary badge--relation" text="query"/><Bullet />[`block`](/node-developers/graphql-api/reference/operations/queries/block.mdx)  <Badge class="badge badge--secondary badge--relation" text="query"/><Bullet />[`Block`](/node-developers/graphql-api/reference/types/objects/block.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`BootstrapStatus`](/node-developers/graphql-api/reference/types/objects/bootstrap-status.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`CompletedWork`](/node-developers/graphql-api/reference/types/objects/completed-work.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`ConsensusConfiguration`](/node-developers/graphql-api/reference/types/objects/consensus-configuration.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`DaemonStatus`](/node-developers/graphql-api/reference/types/objects/daemon-status.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`fork_config`](/node-developers/graphql-api/reference/operations/queries/fork-config.mdx)  <Badge class="badge badge--secondary badge--relation" text="query"/><Bullet />[`getFilteredLogEntries`](/node-developers/graphql-api/reference/operations/queries/get-filtered-log-entries.mdx)  <Badge class="badge badge--secondary badge--relation" text="query"/><Bullet />[`Histogram`](/node-developers/graphql-api/reference/types/objects/histogram.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`LedgerSyncProgress`](/node-developers/graphql-api/reference/types/objects/ledger-sync-progress.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`Metrics`](/node-developers/graphql-api/reference/types/objects/metrics.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`NetworkPeer`](/node-developers/graphql-api/reference/types/inputs/network-peer.mdx)  <Badge class="badge badge--secondary badge--relation" text="input"/><Bullet />[`NetworkPeerPayload`](/node-developers/graphql-api/reference/types/objects/network-peer-payload.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`Peer`](/node-developers/graphql-api/reference/types/objects/peer.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`protocolState`](/node-developers/graphql-api/reference/operations/queries/protocol-state.mdx)  <Badge class="badge badge--secondary badge--relation" text="query"/><Bullet />[`ScanStateTree`](/node-developers/graphql-api/reference/types/objects/scan-state-tree.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`TransactionPoolStatus`](/node-developers/graphql-api/reference/types/objects/transaction-pool-status.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`UserCommand`](/node-developers/graphql-api/reference/types/interfaces/user-command.mdx)  <Badge class="badge badge--secondary badge--relation" text="interface"/><Bullet />[`UserCommandDelegation`](/node-developers/graphql-api/reference/types/objects/user-command-delegation.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`UserCommandPayment`](/node-developers/graphql-api/reference/types/objects/user-command-payment.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`VrfMessage`](/node-developers/graphql-api/reference/types/objects/vrf-message.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`VrfMessageInput`](/node-developers/graphql-api/reference/types/inputs/vrf-message-input.mdx)  <Badge class="badge badge--secondary badge--relation" text="input"/><Bullet />[`WorkBundleSpec`](/node-developers/graphql-api/reference/types/objects/work-bundle-spec.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`WorkDescription`](/node-developers/graphql-api/reference/types/objects/work-description.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

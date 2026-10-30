@@ -1,0 +1,38 @@
+---
+id: applied
+title: Applied
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type Applied {
+  applied: Boolean!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>Applied.<b>applied</b></code>](#applied)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Boolean!</b></code>](/node-developers/graphql-api/reference/types/scalars/boolean.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#applied\} 
+
+
+
+
+
+### Returned By
+
+[`archiveExtensionalBlock`](/node-developers/graphql-api/reference/operations/mutations/archive-extensional-block.mdx)  <Badge class="badge badge--secondary badge--relation" text="mutation"/><Bullet />[`archivePrecomputedBlock`](/node-developers/graphql-api/reference/operations/mutations/archive-precomputed-block.mdx)  <Badge class="badge badge--secondary badge--relation" text="mutation"/><Bullet />[`archiveVersionedPrecomputedBlock`](/node-developers/graphql-api/reference/operations/mutations/archive-versioned-precomputed-block.mdx)  <Badge class="badge badge--secondary badge--relation" text="mutation"/>

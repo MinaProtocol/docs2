@@ -1,0 +1,44 @@
+---
+id: fork-config
+title: fork_config
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+The runtime configuration for a blockchain fork intended to be a continuation of the current one. By default, this returns the newest block that appeared before the transaction stop slot provided in the configuration, or the best tip if no such block exists.
+
+
+```graphql
+fork_config(
+  height: Int
+  stateHash: String
+): JSON!
+```
+
+
+### Arguments
+
+#### [<code style={{ fontWeight: 'normal' }}>fork&#x005F;config.<b>height</b></code>](#height)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#height\} 
+The height of the desired block in the best chain
+
+
+#### [<code style={{ fontWeight: 'normal' }}>fork&#x005F;config.<b>stateHash</b></code>](#state-hash)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String</b></code>](/node-developers/graphql-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#state-hash\} 
+The state hash of the desired block
+
+
+
+
+### Type
+
+#### [<code style={{ fontWeight: 'normal' }}><b>JSON</b></code>](/node-developers/graphql-api/reference/types/scalars/json.mdx) <Badge class="badge badge--secondary " text="scalar"/> 
+Arbitrary JSON

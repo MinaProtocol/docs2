@@ -1,0 +1,67 @@
+---
+id: sync-status
+title: SyncStatus
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+Sync status of daemon
+
+
+```graphql
+enum SyncStatus {
+  BOOTSTRAP
+  CATCHUP
+  CONNECTING
+  LISTENING
+  OFFLINE
+  SYNCED
+}
+```
+
+
+### Values
+
+#### [<code style={{ fontWeight: 'normal' }}>SyncStatus.<b>BOOTSTRAP</b></code>](#bootstrap) \{#bootstrap\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>SyncStatus.<b>CATCHUP</b></code>](#catchup) \{#catchup\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>SyncStatus.<b>CONNECTING</b></code>](#connecting) \{#connecting\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>SyncStatus.<b>LISTENING</b></code>](#listening) \{#listening\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>SyncStatus.<b>OFFLINE</b></code>](#offline) \{#offline\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>SyncStatus.<b>SYNCED</b></code>](#synced) \{#synced\} 
+
+
+
+
+
+### Returned By
+
+[`newSyncUpdate`](/node-developers/graphql-api/reference/operations/subscriptions/new-sync-update.mdx)  <Badge class="badge badge--secondary badge--relation" text="subscription"/><Bullet />[`syncStatus`](/node-developers/graphql-api/reference/operations/queries/sync-status.mdx)  <Badge class="badge badge--secondary badge--relation" text="query"/>
+
+### Member Of
+
+[`DaemonStatus`](/node-developers/graphql-api/reference/types/objects/daemon-status.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

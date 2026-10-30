@@ -1,0 +1,38 @@
+---
+id: zkapp-network-precondition
+title: ZkappNetworkPrecondition
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type ZkappNetworkPrecondition {
+  globalSlotSinceGenesis: ZkappGlobalSlotBounds
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>ZkappNetworkPrecondition.<b>globalSlotSinceGenesis</b></code>](#global-slot-since-genesis)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>ZkappGlobalSlotBounds</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/objects/zkapp-global-slot-bounds.mdx) <Badge class="badge badge--secondary " text="object"/> \{#global-slot-since-genesis\} 
+
+
+
+
+
+### Member Of
+
+[`ZkappAccountUpdateOutput`](/node-operators/data-and-history/archive-node-api/reference/types/objects/zkapp-account-update-output.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

@@ -1,0 +1,8 @@
+label: Queries
+position: 7
+link: 
+  type: generated-index
+  title: 'Queries overview'
+  slug: /node-developers/graphql-api/reference/deprecated/operations/queries
+collapsible: true
+collapsed: true

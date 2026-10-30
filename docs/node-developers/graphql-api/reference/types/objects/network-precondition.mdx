@@ -1,0 +1,68 @@
+---
+id: network-precondition
+title: NetworkPrecondition
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type NetworkPrecondition {
+  blockchainLength: LengthInterval
+  globalSlotSinceGenesis: GlobalSlotSinceGenesisInterval
+  minWindowDensity: LengthInterval
+  nextEpochData: EpochDataPrecondition!
+  snarkedLedgerHash: Field
+  stakingEpochData: EpochDataPrecondition!
+  totalCurrency: CurrencyAmountInterval
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>NetworkPrecondition.<b>blockchainLength</b></code>](#blockchain-length)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>LengthInterval</b></code>](/node-developers/graphql-api/reference/types/objects/length-interval.mdx) <Badge class="badge badge--secondary " text="object"/> \{#blockchain-length\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>NetworkPrecondition.<b>globalSlotSinceGenesis</b></code>](#global-slot-since-genesis)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>GlobalSlotSinceGenesisInterval</b></code>](/node-developers/graphql-api/reference/types/objects/global-slot-since-genesis-interval.mdx) <Badge class="badge badge--secondary " text="object"/> \{#global-slot-since-genesis\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>NetworkPrecondition.<b>minWindowDensity</b></code>](#min-window-density)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>LengthInterval</b></code>](/node-developers/graphql-api/reference/types/objects/length-interval.mdx) <Badge class="badge badge--secondary " text="object"/> \{#min-window-density\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>NetworkPrecondition.<b>nextEpochData</b></code>](#next-epoch-data)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>EpochDataPrecondition!</b></code>](/node-developers/graphql-api/reference/types/objects/epoch-data-precondition.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#next-epoch-data\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>NetworkPrecondition.<b>snarkedLedgerHash</b></code>](#snarked-ledger-hash)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Field</b></code>](/node-developers/graphql-api/reference/types/scalars/field.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#snarked-ledger-hash\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>NetworkPrecondition.<b>stakingEpochData</b></code>](#staking-epoch-data)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>EpochDataPrecondition!</b></code>](/node-developers/graphql-api/reference/types/objects/epoch-data-precondition.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#staking-epoch-data\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>NetworkPrecondition.<b>totalCurrency</b></code>](#total-currency)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>CurrencyAmountInterval</b></code>](/node-developers/graphql-api/reference/types/objects/currency-amount-interval.mdx) <Badge class="badge badge--secondary " text="object"/> \{#total-currency\} 
+
+
+
+
+
+### Member Of
+
+[`Preconditions`](/node-developers/graphql-api/reference/types/objects/preconditions.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

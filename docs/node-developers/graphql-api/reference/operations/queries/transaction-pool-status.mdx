@@ -1,0 +1,29 @@
+---
+id: transaction-pool-status
+title: transactionPoolStatus
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+Occupancy of this daemon's transaction pool, and the fee a new command must beat once the pool is full. Cheap enough to poll before each submission, as a back-pressure signal
+
+
+```graphql
+transactionPoolStatus: TransactionPoolStatus!
+```
+
+
+### Type
+
+#### [<code style={{ fontWeight: 'normal' }}><b>TransactionPoolStatus</b></code>](/node-developers/graphql-api/reference/types/objects/transaction-pool-status.mdx) <Badge class="badge badge--secondary " text="object"/> 
+Occupancy of the transaction pool. When the pool is full, admitting a new command evicts the command with the lowest fee per weight unit, together with every later-nonce command from the same fee payer

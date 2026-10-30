@@ -1,0 +1,38 @@
+---
+id: new-block
+title: newBlock
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+Event that triggers when a new block is created that either contains a transaction with the specified public key, or was produced by it. If no public key is provided, then the event will trigger for every new block received
+
+
+```graphql
+newBlock(
+  publicKey: PublicKey
+): Block!
+```
+
+
+### Arguments
+
+#### [<code style={{ fontWeight: 'normal' }}>newBlock.<b>publicKey</b></code>](#public-key)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>PublicKey</b></code>](/node-developers/graphql-api/reference/types/scalars/public-key.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#public-key\} 
+Public key that is included in the block
+
+
+
+
+### Type
+
+#### [<code style={{ fontWeight: 'normal' }}><b>Block</b></code>](/node-developers/graphql-api/reference/types/objects/block.mdx) <Badge class="badge badge--secondary " text="object"/>

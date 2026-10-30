@@ -1,0 +1,73 @@
+---
+id: account-update-modification-input
+title: AccountUpdateModificationInput
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+input AccountUpdateModificationInput {
+  appState: [Field]!
+  delegate: PublicKey
+  permissions: PermissionsInput
+  timing: TimingInput
+  tokenSymbol: String
+  verificationKey: VerificationKeyWithHashInput
+  votingFor: StateHash
+  zkappUri: String
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountUpdateModificationInput.<b>appState</b></code>](#app-state)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>[Field]!</b></code>](/node-developers/graphql-api/reference/types/scalars/field.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#app-state\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountUpdateModificationInput.<b>delegate</b></code>](#delegate)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>PublicKey</b></code>](/node-developers/graphql-api/reference/types/scalars/public-key.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#delegate\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountUpdateModificationInput.<b>permissions</b></code>](#permissions)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>PermissionsInput</b></code>](/node-developers/graphql-api/reference/types/inputs/permissions-input.mdx) <Badge class="badge badge--secondary " text="input"/> \{#permissions\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountUpdateModificationInput.<b>timing</b></code>](#timing)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>TimingInput</b></code>](/node-developers/graphql-api/reference/types/inputs/timing-input.mdx) <Badge class="badge badge--secondary " text="input"/> \{#timing\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountUpdateModificationInput.<b>tokenSymbol</b></code>](#token-symbol)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String</b></code>](/node-developers/graphql-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#token-symbol\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountUpdateModificationInput.<b>verificationKey</b></code>](#verification-key)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>VerificationKeyWithHashInput</b></code>](/node-developers/graphql-api/reference/types/inputs/verification-key-with-hash-input.mdx) <Badge class="badge badge--secondary " text="input"/> \{#verification-key\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountUpdateModificationInput.<b>votingFor</b></code>](#voting-for)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>StateHash</b></code>](/node-developers/graphql-api/reference/types/scalars/state-hash.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#voting-for\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountUpdateModificationInput.<b>zkappUri</b></code>](#zkapp-uri)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String</b></code>](/node-developers/graphql-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#zkapp-uri\} 
+
+
+
+
+
+### Member Of
+
+[`AccountUpdateBodyInput`](/node-developers/graphql-api/reference/types/inputs/account-update-body-input.mdx)  <Badge class="badge badge--secondary badge--relation" text="input"/>

@@ -1,0 +1,103 @@
+---
+id: account-update-body-input
+title: AccountUpdateBodyInput
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+input AccountUpdateBodyInput {
+  actions: [[Field!]!]!
+  authorizationKind: AuthorizationKindStructuredInput!
+  balanceChange: BalanceChangeInput!
+  callData: Field!
+  callDepth: Int!
+  events: [[Field!]!]!
+  implicitAccountCreationFee: Boolean!
+  incrementNonce: Boolean!
+  mayUseToken: MayUseTokenInput!
+  preconditions: PreconditionsInput!
+  publicKey: PublicKey!
+  tokenId: TokenId!
+  update: AccountUpdateModificationInput!
+  useFullCommitment: Boolean!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountUpdateBodyInput.<b>actions</b></code>](#actions)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>[[Field!]!]!</b></code>](/node-developers/graphql-api/reference/types/scalars/field.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#actions\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountUpdateBodyInput.<b>authorizationKind</b></code>](#authorization-kind)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>AuthorizationKindStructuredInput!</b></code>](/node-developers/graphql-api/reference/types/inputs/authorization-kind-structured-input.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="input"/> \{#authorization-kind\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountUpdateBodyInput.<b>balanceChange</b></code>](#balance-change)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>BalanceChangeInput!</b></code>](/node-developers/graphql-api/reference/types/inputs/balance-change-input.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="input"/> \{#balance-change\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountUpdateBodyInput.<b>callData</b></code>](#call-data)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Field!</b></code>](/node-developers/graphql-api/reference/types/scalars/field.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#call-data\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountUpdateBodyInput.<b>callDepth</b></code>](#call-depth)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#call-depth\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountUpdateBodyInput.<b>events</b></code>](#events)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>[[Field!]!]!</b></code>](/node-developers/graphql-api/reference/types/scalars/field.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#events\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountUpdateBodyInput.<b>implicitAccountCreationFee</b></code>](#implicit-account-creation-fee)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Boolean!</b></code>](/node-developers/graphql-api/reference/types/scalars/boolean.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#implicit-account-creation-fee\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountUpdateBodyInput.<b>incrementNonce</b></code>](#increment-nonce)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Boolean!</b></code>](/node-developers/graphql-api/reference/types/scalars/boolean.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#increment-nonce\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountUpdateBodyInput.<b>mayUseToken</b></code>](#may-use-token)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>MayUseTokenInput!</b></code>](/node-developers/graphql-api/reference/types/inputs/may-use-token-input.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="input"/> \{#may-use-token\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountUpdateBodyInput.<b>preconditions</b></code>](#preconditions)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>PreconditionsInput!</b></code>](/node-developers/graphql-api/reference/types/inputs/preconditions-input.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="input"/> \{#preconditions\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountUpdateBodyInput.<b>publicKey</b></code>](#public-key)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>PublicKey!</b></code>](/node-developers/graphql-api/reference/types/scalars/public-key.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#public-key\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountUpdateBodyInput.<b>tokenId</b></code>](#token-id)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>TokenId!</b></code>](/node-developers/graphql-api/reference/types/scalars/token-id.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#token-id\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountUpdateBodyInput.<b>update</b></code>](#update)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>AccountUpdateModificationInput!</b></code>](/node-developers/graphql-api/reference/types/inputs/account-update-modification-input.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="input"/> \{#update\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountUpdateBodyInput.<b>useFullCommitment</b></code>](#use-full-commitment)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Boolean!</b></code>](/node-developers/graphql-api/reference/types/scalars/boolean.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#use-full-commitment\} 
+
+
+
+
+
+### Member Of
+
+[`ZkappAccountUpdateInput`](/node-developers/graphql-api/reference/types/inputs/zkapp-account-update-input.mdx)  <Badge class="badge badge--secondary badge--relation" text="input"/>

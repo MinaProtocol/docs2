@@ -1,0 +1,43 @@
+---
+id: epoch-ledger-precondition-input
+title: EpochLedgerPreconditionInput
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+input EpochLedgerPreconditionInput {
+  hash: Field
+  totalCurrency: CurrencyAmountIntervalInput
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>EpochLedgerPreconditionInput.<b>hash</b></code>](#hash)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Field</b></code>](/node-developers/graphql-api/reference/types/scalars/field.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#hash\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>EpochLedgerPreconditionInput.<b>totalCurrency</b></code>](#total-currency)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>CurrencyAmountIntervalInput</b></code>](/node-developers/graphql-api/reference/types/inputs/currency-amount-interval-input.mdx) <Badge class="badge badge--secondary " text="input"/> \{#total-currency\} 
+
+
+
+
+
+### Member Of
+
+[`EpochDataPreconditionInput`](/node-developers/graphql-api/reference/types/inputs/epoch-data-precondition-input.mdx)  <Badge class="badge badge--secondary badge--relation" text="input"/>

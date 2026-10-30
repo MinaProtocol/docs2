@@ -1,0 +1,43 @@
+---
+id: account-input
+title: AccountInput
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+An account with a public key and a token id
+
+
+```graphql
+input AccountInput {
+  publicKey: PublicKey!
+  token: TokenId
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountInput.<b>publicKey</b></code>](#public-key)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>PublicKey!</b></code>](/node-developers/graphql-api/reference/types/scalars/public-key.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#public-key\} 
+Public key of the account
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountInput.<b>token</b></code>](#token)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>TokenId</b></code>](/node-developers/graphql-api/reference/types/scalars/token-id.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#token\} 
+Token id of the account
+
+
+
+
+### Member Of
+
+[`encodedSnarkedLedgerAccountMembership`](/node-developers/graphql-api/reference/operations/queries/encoded-snarked-ledger-account-membership.mdx)  <Badge class="badge badge--secondary badge--relation" text="query"/><Bullet />[`snarkedLedgerAccountMembership`](/node-developers/graphql-api/reference/operations/queries/snarked-ledger-account-membership.mdx)  <Badge class="badge badge--secondary badge--relation" text="query"/>

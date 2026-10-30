@@ -1,0 +1,38 @@
+---
+id: pending-snark-work-spec
+title: PendingSnarkWorkSpec
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+Snark work witnesses and statements that are yet to be proven or included in blocks
+
+
+```graphql
+type PendingSnarkWorkSpec {
+  workBundleSpec: WorkBundleSpec!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>PendingSnarkWorkSpec.<b>workBundleSpec</b></code>](#work-bundle-spec)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>WorkBundleSpec!</b></code>](/node-developers/graphql-api/reference/types/objects/work-bundle-spec.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#work-bundle-spec\} 
+Work bundle spec with one or two snark work
+
+
+
+
+### Returned By
+
+[`snarkWorkRange`](/node-developers/graphql-api/reference/operations/queries/snark-work-range.mdx)  <Badge class="badge badge--secondary badge--relation" text="query"/>

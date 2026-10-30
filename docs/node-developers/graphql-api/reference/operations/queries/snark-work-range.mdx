@@ -1,0 +1,44 @@
+---
+id: snark-work-range
+title: snarkWorkRange
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+Find any sequence of snark work between two indexes in all available snark work. Returns both completed and uncompleted work.
+
+
+```graphql
+snarkWorkRange(
+  endingIndex: UInt32
+  startingIndex: UInt32!
+): [PendingSnarkWorkSpec!]!
+```
+
+
+### Arguments
+
+#### [<code style={{ fontWeight: 'normal' }}>snarkWorkRange.<b>endingIndex</b></code>](#ending-index)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>UInt32</b></code>](/node-developers/graphql-api/reference/types/scalars/uint-32.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#ending-index\} 
+The last index to be taken from all available snark work (exclusive). If not specified or greater than the available snark work list,all elements from index [startingIndex] will be returned. An empty list will be returned if startingIndex is not a valid index or if startingIndex &#x003E;= endingIndex.
+
+
+#### [<code style={{ fontWeight: 'normal' }}>snarkWorkRange.<b>startingIndex</b></code>](#starting-index)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>UInt32!</b></code>](/node-developers/graphql-api/reference/types/scalars/uint-32.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#starting-index\} 
+The first index to be taken from all available snark work
+
+
+
+
+### Type
+
+#### [<code style={{ fontWeight: 'normal' }}><b>PendingSnarkWorkSpec</b></code>](/node-developers/graphql-api/reference/types/objects/pending-snark-work-spec.mdx) <Badge class="badge badge--secondary " text="object"/> 
+Snark work witnesses and statements that are yet to be proven or included in blocks

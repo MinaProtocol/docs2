@@ -1,0 +1,43 @@
+---
+id: currency-amount-interval
+title: CurrencyAmountInterval
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type CurrencyAmountInterval {
+  lower: CurrencyAmount!
+  upper: CurrencyAmount!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>CurrencyAmountInterval.<b>lower</b></code>](#lower)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>CurrencyAmount!</b></code>](/node-developers/graphql-api/reference/types/scalars/currency-amount.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#lower\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>CurrencyAmountInterval.<b>upper</b></code>](#upper)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>CurrencyAmount!</b></code>](/node-developers/graphql-api/reference/types/scalars/currency-amount.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#upper\} 
+
+
+
+
+
+### Member Of
+
+[`EpochLedgerPrecondition`](/node-developers/graphql-api/reference/types/objects/epoch-ledger-precondition.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`NetworkPrecondition`](/node-developers/graphql-api/reference/types/objects/network-precondition.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

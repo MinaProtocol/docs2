@@ -1,0 +1,28 @@
+---
+id: signature
+title: Signature
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+scalar Signature
+```
+
+
+### Member Of
+
+[`Control`](/node-developers/graphql-api/reference/types/objects/control.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`ControlInput`](/node-developers/graphql-api/reference/types/inputs/control-input.mdx)  <Badge class="badge badge--secondary badge--relation" text="input"/><Bullet />[`ZkappFeePayer`](/node-developers/graphql-api/reference/types/objects/zkapp-fee-payer.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`ZkappFeePayerInput`](/node-developers/graphql-api/reference/types/inputs/zkapp-fee-payer-input.mdx)  <Badge class="badge badge--secondary badge--relation" text="input"/>

@@ -1,0 +1,38 @@
+---
+id: set-connection-gating-config
+title: setConnectionGatingConfig
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+Set the connection gating config, returning the current config after the application (which may have failed)
+
+
+```graphql
+setConnectionGatingConfig(
+  input: SetConnectionGatingConfigInput!
+): SetConnectionGatingConfigPayload!
+```
+
+
+### Arguments
+
+#### [<code style={{ fontWeight: 'normal' }}>setConnectionGatingConfig.<b>input</b></code>](#input)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>SetConnectionGatingConfigInput!</b></code>](/node-developers/graphql-api/reference/types/inputs/set-connection-gating-config-input.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="input"/> \{#input\} 
+
+
+
+
+
+### Type
+
+#### [<code style={{ fontWeight: 'normal' }}><b>SetConnectionGatingConfigPayload</b></code>](/node-developers/graphql-api/reference/types/objects/set-connection-gating-config-payload.mdx) <Badge class="badge badge--secondary " text="object"/>

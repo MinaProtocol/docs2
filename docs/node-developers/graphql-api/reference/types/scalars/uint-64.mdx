@@ -1,0 +1,28 @@
+---
+id: uint-64
+title: UInt64
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+String or Integer representation of a uint64 number. If the input is a string, it must represent the number in base 10
+
+
+```graphql
+scalar UInt64
+```
+
+
+### Member Of
+
+[`SendDelegationInput`](/node-developers/graphql-api/reference/types/inputs/send-delegation-input.mdx)  <Badge class="badge badge--secondary badge--relation" text="input"/><Bullet />[`SendPaymentInput`](/node-developers/graphql-api/reference/types/inputs/send-payment-input.mdx)  <Badge class="badge badge--secondary badge--relation" text="input"/><Bullet />[`sendTestPayments`](/node-developers/graphql-api/reference/operations/mutations/send-test-payments.mdx)  <Badge class="badge badge--secondary badge--relation" text="mutation"/><Bullet />[`SetSnarkWorkFee`](/node-developers/graphql-api/reference/types/inputs/set-snark-work-fee.mdx)  <Badge class="badge badge--secondary badge--relation" text="input"/><Bullet />[`VrfThresholdInput`](/node-developers/graphql-api/reference/types/inputs/vrf-threshold-input.mdx)  <Badge class="badge badge--secondary badge--relation" text="input"/>

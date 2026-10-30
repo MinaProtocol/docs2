@@ -1,0 +1,83 @@
+---
+id: bootstrap-phase
+title: BootstrapPhase
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+The step a node is in on its way to reaching the network's chain
+
+
+```graphql
+enum BootstrapPhase {
+  BUILDING_STAGED_LEDGER
+  DOWNLOADING_SCAN_STATE
+  FETCHING_BEST_TIP
+  LOADING_FRONTIER
+  PARTICIPATING
+  STARTING
+  SYNCING_EPOCH_LEDGERS
+  SYNCING_ROOT_LEDGER
+  WAITING_FOR_GENESIS
+  WAITING_FOR_PEERS
+}
+```
+
+
+### Values
+
+#### [<code style={{ fontWeight: 'normal' }}>BootstrapPhase.<b>BUILDING&#x005F;STAGED&#x005F;LEDGER</b></code>](#building-staged-ledger) \{#building-staged-ledger\} 
+Bootstrap: building the root's staged ledger, which checks the scan state against the snarked ledger
+
+
+#### [<code style={{ fontWeight: 'normal' }}>BootstrapPhase.<b>DOWNLOADING&#x005F;SCAN&#x005F;STATE</b></code>](#downloading-scan-state) \{#downloading-scan-state\} 
+Bootstrap: downloading the root's scan state and pending coinbases
+
+
+#### [<code style={{ fontWeight: 'normal' }}>BootstrapPhase.<b>FETCHING&#x005F;BEST&#x005F;TIP</b></code>](#fetching-best-tip) \{#fetching-best-tip\} 
+Asking peers for their best tip, while loading the transition frontier from disk
+
+
+#### [<code style={{ fontWeight: 'normal' }}>BootstrapPhase.<b>LOADING&#x005F;FRONTIER</b></code>](#loading-frontier) \{#loading-frontier\} 
+Bootstrap: loading a transition frontier at the new root
+
+
+#### [<code style={{ fontWeight: 'normal' }}>BootstrapPhase.<b>PARTICIPATING</b></code>](#participating) \{#participating\} 
+The transition frontier is running
+
+
+#### [<code style={{ fontWeight: 'normal' }}>BootstrapPhase.<b>STARTING</b></code>](#starting) \{#starting\} 
+Initialisation has not begun
+
+
+#### [<code style={{ fontWeight: 'normal' }}>BootstrapPhase.<b>SYNCING&#x005F;EPOCH&#x005F;LEDGERS</b></code>](#syncing-epoch-ledgers) \{#syncing-epoch-ledgers\} 
+Syncing the staking and next epoch ledgers
+
+
+#### [<code style={{ fontWeight: 'normal' }}>BootstrapPhase.<b>SYNCING&#x005F;ROOT&#x005F;LEDGER</b></code>](#syncing-root-ledger) \{#syncing-root-ledger\} 
+Bootstrap: syncing the root's snarked ledger
+
+
+#### [<code style={{ fontWeight: 'normal' }}>BootstrapPhase.<b>WAITING&#x005F;FOR&#x005F;GENESIS</b></code>](#waiting-for-genesis) \{#waiting-for-genesis\} 
+The chain has not started yet
+
+
+#### [<code style={{ fontWeight: 'normal' }}>BootstrapPhase.<b>WAITING&#x005F;FOR&#x005F;PEERS</b></code>](#waiting-for-peers) \{#waiting-for-peers\} 
+Connecting to enough peers to begin
+
+
+
+
+### Member Of
+
+[`BootstrapStatus`](/node-developers/graphql-api/reference/types/objects/bootstrap-status.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

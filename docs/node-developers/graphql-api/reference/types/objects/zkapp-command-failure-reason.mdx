@@ -1,0 +1,43 @@
+---
+id: zkapp-command-failure-reason
+title: ZkappCommandFailureReason
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type ZkappCommandFailureReason {
+  failures: [TransactionStatusFailure!]!
+  index: Index
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>ZkappCommandFailureReason.<b>failures</b></code>](#failures)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>[TransactionStatusFailure!]!</b></code>](/node-developers/graphql-api/reference/types/scalars/transaction-status-failure.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#failures\} 
+Failure reason for the account update or any nested zkapp command
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ZkappCommandFailureReason.<b>index</b></code>](#index)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Index</b></code>](/node-developers/graphql-api/reference/types/scalars/index.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#index\} 
+List index of the account update that failed
+
+
+
+
+### Member Of
+
+[`ZkappCommandResult`](/node-developers/graphql-api/reference/types/objects/zkapp-command-result.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

@@ -1,0 +1,43 @@
+---
+id: verification-key-permission
+title: VerificationKeyPermission
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type VerificationKeyPermission {
+  auth: AccountAuthRequired!
+  txnVersion: String!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>VerificationKeyPermission.<b>auth</b></code>](#auth)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>AccountAuthRequired!</b></code>](/node-developers/graphql-api/reference/types/enums/account-auth-required.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="enum"/> \{#auth\} 
+Authorization required to set the verification key of the zkApp associated with the account
+
+
+#### [<code style={{ fontWeight: 'normal' }}>VerificationKeyPermission.<b>txnVersion</b></code>](#txn-version)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String!</b></code>](/node-developers/graphql-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#txn-version\} 
+
+
+
+
+
+### Member Of
+
+[`AccountPermissions`](/node-developers/graphql-api/reference/types/objects/account-permissions.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`Permissions`](/node-developers/graphql-api/reference/types/objects/permissions.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

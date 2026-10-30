@@ -1,0 +1,39 @@
+---
+id: send-proof-bundle
+title: sendProofBundle
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+Transaction SNARKs for a given spec
+
+
+```graphql
+sendProofBundle(
+  input: ProofBundleInput!
+): String!
+```
+
+
+### Arguments
+
+#### [<code style={{ fontWeight: 'normal' }}>sendProofBundle.<b>input</b></code>](#input)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>ProofBundleInput!</b></code>](/node-developers/graphql-api/reference/types/scalars/proof-bundle-input.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#input\} 
+Proof bundle for a given spec in json format including fees and prover public key
+
+
+
+
+### Type
+
+#### [<code style={{ fontWeight: 'normal' }}><b>String</b></code>](/node-developers/graphql-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary " text="scalar"/> 
+The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.
