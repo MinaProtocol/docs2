@@ -22,7 +22,8 @@ jobs:
 
       - name: Install Mina daemon
         run: |
-          echo "deb [trusted=yes] http://packages.o1test.net/ bookworm stable" | sudo tee /etc/apt/sources.list.d/mina.list
+          sudo curl -fsSL https://stable.apt.packages.minaprotocol.com/repo-signing-key.gpg -o /usr/share/keyrings/mina-archive-keyring.gpg
+          echo "deb [signed-by=/usr/share/keyrings/mina-archive-keyring.gpg] https://stable.apt.packages.minaprotocol.com $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/mina.list
           sudo apt-get update
           sudo apt-get install -y mina-mainnet
 
@@ -65,7 +66,8 @@ jobs:
 
       - name: Install Mina daemon
         run: |
-          echo "deb [trusted=yes] http://packages.o1test.net/ bookworm stable" | sudo tee /etc/apt/sources.list.d/mina.list
+          sudo curl -fsSL https://stable.apt.packages.minaprotocol.com/repo-signing-key.gpg -o /usr/share/keyrings/mina-archive-keyring.gpg
+          echo "deb [signed-by=/usr/share/keyrings/mina-archive-keyring.gpg] https://stable.apt.packages.minaprotocol.com $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/mina.list
           sudo apt-get update
           sudo apt-get install -y mina-mainnet
 

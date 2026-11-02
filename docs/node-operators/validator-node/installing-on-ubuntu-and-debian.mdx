@@ -25,12 +25,16 @@ For pre-release builds, see the [Mina Releases](https://github.com/MinaProtocol/
 
 ### Ubuntu and Debian
 
+Mina packages are published to the signed repository `stable.apt.packages.minaprotocol.com`. The repository is served over HTTPS and every release index is signed with the Mina repository key (fingerprint `386E9DAC 378726A4 8ED5CE56 ADB30D9A CE02F414`). Download the key once, then add the repository with `signed-by` so that `apt` verifies each package before it is installed.
+
 <Tabs groupId="network">
 <TabItem value="mainnet" label="Mainnet">
 
 ```sh
-sudo rm /etc/apt/sources.list.d/mina*.list
-echo "deb [trusted=yes] http://packages.o1test.net $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/mina.list
+sudo rm -f /etc/apt/sources.list.d/mina*.list
+sudo apt-get install --yes curl ca-certificates lsb-release
+sudo curl -fsSL https://stable.apt.packages.minaprotocol.com/repo-signing-key.gpg -o /usr/share/keyrings/mina-archive-keyring.gpg
+echo "deb [signed-by=/usr/share/keyrings/mina-archive-keyring.gpg] https://stable.apt.packages.minaprotocol.com $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/mina.list
 sudo apt-get update
 sudo apt-get install --yes unzip mina-mainnet=4.0.3-73134bf
 ```
@@ -39,15 +43,22 @@ sudo apt-get install --yes unzip mina-mainnet=4.0.3-73134bf
 <TabItem value="devnet" label="Devnet">
 
 ```sh
-sudo rm /etc/apt/sources.list.d/mina*.list
-echo "deb [trusted=yes] http://packages.o1test.net $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/mina-devnet.list
-sudo apt-get install --yes apt-transport-https
+sudo rm -f /etc/apt/sources.list.d/mina*.list
+sudo apt-get install --yes curl ca-certificates lsb-release
+sudo curl -fsSL https://stable.apt.packages.minaprotocol.com/repo-signing-key.gpg -o /usr/share/keyrings/mina-archive-keyring.gpg
+echo "deb [signed-by=/usr/share/keyrings/mina-archive-keyring.gpg] https://stable.apt.packages.minaprotocol.com $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/mina-devnet.list
 sudo apt-get update
 sudo apt-get install --yes unzip mina-devnet=4.0.3-73134bf
 ```
 
 </TabItem>
 </Tabs>
+
+The same key is also available as an ASCII-armored file at `https://stable.apt.packages.minaprotocol.com/repo-signing-key.asc`.
+
+:::note Legacy repository `packages.o1test.net`
+Older guides add `deb [trusted=yes] http://packages.o1test.net <codename> stable`. That repository is not signed and is served over plain HTTP, so `apt` cannot verify the packages it downloads. For historical reasons, and to keep compatibility with the flow that many operators are used to, `packages.o1test.net` continues to receive the same releases and stays available for some time. New installations should use the signed repository above. To migrate an existing node, remove the old source file and add the signed one as shown; the installed package versions do not change.
+:::
 
 ### Docker
 

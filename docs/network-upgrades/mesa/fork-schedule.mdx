@@ -39,7 +39,7 @@ The mainnet stop-slot schedule is published and is compiled into the releases be
 | Mesa genesis timestamp (UTC)            | 2026-09-03 18:00 (`hard_fork_genesis_slot_delta` = 60 slots = 3 hours)                                                                                  |
 | State Finalization window               | Exactly 100 slots = exactly 5 hours between `slot_tx_end` and `slot_chain_end`                                                                          |
 
-Both mainnet packages come from the `stable` channel on `packages.o1test.net`. Run **one** of the two releases:
+Both mainnet packages come from the `stable` channel. Current releases (4.0.x) are on the signed repository `stable.apt.packages.minaprotocol.com`; the pre-fork stop-slot and automode packages are only on the legacy repository `packages.o1test.net`, which stays available for some time. See [Installation](/node-operators/validator-node/installing-on-ubuntu-and-debian#ubuntu-and-debian). Run **one** of the two releases:
 
 - **Automode** — install `mina-mainnet-automode=4.0.0-mainnet-893c877` before the stop-transaction-slot. The dispatcher swaps to the Mesa binary by itself. No second upgrade.
 - **Manual** — install `mina-mainnet=3.5.0-mainnet-stop-slot-5e100ee` before the stop-transaction-slot, keep it running until the stop-network-slot, then install the Mesa release when it is published. See [Upgrade Modes](/network-upgrades/mesa/upgrade-modes).
@@ -62,7 +62,7 @@ Devnet is on Mesa. The values below are historical; they will not change.
 | Mesa genesis timestamp (UTC)            | 2026-08-19 18:00                                                                                                                                    |
 | State Finalization window               | Exactly 100 slots = exactly 5 hours between `slot_tx_end` and `slot_chain_end`                                                                      |
 
-Devnet packages come from the `alpha` channel on `packages.o1test.net`. A node that joins devnet now must use `mina-devnet=4.0.0-6965b50`; the two pre-fork releases can no longer connect.
+The devnet fork packages listed above come from the `alpha` channel on the legacy repository `packages.o1test.net`. Current devnet releases (4.0.2 and later) are on the `stable` channel of the signed repository `stable.apt.packages.minaprotocol.com`. A node that joins devnet now must use a Mesa release (`mina-devnet=4.0.0-6965b50` or later); the two pre-fork releases can no longer connect.
 
 ## Preflight (archived)
 
