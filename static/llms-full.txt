@@ -4575,7 +4575,7 @@ The mainnet stop-slot schedule is published and is compiled into the releases be
 | Mesa genesis timestamp (UTC)            | 2026-09-03 18:00 (`hard_fork_genesis_slot_delta` = 60 slots = 3 hours)                                                                                  |
 | State Finalization window               | Exactly 100 slots = exactly 5 hours between `slot_tx_end` and `slot_chain_end`                                                                          |
 
-Both mainnet packages come from the `stable` channel on `packages.o1test.net`. Run **one** of the two releases:
+Both mainnet packages come from the `stable` channel. Current releases (4.0.x) are on the signed repository `stable.apt.packages.minaprotocol.com`; the pre-fork stop-slot and automode packages are only on the legacy repository `packages.o1test.net`, which stays available for some time. See [Installation](/node-operators/validator-node/installing-on-ubuntu-and-debian#ubuntu-and-debian). Run **one** of the two releases:
 
 - **Automode** — install `mina-mainnet-automode=4.0.0-mainnet-893c877` before the stop-transaction-slot. The dispatcher swaps to the Mesa binary by itself. No second upgrade.
 - **Manual** — install `mina-mainnet=3.5.0-mainnet-stop-slot-5e100ee` before the stop-transaction-slot, keep it running until the stop-network-slot, then install the Mesa release when it is published. See [Upgrade Modes](/network-upgrades/mesa/upgrade-modes).
@@ -4598,7 +4598,7 @@ Devnet is on Mesa. The values below are historical; they will not change.
 | Mesa genesis timestamp (UTC)            | 2026-08-19 18:00                                                                                                                                    |
 | State Finalization window               | Exactly 100 slots = exactly 5 hours between `slot_tx_end` and `slot_chain_end`                                                                      |
 
-Devnet packages come from the `alpha` channel on `packages.o1test.net`. A node that joins devnet now must use `mina-devnet=4.0.0-6965b50`; the two pre-fork releases can no longer connect.
+The devnet fork packages listed above come from the `alpha` channel on the legacy repository `packages.o1test.net`. Current devnet releases (4.0.2 and later) are on the `stable` channel of the signed repository `stable.apt.packages.minaprotocol.com`. A node that joins devnet now must use a Mesa release (`mina-devnet=4.0.0-6965b50` or later); the two pre-fork releases can no longer connect.
 
 ## Preflight (archived)
 
@@ -10535,8 +10535,9 @@ For production deployments, a complete Docker Compose configuration with all fou
 You can install each component individually via Debian packages. This is useful if you already run a Mina daemon and archive node and only need to add the Rosetta API.
 
 ```bash
-# Add the Mina repository (if not already configured)
-echo "deb [trusted=yes] http://packages.o1test.net/ noble stable" | sudo tee /etc/apt/sources.list.d/mina.list
+# Add the signed Mina repository (if not already configured)
+sudo curl -fsSL https://stable.apt.packages.minaprotocol.com/repo-signing-key.gpg -o /usr/share/keyrings/mina-archive-keyring.gpg
+echo "deb [signed-by=/usr/share/keyrings/mina-archive-keyring.gpg] https://stable.apt.packages.minaprotocol.com $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/mina.list
 sudo apt-get update
 
 # Install the Rosetta package for your network
@@ -10553,6 +10554,8 @@ mina-rosetta \
   --log-json \
   --port 3087
 ```
+
+The legacy unsigned repository `packages.o1test.net` carries the same packages and stays available for some time. See [Installation](/node-operators/validator-node/installing-on-ubuntu-and-debian#ubuntu-and-debian) for the migration note.
 
 This requires a running [Mina daemon](/node-operators/block-producer-node) and [archive node](/node-operators/archive-node) with a populated PostgreSQL database.
 
@@ -16046,12 +16049,16 @@ For pre-release builds, see the [Mina Releases](https://github.com/MinaProtocol/
 
 ### Ubuntu and Debian
 
+Mina packages are published to the signed repository `stable.apt.packages.minaprotocol.com`. The repository is served over HTTPS and every release index is signed with the Mina repository key (fingerprint `386E9DAC 378726A4 8ED5CE56 ADB30D9A CE02F414`). Download the key once, then add the repository with `signed-by` so that `apt` verifies each package before it is installed.
+
 <Tabs groupId="network">
 <TabItem value="mainnet" label="Mainnet">
 
 ```sh
-sudo rm /etc/apt/sources.list.d/mina*.list
-echo "deb [trusted=yes] http://packages.o1test.net $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/mina.list
+sudo rm -f /etc/apt/sources.list.d/mina*.list
+sudo apt-get install --yes curl ca-certificates lsb-release
+sudo curl -fsSL https://stable.apt.packages.minaprotocol.com/repo-signing-key.gpg -o /usr/share/keyrings/mina-archive-keyring.gpg
+echo "deb [signed-by=/usr/share/keyrings/mina-archive-keyring.gpg] https://stable.apt.packages.minaprotocol.com $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/mina.list
 sudo apt-get update
 sudo apt-get install --yes unzip mina-mainnet=4.0.3-73134bf
 ```
@@ -16060,15 +16067,22 @@ sudo apt-get install --yes unzip mina-mainnet=4.0.3-73134bf
 <TabItem value="devnet" label="Devnet">
 
 ```sh
-sudo rm /etc/apt/sources.list.d/mina*.list
-echo "deb [trusted=yes] http://packages.o1test.net $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/mina-devnet.list
-sudo apt-get install --yes apt-transport-https
+sudo rm -f /etc/apt/sources.list.d/mina*.list
+sudo apt-get install --yes curl ca-certificates lsb-release
+sudo curl -fsSL https://stable.apt.packages.minaprotocol.com/repo-signing-key.gpg -o /usr/share/keyrings/mina-archive-keyring.gpg
+echo "deb [signed-by=/usr/share/keyrings/mina-archive-keyring.gpg] https://stable.apt.packages.minaprotocol.com $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/mina-devnet.list
 sudo apt-get update
 sudo apt-get install --yes unzip mina-devnet=4.0.3-73134bf
 ```
 
 </TabItem>
 </Tabs>
+
+The same key is also available as an ASCII-armored file at `https://stable.apt.packages.minaprotocol.com/repo-signing-key.asc`.
+
+:::note Legacy repository `packages.o1test.net`
+Older guides add `deb [trusted=yes] http://packages.o1test.net <codename> stable`. That repository is not signed and is served over plain HTTP, so `apt` cannot verify the packages it downloads. For historical reasons, and to keep compatibility with the flow that many operators are used to, `packages.o1test.net` continues to receive the same releases and stays available for some time. New installations should use the signed repository above. To migrate an existing node, remove the old source file and add the signed one as shown; the installed package versions do not change.
+:::
 
 ### Docker
 
