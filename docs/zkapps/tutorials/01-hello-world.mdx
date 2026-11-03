@@ -78,12 +78,11 @@ Now that you have the tooling installed, you can start building your application
 
   ```sh
   ✔ Create an accompanying UI project too? · none
-  ✔ UI: Set up project
   ✔ Initialize Git repo
   ✔ Set up project
+  ✔ Set project name
   ✔ NPM install
   ✔ NPM build contract
-  ✔ Set project name
   ✔ Git init commit
 
   Success!
@@ -94,12 +93,18 @@ Now that you have the tooling installed, you can start building your application
     git push -u origin main
   ```
 
-  The `zk project` command creates the `01-hello-world` directory that contains the scaffolding for your project, including tools such as the Prettier code formatting tool, the ESLint static code analysis tool, and the Jest JavaScript testing framework.
+  The `zk project` command creates the `01-hello-world` directory that contains the scaffolding for your project, including tools such as the Prettier code formatting tool and the ESLint static code analysis tool. The `npm test` script uses the Node.js built-in test runner.
 
-1. Change into the `01-hello-world` directory and list the contents:
+1. The zkApp CLI `0.23.0` creates a project for o1js 2. To use o1js 3.0.0, the same as the [example project](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/01-hello-world), open `01-hello-world/package.json` and change the `o1js` entry in `peerDependencies` from `"^2.*"` to `"^3.0.0"`. Then install it:
 
   ```sh
   $ cd 01-hello-world
+  $ npm install
+  ```
+
+1. List the contents of the `01-hello-world` directory:
+
+  ```sh
   $ ls
   ```
 
@@ -110,13 +115,12 @@ Now that you have the tooling installed, you can start building your application
   README.md
   babel.config.cjs
   build
+  cache
   config.json
-  jest-resolver.cjs
-  jest.config.js
-  keys
   node_modules
   package-lock.json
   package.json
+  scripts
   src
   tsconfig.json
   ```
@@ -132,6 +136,7 @@ Start by deleting the default files that come with the new project.
   ```sh
   $ rm src/Add.ts
   $ rm src/Add.test.ts
+  $ rm src/AddZkProgram.ts
   $ rm src/interact.ts
   ```
 
@@ -142,8 +147,13 @@ Start by deleting the default files that come with the new project.
   $ touch src/main.ts
   ```
 
-    - The `zk file` command created the `src/Square.ts` and `src/Square.test.ts` test files.
-    - This tutorial does not include writing tests, so you just use the `main.ts` file as a script to interact with the smart contract and observe how it works.
+    - The `zk file` command created the `src/Square.ts` file and the `src/Square.test.ts` test file. The zkApp CLI `0.23.0` writes the test file as a placeholder in a style that does not compile in the project it creates, so `npm run build` fails while the file is there. This tutorial does not include writing tests. Delete the placeholder:
+
+  ```sh
+  $ rm src/Square.test.ts
+  ```
+
+    - You use the `main.ts` file as a script to interact with the smart contract and observe how it works.
 
     In later tutorials, you learn how to interact with a smart contract from the browser, like a typical end user.
 

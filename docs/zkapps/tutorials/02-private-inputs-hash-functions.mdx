@@ -122,8 +122,13 @@ Start by deleting the default files that come with the new project.
   $ touch src/main.ts
   ```
 
-    - The `zk file` command created the `src/IncrementSecret.ts` file and the `src/IncrementSecret.test.ts` test file.
-    - This tutorial does not walk you through writing tests, so you use the `main.ts` file as a script to interact with the smart contract and observe how it works. The finished example project has a test suite; see [Test it](#test-it).
+    - The `zk file` command created the `src/IncrementSecret.ts` file and the `src/IncrementSecret.test.ts` test file. The zkApp CLI `0.23.0` writes the test file as a placeholder in a style that does not compile in the project it creates, so `npm run build` fails while the file is there. This tutorial does not include writing tests. Delete the placeholder:
+
+  ```sh
+  $ rm src/IncrementSecret.test.ts
+  ```
+
+    - You use the `main.ts` file as a script to interact with the smart contract and observe how it works. The finished example project has a test suite; see [Test it](#test-it).
 
 1. Now, open `src/index.ts` in a text editor and change it to look like:
 
