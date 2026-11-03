@@ -30396,7 +30396,7 @@ This command performs the following operations:
 
 - Pulls the latest Docker image for your environment from the [Docker Hub](https://hub.docker.com/r/o1labs/mina-local-network) repository
 - Prepares the file system
-- Uses the artifacts built from the `berkeley` branch of the Mina GitHub [repository](https://github.com/MinaProtocol/mina)
+- Uses the artifacts built from the `compatible` branch of the Mina GitHub [repository](https://github.com/MinaProtocol/mina). Use `--mina-branch` to select `master`, `compatible`, `develop` or `mesa`
 - Configures the network properties to achieve fast startup, syncing and operation times
 - Disables the blockchain `SNARK` proofs
 - Sets the Mina processes logging level to `Trace`
