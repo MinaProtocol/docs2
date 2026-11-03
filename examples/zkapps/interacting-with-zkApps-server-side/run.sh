@@ -1,1 +1,0 @@
-npm run build && node build/src/main_cleanup.js EKFY9bKw995zcjirR1tRc4hJQoEE1DSeK3rSiAQw7Ack7QdgD9b6 EKE5mZZYVLK2jFamrcegZdNKekAC65spZVxuaSZRLVRguFrAK7JS
