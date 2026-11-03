@@ -27337,7 +27337,7 @@ The script on this page connects to Devnet. Before you start, complete [Tutorial
 
 To try the same flow without a network, a funded account or key files, go to [Run it without a network](#run-it-without-a-network).
 
-The [example project](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/interacting-with-zkApps-server-side) uses o1js `^3.0.0`. CI builds it on every pull request, and runs and tests its local version (`src/local.ts`). CI does not run the Devnet script (`src/main.ts`), because that script needs funds and keys.
+The [example project](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/interacting-with-zkApps-server-side) uses o1js `^3.0.0`. CI builds it, and runs and tests its local version (`src/local.ts`), on pull requests that change the examples, on every push to `main`, and daily. CI does not run the Devnet script (`src/main.ts`), because that script needs funds and keys.
 
 ## Interact with the deployed Smart Contract
 
@@ -27576,7 +27576,8 @@ project in this repository carries a second entry point, `src/local.ts`, that
 runs the same flow against a local blockchain:
 
 ```sh
-cd examples/zkapps/interacting-with-zkApps-server-side
+git clone https://github.com/MinaProtocol/docs2.git
+cd docs2/examples/zkapps/interacting-with-zkApps-server-side
 npm install
 npm start
 ```
@@ -27622,9 +27623,8 @@ const num = zkApp.num.get();
 console.log(`current value of num is ${num.toString()}`);
 ```
 
-`npm test` asserts the same ground, including the account creation fee the fee
-payer pays for the zkApp account and the rejection of an update that is not
-the square.
+`npm test` asserts the same ground, including that the fee payer is charged
+for the deployment and that an update that is not the square is rejected.
 
 ## Conclusion
 
