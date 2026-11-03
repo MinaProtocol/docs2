@@ -1,13 +1,15 @@
 // docs:start test
-import { OracleExample } from './OracleExample';
+import assert from 'node:assert';
+import { beforeEach, describe, it } from 'node:test';
 import {
+  AccountUpdate,
   Field,
   Mina,
   PrivateKey,
   PublicKey,
-  AccountUpdate,
   Signature,
 } from 'o1js';
+import { OracleExample } from './OracleExample.js';
 
 let proofsEnabled = false;
 
@@ -24,11 +26,8 @@ describe('OracleExample', () => {
     zkAppPrivateKey: PrivateKey,
     zkApp: OracleExample;
 
-  beforeAll(async () => {
-    if (proofsEnabled) await OracleExample.compile();
-  });
-
   beforeEach(async () => {
+    if (proofsEnabled) await OracleExample.compile();
     const Local = await Mina.LocalBlockchain({ proofsEnabled });
     Mina.setActiveInstance(Local);
     deployerAccount = Local.testAccounts[0];
@@ -50,14 +49,33 @@ describe('OracleExample', () => {
     await txn.sign([deployerKey, zkAppPrivateKey]).send();
   }
 
+  // Calls verify() and returns the id in the emitted `verified` event.
+  async function verifyAndReadEvent(
+    id: Field,
+    creditScore: Field,
+    signature: Signature
+  ) {
+    const txn = await Mina.transaction(senderAccount, async () => {
+      await zkApp.verify(id, creditScore, signature);
+    });
+    await txn.prove();
+    await txn.sign([senderKey]).send();
+
+    const events = await zkApp.fetchEvents();
+    return events[0].event.data.toFields(null)[0];
+  }
+
   it('generates and deploys the `OracleExample` smart contract', async () => {
     await localDeploy();
     const oraclePublicKey = zkApp.oraclePublicKey.get();
-    expect(oraclePublicKey).toEqual(PublicKey.fromBase58(ORACLE_PUBLIC_KEY));
+    assert.deepStrictEqual(
+      oraclePublicKey,
+      PublicKey.fromBase58(ORACLE_PUBLIC_KEY)
+    );
   });
 
   describe('hardcoded values', () => {
-    it('emits an `id` event containing the users id if their credit score is above 700 and the provided signature is valid', async () => {
+    it('emits an `id` event containing the users id if their credit score is 700 or higher and the provided signature is valid', async () => {
       await localDeploy();
 
       const id = Field(1);
@@ -66,15 +84,12 @@ describe('OracleExample', () => {
         '7mXGPCbSJUiYgZnGioezZm7GCy46CEUbgcCH9nrJYXQQiwwVrA5wemBX4T1XFHUw62oR2324QNnkUVXW6yYQLsPsqxZ3nsYR'
       );
 
-      const txn = await Mina.transaction(senderAccount, async () => {
-        await zkApp.verify(id, creditScore, signature);
-      });
-      await txn.prove();
-      await txn.sign([senderKey]).send();
-
-      const events = await zkApp.fetchEvents();
-      const verifiedEventValue = events[0].event.data.toFields(null)[0];
-      expect(verifiedEventValue).toEqual(id);
+      const verifiedEventValue = await verifyAndReadEvent(
+        id,
+        creditScore,
+        signature
+      );
+      assert.deepStrictEqual(verifiedEventValue, id);
     });
 
     it('throws an error if the credit score is below 700 even if the provided signature is valid', async () => {
@@ -86,14 +101,15 @@ describe('OracleExample', () => {
         '7mXXnqMx6YodEkySD3yQ5WK7CCqRL1MBRTASNhrm48oR4EPmenD2NjJqWpFNZnityFTZX5mWuHS1WhRnbdxSTPzytuCgMGuL'
       );
 
-      await expect(
+      await assert.rejects(
         Mina.transaction(senderAccount, async () => {
           await zkApp.verify(id, creditScore, signature);
-        })
-      ).rejects.toThrow('expected 700 <= 536');
+        }),
+        /expected 700 <= 536/
+      );
     });
 
-    it('throws an error if the credit score is above 700 and the provided signature is invalid', async () => {
+    it('throws an error if the credit score is 700 or higher and the provided signature is invalid', async () => {
       await localDeploy();
 
       const id = Field(1);
@@ -102,16 +118,17 @@ describe('OracleExample', () => {
         '7mXPv97hRN7AiUxBjuHgeWjzoSgL3z61a5QZacVgd1PEGain6FmyxQ8pbAYd5oycwLcAbqJLdezY7PRAUVtokFaQP8AJDEGX'
       );
 
-      await expect(
+      await assert.rejects(
         Mina.transaction(senderAccount, async () => {
           await zkApp.verify(id, creditScore, signature);
-        })
-      ).rejects.toThrow('Bool.assertTrue');
+        }),
+        /Bool\.assertTrue/
+      );
     });
   });
 
   describe('actual API requests', () => {
-    it('emits an `id` event containing the users id if their credit score is above 700 and the provided signature is valid', async () => {
+    it('emits an `id` event containing the users id if their credit score is 700 or higher and the provided signature is valid', async () => {
       await localDeploy();
 
       const response = await fetch(
@@ -123,15 +140,12 @@ describe('OracleExample', () => {
       const creditScore = Field(data.data.creditScore);
       const signature = Signature.fromBase58(data.signature);
 
-      const txn = await Mina.transaction(senderAccount, async () => {
-        await zkApp.verify(id, creditScore, signature);
-      });
-      await txn.prove();
-      await txn.sign([senderKey]).send();
-
-      const events = await zkApp.fetchEvents();
-      const verifiedEventValue = events[0].event.data.toFields(null)[0];
-      expect(verifiedEventValue).toEqual(id);
+      const verifiedEventValue = await verifyAndReadEvent(
+        id,
+        creditScore,
+        signature
+      );
+      assert.deepStrictEqual(verifiedEventValue, id);
     });
 
     it('throws an error if the credit score is below 700 even if the provided signature is valid', async () => {
@@ -146,11 +160,12 @@ describe('OracleExample', () => {
       const creditScore = Field(data.data.creditScore);
       const signature = Signature.fromBase58(data.signature);
 
-      await expect(
+      await assert.rejects(
         Mina.transaction(senderAccount, async () => {
           await zkApp.verify(id, creditScore, signature);
-        })
-      ).rejects.toThrow('expected 700 <= 536');
+        }),
+        /expected 700 <= 536/
+      );
     });
   });
 });
