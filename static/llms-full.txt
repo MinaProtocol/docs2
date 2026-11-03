@@ -20057,12 +20057,11 @@ Now that you have the tooling installed, you can start building your application
 
   ```sh
   ✔ Create an accompanying UI project too? · none
-  ✔ UI: Set up project
   ✔ Initialize Git repo
   ✔ Set up project
+  ✔ Set project name
   ✔ NPM install
   ✔ NPM build contract
-  ✔ Set project name
   ✔ Git init commit
 
   Success!
@@ -20073,12 +20072,18 @@ Now that you have the tooling installed, you can start building your application
     git push -u origin main
   ```
 
-  The `zk project` command creates the `01-hello-world` directory that contains the scaffolding for your project, including tools such as the Prettier code formatting tool, the ESLint static code analysis tool, and the Jest JavaScript testing framework.
+  The `zk project` command creates the `01-hello-world` directory that contains the scaffolding for your project, including tools such as the Prettier code formatting tool and the ESLint static code analysis tool. The `npm test` script uses the Node.js built-in test runner.
 
-1. Change into the `01-hello-world` directory and list the contents:
+1. The zkApp CLI `0.23.0` creates a project for o1js 2. To use o1js 3.0.0, the same as the [example project](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/01-hello-world), open `01-hello-world/package.json` and change the `o1js` entry in `peerDependencies` from `"^2.*"` to `"^3.0.0"`. Then install it:
 
   ```sh
   $ cd 01-hello-world
+  $ npm install
+  ```
+
+1. List the contents of the `01-hello-world` directory:
+
+  ```sh
   $ ls
   ```
 
@@ -20089,13 +20094,12 @@ Now that you have the tooling installed, you can start building your application
   README.md
   babel.config.cjs
   build
+  cache
   config.json
-  jest-resolver.cjs
-  jest.config.js
-  keys
   node_modules
   package-lock.json
   package.json
+  scripts
   src
   tsconfig.json
   ```
@@ -20111,6 +20115,7 @@ Start by deleting the default files that come with the new project.
   ```sh
   $ rm src/Add.ts
   $ rm src/Add.test.ts
+  $ rm src/AddZkProgram.ts
   $ rm src/interact.ts
   ```
 
@@ -20121,8 +20126,13 @@ Start by deleting the default files that come with the new project.
   $ touch src/main.ts
   ```
 
-    - The `zk file` command created the `src/Square.ts` and `src/Square.test.ts` test files.
-    - This tutorial does not include writing tests, so you just use the `main.ts` file as a script to interact with the smart contract and observe how it works.
+    - The `zk file` command created the `src/Square.ts` file and the `src/Square.test.ts` test file. The zkApp CLI `0.23.0` writes the test file as a placeholder in a style that does not compile in the project it creates, so `npm run build` fails while the file is there. This tutorial does not include writing tests. Delete the placeholder:
+
+  ```sh
+  $ rm src/Square.test.ts
+  ```
+
+    - You use the `main.ts` file as a script to interact with the smart contract and observe how it works.
 
     In later tutorials, you learn how to interact with a smart contract from the browser, like a typical end user.
 
@@ -20626,8 +20636,13 @@ Start by deleting the default files that come with the new project.
   $ touch src/main.ts
   ```
 
-    - The `zk file` command created the `src/IncrementSecret.ts` file and the `src/IncrementSecret.test.ts` test file.
-    - This tutorial does not walk you through writing tests, so you use the `main.ts` file as a script to interact with the smart contract and observe how it works. The finished example project has a test suite; see [Test it](#test-it).
+    - The `zk file` command created the `src/IncrementSecret.ts` file and the `src/IncrementSecret.test.ts` test file. The zkApp CLI `0.23.0` writes the test file as a placeholder in a style that does not compile in the project it creates, so `npm run build` fails while the file is there. This tutorial does not include writing tests. Delete the placeholder:
+
+  ```sh
+  $ rm src/IncrementSecret.test.ts
+  ```
+
+    - You use the `main.ts` file as a script to interact with the smart contract and observe how it works. The finished example project has a test suite; see [Test it](#test-it).
 
 1. Now, open `src/index.ts` in a text editor and change it to look like:
 
@@ -20875,12 +20890,11 @@ npm update -g zkapp-cli
 
   ```sh
   ✔ Create an accompanying UI project too? · none
-  ✔ UI: Set up project
   ✔ Initialize Git repo
   ✔ Set up project
+  ✔ Set project name
   ✔ NPM install
   ✔ NPM build contract
-  ✔ Set project name
   ✔ Git init commit
 
   Success!
@@ -20891,9 +20905,15 @@ npm update -g zkapp-cli
     git push -u origin main
   ```
 
-  The `zk project` command creates the `03-deploying-to-a-live-network` directory that contains the scaffolding for your project, including tools such as the Prettier code formatting, the ESLint static code analysis, and the Jest JavaScript testing framework.
+  The `zk project` command creates the `03-deploying-to-a-live-network` directory that contains the scaffolding for your project, including tools such as the Prettier code formatting tool and the ESLint static code analysis tool. The `npm test` script uses the Node.js built-in test runner.
 
 1. Change into the `03-deploying-to-a-live-network` directory.
+
+1. The zkApp CLI `0.23.0` creates a project for o1js 2. To use o1js 3.0.0, the same as the example project, open `package.json` and change the `o1js` entry in `peerDependencies` from `"^2.*"` to `"^3.0.0"`. Then install it:
+
+  ```sh
+  $ npm install
+  ```
 
 For this tutorial, you run commands from the root of the `03-deploying-to-a-live-network` directory as you work in the `src` directory on files that contain the TypeScript code for the smart contract.
 
@@ -20908,6 +20928,7 @@ Start by deleting the default files that come with the new project.
   ```sh
   $ rm src/Add.ts
   $ rm src/Add.test.ts
+  $ rm src/AddZkProgram.ts
   $ rm src/interact.ts
   ```
 
@@ -20965,26 +20986,20 @@ A deploy alias consists of:
 
     - Transaction fee to use when deploying (in MINA): `0.1`
 
-1. When prompted to choose an account to pay transaction fees, select:
-
-    ```text
-    Use a different account (select to see options)
-    ```
-
-    If this is the first time you are running the `zk config` command, you see these options:
+1. When prompted to choose an account to pay transaction fees, you see these options if this is the first time you run the `zk config` command:
 
     ```text
     > Recover fee payer account from an existing base58 private key
     Create a new fee payer key pair
     ```
 
-    A third option to choose another saved fee payer account is shown only if you have multiple cached fee payer accounts.
+    If you already have a saved fee payer account, the first option is to use it. Select `Use a different account (select to see options)` to see the two options above, and a third option to choose another saved fee payer account if you have more than one.
 
 1. Select to create a new fee payer key pair:
 
     ```sh
     Create a new fee payer key pair
-    NOTE: the private key will be stored in plain text on this computer.
+    NOTE: The private key is created on this computer and is stored in plain text.
     ```
 
     Please mind the note above and **do not** use the fee payer account that holds a substantial amount of MINA.
@@ -21032,7 +21047,7 @@ A deploy alias consists of:
 1. At the interactive prompt, select the `devnet` deploy alias:
 
   ```text
-  ? Which deploy alias would you like to deploy to? …
+  ? Which deploy alias do you want to deploy to? …
   > devnet
   ```
 
@@ -21096,7 +21111,7 @@ A deploy alias consists of:
 
 After the transaction is included in a block, your smart contract is deployed!
 
-- The Mina account used to deploy the zkApp now contains the verification key associated with this smart contract.
+- The zkApp account, the key pair in `keys/devnet.json`, now contains the verification key associated with this smart contract. The fee payer account paid the fee and the account creation fee, and holds nothing of the zkApp.
 
 You ran the `zk config` command to:
 
@@ -21297,25 +21312,25 @@ Go ahead and create your repository now. For other projects, you can name your G
 
 1. Go to [https://github.com/new](https://github.com/new).
 1. For the **Repository name**, enter `04-zkapp-browser-ui`.
-1. Optionally, add a description and a README.
+1. Optionally, add a description. Do not add a README, a license or a `.gitignore` on GitHub: the `zk project` command already made the first commit on your computer, and a first commit on GitHub makes your first push fail.
 
 Your project repository is ready to use.
 
 ### Preparing the project
 
-Start by deleting the default `page.tsx` file that comes with a new project so that you have a clean project to work with.
+Start by deleting the default `page.tsx` file and the two web worker files that come with a new project, so that you have a clean project to work with. The zkApp CLI `0.23.0` writes the worker files as `ZkappWorker.ts` and `ZkappWorkerClient.ts`, with a capital `Z`. They import the `AddZkProgram` that you delete in [Build the contract](#build-the-contract), so they must go, or the type check fails.
 
 1. In the `04-zkapp-browser-ui/ui` directory:
 
   ```sh
-  $ rm app/page.tsx
+  $ rm app/page.tsx app/ZkappWorker.ts app/ZkappWorkerClient.ts
   ```
 ### Install UI dependencies
 
 This tutorial uses the `comlink` package to integrate web workers into the React application. Comlink simplifies
 communication between the main thread and web workers by abstracting the `postMessage` API, allowing you to call functions in the worker as if they were local.
 
-In the `04-zkapp-browser-ui/ui` directory, install `comlink` by running the following command:
+The zkApp CLI `0.23.0` already adds `comlink` to the dependencies in `ui/package.json`. If your `ui/package.json` does not list it, install it in the `04-zkapp-browser-ui/ui` directory:
 
 ```sh
 $ npm install comlink
@@ -21581,7 +21596,7 @@ To learn more about `useState` hooks, see [built-in React hooks](https://react.d
 
 This `04-zkapp-browser-ui/ui/app/page.tsx` code adds a functions to set up zkApp:
 
-- The Boolean `hasBeenSetup` ensures that the react feature `useEffect` is run only once.
+- The `useEffect` hook with an empty dependency array (`[]`) runs once, when the page loads. The Boolean `hasBeenSetup` records that the setup is complete, so that the other effects and the buttons can wait for it.
 To learn more about `useEffect` hooks, see [useEffect](https://react.dev/reference/react/useEffect) in the React API reference documentation.
 
 - This code also sets up your web worker client that interacts with the web worker running o1js code to ensure the computationally heavy o1js code doesn't block the UI thread.
@@ -21616,7 +21631,8 @@ displayStep('Checking if fee payer account exists...');
 const res = await zkappWorkerClient.fetchAccount(
 publicKeyBase58,
 );
-const accountExists = res.error === null;
+// fetchAccount() returns `error: undefined` when the account exists
+const accountExists = res.error == null;
 setAccountExists(accountExists);
 ```
 
@@ -21695,13 +21711,12 @@ useEffect(() => {
             break;
           }
           await new Promise((resolve) => setTimeout(resolve, 5000));
-        } 
+        }
+        setAccountExists(true);
       } catch (error: any) {
         displayStep(`Error checking account: ${error.message}`);
       }
-
     }
-    setAccountExists(true);
   };
 
   checkAccountExists();
@@ -21740,7 +21755,7 @@ const onSendTransaction = async () => {
 
     const transactionLink = `https://minascan.io/devnet/tx/${hash}`;
     setTransactionLink(transactionLink);
-    setDisplayText(transactionLink);
+    setDisplayText('Transaction sent');
   } catch (error: any) {
     displayStep(`Error sending transaction: ${error.message}`);
   } finally {
@@ -21781,17 +21796,22 @@ if (hasWallet === false) {
   );
 }
 
-const stepDisplay = transactionlink ? (
-  <a
-    href={transactionlink}
-    target="_blank"
-    rel="noreferrer"
-    style={{ textDecoration: 'underline' }}
-  >
-    View transaction
-  </a>
-) : (
-  displayText
+// The current step, and a link to the last transaction once there is one.
+// Both stay visible, so a later step or error is not hidden by the link.
+const stepDisplay = (
+  <>
+    <div>{displayText}</div>
+    {transactionlink && (
+      <a
+        href={transactionlink}
+        target="_blank"
+        rel="noreferrer"
+        style={{ textDecoration: 'underline' }}
+      >
+        View transaction
+      </a>
+    )}
+  </>
 );
 
 let setup = (
@@ -21877,12 +21897,25 @@ Before you can deploy your project to GitHub Pages, you must push it to a new Gi
 
 To deploy the UI:
 
+1. In the `04-zkapp-browser-ui` directory, add the repository that you created as the `origin` remote and push the project. Replace `<your-user>` with your GitHub user name:
+
+  ```sh
+  $ git add -A
+  $ git commit -m "Tutorial 4"
+  $ git remote add origin https://github.com/<your-user>/04-zkapp-browser-ui.git
+  $ git push -u origin main
+  ```
+
 1. Change to the `04-zkapp-browser-ui/ui/` directory.
 1. Run the `deploy` script by executing the following command:
 
   ```sh
   npm run deploy
   ```
+
+  The script builds the site into `ui/out` and pushes that directory to the `gh-pages` branch of the `origin` remote.
+
+1. On GitHub, open the repository **Settings**, select **Pages**, and under **Build and deployment** set the source to **Deploy from a branch** and the branch to `gh-pages`.
 
 Scripts defined in the `04-zkapp-browser-ui/ui/package.json` file do the work to build your application and publish it to the GitHub Pages.
 
@@ -22500,12 +22533,31 @@ The offchain state API is exported under `Experimental`, so its shape can change
   $ zk project 06-offchain-storage
   ```
 
-1. Change to the project directory and clear the scaffolding:
+1. Change to the project directory. The zkApp CLI `0.23.0` creates a project for o1js 2. To use o1js 3.0.0, the same as the [example project](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/06-offchain-storage), open `package.json` and change the `o1js` entry in `peerDependencies` from `"^2.*"` to `"^3.0.0"`. Then install it:
 
   ```sh
   $ cd 06-offchain-storage
-  $ rm src/Add.ts src/Add.test.ts src/interact.ts
+  $ npm install
+  ```
+
+1. Clear the scaffolding and create the contract file:
+
+  ```sh
+  $ rm src/Add.ts src/Add.test.ts src/AddZkProgram.ts src/interact.ts
   $ zk file src/NumberStorageContract
+  $ rm src/NumberStorageContract.test.ts
+  ```
+
+  The `zk file` command also creates `src/NumberStorageContract.test.ts`. The zkApp CLI `0.23.0` writes this placeholder in a style that does not compile in the project it creates, so delete it. The example project has a test suite of its own; see [What happens to a stale write](#what-happens-to-a-stale-write).
+
+1. Replace the content of `src/index.ts`, which still imports the deleted files, with:
+
+  ```ts title="src/index.ts"
+  export {
+    NumberStorageContract,
+    offchainState,
+    StateProof,
+  } from './NumberStorageContract.js';
   ```
 
 ## Declare the offchain state
@@ -22600,7 +22652,24 @@ Finally, add the method that settles. It takes the proof and hands it to the off
 
 ## Run it
 
-`src/main.ts` runs the contract on a local blockchain, with the first test account as the deployer. Bind the state to the contract instance, then compile both the offchain state program and the contract:
+Create `src/main.ts`. It runs the contract on a local blockchain, with the first test account as the deployer:
+
+```ts title="src/main.ts"
+import { AccountUpdate, Field, Mina, PrivateKey } from 'o1js';
+import {
+  NumberStorageContract,
+  offchainState,
+} from './NumberStorageContract.js';
+
+// A local blockchain: no network, no faucet, no funded accounts.
+const Local = await Mina.LocalBlockchain({ proofsEnabled: false });
+Mina.setActiveInstance(Local);
+
+const deployer = Local.testAccounts[0];
+const zkAppKey = PrivateKey.random();
+```
+
+Bind the state to the contract instance, then compile both the offchain state program and the contract:
 
 ```ts title="src/main.ts"
 const contract = new NumberStorageContract(zkAppKey.toPublicKey());
@@ -22614,6 +22683,31 @@ state.setContractInstance(contract);
 console.log('compiling...');
 await offchainState.compile();
 await NumberStorageContract.compile();
+```
+
+Deploy the contract. `init()` runs as part of the deployment and sets the commitment to the empty state:
+
+```ts title="src/main.ts"
+console.log('deploying...');
+const deployTx = await Mina.transaction(deployer, async () => {
+  AccountUpdate.fundNewAccount(deployer);
+  await contract.deploy();
+});
+await deployTx.prove();
+await deployTx.sign([deployer.key, zkAppKey]).send();
+```
+
+A settlement makes a proof over the pending actions and sends it to `settle()`. `main.ts` puts this in a function, because it settles more than once:
+
+```ts title="src/main.ts"
+async function settle() {
+  const proof = await state.createSettlementProof();
+  const tx = await Mina.transaction(deployer, async () => {
+    await contract.settle(proof);
+  });
+  await tx.prove();
+  await tx.sign([deployer.key]).send();
+}
 ```
 
 After the deployment, write a value. At this point the write is an action, and reading the entry returns none:
@@ -22634,19 +22728,6 @@ console.log(
 );
 ```
 
-A settlement makes a proof over the pending actions and sends it to `settle()`. `main.ts` puts this in a function, because it settles more than once:
-
-```ts title="src/main.ts"
-async function settle() {
-  const proof = await state.createSettlementProof();
-  const tx = await Mina.transaction(deployer, async () => {
-    await contract.settle(proof);
-  });
-  await tx.prove();
-  await tx.sign([deployer.key]).send();
-}
-```
-
 Settle, and the value becomes readable:
 
 ```ts title="src/main.ts"
@@ -22661,7 +22742,32 @@ console.log(
 );
 ```
 
-Running `npm start` in the example prints the whole sequence:
+Finally, replace the value. `updateNumber()` names the value it replaces, so a stale writer cannot overwrite a newer value by accident:
+
+```ts title="src/main.ts"
+// An update names the value it replaces, so a stale writer cannot clobber a
+// newer value by accident.
+console.log('updating index 1 from 42 to 43...');
+const updateTx = await Mina.transaction(deployer, async () => {
+  await contract.updateNumber(Field(1), Field(42), Field(43));
+});
+await updateTx.prove();
+await updateTx.sign([deployer.key]).send();
+await settle();
+
+console.log(
+  'index 1 is now:',
+  (await state.fields.numbers.get(Field(1))).value.toString()
+);
+```
+
+The project that the zkApp CLI creates has no `start` script. Add one to the `scripts` section of `package.json`, the same as the example project:
+
+```json
+"start": "npm run build && node build/src/main.js"
+```
+
+Then `npm start` prints the whole sequence:
 
 ```text
 compiling...
@@ -22734,8 +22840,8 @@ The example project is built and tested in CI: the smart contract tests run agai
 
 In this tutorial, you are going to build an oracle that retrieves data from the REST API and you also are going to write the smart contract that consumes information from this oracle.
 
-1. Retrieve data from the REST API that provides mock credit score information for two users: one with a high credit score (user with `id=1`) and one with a low credit score (users with `id > 1`).
-1. The smart contract consumes this information and allows users to prove their credit score is above a certain threshold (for example, higher than 700).
+1. Retrieve data from the REST API that provides mock credit score information for two users: one with a high credit score (the user with `id=1`) and one with a low credit score (any other `id`).
+1. The smart contract consumes this information and allows users to prove their credit score is at or above a certain threshold (for example, 700 or higher).
 
 Using the smart contract, users can generate an attestation that their credit score is above a certain value. To maintain their privacy, users can prove this fact to a third party without sharing the exact credit score or other personal information.
 
@@ -22848,23 +22954,48 @@ The demo oracle for user with id `2` with a lower credit score is available at h
 
 While the first user has a credit score of `787`, the second user has a credit score of `536`. The `signature` is also changed. This makes sense because the payload is different from what is received in the first response. Finally, notice that the `publicKey` is the same because in each case we are querying data from the same provider.
 
-## Generate a key pair for your oracle
+## Run the oracle yourself
 
-To generate a Mina-compatible public/private key pair for your oracle, run this command in the `oracle` directory of the example project:
+The demo oracle at `https://07-oracles.vercel.app` is a deployment of the `oracle` directory of the example project. To run the same oracle on your computer, run these commands in `examples/zkapps/07-oracles/oracle`:
 
 ```sh
-npm run keygen
+npm install
+npm run dev
 ```
 
-This command runs the code in the [keygen.js](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/07-oracles/oracle/scripts/keygen.js) file of the oracle `Next.js` project.
+The oracle starts on port 3000. Open `http://localhost:3000/api/credit-score?user=1` to see the signed response.
 
-The demo oracle at `https://07-oracles.vercel.app` signs with its own private key. Its public key is `B62qoAE4rBRuTgC42vqvEyUqCGhaZsW58SKVW4Ht8aYqP9UTvxFWBgy`, and the smart contract in this tutorial trusts only this key.
+The oracle signs with the private key in the `PRIVATE_KEY` environment variable. Without it, the oracle signs with a built-in development key. The public key of the development key is `B62qphyUJg3TjMKi74T2rF8Yer5rQjBr1UyEG7Wg9XEYAHjaSiSqFv1`. The demo oracle signs with its own private key, whose public key is `B62qoAE4rBRuTgC42vqvEyUqCGhaZsW58SKVW4Ht8aYqP9UTvxFWBgy`. The smart contract in this tutorial trusts only this key, so it rejects the signatures of the development key.
 
-When you run the oracle yourself (`npm run dev`) without the `PRIVATE_KEY` environment variable, it signs with a development key. The public key of the development key is `B62qphyUJg3TjMKi74T2rF8Yer5rQjBr1UyEG7Wg9XEYAHjaSiSqFv1`, so the smart contract rejects its signatures. To use your own oracle:
+:::note
 
-1. Generate a key pair with `npm run keygen`.
-1. Set the `PRIVATE_KEY` environment variable of the oracle to the private key.
-1. Set `ORACLE_PUBLIC_KEY` in the smart contract to the public key.
+Leave the `NETWORK_KIND` environment variable unset, or set it to `testnet`. With `NETWORK_KIND=mainnet` the oracle signs with the mainnet signature prefix, and `Signature.verify()` in o1js 3.0.0 checks signatures with the devnet prefix only. The smart contract then rejects every signature.
+
+:::
+
+## Generate a key pair for your oracle
+
+To make the smart contract trust your own oracle, give the oracle a key pair of its own and tell the contract its public key.
+
+1. Generate a Mina-compatible public/private key pair. In the `oracle` directory, run:
+
+   ```sh
+   npm run keygen
+   ```
+
+   This command runs the code in the [keygen.js](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/07-oracles/oracle/scripts/keygen.js) file of the oracle `Next.js` project and prints the key pair.
+
+1. Set the `PRIVATE_KEY` environment variable of the oracle to the private key. For a local run, create a file named `.env.local` in the `oracle` directory with one line, `PRIVATE_KEY=EK...`, or set the variable on the command line:
+
+   ```sh
+   PRIVATE_KEY=EK... npm run dev
+   ```
+
+   For a deployment on Vercel, set `PRIVATE_KEY` as an environment variable of the project. Do not commit the private key.
+
+1. Set `ORACLE_PUBLIC_KEY` in `src/OracleExample.ts` of the `contracts` project to the public key.
+
+The tests in `OracleExample.test.ts` (see [Test your smart contract](#test-your-smart-contract)) are written for the demo oracle: they hardcode its public key and two of its signatures, and the `actual API requests` group fetches from `https://07-oracles.vercel.app`. After you switch to your own key, update `ORACLE_PUBLIC_KEY` in the test, replace the hardcoded signatures with signatures from your oracle, and point the `fetch()` calls at `http://localhost:3000`.
 
 ## Smart Contract
 
@@ -23020,7 +23151,7 @@ Pass in these arguments:
 - `creditScore`: The credit score of the user that is a number between 350 and 800 (this tutorial uses mock credit scores).
 - `signature`: A cryptographic signature of oracle's `data` object (`id` and `creditScore`). This is what the smart contract uses to verify that the data was provided by the expected source.
 
-The `verify()` method does not return any values or change any contract state. It only emits a `verified` event with the user's id if their credit score is above 700.
+The `verify()` method does not return any values or change any contract state. It only emits a `verified` event with the user's id if their credit score is 700 or higher.
 
 ### Fetch the oracle's public key
 
@@ -23129,20 +23260,22 @@ export class OracleExample extends SmartContract {
 
 You can find the complete code for the smart contract tests [here](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/07-oracles/contracts/src/OracleExample.test.ts).
 
-When you ran the `zk file OracleExample` command, the zkApp CLI automatically generated a test file `src/OracleExample.test.ts`.
+When you ran the `zk file OracleExample` command, the zkApp CLI automatically generated a test file `src/OracleExample.test.ts`. The generated file is a placeholder, and the zkApp CLI `0.23.0` writes it in a style that does not compile in the project it creates, so you must replace its content.
 
-To add tests, paste the following code in the `OracleExample.test.ts` file:
+Replace the content of the `src/OracleExample.test.ts` file with:
 
 ```ts title="src/OracleExample.test.ts"
-import { OracleExample } from './OracleExample';
+import assert from 'node:assert';
+import { beforeEach, describe, it } from 'node:test';
 import {
+  AccountUpdate,
   Field,
   Mina,
   PrivateKey,
   PublicKey,
-  AccountUpdate,
   Signature,
 } from 'o1js';
+import { OracleExample } from './OracleExample.js';
 
 let proofsEnabled = false;
 
@@ -23159,11 +23292,8 @@ describe('OracleExample', () => {
     zkAppPrivateKey: PrivateKey,
     zkApp: OracleExample;
 
-  beforeAll(async () => {
-    if (proofsEnabled) await OracleExample.compile();
-  });
-
   beforeEach(async () => {
+    if (proofsEnabled) await OracleExample.compile();
     const Local = await Mina.LocalBlockchain({ proofsEnabled });
     Mina.setActiveInstance(Local);
     deployerAccount = Local.testAccounts[0];
@@ -23185,14 +23315,33 @@ describe('OracleExample', () => {
     await txn.sign([deployerKey, zkAppPrivateKey]).send();
   }
 
+  // Calls verify() and returns the id in the emitted `verified` event.
+  async function verifyAndReadEvent(
+    id: Field,
+    creditScore: Field,
+    signature: Signature
+  ) {
+    const txn = await Mina.transaction(senderAccount, async () => {
+      await zkApp.verify(id, creditScore, signature);
+    });
+    await txn.prove();
+    await txn.sign([senderKey]).send();
+
+    const events = await zkApp.fetchEvents();
+    return events[0].event.data.toFields(null)[0];
+  }
+
   it('generates and deploys the `OracleExample` smart contract', async () => {
     await localDeploy();
     const oraclePublicKey = zkApp.oraclePublicKey.get();
-    expect(oraclePublicKey).toEqual(PublicKey.fromBase58(ORACLE_PUBLIC_KEY));
+    assert.deepStrictEqual(
+      oraclePublicKey,
+      PublicKey.fromBase58(ORACLE_PUBLIC_KEY)
+    );
   });
 
   describe('hardcoded values', () => {
-    it('emits an `id` event containing the users id if their credit score is above 700 and the provided signature is valid', async () => {
+    it('emits an `id` event containing the users id if their credit score is 700 or higher and the provided signature is valid', async () => {
       await localDeploy();
 
       const id = Field(1);
@@ -23201,15 +23350,12 @@ describe('OracleExample', () => {
         '7mXGPCbSJUiYgZnGioezZm7GCy46CEUbgcCH9nrJYXQQiwwVrA5wemBX4T1XFHUw62oR2324QNnkUVXW6yYQLsPsqxZ3nsYR'
       );
 
-      const txn = await Mina.transaction(senderAccount, async () => {
-        await zkApp.verify(id, creditScore, signature);
-      });
-      await txn.prove();
-      await txn.sign([senderKey]).send();
-
-      const events = await zkApp.fetchEvents();
-      const verifiedEventValue = events[0].event.data.toFields(null)[0];
-      expect(verifiedEventValue).toEqual(id);
+      const verifiedEventValue = await verifyAndReadEvent(
+        id,
+        creditScore,
+        signature
+      );
+      assert.deepStrictEqual(verifiedEventValue, id);
     });
 
     it('throws an error if the credit score is below 700 even if the provided signature is valid', async () => {
@@ -23221,14 +23367,15 @@ describe('OracleExample', () => {
         '7mXXnqMx6YodEkySD3yQ5WK7CCqRL1MBRTASNhrm48oR4EPmenD2NjJqWpFNZnityFTZX5mWuHS1WhRnbdxSTPzytuCgMGuL'
       );
 
-      await expect(
+      await assert.rejects(
         Mina.transaction(senderAccount, async () => {
           await zkApp.verify(id, creditScore, signature);
-        })
-      ).rejects.toThrow('expected 700 <= 536');
+        }),
+        /expected 700 <= 536/
+      );
     });
 
-    it('throws an error if the credit score is above 700 and the provided signature is invalid', async () => {
+    it('throws an error if the credit score is 700 or higher and the provided signature is invalid', async () => {
       await localDeploy();
 
       const id = Field(1);
@@ -23237,16 +23384,17 @@ describe('OracleExample', () => {
         '7mXPv97hRN7AiUxBjuHgeWjzoSgL3z61a5QZacVgd1PEGain6FmyxQ8pbAYd5oycwLcAbqJLdezY7PRAUVtokFaQP8AJDEGX'
       );
 
-      await expect(
+      await assert.rejects(
         Mina.transaction(senderAccount, async () => {
           await zkApp.verify(id, creditScore, signature);
-        })
-      ).rejects.toThrow('Bool.assertTrue');
+        }),
+        /Bool\.assertTrue/
+      );
     });
   });
 
   describe('actual API requests', () => {
-    it('emits an `id` event containing the users id if their credit score is above 700 and the provided signature is valid', async () => {
+    it('emits an `id` event containing the users id if their credit score is 700 or higher and the provided signature is valid', async () => {
       await localDeploy();
 
       const response = await fetch(
@@ -23258,15 +23406,12 @@ describe('OracleExample', () => {
       const creditScore = Field(data.data.creditScore);
       const signature = Signature.fromBase58(data.signature);
 
-      const txn = await Mina.transaction(senderAccount, async () => {
-        await zkApp.verify(id, creditScore, signature);
-      });
-      await txn.prove();
-      await txn.sign([senderKey]).send();
-
-      const events = await zkApp.fetchEvents();
-      const verifiedEventValue = events[0].event.data.toFields(null)[0];
-      expect(verifiedEventValue).toEqual(id);
+      const verifiedEventValue = await verifyAndReadEvent(
+        id,
+        creditScore,
+        signature
+      );
+      assert.deepStrictEqual(verifiedEventValue, id);
     });
 
     it('throws an error if the credit score is below 700 even if the provided signature is valid', async () => {
@@ -23281,17 +23426,18 @@ describe('OracleExample', () => {
       const creditScore = Field(data.data.creditScore);
       const signature = Signature.fromBase58(data.signature);
 
-      await expect(
+      await assert.rejects(
         Mina.transaction(senderAccount, async () => {
           await zkApp.verify(id, creditScore, signature);
-        })
-      ).rejects.toThrow('expected 700 <= 536');
+        }),
+        /expected 700 <= 536/
+      );
     });
   });
 });
 ```
 
-Each failure test waits for the rejected transaction with `await expect(...).rejects.toThrow(...)` and checks the error message. Without `await` and a matcher such as `toThrow()`, the test checks nothing and passes even when the transaction succeeds.
+The tests use the Node.js built-in test runner (`node:test`) and `node:assert`, the same as the project that the zkApp CLI creates. Each failure test waits for the rejected transaction with `await assert.rejects(..., /message/)` and checks the error message. Without `await`, the test checks nothing and passes even when the transaction succeeds.
 
 To run the tests:
 
@@ -23316,7 +23462,7 @@ In this tutorial, you learn to create custom tokens.
 
 Mina comes with native support for custom tokens. Each account on Mina can also have tokens associated with it.
 
-To create a new token, one creates a smart contract, which becomes the manager for the token, and uses that contract to set the rules around how the token can be mint, burned, and sent.
+To create a new token, one creates a smart contract, which becomes the manager for the token, and uses that contract to set the rules around how the token can be minted, burned, and sent.
 
 The manager account may also set a token symbol for its token, such as in this example, `MYTKN`. Uniqueness is not enforced for token names. Instead the public key of the manager account is used to identify tokens.
 
@@ -23324,7 +23470,7 @@ In this tutorial, you review smart contract code that creates and manages new to
 
 The full example code is provided in the [08-custom-tokens/src/](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/08-custom-tokens/src) example files.
 
-For reference, a more extensive example, including all the ways to interact with token smart contracts, is provided in [token.test.ts](https://github.com/o1-labs/o1js/blob/main/src/lib/token.test.ts).
+For reference, a more extensive example, including all the ways to interact with token smart contracts, is provided in [token.test.ts](https://github.com/o1-labs/o1js/blob/main/src/lib/mina/v1/token.test.ts).
 
 ## Prerequisites
 
@@ -23336,7 +23482,7 @@ For reference, a more extensive example, including all the ways to interact with
 
 - Ensure your environment meets the [Prerequisites](/zkapps/tutorials#prerequisites) for zkApp Developer Tutorials.
 
-The example project for this tutorial is tested with [o1js](https://www.npmjs.com/package/o1js) version `3.0.0` and Node.js 22.
+The example project for this tutorial is tested with [o1js](https://www.npmjs.com/package/o1js) version `3.0.0` and Node.js 22.19.5 or later, which is what o1js 3 requires.
 
 ## Create the project
 
@@ -23360,18 +23506,27 @@ The example project for this tutorial is tested with [o1js](https://www.npmjs.co
 
 ## Prepare the project
 
-1. Change to the project directory, delete the existing files, and create a new `src/BasicTokenContract` smart contract, and a `index.ts` file:
+1. Change to the project directory. The zkApp CLI `0.23.0` creates a project for o1js 2. To use o1js 3.0.0, the same as the [example project](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/08-custom-tokens), open `package.json` and change the `o1js` entry in `peerDependencies` from `"^2.*"` to `"^3.0.0"`. Then install it:
 
   ```sh
   $ cd 08-custom-tokens
-  $ rm src/Add.ts
-  $ rm src/Add.test.ts
-  $ rm src/interact.ts
-  $ zk file src/BasicTokenContract
-  $ touch src/index.ts
+  $ npm install
   ```
 
-1. Edit `index.ts` to export your new smart contract:
+1. Delete the existing files and create a new `src/BasicTokenContract` smart contract:
+
+  ```sh
+  $ rm src/Add.ts
+  $ rm src/Add.test.ts
+  $ rm src/AddZkProgram.ts
+  $ rm src/interact.ts
+  $ zk file src/BasicTokenContract
+  $ rm src/BasicTokenContract.test.ts
+  ```
+
+  The `zk file` command also creates `src/BasicTokenContract.test.ts`. The zkApp CLI `0.23.0` writes this placeholder in a style that does not compile in the project it creates, so delete it. The example project has a test suite of its own.
+
+1. Replace the content of `src/index.ts`, which still imports the deleted files, so that it exports your new smart contract:
 
   ```ts title="src/index.ts"
   export { BasicTokenContract, tokenSymbol } from './BasicTokenContract.js';
@@ -23383,7 +23538,7 @@ The example project for this tutorial is tested with [o1js](https://www.npmjs.co
 
 Before you read the contract, learn the three objects that every custom token on Mina uses: the token manager, the token id, and the token account. Then learn the approval mechanism, which is how the token manager controls every change to a token balance.
 
-The [tokenConcepts.test.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/08-custom-tokens/src/tokenConcepts.test.ts) test file in the example project checks each statement in this section on a local blockchain.
+The [tokenConcepts.test.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/08-custom-tokens/src/tokenConcepts.test.ts) test file in the example project checks most of the statements in this section on a local blockchain.
 
 ### Token manager
 
@@ -26059,7 +26214,10 @@ Example smart contract files come with the new project, you can delete them if y
 
   ```sh
   $ zk file message
+  $ rm src/message.test.ts
   ```
+
+  The `zk file` command also creates `src/message.test.ts`. The zkApp CLI `0.23.0` writes this placeholder in a style that does not compile in the project it creates, so delete it. The example project has a test suite of its own.
 
 1. Copy the entire contents of the [message.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/13-anonymous-message-board/src/message.ts) example file into your local `message-board/src/message.ts` file.
 
@@ -27337,7 +27495,7 @@ The script on this page connects to Devnet. Before you start, complete [Tutorial
 
 To try the same flow without a network, a funded account or key files, go to [Run it without a network](#run-it-without-a-network).
 
-The [example project](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/interacting-with-zkApps-server-side) uses o1js `^3.0.0`. CI builds it on every pull request, and runs and tests its local version (`src/local.ts`). CI does not run the Devnet script (`src/main.ts`), because that script needs funds and keys.
+The [example project](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/interacting-with-zkApps-server-side) uses o1js `^3.0.0`. CI builds it, and runs and tests its local version (`src/local.ts`), on pull requests that change the examples, on every push to `main`, and daily. CI does not run the Devnet script (`src/main.ts`), because that script needs funds and keys.
 
 ## Interact with the deployed Smart Contract
 
@@ -27576,7 +27734,8 @@ project in this repository carries a second entry point, `src/local.ts`, that
 runs the same flow against a local blockchain:
 
 ```sh
-cd examples/zkapps/interacting-with-zkApps-server-side
+git clone https://github.com/MinaProtocol/docs2.git
+cd docs2/examples/zkapps/interacting-with-zkApps-server-side
 npm install
 npm start
 ```
@@ -27622,9 +27781,8 @@ const num = zkApp.num.get();
 console.log(`current value of num is ${num.toString()}`);
 ```
 
-`npm test` asserts the same ground, including the account creation fee the fee
-payer pays for the zkApp account and the rejection of an update that is not
-the square.
+`npm test` asserts the same ground, including that the fee payer is charged
+for the deployment and that an update that is not the square is rejected.
 
 ## Conclusion
 
@@ -30396,7 +30554,7 @@ This command performs the following operations:
 
 - Pulls the latest Docker image for your environment from the [Docker Hub](https://hub.docker.com/r/o1labs/mina-local-network) repository
 - Prepares the file system
-- Uses the artifacts built from the `berkeley` branch of the Mina GitHub [repository](https://github.com/MinaProtocol/mina)
+- Uses the artifacts built from the `compatible` branch of the Mina GitHub [repository](https://github.com/MinaProtocol/mina). Use `--mina-branch` to select `master`, `compatible`, `develop` or `mesa`
 - Configures the network properties to achieve fast startup, syncing and operation times
 - Disables the blockchain `SNARK` proofs
 - Sets the Mina processes logging level to `Trace`
