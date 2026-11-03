@@ -19,9 +19,10 @@ const proofsEnabled = false;
 const Local = await Mina.LocalBlockchain({ proofsEnabled });
 Mina.setActiveInstance(Local);
 
-// On a real network this is your own funded account, read from
-// `keys/<alias>.json` and topped up at the faucet. A local blockchain hands
-// out pre-funded accounts instead.
+// On a real network this is your own funded fee payer account: the key that
+// `feepayerKeyPath` in `config.json` points to, under
+// `~/.cache/zkapp-cli/keys/`, topped up at the faucet. A local blockchain
+// hands out pre-funded accounts instead.
 const deployer = Local.testAccounts[0];
 
 // The zkApp lives at its own key, not the fee payer's. That separation is the
