@@ -71,13 +71,26 @@ The offchain state API is exported under `Experimental`, so its shape can change
   $ zk project 06-offchain-storage
   ```
 
-1. Change to the project directory and clear the scaffolding:
+1. Change to the project directory. The zkApp CLI `0.23.0` creates a project for o1js 2. To use o1js 3.0.0, the same as the [example project](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/06-offchain-storage), open `package.json` and change the `o1js` entry in `peerDependencies` from `"^2.*"` to `"^3.0.0"`. Then install it:
 
   ```sh
   $ cd 06-offchain-storage
-  $ rm src/Add.ts src/Add.test.ts src/interact.ts
-  $ zk file src/NumberStorageContract
+  $ npm install
   ```
+
+1. Clear the scaffolding and create the contract file:
+
+  ```sh
+  $ rm src/Add.ts src/Add.test.ts src/AddZkProgram.ts src/interact.ts
+  $ zk file src/NumberStorageContract
+  $ rm src/NumberStorageContract.test.ts
+  ```
+
+  The `zk file` command also creates `src/NumberStorageContract.test.ts`. The zkApp CLI `0.23.0` writes this placeholder in a style that does not compile in the project it creates, so delete it. The example project has a test suite of its own; see [What happens to a stale write](#what-happens-to-a-stale-write).
+
+1. Replace the content of `src/index.ts`, which still imports the deleted files, with:
+
+  #include_code index examples/zkapps/06-offchain-storage/src/index.ts ts title="src/index.ts"
 
 ## Declare the offchain state
 
@@ -107,23 +120,41 @@ Finally, add the method that settles. It takes the proof and hands it to the off
 
 ## Run it
 
-`src/main.ts` runs the contract on a local blockchain, with the first test account as the deployer. Bind the state to the contract instance, then compile both the offchain state program and the contract:
+Create `src/main.ts`. It runs the contract on a local blockchain, with the first test account as the deployer:
+
+#include_code local examples/zkapps/06-offchain-storage/src/main.ts ts title="src/main.ts"
+
+Bind the state to the contract instance, then compile both the offchain state program and the contract:
 
 #include_code setup examples/zkapps/06-offchain-storage/src/main.ts ts title="src/main.ts"
 
-After the deployment, write a value. At this point the write is an action, and reading the entry returns none:
+Deploy the contract. `init()` runs as part of the deployment and sets the commitment to the empty state:
 
-#include_code write examples/zkapps/06-offchain-storage/src/main.ts ts title="src/main.ts"
+#include_code deploy examples/zkapps/06-offchain-storage/src/main.ts ts title="src/main.ts"
 
 A settlement makes a proof over the pending actions and sends it to `settle()`. `main.ts` puts this in a function, because it settles more than once:
 
 #include_code settle-function examples/zkapps/06-offchain-storage/src/main.ts ts title="src/main.ts"
 
+After the deployment, write a value. At this point the write is an action, and reading the entry returns none:
+
+#include_code write examples/zkapps/06-offchain-storage/src/main.ts ts title="src/main.ts"
+
 Settle, and the value becomes readable:
 
 #include_code read-after-settle examples/zkapps/06-offchain-storage/src/main.ts ts title="src/main.ts"
 
-Running `npm start` in the example prints the whole sequence:
+Finally, replace the value. `updateNumber()` names the value it replaces, so a stale writer cannot overwrite a newer value by accident:
+
+#include_code update examples/zkapps/06-offchain-storage/src/main.ts ts title="src/main.ts"
+
+The project that the zkApp CLI creates has no `start` script. Add one to the `scripts` section of `package.json`, the same as the example project:
+
+```json
+"start": "npm run build && node build/src/main.js"
+```
+
+Then `npm start` prints the whole sequence:
 
 ```text
 compiling...
