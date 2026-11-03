@@ -105,8 +105,9 @@ For production deployments, a complete Docker Compose configuration with all fou
 You can install each component individually via Debian packages. This is useful if you already run a Mina daemon and archive node and only need to add the Rosetta API.
 
 ```bash
-# Add the Mina repository (if not already configured)
-echo "deb [trusted=yes] http://packages.o1test.net/ noble stable" | sudo tee /etc/apt/sources.list.d/mina.list
+# Add the signed Mina repository (if not already configured)
+sudo curl -fsSL https://stable.apt.packages.minaprotocol.com/repo-signing-key.gpg -o /usr/share/keyrings/mina-archive-keyring.gpg
+echo "deb [signed-by=/usr/share/keyrings/mina-archive-keyring.gpg] https://stable.apt.packages.minaprotocol.com $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/mina.list
 sudo apt-get update
 
 # Install the Rosetta package for your network
@@ -123,6 +124,8 @@ mina-rosetta \
   --log-json \
   --port 3087
 ```
+
+The legacy unsigned repository `packages.o1test.net` carries the same packages and stays available for some time. See [Installation](/node-operators/validator-node/installing-on-ubuntu-and-debian#ubuntu-and-debian) for the migration note.
 
 This requires a running [Mina daemon](/node-operators/block-producer-node) and [archive node](/node-operators/archive-node) with a populated PostgreSQL database.
 
