@@ -45,7 +45,6 @@ Every page also has a markdown twin: add `.md` to its URL (for example https://d
 
 - [zkApps Development Frameworks](https://docs.minaprotocol.com/zkapps/zkapp-development-frameworks): zkApps (zero knowledge apps) are Mina Protocol smart contracts powered by zero knowledge proofs, specifically using zk-SNARKs.
 - [Introduction to o1js](https://docs.minaprotocol.com/zkapps/o1js): o1js is a general-purpose zk framework with the tools to create zk proofs. o1js is a TypeScript library for writing general-purpose zk programs and writing zk smart contracts for Mina.
-- [Introduction to o1js](https://docs.minaprotocol.com/zkapps/o1js): o1js is a general-purpose zk framework with the tools to create zk proofs. o1js is a TypeScript library for writing general-purpose zk programs and writing zk smart contracts for Mina.
 - [o1js Basic Concepts](https://docs.minaprotocol.com/zkapps/o1js/basic-concepts): Field elements are the basic unit of data in zero knowledge proof programming. Learn about built-in data types, functions, and common methods.
 - [Circuit-Writing Primer](https://docs.minaprotocol.com/zkapps/o1js/circuit-writing-primer): Overview of the circuit-writing features in o1js
 - [Gadgets](https://docs.minaprotocol.com/zkapps/o1js/gadgets): How gadgets work in o1js.
@@ -54,10 +53,8 @@ Every page also has a markdown twin: add `.md` to its URL (for example https://d
 - [ECDSA](https://docs.minaprotocol.com/zkapps/o1js/ecdsa): ECDSA in o1js.
 - [Protokit](https://docs.minaprotocol.com/zkapps/protokit): Protokit is a framework built on o1js for zkApps that need shared state, with an off-chain sequencer that settles to Mina L1.
 - [zkApps Overview](https://docs.minaprotocol.com/zkapps/writing-a-zkapp): zkApps (zero knowledge apps) are Mina Protocol smart contracts powered by zero knowledge proofs, specifically using zk-SNARKs. Use this quickstart guide to deploy zkApps and resources for learning TypeScript.
-- [zkApps Overview](https://docs.minaprotocol.com/zkapps/writing-a-zkapp): zkApps (zero knowledge apps) are Mina Protocol smart contracts powered by zero knowledge proofs, specifically using zk-SNARKs. Use this quickstart guide to deploy zkApps and resources for learning TypeScript.
 - [zkApps Getting Started](https://docs.minaprotocol.com/zkapps/writing-a-zkapp/introduction-to-zkapps/getting-started-zkapps): How to get started writing zkApps (zero knowledge apps).
 - [Install zkApp CLI](https://docs.minaprotocol.com/zkapps/writing-a-zkapp/introduction-to-zkapps/install-zkapp-cli): Prerequisites and installation steps for the zkApp CLI.
-- [zkApps Getting Started](https://docs.minaprotocol.com/zkapps/writing-a-zkapp/introduction-to-zkapps/getting-started-zkapps): How to get started writing zkApps (zero knowledge apps).
 - [How to Write a zkApp](https://docs.minaprotocol.com/zkapps/writing-a-zkapp/introduction-to-zkapps/how-to-write-a-zkapp): Guided steps to write a zkApp that includes a smart contract and a UI. Create a smart contract with o1js for Mina Protocol.
 - [Testing zkApps with Lightnet](https://docs.minaprotocol.com/zkapps/writing-a-zkapp/introduction-to-zkapps/testing-zkapps-lightnet): Use lightweight Mina blockchain network (Lightnet) for testing on a local blockchain before you test with a live network.
 - [How to Deploy a zkApp](https://docs.minaprotocol.com/zkapps/writing-a-zkapp/introduction-to-zkapps/how-to-deploy-a-zkapp): Guided steps to configure your zkApp project, request funds from the Faucet and deploy zkApp to the Devnet.
@@ -65,17 +62,13 @@ Every page also has a markdown twin: add `.md` to its URL (for example https://d
 - [Interacting With Mina](https://docs.minaprotocol.com/zkapps/writing-a-zkapp/introduction-to-zkapps/interact-with-mina): How to create zero knowledge proofs and how users can call zkApp methods. An account update can have proof, signature, or none authorizations.
 - [Security and zkApps](https://docs.minaprotocol.com/zkapps/writing-a-zkapp/introduction-to-zkapps/secure-zkapps): An introduction to security considerations for zkApps, including common pitfalls and best practices.
 - [Off-Chain Storage](https://docs.minaprotocol.com/zkapps/writing-a-zkapp/feature-overview/offchain-storage): An in-depth look at using offchain storage in o1js to extend your zkApp's storage.
-- [Off-Chain Storage](https://docs.minaprotocol.com/zkapps/writing-a-zkapp/feature-overview/offchain-storage): An in-depth look at using offchain storage in o1js to extend your zkApp's storage.
 - [How to Fetch Events and Actions](https://docs.minaprotocol.com/zkapps/writing-a-zkapp/feature-overview/fetch-events-and-actions): Use o1js to retrieve previously emitted events and actions from Mina archive node. Connect your zkApp smart contract to an archive node API endpoint and fetch and use events and actions.
 - [Time-Locked Accounts](https://docs.minaprotocol.com/zkapps/writing-a-zkapp/feature-overview/time-locked-accounts): Use time-locking in Mina to implement vesting schedules. Practical examples of setting up a time-lock for MINA tokens using o1js.
 - [Custom Tokens](https://docs.minaprotocol.com/zkapps/writing-a-zkapp/feature-overview/custom-tokens): Learn how to use o1js for common token operations like minting, burning, and sending tokens. How to implement custom tokens on Mina and use the TokenContract class.
 - [Experimental features](https://docs.minaprotocol.com/zkapps/advanced/experimental): Experimental features are not considered production-ready.
-- [Experimental features](https://docs.minaprotocol.com/zkapps/advanced/experimental): Experimental features are not considered production-ready.
 - [zkApps for Ethereum Developers](https://docs.minaprotocol.com/zkapps/advanced/zkapps-for-ethereum-developers): How zkApps and Ethereum smart contracts compare, differences in language, execution environment, transaction costs, application storage, developer tooling, scaling, and consensus.
 - [Angular and GitHub Pages](https://docs.minaprotocol.com/zkapps/front-end-integration-guides/angular): Getting started with Angular
-- [Angular and GitHub Pages](https://docs.minaprotocol.com/zkapps/front-end-integration-guides/angular): Getting started with Angular
 - [Next JS and Vercel](https://docs.minaprotocol.com/zkapps/front-end-integration-guides/next): Getting started with Next JS and o1js, and deployments to Vercel
-- [zkApp Developer Tutorials](https://docs.minaprotocol.com/zkapps/tutorials): zkApp developer tutorials provide a hands-on walk-through of use cases that teach you how to achieve a defined goal.
 - [zkApp Developer Tutorials](https://docs.minaprotocol.com/zkapps/tutorials): zkApp developer tutorials provide a hands-on walk-through of use cases that teach you how to achieve a defined goal.
 - [Tutorial 1: Hello World](https://docs.minaprotocol.com/zkapps/tutorials/hello-world): Guided steps to get started with o1js, zkApps, and programming with zero knowledge proofs. Learn to code a zkApp from start to finish.
 - [Tutorial 2: Private Inputs and Hash Functions](https://docs.minaprotocol.com/zkapps/tutorials/private-inputs-hash-functions): Guided steps to learn about private inputs, hash functions, and adding a second value as an input.
