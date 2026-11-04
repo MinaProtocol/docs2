@@ -22515,12 +22515,31 @@ The offchain state API is exported under `Experimental`, so its shape can change
   $ zk project 06-offchain-storage
   ```
 
-1. Change to the project directory and clear the scaffolding:
+1. Change to the project directory. The zkApp CLI `0.23.0` creates a project for o1js 2. To use o1js 3.0.0, the same as the [example project](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/06-offchain-storage), open `package.json` and change the `o1js` entry in `peerDependencies` from `"^2.*"` to `"^3.0.0"`. Then install it:
 
   ```sh
   $ cd 06-offchain-storage
-  $ rm src/Add.ts src/Add.test.ts src/interact.ts
+  $ npm install
+  ```
+
+1. Clear the scaffolding and create the contract file:
+
+  ```sh
+  $ rm src/Add.ts src/Add.test.ts src/AddZkProgram.ts src/interact.ts
   $ zk file src/NumberStorageContract
+  $ rm src/NumberStorageContract.test.ts
+  ```
+
+  The `zk file` command also creates `src/NumberStorageContract.test.ts`. The zkApp CLI `0.23.0` writes this placeholder in a style that does not compile in the project it creates, so delete it. The example project has a test suite of its own; see [What happens to a stale write](#what-happens-to-a-stale-write).
+
+1. Replace the content of `src/index.ts`, which still imports the deleted files, with:
+
+  ```ts title="src/index.ts"
+  export {
+    NumberStorageContract,
+    offchainState,
+    StateProof,
+  } from './NumberStorageContract.js';
   ```
 
 ## Declare the offchain state
@@ -22615,7 +22634,24 @@ Finally, add the method that settles. It takes the proof and hands it to the off
 
 ## Run it
 
-`src/main.ts` runs the contract on a local blockchain, with the first test account as the deployer. Bind the state to the contract instance, then compile both the offchain state program and the contract:
+Create `src/main.ts`. It runs the contract on a local blockchain, with the first test account as the deployer:
+
+```ts title="src/main.ts"
+import { AccountUpdate, Field, Mina, PrivateKey } from 'o1js';
+import {
+  NumberStorageContract,
+  offchainState,
+} from './NumberStorageContract.js';
+
+// A local blockchain: no network, no faucet, no funded accounts.
+const Local = await Mina.LocalBlockchain({ proofsEnabled: false });
+Mina.setActiveInstance(Local);
+
+const deployer = Local.testAccounts[0];
+const zkAppKey = PrivateKey.random();
+```
+
+Bind the state to the contract instance, then compile both the offchain state program and the contract:
 
 ```ts title="src/main.ts"
 const contract = new NumberStorageContract(zkAppKey.toPublicKey());
@@ -22629,6 +22665,31 @@ state.setContractInstance(contract);
 console.log('compiling...');
 await offchainState.compile();
 await NumberStorageContract.compile();
+```
+
+Deploy the contract. `init()` runs as part of the deployment and sets the commitment to the empty state:
+
+```ts title="src/main.ts"
+console.log('deploying...');
+const deployTx = await Mina.transaction(deployer, async () => {
+  AccountUpdate.fundNewAccount(deployer);
+  await contract.deploy();
+});
+await deployTx.prove();
+await deployTx.sign([deployer.key, zkAppKey]).send();
+```
+
+A settlement makes a proof over the pending actions and sends it to `settle()`. `main.ts` puts this in a function, because it settles more than once:
+
+```ts title="src/main.ts"
+async function settle() {
+  const proof = await state.createSettlementProof();
+  const tx = await Mina.transaction(deployer, async () => {
+    await contract.settle(proof);
+  });
+  await tx.prove();
+  await tx.sign([deployer.key]).send();
+}
 ```
 
 After the deployment, write a value. At this point the write is an action, and reading the entry returns none:
@@ -22649,19 +22710,6 @@ console.log(
 );
 ```
 
-A settlement makes a proof over the pending actions and sends it to `settle()`. `main.ts` puts this in a function, because it settles more than once:
-
-```ts title="src/main.ts"
-async function settle() {
-  const proof = await state.createSettlementProof();
-  const tx = await Mina.transaction(deployer, async () => {
-    await contract.settle(proof);
-  });
-  await tx.prove();
-  await tx.sign([deployer.key]).send();
-}
-```
-
 Settle, and the value becomes readable:
 
 ```ts title="src/main.ts"
@@ -22676,7 +22724,32 @@ console.log(
 );
 ```
 
-Running `npm start` in the example prints the whole sequence:
+Finally, replace the value. `updateNumber()` names the value it replaces, so a stale writer cannot overwrite a newer value by accident:
+
+```ts title="src/main.ts"
+// An update names the value it replaces, so a stale writer cannot clobber a
+// newer value by accident.
+console.log('updating index 1 from 42 to 43...');
+const updateTx = await Mina.transaction(deployer, async () => {
+  await contract.updateNumber(Field(1), Field(42), Field(43));
+});
+await updateTx.prove();
+await updateTx.sign([deployer.key]).send();
+await settle();
+
+console.log(
+  'index 1 is now:',
+  (await state.fields.numbers.get(Field(1))).value.toString()
+);
+```
+
+The project that the zkApp CLI creates has no `start` script. Add one to the `scripts` section of `package.json`, the same as the example project:
+
+```json
+"start": "npm run build && node build/src/main.js"
+```
+
+Then `npm start` prints the whole sequence:
 
 ```text
 compiling...
