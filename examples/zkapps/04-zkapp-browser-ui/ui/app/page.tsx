@@ -62,7 +62,8 @@ export default function Home() {
           const res = await zkappWorkerClient.fetchAccount(
           publicKeyBase58,
           );
-          const accountExists = res.error === null;
+          // fetchAccount() returns `error: undefined` when the account exists
+          const accountExists = res.error == null;
           setAccountExists(accountExists);
           // docs:end setup-wallet
 
@@ -113,13 +114,12 @@ export default function Home() {
               break;
             }
             await new Promise((resolve) => setTimeout(resolve, 5000));
-          } 
+          }
+          setAccountExists(true);
         } catch (error: any) {
           displayStep(`Error checking account: ${error.message}`);
         }
-
       }
-      setAccountExists(true);
     };
 
     checkAccountExists();
@@ -157,7 +157,7 @@ export default function Home() {
 
       const transactionLink = `https://minascan.io/devnet/tx/${hash}`;
       setTransactionLink(transactionLink);
-      setDisplayText(transactionLink);
+      setDisplayText('Transaction sent');
     } catch (error: any) {
       displayStep(`Error sending transaction: ${error.message}`);
     } finally {
@@ -199,17 +199,22 @@ export default function Home() {
     );
   }
 
-  const stepDisplay = transactionlink ? (
-    <a
-      href={transactionlink}
-      target="_blank"
-      rel="noreferrer"
-      style={{ textDecoration: 'underline' }}
-    >
-      View transaction
-    </a>
-  ) : (
-    displayText
+  // The current step, and a link to the last transaction once there is one.
+  // Both stay visible, so a later step or error is not hidden by the link.
+  const stepDisplay = (
+    <>
+      <div>{displayText}</div>
+      {transactionlink && (
+        <a
+          href={transactionlink}
+          target="_blank"
+          rel="noreferrer"
+          style={{ textDecoration: 'underline' }}
+        >
+          View transaction
+        </a>
+      )}
+    </>
   );
 
   let setup = (
