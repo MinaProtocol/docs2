@@ -24,8 +24,8 @@ const WHITELIST_SIZE = 3;
 /**
  * The whitelist itself, passed to a method as an argument.
  *
- * Only its hash lives in contract state, because on-chain state is eight field
- * elements and a public key already costs two. The contract checks the hash of
+ * Only its hash lives in contract state, because on-chain state is 32 field
+ * elements, a public key costs two, and a list would not fit for long. The contract checks the hash of
  * the list it is given before trusting the list.
  */
 export class Whitelist extends Struct({

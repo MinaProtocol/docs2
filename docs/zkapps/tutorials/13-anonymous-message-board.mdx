@@ -74,7 +74,10 @@ Example smart contract files come with the new project, you can delete them if y
 
   ```sh
   $ zk file message
+  $ rm src/message.test.ts
   ```
+
+  The `zk file` command also creates `src/message.test.ts`. The zkApp CLI `0.23.0` writes this placeholder in a style that does not compile in the project it creates, so delete it. The example project has a test suite of its own.
 
 1. Copy the entire contents of the [message.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/13-anonymous-message-board/src/message.ts) example file into your local `message-board/src/message.ts` file.
 
