@@ -1,0 +1,28 @@
+---
+id: verification-key
+title: VerificationKey
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+verification key in Base64 format
+
+
+```graphql
+scalar VerificationKey
+```
+
+
+### Member Of
+
+[`AccountVerificationKeyWithHash`](/node-developers/graphql-api/reference/types/objects/account-verification-key-with-hash.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`VerificationKeyWithHash`](/node-developers/graphql-api/reference/types/objects/verification-key-with-hash.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`VerificationKeyWithHashInput`](/node-developers/graphql-api/reference/types/inputs/verification-key-with-hash-input.mdx)  <Badge class="badge badge--secondary badge--relation" text="input"/>

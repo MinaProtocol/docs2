@@ -1,0 +1,49 @@
+---
+id: evaluate-vrf
+title: evaluateVrf
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+Evaluate a vrf for the given public key. This includes a witness which may be verified without access to the private key for this vrf evaluation.
+
+
+```graphql
+evaluateVrf(
+  message: VrfMessageInput!
+  publicKey: PublicKey!
+  vrfThreshold: VrfThresholdInput
+): VrfEvaluation!
+```
+
+
+### Arguments
+
+#### [<code style={{ fontWeight: 'normal' }}>evaluateVrf.<b>message</b></code>](#message)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>VrfMessageInput!</b></code>](/node-developers/graphql-api/reference/types/inputs/vrf-message-input.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="input"/> \{#message\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>evaluateVrf.<b>publicKey</b></code>](#public-key)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>PublicKey!</b></code>](/node-developers/graphql-api/reference/types/scalars/public-key.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#public-key\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>evaluateVrf.<b>vrfThreshold</b></code>](#vrf-threshold)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>VrfThresholdInput</b></code>](/node-developers/graphql-api/reference/types/inputs/vrf-threshold-input.mdx) <Badge class="badge badge--secondary " text="input"/> \{#vrf-threshold\} 
+
+
+
+
+
+### Type
+
+#### [<code style={{ fontWeight: 'normal' }}><b>VrfEvaluation</b></code>](/node-developers/graphql-api/reference/types/objects/vrf-evaluation.mdx) <Badge class="badge badge--secondary " text="object"/> 
+A witness to a vrf evaluation, which may be externally verified

@@ -1,0 +1,41 @@
+---
+id: zkapp-field-array
+title: ZkappFieldArray
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+Raw field array from the archive database.
+
+An empty `fields` array means the archive row exists but contains no field values.
+Nullable entries mean the corresponding nullable archive state slot has no field value.
+
+
+```graphql
+type ZkappFieldArray {
+  fields: [String]!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>ZkappFieldArray.<b>fields</b></code>](#fields)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>[String]!</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#fields\} 
+
+
+
+
+
+### Member Of
+
+[`ZkappAccountPrecondition`](/node-operators/data-and-history/archive-node-api/reference/types/objects/zkapp-account-precondition.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`ZkappAccountUpdateOutput`](/node-operators/data-and-history/archive-node-api/reference/types/objects/zkapp-account-update-output.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

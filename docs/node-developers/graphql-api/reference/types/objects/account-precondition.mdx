@@ -1,0 +1,73 @@
+---
+id: account-precondition
+title: AccountPrecondition
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type AccountPrecondition {
+  actionState: Field
+  balance: BalanceInterval
+  delegate: PublicKey
+  isNew: Boolean
+  nonce: NonceInterval
+  provedState: Boolean
+  receiptChainHash: Field
+  state: [Field]!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountPrecondition.<b>actionState</b></code>](#action-state)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Field</b></code>](/node-developers/graphql-api/reference/types/scalars/field.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#action-state\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountPrecondition.<b>balance</b></code>](#balance)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>BalanceInterval</b></code>](/node-developers/graphql-api/reference/types/objects/balance-interval.mdx) <Badge class="badge badge--secondary " text="object"/> \{#balance\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountPrecondition.<b>delegate</b></code>](#delegate)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>PublicKey</b></code>](/node-developers/graphql-api/reference/types/scalars/public-key.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#delegate\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountPrecondition.<b>isNew</b></code>](#is-new)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Boolean</b></code>](/node-developers/graphql-api/reference/types/scalars/boolean.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#is-new\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountPrecondition.<b>nonce</b></code>](#nonce)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>NonceInterval</b></code>](/node-developers/graphql-api/reference/types/objects/nonce-interval.mdx) <Badge class="badge badge--secondary " text="object"/> \{#nonce\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountPrecondition.<b>provedState</b></code>](#proved-state)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Boolean</b></code>](/node-developers/graphql-api/reference/types/scalars/boolean.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#proved-state\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountPrecondition.<b>receiptChainHash</b></code>](#receipt-chain-hash)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Field</b></code>](/node-developers/graphql-api/reference/types/scalars/field.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#receipt-chain-hash\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountPrecondition.<b>state</b></code>](#state)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>[Field]!</b></code>](/node-developers/graphql-api/reference/types/scalars/field.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#state\} 
+
+
+
+
+
+### Member Of
+
+[`Preconditions`](/node-developers/graphql-api/reference/types/objects/preconditions.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

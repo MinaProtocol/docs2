@@ -1,0 +1,43 @@
+---
+id: consensus-time-global-slot
+title: ConsensusTimeGlobalSlot
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+Consensus time and the corresponding global slot since genesis
+
+
+```graphql
+type ConsensusTimeGlobalSlot {
+  consensusTime: ConsensusTime!
+  globalSlotSinceGenesis: Globalslot!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>ConsensusTimeGlobalSlot.<b>consensusTime</b></code>](#consensus-time)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>ConsensusTime!</b></code>](/node-developers/graphql-api/reference/types/objects/consensus-time.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#consensus-time\} 
+Time in terms of slot number in an epoch, start and end time of the slot since UTC epoch
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ConsensusTimeGlobalSlot.<b>globalSlotSinceGenesis</b></code>](#global-slot-since-genesis)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Globalslot!</b></code>](/node-developers/graphql-api/reference/types/scalars/globalslot.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#global-slot-since-genesis\} 
+
+
+
+
+
+### Member Of
+
+[`BlockProducerTimings`](/node-developers/graphql-api/reference/types/objects/block-producer-timings.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

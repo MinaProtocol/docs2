@@ -1,0 +1,98 @@
+---
+id: account-permissions
+title: AccountPermissions
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type AccountPermissions {
+  access: AccountAuthRequired!
+  editActionState: AccountAuthRequired!
+  editState: AccountAuthRequired!
+  incrementNonce: AccountAuthRequired!
+  receive: AccountAuthRequired!
+  send: AccountAuthRequired!
+  setDelegate: AccountAuthRequired!
+  setPermissions: AccountAuthRequired!
+  setTiming: AccountAuthRequired!
+  setTokenSymbol: AccountAuthRequired!
+  setVerificationKey: VerificationKeyPermission!
+  setVotingFor: AccountAuthRequired!
+  setZkappUri: AccountAuthRequired!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountPermissions.<b>access</b></code>](#access)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>AccountAuthRequired!</b></code>](/node-developers/graphql-api/reference/types/enums/account-auth-required.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="enum"/> \{#access\} 
+Authorization required to access the account
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountPermissions.<b>editActionState</b></code>](#edit-action-state)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>AccountAuthRequired!</b></code>](/node-developers/graphql-api/reference/types/enums/account-auth-required.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="enum"/> \{#edit-action-state\} 
+Authorization required to edit the action state
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountPermissions.<b>editState</b></code>](#edit-state)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>AccountAuthRequired!</b></code>](/node-developers/graphql-api/reference/types/enums/account-auth-required.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="enum"/> \{#edit-state\} 
+Authorization required to edit zkApp state
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountPermissions.<b>incrementNonce</b></code>](#increment-nonce)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>AccountAuthRequired!</b></code>](/node-developers/graphql-api/reference/types/enums/account-auth-required.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="enum"/> \{#increment-nonce\} 
+Authorization required to increment the nonce
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountPermissions.<b>receive</b></code>](#receive)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>AccountAuthRequired!</b></code>](/node-developers/graphql-api/reference/types/enums/account-auth-required.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="enum"/> \{#receive\} 
+Authorization required to receive tokens
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountPermissions.<b>send</b></code>](#send)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>AccountAuthRequired!</b></code>](/node-developers/graphql-api/reference/types/enums/account-auth-required.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="enum"/> \{#send\} 
+Authorization required to send tokens
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountPermissions.<b>setDelegate</b></code>](#set-delegate)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>AccountAuthRequired!</b></code>](/node-developers/graphql-api/reference/types/enums/account-auth-required.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="enum"/> \{#set-delegate\} 
+Authorization required to set the delegate
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountPermissions.<b>setPermissions</b></code>](#set-permissions)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>AccountAuthRequired!</b></code>](/node-developers/graphql-api/reference/types/enums/account-auth-required.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="enum"/> \{#set-permissions\} 
+Authorization required to change permissions
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountPermissions.<b>setTiming</b></code>](#set-timing)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>AccountAuthRequired!</b></code>](/node-developers/graphql-api/reference/types/enums/account-auth-required.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="enum"/> \{#set-timing\} 
+Authorization required to set the timing of the account
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountPermissions.<b>setTokenSymbol</b></code>](#set-token-symbol)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>AccountAuthRequired!</b></code>](/node-developers/graphql-api/reference/types/enums/account-auth-required.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="enum"/> \{#set-token-symbol\} 
+Authorization required to set the token symbol
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountPermissions.<b>setVerificationKey</b></code>](#set-verification-key)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>VerificationKeyPermission!</b></code>](/node-developers/graphql-api/reference/types/objects/verification-key-permission.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#set-verification-key\} 
+Authorization required to set the verification key of the zkApp associated with the account
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountPermissions.<b>setVotingFor</b></code>](#set-voting-for)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>AccountAuthRequired!</b></code>](/node-developers/graphql-api/reference/types/enums/account-auth-required.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="enum"/> \{#set-voting-for\} 
+Authorization required to set the state hash the account is voting for
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountPermissions.<b>setZkappUri</b></code>](#set-zkapp-uri)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>AccountAuthRequired!</b></code>](/node-developers/graphql-api/reference/types/enums/account-auth-required.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="enum"/> \{#set-zkapp-uri\} 
+Authorization required to change the URI of the zkApp associated with the account
+
+
+
+
+### Member Of
+
+[`Account`](/node-developers/graphql-api/reference/types/objects/account.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

@@ -1,0 +1,53 @@
+---
+id: zkapp-account-precondition
+title: ZkappAccountPrecondition
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type ZkappAccountPrecondition {
+  state: ZkappFieldArray
+  actionState: ZkappFieldArray
+  provedState: Boolean
+  isNew: Boolean
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>ZkappAccountPrecondition.<b>state</b></code>](#state)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>ZkappFieldArray</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/objects/zkapp-field-array.mdx) <Badge class="badge badge--secondary " text="object"/> \{#state\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ZkappAccountPrecondition.<b>actionState</b></code>](#action-state)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>ZkappFieldArray</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/objects/zkapp-field-array.mdx) <Badge class="badge badge--secondary " text="object"/> \{#action-state\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ZkappAccountPrecondition.<b>provedState</b></code>](#proved-state)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Boolean</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/boolean.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#proved-state\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ZkappAccountPrecondition.<b>isNew</b></code>](#is-new)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Boolean</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/boolean.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#is-new\} 
+
+
+
+
+
+### Member Of
+
+[`ZkappAccountUpdateOutput`](/node-operators/data-and-history/archive-node-api/reference/types/objects/zkapp-account-update-output.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

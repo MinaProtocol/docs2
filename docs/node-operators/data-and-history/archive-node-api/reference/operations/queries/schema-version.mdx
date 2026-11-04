@@ -1,0 +1,37 @@
+---
+id: schema-version
+title: schemaVersion
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+The `MAJOR.MINOR` version of this schema.
+
+Clients compare it with the schema version they were built against: an equal
+major means the contract they code against still holds, and a higher minor
+means this server has additive changes they may not know about yet.
+
+Always available, even when `ENABLED_QUERIES` restricts which data queries
+this server exposes — a compatibility check that can itself be switched off
+is of no use to a client.
+
+
+```graphql
+schemaVersion: String!
+```
+
+
+### Type
+
+#### [<code style={{ fontWeight: 'normal' }}><b>String</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary " text="scalar"/> 
+The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.

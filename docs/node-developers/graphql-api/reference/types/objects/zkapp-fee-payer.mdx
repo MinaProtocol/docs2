@@ -1,0 +1,43 @@
+---
+id: zkapp-fee-payer
+title: ZkappFeePayer
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type ZkappFeePayer {
+  authorization: Signature!
+  body: FeePayerBody!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>ZkappFeePayer.<b>authorization</b></code>](#authorization)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Signature!</b></code>](/node-developers/graphql-api/reference/types/scalars/signature.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#authorization\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ZkappFeePayer.<b>body</b></code>](#body)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>FeePayerBody!</b></code>](/node-developers/graphql-api/reference/types/objects/fee-payer-body.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#body\} 
+
+
+
+
+
+### Member Of
+
+[`ZkappCommand`](/node-developers/graphql-api/reference/types/objects/zkapp-command.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

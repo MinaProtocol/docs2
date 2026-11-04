@@ -1,0 +1,48 @@
+---
+id: scan-state-tree
+title: ScanStateTree
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+Free space and outstanding snark work in one tree of the scan state
+
+
+```graphql
+type ScanStateTree {
+  availableSpace: Int!
+  baseJobsTodo: Int!
+  mergeJobsTodo: Int!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>ScanStateTree.<b>availableSpace</b></code>](#available-space)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#available-space\} 
+Number of transaction slots still free in this tree
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ScanStateTree.<b>baseJobsTodo</b></code>](#base-jobs-todo)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#base-jobs-todo\} 
+Number of base jobs in this tree that are yet to be done
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ScanStateTree.<b>mergeJobsTodo</b></code>](#merge-jobs-todo)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#merge-jobs-todo\} 
+Number of merge jobs in this tree that are yet to be done
+
+
+
+
+### Member Of
+
+[`ScanState`](/node-developers/graphql-api/reference/types/objects/scan-state.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

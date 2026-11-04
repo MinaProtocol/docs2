@@ -1,0 +1,68 @@
+---
+id: snarked-ledger-state
+title: SnarkedLedgerState
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type SnarkedLedgerState {
+  connectingLedgerLeft: LedgerHash!
+  connectingLedgerRight: LedgerHash!
+  feeExcess: FeeExcess!
+  sokDigest: String
+  sourceRegisters: Registers!
+  supplyIncrease: SignedAmount!
+  targetRegisters: Registers!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>SnarkedLedgerState.<b>connectingLedgerLeft</b></code>](#connecting-ledger-left)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>LedgerHash!</b></code>](/node-developers/graphql-api/reference/types/scalars/ledger-hash.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#connecting-ledger-left\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>SnarkedLedgerState.<b>connectingLedgerRight</b></code>](#connecting-ledger-right)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>LedgerHash!</b></code>](/node-developers/graphql-api/reference/types/scalars/ledger-hash.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#connecting-ledger-right\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>SnarkedLedgerState.<b>feeExcess</b></code>](#fee-excess)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>FeeExcess!</b></code>](/node-developers/graphql-api/reference/types/objects/fee-excess.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#fee-excess\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>SnarkedLedgerState.<b>sokDigest</b></code>](#sok-digest)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String</b></code>](/node-developers/graphql-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#sok-digest\} 
+Placeholder for SOK digest
+
+
+#### [<code style={{ fontWeight: 'normal' }}>SnarkedLedgerState.<b>sourceRegisters</b></code>](#source-registers)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Registers!</b></code>](/node-developers/graphql-api/reference/types/objects/registers.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#source-registers\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>SnarkedLedgerState.<b>supplyIncrease</b></code>](#supply-increase)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>SignedAmount!</b></code>](/node-developers/graphql-api/reference/types/objects/signed-amount.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#supply-increase\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>SnarkedLedgerState.<b>targetRegisters</b></code>](#target-registers)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Registers!</b></code>](/node-developers/graphql-api/reference/types/objects/registers.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#target-registers\} 
+
+
+
+
+
+### Member Of
+
+[`BlockchainState`](/node-developers/graphql-api/reference/types/objects/blockchain-state.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

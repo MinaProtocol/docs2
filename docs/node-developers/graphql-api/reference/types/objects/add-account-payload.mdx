@@ -1,0 +1,59 @@
+---
+id: add-account-payload
+title: AddAccountPayload
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type AddAccountPayload {
+  account: Account!
+  publicKey: PublicKey! @deprecated
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>AddAccountPayload.<b>account</b></code>](#account)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Account!</b></code>](/node-developers/graphql-api/reference/types/objects/account.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#account\} 
+Details of created account
+
+
+
+
+<details class="graphql-markdown-details">
+<summary>
+<span class="graphql-markdown-details-label-closed">Show deprecated</span>
+<span class="graphql-markdown-details-label-open" hidden>Hide deprecated</span>
+</summary>
+
+#### [<code style={{ fontWeight: 'normal' }}>AddAccountPayload.<b>publicKey</b></code>](#public-key)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>PublicKey!</b></code>](/node-developers/graphql-api/reference/types/scalars/public-key.mdx) <Badge class="badge badge--secondary badge--deprecated" text="deprecated"/> <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#public-key\} 
+:::warning[DEPRECATED]
+
+use account field instead
+
+:::
+
+Public key of the created account
+
+
+</details>
+
+
+
+### Returned By
+
+[`addWallet`](/node-developers/graphql-api/reference/deprecated/operations/mutations/add-wallet.mdx)  <Badge class="badge badge--secondary badge--relation" text="mutation"/><Bullet />[`createAccount`](/node-developers/graphql-api/reference/operations/mutations/create-account.mdx)  <Badge class="badge badge--secondary badge--relation" text="mutation"/><Bullet />[`createHDAccount`](/node-developers/graphql-api/reference/operations/mutations/create-hdaccount.mdx)  <Badge class="badge badge--secondary badge--relation" text="mutation"/>

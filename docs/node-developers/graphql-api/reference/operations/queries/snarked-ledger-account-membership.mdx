@@ -1,0 +1,43 @@
+---
+id: snarked-ledger-account-membership
+title: snarkedLedgerAccountMembership
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+obtain a membership proof for an account in the snarked ledger along with the account's balance, timing information, and nonce
+
+
+```graphql
+snarkedLedgerAccountMembership(
+  accountInfos: [AccountInput!]!
+  stateHash: String!
+): [MembershipInfo!]!
+```
+
+
+### Arguments
+
+#### [<code style={{ fontWeight: 'normal' }}>snarkedLedgerAccountMembership.<b>accountInfos</b></code>](#account-infos)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>[AccountInput!]!</b></code>](/node-developers/graphql-api/reference/types/inputs/account-input.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="input"/> \{#account-infos\} 
+Token id of the account to check
+
+
+#### [<code style={{ fontWeight: 'normal' }}>snarkedLedgerAccountMembership.<b>stateHash</b></code>](#state-hash)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String!</b></code>](/node-developers/graphql-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#state-hash\} 
+Hash of the snarked ledger to check
+
+
+
+
+### Type
+
+#### [<code style={{ fontWeight: 'normal' }}><b>MembershipInfo</b></code>](/node-developers/graphql-api/reference/types/objects/membership-info.mdx) <Badge class="badge badge--secondary " text="object"/>

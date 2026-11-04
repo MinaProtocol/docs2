@@ -164,6 +164,10 @@ Every page also has a markdown twin: add `.md` to its URL (for example https://d
 
 - [Exchange Operators](https://docs.minaprotocol.com/node-operators/exchange-operators): Guide for exchanges integrating with the Mina blockchain using Rosetta API, archive nodes, and block producer nodes.
 
+## Node Developers
+
+- [GraphQL API](https://docs.minaprotocol.com/node-developers/graphql-api): The Mina daemon GraphQL API — the contract a running node serves on port 3085 for querying recent chain state and submitting transactions, with the schema of the current release published as SDL and introspection JSON, a generated reference, and the limits and flags that govern access.
+
 ## Integrations
 
 - [Integrate with Mina](https://docs.minaprotocol.com/integrations): Choose how to integrate an application, exchange, wallet, explorer, or indexer with Mina — the daemon GraphQL API, the Archive Node API, Rosetta, client SDKs, and signing libraries.

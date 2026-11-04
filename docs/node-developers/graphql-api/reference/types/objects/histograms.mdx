@@ -1,0 +1,68 @@
+---
+id: histograms
+title: Histograms
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type Histograms {
+  acceptedTransitionLocalLatency: Histogram
+  acceptedTransitionRemoteLatency: Histogram
+  externalTransitionLatency: Histogram
+  rpcTimings: RpcTimings!
+  snarkWorkerMergeTime: Histogram
+  snarkWorkerNonzkappTransitionTime: Histogram
+  snarkWorkerZkappTransitionTime: Histogram
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>Histograms.<b>acceptedTransitionLocalLatency</b></code>](#accepted-transition-local-latency)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Histogram</b></code>](/node-developers/graphql-api/reference/types/objects/histogram.mdx) <Badge class="badge badge--secondary " text="object"/> \{#accepted-transition-local-latency\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>Histograms.<b>acceptedTransitionRemoteLatency</b></code>](#accepted-transition-remote-latency)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Histogram</b></code>](/node-developers/graphql-api/reference/types/objects/histogram.mdx) <Badge class="badge badge--secondary " text="object"/> \{#accepted-transition-remote-latency\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>Histograms.<b>externalTransitionLatency</b></code>](#external-transition-latency)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Histogram</b></code>](/node-developers/graphql-api/reference/types/objects/histogram.mdx) <Badge class="badge badge--secondary " text="object"/> \{#external-transition-latency\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>Histograms.<b>rpcTimings</b></code>](#rpc-timings)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>RpcTimings!</b></code>](/node-developers/graphql-api/reference/types/objects/rpc-timings.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#rpc-timings\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>Histograms.<b>snarkWorkerMergeTime</b></code>](#snark-worker-merge-time)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Histogram</b></code>](/node-developers/graphql-api/reference/types/objects/histogram.mdx) <Badge class="badge badge--secondary " text="object"/> \{#snark-worker-merge-time\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>Histograms.<b>snarkWorkerNonzkappTransitionTime</b></code>](#snark-worker-nonzkapp-transition-time)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Histogram</b></code>](/node-developers/graphql-api/reference/types/objects/histogram.mdx) <Badge class="badge badge--secondary " text="object"/> \{#snark-worker-nonzkapp-transition-time\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>Histograms.<b>snarkWorkerZkappTransitionTime</b></code>](#snark-worker-zkapp-transition-time)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Histogram</b></code>](/node-developers/graphql-api/reference/types/objects/histogram.mdx) <Badge class="badge badge--secondary " text="object"/> \{#snark-worker-zkapp-transition-time\} 
+
+
+
+
+
+### Member Of
+
+[`DaemonStatus`](/node-developers/graphql-api/reference/types/objects/daemon-status.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

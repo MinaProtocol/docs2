@@ -1,0 +1,39 @@
+---
+id: scan-state
+title: scanState
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+Free space and outstanding snark work in each tree of the scan state as of the given block, or of the best tip if no block is given. Returns an error if the block is not in the transition frontier or if the system is bootstrapping.
+
+
+```graphql
+scanState(
+  stateHash: String
+): ScanState!
+```
+
+
+### Arguments
+
+#### [<code style={{ fontWeight: 'normal' }}>scanState.<b>stateHash</b></code>](#state-hash)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String</b></code>](/node-developers/graphql-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#state-hash\} 
+The state hash of the desired block
+
+
+
+
+### Type
+
+#### [<code style={{ fontWeight: 'normal' }}><b>ScanState</b></code>](/node-developers/graphql-api/reference/types/objects/scan-state.mdx) <Badge class="badge badge--secondary " text="object"/> 
+Status of the scan state as of a block

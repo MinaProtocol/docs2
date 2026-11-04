@@ -1,0 +1,38 @@
+---
+id: network-state-output
+title: NetworkStateOutput
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+Metadata about the network
+
+
+```graphql
+type NetworkStateOutput {
+  maxBlockHeight: MaxBlockHeightInfo
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>NetworkStateOutput.<b>maxBlockHeight</b></code>](#max-block-height)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>MaxBlockHeightInfo</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/objects/max-block-height-info.mdx) <Badge class="badge badge--secondary " text="object"/> \{#max-block-height\} 
+Returns the latest pending and canonical block heights that are synced by the archive node.  If the archive node is not fully synced, the pending block height will be lower than the actual network state.  Wait some time for the archive node to get back in sync.
+
+
+
+
+### Returned By
+
+[`networkState`](/node-operators/data-and-history/archive-node-api/reference/operations/queries/network-state.mdx)  <Badge class="badge badge--secondary badge--relation" text="query"/>

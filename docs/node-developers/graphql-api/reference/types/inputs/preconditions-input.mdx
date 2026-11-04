@@ -1,0 +1,48 @@
+---
+id: preconditions-input
+title: PreconditionsInput
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+input PreconditionsInput {
+  account: AccountPreconditionInput!
+  network: NetworkPreconditionInput!
+  validWhile: GlobalSlotSinceGenesisIntervalInput
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>PreconditionsInput.<b>account</b></code>](#account)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>AccountPreconditionInput!</b></code>](/node-developers/graphql-api/reference/types/inputs/account-precondition-input.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="input"/> \{#account\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>PreconditionsInput.<b>network</b></code>](#network)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>NetworkPreconditionInput!</b></code>](/node-developers/graphql-api/reference/types/inputs/network-precondition-input.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="input"/> \{#network\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>PreconditionsInput.<b>validWhile</b></code>](#valid-while)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>GlobalSlotSinceGenesisIntervalInput</b></code>](/node-developers/graphql-api/reference/types/inputs/global-slot-since-genesis-interval-input.mdx) <Badge class="badge badge--secondary " text="input"/> \{#valid-while\} 
+
+
+
+
+
+### Member Of
+
+[`AccountUpdateBodyInput`](/node-developers/graphql-api/reference/types/inputs/account-update-body-input.mdx)  <Badge class="badge badge--secondary badge--relation" text="input"/>

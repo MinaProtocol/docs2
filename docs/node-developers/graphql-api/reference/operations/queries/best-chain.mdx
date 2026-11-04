@@ -1,0 +1,38 @@
+---
+id: best-chain
+title: bestChain
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+Retrieve a list of blocks from transition frontier's root to the current best tip. Returns an error if the system is bootstrapping.
+
+
+```graphql
+bestChain(
+  maxLength: Int
+): [Block!]
+```
+
+
+### Arguments
+
+#### [<code style={{ fontWeight: 'normal' }}>bestChain.<b>maxLength</b></code>](#max-length)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#max-length\} 
+The maximum number of blocks to return. If there are more blocks in the transition frontier from root to tip, the maxLength blocks closest to the best tip will be returned
+
+
+
+
+### Type
+
+#### [<code style={{ fontWeight: 'normal' }}><b>Block</b></code>](/node-developers/graphql-api/reference/types/objects/block.mdx) <Badge class="badge badge--secondary " text="object"/>

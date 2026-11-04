@@ -1,0 +1,48 @@
+---
+id: set-connection-gating-config-payload
+title: SetConnectionGatingConfigPayload
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type SetConnectionGatingConfigPayload {
+  bannedPeers: [NetworkPeerPayload!]!
+  isolate: Boolean!
+  trustedPeers: [NetworkPeerPayload!]!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>SetConnectionGatingConfigPayload.<b>bannedPeers</b></code>](#banned-peers)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>[NetworkPeerPayload!]!</b></code>](/node-developers/graphql-api/reference/types/objects/network-peer-payload.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#banned-peers\} 
+Peers we will never allow connections from (unless they are also trusted!)
+
+
+#### [<code style={{ fontWeight: 'normal' }}>SetConnectionGatingConfigPayload.<b>isolate</b></code>](#isolate)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Boolean!</b></code>](/node-developers/graphql-api/reference/types/scalars/boolean.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#isolate\} 
+If true, no connections will be allowed unless they are from a trusted peer
+
+
+#### [<code style={{ fontWeight: 'normal' }}>SetConnectionGatingConfigPayload.<b>trustedPeers</b></code>](#trusted-peers)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>[NetworkPeerPayload!]!</b></code>](/node-developers/graphql-api/reference/types/objects/network-peer-payload.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#trusted-peers\} 
+Peers we will always allow connections from
+
+
+
+
+### Returned By
+
+[`connectionGatingConfig`](/node-developers/graphql-api/reference/operations/queries/connection-gating-config.mdx)  <Badge class="badge badge--secondary badge--relation" text="query"/><Bullet />[`setConnectionGatingConfig`](/node-developers/graphql-api/reference/operations/mutations/set-connection-gating-config.mdx)  <Badge class="badge badge--secondary badge--relation" text="mutation"/>

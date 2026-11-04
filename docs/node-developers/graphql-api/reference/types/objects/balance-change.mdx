@@ -1,0 +1,43 @@
+---
+id: balance-change
+title: BalanceChange
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type BalanceChange {
+  magnitude: CurrencyAmount!
+  sgn: Sign!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>BalanceChange.<b>magnitude</b></code>](#magnitude)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>CurrencyAmount!</b></code>](/node-developers/graphql-api/reference/types/scalars/currency-amount.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#magnitude\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>BalanceChange.<b>sgn</b></code>](#sgn)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Sign!</b></code>](/node-developers/graphql-api/reference/types/scalars/sign.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#sgn\} 
+
+
+
+
+
+### Member Of
+
+[`AccountUpdateBody`](/node-developers/graphql-api/reference/types/objects/account-update-body.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

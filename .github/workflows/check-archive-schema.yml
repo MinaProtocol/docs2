@@ -1,9 +1,11 @@
 name: Check the Archive Node API schema copy
 
 # static/archive-node-api/schema.graphql is a copy of schema.graphql from the
-# o1-labs/Archive-Node-API repository, and schema.json is derived from it. This
-# job fails when the copy no longer matches the upstream file at
-# ARCHIVE_NODE_API_REF, or when schema.json is stale.
+# o1-labs/Archive-Node-API repository at the release tag ARCHIVE_NODE_API_REF.
+# schema.json and the reference pages under
+# docs/node-operators/data-and-history/archive-node-api/reference are
+# generated from it. This job fails when the copy no longer matches the tag,
+# or when the derived files are stale.
 
 on:
   pull_request:
@@ -11,7 +13,10 @@ on:
       - main
     paths:
       - 'static/archive-node-api/**'
+      - 'docs/node-operators/data-and-history/archive-node-api/reference/**'
       - 'scripts/generate-archive-schema-json.mjs'
+      - 'scripts/generate-graphql-reference.mjs'
+      - 'docusaurus.config.js'
       - '.github/workflows/check-archive-schema.yml'
   schedule:
     # Mondays 06:00 UTC, so an upstream schema release is noticed within a week.
@@ -19,8 +24,12 @@ on:
   workflow_dispatch: {}
 
 env:
-  # The upstream revision the docs copy follows. Move it to the release tag
-  # (for example v2.1.1) with each schema release.
+  # The Archive Node API release tag the docs copy follows. Move it when a
+  # release changes the schema, copy the tag's schema.graphql between the
+  # docs:start/docs:end markers, run `npm run generate-graphql-reference --
+  # archive` and commit the result. The archive-node-api and
+  # archive-node-api-schema pages name the same version in prose; update them
+  # in the same change.
   ARCHIVE_NODE_API_REF: v2.1.1
 
 jobs:
@@ -35,14 +44,18 @@ jobs:
         uses: actions/setup-node@v7
         with:
           node-version: 22
+          cache: npm
 
-      - name: Fetch the upstream schema
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Fetch the schema at the pinned release
         run: |
           curl -fsSL \
             "https://raw.githubusercontent.com/o1-labs/Archive-Node-API/${ARCHIVE_NODE_API_REF}/schema.graphql" \
             -o /tmp/upstream.graphql
 
-      - name: Compare the SDL copy with upstream
+      - name: Compare the SDL copy with the pinned release
         run: |
           # The copy wraps the upstream file in a header and #include_code markers.
           sed -n '/^# docs:start schema$/,/^# docs:end schema$/p' static/archive-node-api/schema.graphql \
@@ -50,21 +63,38 @@ jobs:
           if ! diff -u /tmp/upstream.graphql /tmp/local.graphql; then
             echo ""
             echo "❌ static/archive-node-api/schema.graphql differs from Archive-Node-API@${ARCHIVE_NODE_API_REF}."
-            echo "Copy the upstream schema.graphql between the docs:start/docs:end markers, then regenerate schema.json."
+            echo "Copy the upstream schema.graphql between the docs:start/docs:end markers,"
+            echo "then run 'npm run generate-graphql-reference -- archive' and commit the result."
             exit 1
           fi
 
-      - name: Install graphql for the JSON generator
-        run: npm i --prefix /tmp/g --no-audit --no-fund graphql@16
+      - name: Regenerate schema.json and the reference pages
+        run: npm run generate-graphql-reference -- archive
 
-      - name: Regenerate schema.json
-        run: NODE_PATH=/tmp/g/node_modules node scripts/generate-archive-schema-json.mjs
-
-      - name: Check schema.json for differences
+      - name: Check the generated files for differences
         run: |
-          if ! git diff --exit-code static/archive-node-api/schema.json; then
+          REFERENCE=docs/node-operators/data-and-history/archive-node-api/reference
+          if ! git diff --exit-code --stat static/archive-node-api/schema.json "$REFERENCE"; then
             echo ""
-            echo "❌ static/archive-node-api/schema.json is out of date!"
-            echo "Run the generator (see the header of scripts/generate-archive-schema-json.mjs) and commit the result."
+            echo "❌ The generated Archive Node API files are out of date."
+            echo "Run 'npm run generate-graphql-reference -- archive' and commit the result."
             exit 1
+          fi
+          if [ -n "$(git status --porcelain "$REFERENCE")" ]; then
+            git status --porcelain "$REFERENCE"
+            echo ""
+            echo "❌ The generator produced pages that are not committed. Commit them."
+            exit 1
+          fi
+
+      - name: Report a newer Archive Node API release
+        # Informational: the newest tag may be ahead of ARCHIVE_NODE_API_REF.
+        # The schema of a newer release may be identical; the diff above is
+        # what decides whether the docs are stale.
+        run: |
+          LATEST=$(git ls-remote --tags --refs https://github.com/o1-labs/Archive-Node-API.git 'v*' \
+            | awk -F/ '{print $NF}' | sort -V | tail -n 1)
+          echo "Pinned: ${ARCHIVE_NODE_API_REF}; newest tag: ${LATEST}"
+          if [ "$LATEST" != "$ARCHIVE_NODE_API_REF" ]; then
+            echo "::notice::o1-labs/Archive-Node-API newest tag is ${LATEST}; the docs schema copy is pinned to ${ARCHIVE_NODE_API_REF}. Compare the two schemas and move ARCHIVE_NODE_API_REF if they differ."
           fi

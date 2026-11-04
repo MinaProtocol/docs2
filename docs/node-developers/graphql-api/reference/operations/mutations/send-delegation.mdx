@@ -1,0 +1,43 @@
+---
+id: send-delegation
+title: sendDelegation
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+Change your delegate by sending a transaction
+
+
+```graphql
+sendDelegation(
+  input: SendDelegationInput!
+  signature: SignatureInput
+): SendDelegationPayload!
+```
+
+
+### Arguments
+
+#### [<code style={{ fontWeight: 'normal' }}>sendDelegation.<b>input</b></code>](#input)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>SendDelegationInput!</b></code>](/node-developers/graphql-api/reference/types/inputs/send-delegation-input.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="input"/> \{#input\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>sendDelegation.<b>signature</b></code>](#signature)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>SignatureInput</b></code>](/node-developers/graphql-api/reference/types/inputs/signature-input.mdx) <Badge class="badge badge--secondary " text="input"/> \{#signature\} 
+If a signature is provided, this transaction is considered signed and will be broadcasted to the network without requiring a private key
+
+
+
+
+### Type
+
+#### [<code style={{ fontWeight: 'normal' }}><b>SendDelegationPayload</b></code>](/node-developers/graphql-api/reference/types/objects/send-delegation-payload.mdx) <Badge class="badge badge--secondary " text="object"/>

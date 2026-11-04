@@ -1,0 +1,43 @@
+---
+id: import-account
+title: importAccount
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+Reload tracked account information from disk
+
+
+```graphql
+importAccount(
+  password: String!
+  path: String!
+): ImportAccountPayload!
+```
+
+
+### Arguments
+
+#### [<code style={{ fontWeight: 'normal' }}>importAccount.<b>password</b></code>](#password)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String!</b></code>](/node-developers/graphql-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#password\} 
+Password for the account to import
+
+
+#### [<code style={{ fontWeight: 'normal' }}>importAccount.<b>path</b></code>](#path)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String!</b></code>](/node-developers/graphql-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#path\} 
+Path to the wallet file, relative to the daemon's current working directory.
+
+
+
+
+### Type
+
+#### [<code style={{ fontWeight: 'normal' }}><b>ImportAccountPayload</b></code>](/node-developers/graphql-api/reference/types/objects/import-account-payload.mdx) <Badge class="badge badge--secondary " text="object"/>

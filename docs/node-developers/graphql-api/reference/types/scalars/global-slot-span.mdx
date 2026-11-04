@@ -1,0 +1,28 @@
+---
+id: global-slot-span
+title: GlobalSlotSpan
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+global slot span
+
+
+```graphql
+scalar GlobalSlotSpan
+```
+
+
+### Member Of
+
+[`AccountTiming`](/node-developers/graphql-api/reference/types/objects/account-timing.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`Timing`](/node-developers/graphql-api/reference/types/objects/timing.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`TimingInput`](/node-developers/graphql-api/reference/types/inputs/timing-input.mdx)  <Badge class="badge badge--secondary badge--relation" text="input"/>

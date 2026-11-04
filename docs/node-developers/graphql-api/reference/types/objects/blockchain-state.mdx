@@ -1,0 +1,83 @@
+---
+id: blockchain-state
+title: BlockchainState
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type BlockchainState {
+  bodyReference: BodyReference!
+  date: BlockTime!
+  ledgerProofStatement: SnarkedLedgerState!
+  snarkedLedgerHash: LedgerHash!
+  stagedLedgerAuxHash: StagedLedgerAuxHash!
+  stagedLedgerHash: LedgerHash!
+  stagedLedgerPendingCoinbaseAux: PendingCoinbaseAuxHash!
+  stagedLedgerPendingCoinbaseHash: PendingCoinbaseHash!
+  stagedLedgerProofEmitted: Boolean
+  utcDate: BlockTime!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>BlockchainState.<b>bodyReference</b></code>](#body-reference)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>BodyReference!</b></code>](/node-developers/graphql-api/reference/types/scalars/body-reference.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#body-reference\} 
+A reference to how the block header refers to the body of the block as a hex-encoded string
+
+
+#### [<code style={{ fontWeight: 'normal' }}>BlockchainState.<b>date</b></code>](#date)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>BlockTime!</b></code>](/node-developers/graphql-api/reference/types/scalars/block-time.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#date\} 
+date (stringified Unix time - number of milliseconds since January 1, 1970)
+
+
+#### [<code style={{ fontWeight: 'normal' }}>BlockchainState.<b>ledgerProofStatement</b></code>](#ledger-proof-statement)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>SnarkedLedgerState!</b></code>](/node-developers/graphql-api/reference/types/objects/snarked-ledger-state.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#ledger-proof-statement\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>BlockchainState.<b>snarkedLedgerHash</b></code>](#snarked-ledger-hash)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>LedgerHash!</b></code>](/node-developers/graphql-api/reference/types/scalars/ledger-hash.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#snarked-ledger-hash\} 
+Base58Check-encoded hash of the snarked ledger
+
+
+#### [<code style={{ fontWeight: 'normal' }}>BlockchainState.<b>stagedLedgerAuxHash</b></code>](#staged-ledger-aux-hash)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>StagedLedgerAuxHash!</b></code>](/node-developers/graphql-api/reference/types/scalars/staged-ledger-aux-hash.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#staged-ledger-aux-hash\} 
+Base58Check-encoded hash of the staged ledger hash's aux&#x005F;hash
+
+
+#### [<code style={{ fontWeight: 'normal' }}>BlockchainState.<b>stagedLedgerHash</b></code>](#staged-ledger-hash)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>LedgerHash!</b></code>](/node-developers/graphql-api/reference/types/scalars/ledger-hash.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#staged-ledger-hash\} 
+Base58Check-encoded hash of the staged ledger hash's main ledger hash
+
+
+#### [<code style={{ fontWeight: 'normal' }}>BlockchainState.<b>stagedLedgerPendingCoinbaseAux</b></code>](#staged-ledger-pending-coinbase-aux)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>PendingCoinbaseAuxHash!</b></code>](/node-developers/graphql-api/reference/types/scalars/pending-coinbase-aux-hash.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#staged-ledger-pending-coinbase-aux\} 
+Base58Check-encoded staged ledger hash's pending&#x005F;coinbase&#x005F;aux
+
+
+#### [<code style={{ fontWeight: 'normal' }}>BlockchainState.<b>stagedLedgerPendingCoinbaseHash</b></code>](#staged-ledger-pending-coinbase-hash)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>PendingCoinbaseHash!</b></code>](/node-developers/graphql-api/reference/types/scalars/pending-coinbase-hash.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#staged-ledger-pending-coinbase-hash\} 
+Base58Check-encoded hash of the staged ledger hash's pending&#x005F;coinbase&#x005F;hash
+
+
+#### [<code style={{ fontWeight: 'normal' }}>BlockchainState.<b>stagedLedgerProofEmitted</b></code>](#staged-ledger-proof-emitted)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Boolean</b></code>](/node-developers/graphql-api/reference/types/scalars/boolean.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#staged-ledger-proof-emitted\} 
+Block finished a staged ledger, and a proof was emitted from it and included into this block's proof. If there is no transition frontier available or no block found, this will return null.
+
+
+#### [<code style={{ fontWeight: 'normal' }}>BlockchainState.<b>utcDate</b></code>](#utc-date)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>BlockTime!</b></code>](/node-developers/graphql-api/reference/types/scalars/block-time.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#utc-date\} 
+utcDate (stringified Unix time - number of milliseconds since January 1, 1970). Time offsets are adjusted to reflect true wall-clock time instead of genesis time.
+
+
+
+
+### Member Of
+
+[`ProtocolState`](/node-developers/graphql-api/reference/types/objects/protocol-state.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

@@ -1,0 +1,48 @@
+---
+id: genesis-constants
+title: GenesisConstants
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type GenesisConstants {
+  accountCreationFee: Fee!
+  coinbase: Amount!
+  genesisTimestamp: String!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>GenesisConstants.<b>accountCreationFee</b></code>](#account-creation-fee)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Fee!</b></code>](/node-developers/graphql-api/reference/types/scalars/fee.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#account-creation-fee\} 
+The fee charged to create a new account
+
+
+#### [<code style={{ fontWeight: 'normal' }}>GenesisConstants.<b>coinbase</b></code>](#coinbase)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Amount!</b></code>](/node-developers/graphql-api/reference/types/scalars/amount.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#coinbase\} 
+The amount received as a coinbase reward for producing a block
+
+
+#### [<code style={{ fontWeight: 'normal' }}>GenesisConstants.<b>genesisTimestamp</b></code>](#genesis-timestamp)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String!</b></code>](/node-developers/graphql-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#genesis-timestamp\} 
+The genesis timestamp in ISO 8601 format
+
+
+
+
+### Returned By
+
+[`genesisConstants`](/node-developers/graphql-api/reference/operations/queries/genesis-constants.mdx)  <Badge class="badge badge--secondary badge--relation" text="query"/>

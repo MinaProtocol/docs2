@@ -1,0 +1,58 @@
+---
+id: epoch-data-precondition
+title: EpochDataPrecondition
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type EpochDataPrecondition {
+  epochLength: LengthInterval
+  ledger: EpochLedgerPrecondition!
+  lockCheckpoint: Field
+  seed: Field
+  startCheckpoint: Field
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>EpochDataPrecondition.<b>epochLength</b></code>](#epoch-length)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>LengthInterval</b></code>](/node-developers/graphql-api/reference/types/objects/length-interval.mdx) <Badge class="badge badge--secondary " text="object"/> \{#epoch-length\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>EpochDataPrecondition.<b>ledger</b></code>](#ledger)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>EpochLedgerPrecondition!</b></code>](/node-developers/graphql-api/reference/types/objects/epoch-ledger-precondition.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#ledger\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>EpochDataPrecondition.<b>lockCheckpoint</b></code>](#lock-checkpoint)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Field</b></code>](/node-developers/graphql-api/reference/types/scalars/field.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#lock-checkpoint\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>EpochDataPrecondition.<b>seed</b></code>](#seed)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Field</b></code>](/node-developers/graphql-api/reference/types/scalars/field.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#seed\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>EpochDataPrecondition.<b>startCheckpoint</b></code>](#start-checkpoint)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Field</b></code>](/node-developers/graphql-api/reference/types/scalars/field.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#start-checkpoint\} 
+
+
+
+
+
+### Member Of
+
+[`NetworkPrecondition`](/node-developers/graphql-api/reference/types/objects/network-precondition.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

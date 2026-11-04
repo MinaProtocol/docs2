@@ -1,0 +1,32 @@
+---
+id: boolean
+title: Boolean
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+The `Boolean` scalar type represents `true` or `false`.
+
+
+```graphql
+scalar Boolean
+```
+
+
+### Returned By
+
+[`startFilteredLog`](/node-developers/graphql-api/reference/operations/mutations/start-filtered-log.mdx)  <Badge class="badge badge--secondary badge--relation" text="mutation"/><Bullet />[`validatePayment`](/node-developers/graphql-api/reference/operations/queries/validate-payment.mdx)  <Badge class="badge badge--secondary badge--relation" text="query"/>
+
+### Member Of
+
+[`Account`](/node-developers/graphql-api/reference/types/objects/account.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`AccountPrecondition`](/node-developers/graphql-api/reference/types/objects/account-precondition.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`AccountPreconditionInput`](/node-developers/graphql-api/reference/types/inputs/account-precondition-input.mdx)  <Badge class="badge badge--secondary badge--relation" text="input"/><Bullet />[`AccountUpdateBody`](/node-developers/graphql-api/reference/types/objects/account-update-body.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`AccountUpdateBodyInput`](/node-developers/graphql-api/reference/types/inputs/account-update-body-input.mdx)  <Badge class="badge badge--secondary badge--relation" text="input"/><Bullet />[`addPeers`](/node-developers/graphql-api/reference/operations/mutations/add-peers.mdx)  <Badge class="badge badge--secondary badge--relation" text="mutation"/><Bullet />[`Applied`](/node-developers/graphql-api/reference/types/objects/applied.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`AuthorizationKindStructured`](/node-developers/graphql-api/reference/types/objects/authorization-kind-structured.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`AuthorizationKindStructuredInput`](/node-developers/graphql-api/reference/types/inputs/authorization-kind-structured-input.mdx)  <Badge class="badge badge--secondary badge--relation" text="input"/><Bullet />[`BlockchainState`](/node-developers/graphql-api/reference/types/objects/blockchain-state.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`ConsensusState`](/node-developers/graphql-api/reference/types/objects/consensus-state.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`GetFilteredLogEntries`](/node-developers/graphql-api/reference/types/objects/get-filtered-log-entries.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`ImportAccountPayload`](/node-developers/graphql-api/reference/types/objects/import-account-payload.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`include`](/node-developers/graphql-api/reference/operations/directives/include.mdx)  <Badge class="badge badge--secondary badge--relation" text="directive"/><Bullet />[`LedgerSync`](/node-developers/graphql-api/reference/types/objects/ledger-sync.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`LedgerSyncProgress`](/node-developers/graphql-api/reference/types/objects/ledger-sync-progress.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`LocalState`](/node-developers/graphql-api/reference/types/objects/local-state.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`MayUseToken`](/node-developers/graphql-api/reference/types/objects/may-use-token.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`MayUseTokenInput`](/node-developers/graphql-api/reference/types/inputs/may-use-token-input.mdx)  <Badge class="badge badge--secondary badge--relation" text="input"/><Bullet />[`ReloadAccountsPayload`](/node-developers/graphql-api/reference/types/objects/reload-accounts-payload.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`SetConnectionGatingConfigInput`](/node-developers/graphql-api/reference/types/inputs/set-connection-gating-config-input.mdx)  <Badge class="badge badge--secondary badge--relation" text="input"/><Bullet />[`SetConnectionGatingConfigPayload`](/node-developers/graphql-api/reference/types/objects/set-connection-gating-config-payload.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`skip`](/node-developers/graphql-api/reference/operations/directives/skip.mdx)  <Badge class="badge badge--secondary badge--relation" text="directive"/><Bullet />[`UserCommand`](/node-developers/graphql-api/reference/types/interfaces/user-command.mdx)  <Badge class="badge badge--secondary badge--relation" text="interface"/><Bullet />[`UserCommandDelegation`](/node-developers/graphql-api/reference/types/objects/user-command-delegation.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`UserCommandPayment`](/node-developers/graphql-api/reference/types/objects/user-command-payment.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`VrfEvaluation`](/node-developers/graphql-api/reference/types/objects/vrf-evaluation.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

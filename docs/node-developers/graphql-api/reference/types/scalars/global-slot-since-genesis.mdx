@@ -1,0 +1,28 @@
+---
+id: global-slot-since-genesis
+title: GlobalSlotSinceGenesis
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+scalar GlobalSlotSinceGenesis
+```
+
+
+### Member Of
+
+[`FeePayerBody`](/node-developers/graphql-api/reference/types/objects/fee-payer-body.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`FeePayerBodyInput`](/node-developers/graphql-api/reference/types/inputs/fee-payer-body-input.mdx)  <Badge class="badge badge--secondary badge--relation" text="input"/><Bullet />[`GlobalSlotSinceGenesisInterval`](/node-developers/graphql-api/reference/types/objects/global-slot-since-genesis-interval.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`GlobalSlotSinceGenesisIntervalInput`](/node-developers/graphql-api/reference/types/inputs/global-slot-since-genesis-interval-input.mdx)  <Badge class="badge badge--secondary badge--relation" text="input"/><Bullet />[`Timing`](/node-developers/graphql-api/reference/types/objects/timing.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`TimingInput`](/node-developers/graphql-api/reference/types/inputs/timing-input.mdx)  <Badge class="badge badge--secondary badge--relation" text="input"/>

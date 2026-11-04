@@ -1,0 +1,38 @@
+---
+id: send-zkapp-payload
+title: SendZkappPayload
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type SendZkappPayload {
+  zkapp: ZkappCommandResult!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>SendZkappPayload.<b>zkapp</b></code>](#zkapp)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>ZkappCommandResult!</b></code>](/node-developers/graphql-api/reference/types/objects/zkapp-command-result.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#zkapp\} 
+zkApp transaction that was sent
+
+
+
+
+### Returned By
+
+[`internalSendZkapp`](/node-developers/graphql-api/reference/operations/mutations/internal-send-zkapp.mdx)  <Badge class="badge badge--secondary badge--relation" text="mutation"/><Bullet />[`mockZkapp`](/node-developers/graphql-api/reference/operations/mutations/mock-zkapp.mdx)  <Badge class="badge badge--secondary badge--relation" text="mutation"/><Bullet />[`sendZkapp`](/node-developers/graphql-api/reference/operations/mutations/send-zkapp.mdx)  <Badge class="badge badge--secondary badge--relation" text="mutation"/>
