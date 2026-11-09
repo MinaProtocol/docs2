@@ -391,6 +391,33 @@ A few conventions apply across the schema. Scalars are documented individually i
 - `memo` on a transaction is Base58Check encoded, not plain text.
 - Block heights (`Length`), slots (`Globalslot`, `Slot`) and epochs (`Epoch`) are strings. A transaction's `nonce` is an `Int`.
 
+### Token symbols and zkApp URIs
+
+A token symbol (at most 6 bytes) and a zkApp URI are arbitrary bytes on chain. o1js writes them as UTF-8 text, but the protocol does not require UTF-8. Mainnet has a value that is not valid UTF-8: the token symbol of account `B62qjoWP2dCbr8z1Zt9XRhYsKJaDr66kNTJKGh9KKUbQz4hfphMduEZ` is the single byte `0xff`.
+
+The daemon writes these values into the response without a change. This applies to `tokenSymbol` and `zkappUri` on `Account`, and to `tokenSymbol` and `zkappUri` in the `update` of a zkApp command's account updates. When a value is not valid UTF-8, the response is not valid JSON, because JSON text must be UTF-8. A strict JSON parser rejects the full response. Other clients replace each such byte with U+FFFD (`�`), so the value they show is not the on-chain value.
+
+To get the exact bytes, read the response body as bytes and decode it in a way that keeps each byte that is not valid UTF-8. In Python:
+
+```python
+import json
+import urllib.request
+
+query = '{ account(publicKey: "B62qjoWP2dCbr8z1Zt9XRhYsKJaDr66kNTJKGh9KKUbQz4hfphMduEZ") { tokenSymbol } }'
+request = urllib.request.Request(
+    "http://localhost:3085/graphql",
+    data=json.dumps({"query": query}).encode(),
+    headers={"Content-Type": "application/json"},
+)
+body = urllib.request.urlopen(request).read()
+
+# surrogateescape maps each byte that is not valid UTF-8 to a placeholder
+# character, and encode(..., "surrogateescape") gives the byte back.
+data = json.loads(body.decode("utf-8", "surrogateescape"))
+symbol = data["data"]["account"]["tokenSymbol"].encode("utf-8", "surrogateescape")
+print(symbol)  # b'\xff'
+```
+
 ## Tools
 
 - The `mina client` subcommands that take `--rest-server` talk to the node through this API; see the [CLI reference](/node-operators/reference/mina-cli-reference).
