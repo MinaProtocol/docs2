@@ -22887,11 +22887,11 @@ To make the smart contract trust your own oracle, give the oracle a key pair of 
 
    For a deployment on Vercel, set `PRIVATE_KEY` as an environment variable of the project. Do not commit the private key.
 
-1. Set `ORACLE_PUBLIC_KEY` in `src/OracleExample.ts` of the `contracts` project to the public key.
+1. Set `ORACLE_PUBLIC_KEY` in `src/OracleExample.ts` to the public key. This is the smart contract file that you write in [Smart Contract](#smart-contract), in your `07-oracles` project. In the example repository, the file is in the `contracts` directory.
 
 The tests in `OracleExample.test.ts` (see [Test your smart contract](#test-your-smart-contract)) are written for the demo oracle: they hardcode its public key and two of its signatures, and the `actual API requests` group fetches from `https://07-oracles.vercel.app`. After you switch to your own key, update `ORACLE_PUBLIC_KEY` in the test, replace the hardcoded signatures with signatures from your oracle, and point the `fetch()` calls at `http://localhost:3000`.
 
-The oracle test `the demo oracle responses in the tutorial verify against the contract key` in `oracle/test/signCreditScore.test.mjs` reads `ORACLE_PUBLIC_KEY` from the contract source. It also fails after the key change until you replace its two demo signatures with signatures from your oracle.
+In the example repository, the oracle test `the demo oracle responses in the tutorial verify against the contract key` in `oracle/test/signCreditScore.test.mjs` reads `ORACLE_PUBLIC_KEY` from `contracts/src/OracleExample.ts`. It also fails after the key change until you replace its two demo signatures with signatures from your oracle.
 
 ## Smart Contract
 
@@ -22916,6 +22916,14 @@ Now that you have an oracle that returns signed data, you can write a smart cont
    ```sh
    $ npm install
    ```
+
+1. In `package.json`, change the `test` script to:
+
+   ```json
+   "test": "npm run build && node --test build/src/*.test.js",
+   ```
+
+   The zkApp CLI `0.23.0` writes the `test` script as `find build/src -name '*.test.js' -exec node --test {} \;`. With `\;`, `find` ignores the exit code of `node --test`, so `npm run test` exits with code 0 even when a test fails.
 
 For this tutorial, you run commands from the root of the `07-oracles` directory.
 
