@@ -23470,9 +23470,10 @@ The example project for this tutorial is tested with [o1js](https://www.npmjs.co
   $ npm install
   ```
 
-1. Delete the existing files and create a new `src/BasicTokenContract` smart contract:
+1. Delete the existing files and their compiled output in `build`, and create a new `src/BasicTokenContract` smart contract:
 
   ```sh
+  $ rm -rf build
   $ rm src/Add.ts
   $ rm src/Add.test.ts
   $ rm src/AddZkProgram.ts
@@ -23480,6 +23481,8 @@ The example project for this tutorial is tested with [o1js](https://www.npmjs.co
   $ zk file src/BasicTokenContract
   $ rm src/BasicTokenContract.test.ts
   ```
+
+  The `zk project` command builds the project when it creates it, and `tsc` does not delete old files from `build`. Without `rm -rf build`, the compiled `build/src/Add.test.js` stays, and `npm test` still runs it.
 
   The `zk file` command also creates `src/BasicTokenContract.test.ts`. The zkApp CLI `0.23.0` writes this placeholder in a style that does not compile in the project it creates, so delete it. The example project has a test suite of its own.
 
@@ -26134,7 +26137,7 @@ $ npm install -g zkapp-cli
 
 o1js 3 requires Node.js 22.19.5 or later.
 
-The [example project](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/13-anonymous-message-board) uses o1js `^3.0.0`. CI builds it, runs it and runs its tests on every pull request.
+The [example project](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/13-anonymous-message-board) uses o1js `^3.0.0`. CI builds it, runs it and runs its tests on each push to `main`, on each pull request that changes the examples, and once a day.
 
 ## Create the message-board project
 
@@ -26157,15 +26160,23 @@ The [example project](https://github.com/MinaProtocol/docs2/tree/main/examples/z
 
   Each time you make updates, then build or deploy, the TypeScript code is compiled into JavaScript in the `build` directory. See the included [README](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/13-anonymous-message-board/README.md) file with usage instructions.
 
+1. The zkApp CLI `0.23.0` creates a project for o1js 2. To use o1js 3, the same as the [example project](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/13-anonymous-message-board), open `package.json` and change the `o1js` entry in `peerDependencies` from `"^2.*"` to `"^3.0.0"`. Then install it:
+
+  ```sh
+  $ npm install
+  ```
+
 ### Prepare the project
 
 Example smart contract files come with the new project, you can delete them if you want.
 
-1. Optional: Delete the example files not used in this tutorial:
+1. Optional: Delete the example files not used in this tutorial, and their compiled output in `build`:
 
   ```sh
-  $ rm -rf src/*
+  $ rm -rf src/* build
   ```
+
+  The `zk project` command builds the project when it creates it, and `tsc` does not delete old files from `build`. Without `rm -rf build`, the compiled example files stay in `build`, and `npm test` still runs `build/src/Add.test.js`.
 
 1. To create the `src/message.ts` file:
 
