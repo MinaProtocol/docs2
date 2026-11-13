@@ -21,6 +21,8 @@ Without the `PRIVATE_KEY` environment variable the oracle signs with a built-in 
 2. Put the private key in `.env.local` (`PRIVATE_KEY=EK...`) or set it on the command line. Do not commit it.
 3. Set `ORACLE_PUBLIC_KEY` in `../contracts/src/OracleExample.ts` to the public key.
 
+After step 3, the test `the demo oracle responses in the tutorial verify against the contract key` fails: it reads `ORACLE_PUBLIC_KEY` from the contract source and checks the demo oracle's signatures against it. Replace the two demo signatures in `test/signCreditScore.test.mjs` with signatures from your oracle.
+
 Leave `NETWORK_KIND` unset or set to `testnet`. o1js `Signature.verify()` checks the devnet signature prefix only, so mainnet-prefixed signatures are rejected by the contract.
 
 ## Test

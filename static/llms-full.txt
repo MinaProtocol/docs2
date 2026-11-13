@@ -22891,6 +22891,8 @@ To make the smart contract trust your own oracle, give the oracle a key pair of 
 
 The tests in `OracleExample.test.ts` (see [Test your smart contract](#test-your-smart-contract)) are written for the demo oracle: they hardcode its public key and two of its signatures, and the `actual API requests` group fetches from `https://07-oracles.vercel.app`. After you switch to your own key, update `ORACLE_PUBLIC_KEY` in the test, replace the hardcoded signatures with signatures from your oracle, and point the `fetch()` calls at `http://localhost:3000`.
 
+The oracle test `the demo oracle responses in the tutorial verify against the contract key` in `oracle/test/signCreditScore.test.mjs` reads `ORACLE_PUBLIC_KEY` from the contract source. It also fails after the key change until you replace its two demo signatures with signatures from your oracle.
+
 ## Smart Contract
 
 Now that you have an oracle that returns signed data, you can write a smart contract that uses this data.
