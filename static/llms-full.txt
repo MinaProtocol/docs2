@@ -21327,25 +21327,25 @@ Go ahead and create your repository now. For other projects, you can name your G
 
 1. Go to [https://github.com/new](https://github.com/new).
 1. For the **Repository name**, enter `04-zkapp-browser-ui`.
-1. Optionally, add a description and a README.
+1. Optionally, add a description. Do not add a README, a license or a `.gitignore` on GitHub: the `zk project` command already made the first commit on your computer, and a first commit on GitHub makes your first push fail.
 
 Your project repository is ready to use.
 
 ### Preparing the project
 
-Start by deleting the default `page.tsx` file that comes with a new project so that you have a clean project to work with.
+Start by deleting the default `page.tsx` file and the two web worker files that come with a new project, so that you have a clean project to work with. The zkApp CLI `0.23.0` writes the worker files as `ZkappWorker.ts` and `ZkappWorkerClient.ts`, with a capital `Z`. They import the `AddZkProgram` that you delete in [Build the contract](#build-the-contract), so they must go, or the type check fails.
 
 1. In the `04-zkapp-browser-ui/ui` directory:
 
   ```sh
-  $ rm app/page.tsx
+  $ rm -f app/page.tsx app/ZkappWorker.ts app/ZkappWorkerClient.ts
   ```
 ### Install UI dependencies
 
 This tutorial uses the `comlink` package to integrate web workers into the React application. Comlink simplifies
 communication between the main thread and web workers by abstracting the `postMessage` API, allowing you to call functions in the worker as if they were local.
 
-In the `04-zkapp-browser-ui/ui` directory, install `comlink` by running the following command:
+The zkApp CLI `0.23.0` already adds `comlink` to the dependencies in `ui/package.json`. If your `ui/package.json` does not list it, install it in the `04-zkapp-browser-ui/ui` directory:
 
 ```sh
 $ npm install comlink
@@ -21611,7 +21611,7 @@ To learn more about `useState` hooks, see [built-in React hooks](https://react.d
 
 This `04-zkapp-browser-ui/ui/app/page.tsx` code adds a functions to set up zkApp:
 
-- The Boolean `hasBeenSetup` ensures that the react feature `useEffect` is run only once.
+- The `useEffect` hook with an empty dependency array (`[]`) runs once, when the page loads. The Boolean `hasBeenSetup` records that the setup is complete, so that the other effects and the buttons can wait for it.
 To learn more about `useEffect` hooks, see [useEffect](https://react.dev/reference/react/useEffect) in the React API reference documentation.
 
 - This code also sets up your web worker client that interacts with the web worker running o1js code to ensure the computationally heavy o1js code doesn't block the UI thread.
@@ -21646,7 +21646,8 @@ displayStep('Checking if fee payer account exists...');
 const res = await zkappWorkerClient.fetchAccount(
 publicKeyBase58,
 );
-const accountExists = res.error === null;
+// fetchAccount() returns `error: undefined` when the account exists
+const accountExists = res.error == null;
 setAccountExists(accountExists);
 ```
 
@@ -21725,13 +21726,13 @@ useEffect(() => {
             break;
           }
           await new Promise((resolve) => setTimeout(resolve, 5000));
-        } 
+        }
+        setAccountExists(true);
+        setDisplayText('');
       } catch (error: any) {
         displayStep(`Error checking account: ${error.message}`);
       }
-
     }
-    setAccountExists(true);
   };
 
   checkAccountExists();
@@ -21770,7 +21771,7 @@ const onSendTransaction = async () => {
 
     const transactionLink = `https://minascan.io/devnet/tx/${hash}`;
     setTransactionLink(transactionLink);
-    setDisplayText(transactionLink);
+    setDisplayText('Transaction sent');
   } catch (error: any) {
     displayStep(`Error sending transaction: ${error.message}`);
   } finally {
@@ -21811,17 +21812,22 @@ if (hasWallet === false) {
   );
 }
 
-const stepDisplay = transactionlink ? (
-  <a
-    href={transactionlink}
-    target="_blank"
-    rel="noreferrer"
-    style={{ textDecoration: 'underline' }}
-  >
-    View transaction
-  </a>
-) : (
-  displayText
+// The current step, and a link to the last transaction once there is one.
+// Both stay visible, so a later step or error is not hidden by the link.
+const stepDisplay = (
+  <>
+    <div>{displayText}</div>
+    {transactionlink && (
+      <a
+        href={transactionlink}
+        target="_blank"
+        rel="noreferrer"
+        style={{ textDecoration: 'underline' }}
+      >
+        View transaction
+      </a>
+    )}
+  </>
 );
 
 let setup = (
@@ -21907,12 +21913,36 @@ Before you can deploy your project to GitHub Pages, you must push it to a new Gi
 
 To deploy the UI:
 
+1. In the `04-zkapp-browser-ui/ui` directory, remove the circuit cache and keep it out of git. The `zk project` command compiled the template contracts and copied their circuit cache to `ui/public/cache` and `ui/app/cache.json`. Some cache files are larger than 100 MB, the largest file that GitHub accepts, so a push that contains them fails. The UI in this tutorial does not use the cache.
+
+  ```sh
+  $ npm run clear-cache
+  $ printf '\n# o1js circuit cache\n/public/cache\n/app/cache.json\n' >> .gitignore
+  ```
+
+1. In the `04-zkapp-browser-ui` directory, commit your work, add the repository that you created as the `origin` remote, and push the project. Replace `<your-user>` with your GitHub user name.
+
+  The first commit that `zk project` made, `Init commit`, contains only the `contracts` directory. This commit adds the `ui` directory and your changes:
+
+  ```sh
+  $ git add -A
+  $ git commit -m "Tutorial 4"
+  $ git remote add origin https://github.com/<your-user>/04-zkapp-browser-ui.git
+  $ git push -u origin main
+  ```
+
+  If you already added the `origin` remote after `zk project` (the command prints this step as a next step), `git remote add` fails with `remote origin already exists`. In that case, skip `git remote add` and run only `git push -u origin main`.
+
 1. Change to the `04-zkapp-browser-ui/ui/` directory.
 1. Run the `deploy` script by executing the following command:
 
   ```sh
   npm run deploy
   ```
+
+  The script builds the site into `ui/out`, commits `ui/out` to your local `main` branch, and pushes that directory to the `gh-pages` branch of the `origin` remote.
+
+1. On GitHub, open the repository **Settings**, select **Pages**, and under **Build and deployment** set the source to **Deploy from a branch** and the branch to `gh-pages`.
 
 Scripts defined in the `04-zkapp-browser-ui/ui/package.json` file do the work to build your application and publish it to the GitHub Pages.
 
