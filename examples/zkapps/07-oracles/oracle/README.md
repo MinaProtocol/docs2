@@ -2,7 +2,7 @@
 
 A [Next.js](https://nextjs.org/) application that serves signed mock credit scores. It is the oracle of [Tutorial 7: Oracles](https://docs.minaprotocol.com/zkapps/tutorials/oracle); the smart contract in [../contracts](../contracts/) verifies its signatures. A deployment of this directory runs at `https://07-oracles.vercel.app`.
 
-Requires Node.js 22.18 or later: the tests import the TypeScript source directly.
+Requires Node.js 22.19.5 or later: o1js 3 requires it, and the tests import the TypeScript source directly (Node.js 22.18 or later).
 
 ## Run the oracle
 
@@ -23,7 +23,7 @@ Without the `PRIVATE_KEY` environment variable the oracle signs with a built-in 
 
 After step 3, the test `the demo oracle responses in the tutorial verify against the contract key` fails: it reads `ORACLE_PUBLIC_KEY` from the contract source and checks the demo oracle's signatures against it. Replace the two demo signatures in `test/signCreditScore.test.mjs` with signatures from your oracle.
 
-Leave `NETWORK_KIND` unset or set to `testnet`. o1js `Signature.verify()` checks the devnet signature prefix only, so mainnet-prefixed signatures are rejected by the contract.
+`NETWORK_KIND` does not change the signatures: `signFields()` in `mina-signer` always signs with the testnet signature prefix, and o1js `Signature.verify()` checks that prefix.
 
 ## Test
 

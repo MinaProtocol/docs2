@@ -22850,9 +22850,11 @@ While the first user has a credit score of `787`, the second user has a credit s
 
 ## Run the oracle yourself
 
-The demo oracle at `https://07-oracles.vercel.app` is a deployment of the `oracle` directory of the example project. To run the same oracle on your computer, run these commands in `examples/zkapps/07-oracles/oracle`:
+The demo oracle at `https://07-oracles.vercel.app` is a deployment of the `oracle` directory of the example project. To run the same oracle on your computer, clone the docs repository and start the oracle:
 
 ```sh
+git clone https://github.com/MinaProtocol/docs2.git
+cd docs2/examples/zkapps/07-oracles/oracle
 npm install
 npm run dev
 ```
@@ -22863,7 +22865,7 @@ The oracle signs with the private key in the `PRIVATE_KEY` environment variable.
 
 :::note
 
-Leave the `NETWORK_KIND` environment variable unset, or set it to `testnet`. With `NETWORK_KIND=mainnet` the oracle signs with the mainnet signature prefix, and `Signature.verify()` in o1js 3.0.0 checks signatures with the devnet prefix only. The smart contract then rejects every signature.
+The oracle reads a `NETWORK_KIND` environment variable and gives it to the `mina-signer` client, but the variable does not change the signatures. `signFields()` in `mina-signer` always signs with the testnet signature prefix, and `Signature.verify()` in o1js checks that prefix.
 
 :::
 
@@ -22933,9 +22935,10 @@ Each time you make changes, then build or deploy, the TypeScript code is compile
 
 The files in the `src` directory contain the TypeScript code for the smart contract.
 
-1. Delete the default generated files by running:
+1. Delete the default generated files and their compiled output in `build` by running:
 
    ```sh
+   $ rm -rf build
    $ rm src/Add.ts
    $ rm src/Add.test.ts
    $ rm src/AddZkProgram.ts
@@ -22943,6 +22946,8 @@ The files in the `src` directory contain the TypeScript code for the smart contr
    ```
 
    If your version of the zkApp CLI does not create `src/AddZkProgram.ts`, skip that command.
+
+   The `zk project` command builds the project when it creates it, and `tsc` does not delete old files from `build`. Without `rm -rf build`, the compiled `build/src/Add.test.js` stays, and `npm run test` still runs it.
 
 1. Create the `OracleExample.ts` file and generate the corresponding test file:
 
