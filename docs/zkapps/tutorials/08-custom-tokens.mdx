@@ -72,9 +72,10 @@ The example project for this tutorial is tested with [o1js](https://www.npmjs.co
   $ npm install
   ```
 
-1. Delete the existing files and create a new `src/BasicTokenContract` smart contract:
+1. Delete the existing files and their compiled output in `build`, and create a new `src/BasicTokenContract` smart contract:
 
   ```sh
+  $ rm -rf build
   $ rm src/Add.ts
   $ rm src/Add.test.ts
   $ rm src/AddZkProgram.ts
@@ -82,6 +83,8 @@ The example project for this tutorial is tested with [o1js](https://www.npmjs.co
   $ zk file src/BasicTokenContract
   $ rm src/BasicTokenContract.test.ts
   ```
+
+  The `zk project` command builds the project when it creates it, and `tsc` does not delete old files from `build`. Without `rm -rf build`, the compiled `build/src/Add.test.js` stays, and `npm test` still runs it.
 
   The `zk file` command also creates `src/BasicTokenContract.test.ts`. The zkApp CLI `0.23.0` writes this placeholder in a style that does not compile in the project it creates, so delete it. The example project has a test suite of its own.
 
