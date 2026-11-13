@@ -21308,7 +21308,7 @@ Start by deleting the default `page.tsx` file and the two web worker files that 
 1. In the `04-zkapp-browser-ui/ui` directory:
 
   ```sh
-  $ rm app/page.tsx app/ZkappWorker.ts app/ZkappWorkerClient.ts
+  $ rm -f app/page.tsx app/ZkappWorker.ts app/ZkappWorkerClient.ts
   ```
 ### Install UI dependencies
 
@@ -21698,6 +21698,7 @@ useEffect(() => {
           await new Promise((resolve) => setTimeout(resolve, 5000));
         }
         setAccountExists(true);
+        setDisplayText('');
       } catch (error: any) {
         displayStep(`Error checking account: ${error.message}`);
       }
@@ -21882,11 +21883,20 @@ Before you can deploy your project to GitHub Pages, you must push it to a new Gi
 
 To deploy the UI:
 
-1. In the `04-zkapp-browser-ui` directory, add the repository that you created as the `origin` remote and push the project. Replace `<your-user>` with your GitHub user name:
+1. In the `04-zkapp-browser-ui/ui` directory, remove the circuit cache and keep it out of git. The `zk project` command compiled the template contracts and copied their circuit cache to `ui/public/cache` and `ui/app/cache.json`. Some cache files are larger than 100 MB, the largest file that GitHub accepts, so a push that contains them fails. The UI in this tutorial does not use the cache.
+
+  ```sh
+  $ npm run clear-cache
+  $ printf '\n# o1js circuit cache\n/public/cache\n/app/cache.json\n' >> .gitignore
+  ```
+
+1. In the `04-zkapp-browser-ui` directory, add the repository that you created as the `origin` remote and push the project. Replace `<your-user>` with your GitHub user name.
+
+  The `zk project` command put the cache into its first commit, `Init commit`. A new commit does not remove the cache files from that commit, so amend the first commit instead. This tutorial does not tell you to make other commits, so the first commit is the only one:
 
   ```sh
   $ git add -A
-  $ git commit -m "Tutorial 4"
+  $ git commit --amend -m "Tutorial 4"
   $ git remote add origin https://github.com/<your-user>/04-zkapp-browser-ui.git
   $ git push -u origin main
   ```
@@ -21898,7 +21908,7 @@ To deploy the UI:
   npm run deploy
   ```
 
-  The script builds the site into `ui/out` and pushes that directory to the `gh-pages` branch of the `origin` remote.
+  The script builds the site into `ui/out`, commits `ui/out` to your local `main` branch, and pushes that directory to the `gh-pages` branch of the `origin` remote.
 
 1. On GitHub, open the repository **Settings**, select **Pages**, and under **Build and deployment** set the source to **Deploy from a branch** and the branch to `gh-pages`.
 

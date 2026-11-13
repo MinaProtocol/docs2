@@ -116,6 +116,7 @@ export default function Home() {
             await new Promise((resolve) => setTimeout(resolve, 5000));
           }
           setAccountExists(true);
+          setDisplayText('');
         } catch (error: any) {
           displayStep(`Error checking account: ${error.message}`);
         }
