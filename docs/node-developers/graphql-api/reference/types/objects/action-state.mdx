@@ -1,0 +1,49 @@
+---
+id: action-state
+title: ActionState
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+```graphql
+type ActionState {
+  action: [[FieldElem!]!]!
+  actionSequenceNo: Int!
+  blockNumber: UInt32!
+  transactionSequenceNo: Int!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>ActionState.<b>action</b></code>](#action)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>[[FieldElem!]!]!</b></code>](/node-developers/graphql-api/reference/types/scalars/field-elem.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#action\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ActionState.<b>actionSequenceNo</b></code>](#action-sequence-no)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#action-sequence-no\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ActionState.<b>blockNumber</b></code>](#block-number)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>UInt32!</b></code>](/node-developers/graphql-api/reference/types/scalars/uint-32.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#block-number\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ActionState.<b>transactionSequenceNo</b></code>](#transaction-sequence-no)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#transaction-sequence-no\} 
+
+
+
+
+
+### Returned By
+
+[`accountActions`](/node-developers/graphql-api/reference/operations/queries/account-actions.mdx)  <Badge class="badge badge--secondary badge--relation" text="query"/>

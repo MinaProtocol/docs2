@@ -1,0 +1,9 @@
+label: Deprecated
+position: 999
+className: graphql-markdown-deprecated-section
+link: 
+  type: generated-index
+  title: 'Deprecated overview'
+  slug: /node-developers/graphql-api/reference/deprecated
+collapsible: true
+collapsed: true

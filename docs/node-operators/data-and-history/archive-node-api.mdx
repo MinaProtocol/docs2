@@ -113,7 +113,7 @@ curl -s -X POST http://localhost:8080 \
 
 ## The query surface
 
-Eight root fields. The authoritative definition is the [schema reference](/node-operators/data-and-history/archive-node-api-schema), which also gives the schema as a file to download.
+Eight root fields. The authoritative definition is the [schema](/node-operators/data-and-history/archive-node-api-schema) page, which also gives the schema as a file to download. The generated [schema reference](/node-operators/data-and-history/archive-node-api/reference/operations) has one page per query and per type.
 
 | Query | Returns |
 |---|---|
@@ -962,4 +962,4 @@ query {
 
 `schemaVersion` reports the contract, not the queries a given deployment exposes. `ENABLED_QUERIES`, `ENABLE_ZKAPP_COMMANDS_QUERY` and `ENABLE_USER_COMMANDS_QUERY` can still switch data queries off, so detect a missing query from the `Cannot query field` error.
 
-The full policy, including what counts as a breaking change, is in the repository's [versioning guide](https://github.com/o1-labs/Archive-Node-API/blob/main/docs/versioning.md). The 2.1 schema is on the [schema reference](/node-operators/data-and-history/archive-node-api-schema) page and at `https://docs.minaprotocol.com/archive-node-api/schema.graphql` as a file.
+The full policy, including what counts as a breaking change, is in the repository's [versioning guide](https://github.com/o1-labs/Archive-Node-API/blob/main/docs/versioning.md). The 2.1 schema is on the [schema](/node-operators/data-and-history/archive-node-api-schema) page, in the generated [schema reference](/node-operators/data-and-history/archive-node-api/reference/operations), and at `https://docs.minaprotocol.com/archive-node-api/schema.graphql` as a file.

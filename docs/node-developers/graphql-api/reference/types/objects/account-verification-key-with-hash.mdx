@@ -1,0 +1,43 @@
+---
+id: account-verification-key-with-hash
+title: AccountVerificationKeyWithHash
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+Verification key with hash
+
+
+```graphql
+type AccountVerificationKeyWithHash {
+  hash: VerificationKeyHash!
+  verificationKey: VerificationKey!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountVerificationKeyWithHash.<b>hash</b></code>](#hash)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>VerificationKeyHash!</b></code>](/node-developers/graphql-api/reference/types/scalars/verification-key-hash.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#hash\} 
+Hash of verification key
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountVerificationKeyWithHash.<b>verificationKey</b></code>](#verification-key)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>VerificationKey!</b></code>](/node-developers/graphql-api/reference/types/scalars/verification-key.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#verification-key\} 
+verification key in Base64 format
+
+
+
+
+### Member Of
+
+[`Account`](/node-developers/graphql-api/reference/types/objects/account.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

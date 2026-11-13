@@ -1,0 +1,38 @@
+---
+id: lock-account
+title: lockAccount
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+Lock an unlocked account to prevent transaction being sent from it
+
+
+```graphql
+lockAccount(
+  input: LockInput!
+): LockPayload!
+```
+
+
+### Arguments
+
+#### [<code style={{ fontWeight: 'normal' }}>lockAccount.<b>input</b></code>](#input)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>LockInput!</b></code>](/node-developers/graphql-api/reference/types/inputs/lock-input.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="input"/> \{#input\} 
+
+
+
+
+
+### Type
+
+#### [<code style={{ fontWeight: 'normal' }}><b>LockPayload</b></code>](/node-developers/graphql-api/reference/types/objects/lock-payload.mdx) <Badge class="badge badge--secondary " text="object"/>

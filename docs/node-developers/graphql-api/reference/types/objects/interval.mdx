@@ -1,0 +1,43 @@
+---
+id: interval
+title: Interval
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type Interval {
+  start: Span!
+  stop: Span!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>Interval.<b>start</b></code>](#start)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Span!</b></code>](/node-developers/graphql-api/reference/types/scalars/span.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#start\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>Interval.<b>stop</b></code>](#stop)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Span!</b></code>](/node-developers/graphql-api/reference/types/scalars/span.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#stop\} 
+
+
+
+
+
+### Member Of
+
+[`Histogram`](/node-developers/graphql-api/reference/types/objects/histogram.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

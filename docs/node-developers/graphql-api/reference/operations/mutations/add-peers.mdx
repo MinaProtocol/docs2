@@ -1,0 +1,43 @@
+---
+id: add-peers
+title: addPeers
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+Connect to the given peers
+
+
+```graphql
+addPeers(
+  peers: [NetworkPeer!]!
+  seed: Boolean
+): [Peer!]!
+```
+
+
+### Arguments
+
+#### [<code style={{ fontWeight: 'normal' }}>addPeers.<b>peers</b></code>](#peers)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>[NetworkPeer!]!</b></code>](/node-developers/graphql-api/reference/types/inputs/network-peer.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="input"/> \{#peers\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>addPeers.<b>seed</b></code>](#seed)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Boolean</b></code>](/node-developers/graphql-api/reference/types/scalars/boolean.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#seed\} 
+
+
+
+
+
+### Type
+
+#### [<code style={{ fontWeight: 'normal' }}><b>Peer</b></code>](/node-developers/graphql-api/reference/types/objects/peer.mdx) <Badge class="badge badge--secondary " text="object"/>

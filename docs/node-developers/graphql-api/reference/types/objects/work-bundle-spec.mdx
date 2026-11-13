@@ -1,0 +1,53 @@
+---
+id: work-bundle-spec
+title: WorkBundleSpec
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+Witnesses and statements for snark work bundles. Includes optional fees and prover public keys for ones that have proofs in the snark pool
+
+
+```graphql
+type WorkBundleSpec {
+  snarkFee: Fee
+  snarkProverKey: PublicKey
+  spec: String!
+  workIds: [Int!]!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>WorkBundleSpec.<b>snarkFee</b></code>](#snark-fee)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Fee</b></code>](/node-developers/graphql-api/reference/types/scalars/fee.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#snark-fee\} 
+Fee if proof for the spec exists in snark pool
+
+
+#### [<code style={{ fontWeight: 'normal' }}>WorkBundleSpec.<b>snarkProverKey</b></code>](#snark-prover-key)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>PublicKey</b></code>](/node-developers/graphql-api/reference/types/scalars/public-key.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#snark-prover-key\} 
+Prover public key if proof for the spec exists in snark pool
+
+
+#### [<code style={{ fontWeight: 'normal' }}>WorkBundleSpec.<b>spec</b></code>](#spec)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String!</b></code>](/node-developers/graphql-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#spec\} 
+Snark work specification in json format
+
+
+#### [<code style={{ fontWeight: 'normal' }}>WorkBundleSpec.<b>workIds</b></code>](#work-ids)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>[Int!]!</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#work-ids\} 
+Unique identifier for a snark work
+
+
+
+
+### Member Of
+
+[`PendingSnarkWorkSpec`](/node-developers/graphql-api/reference/types/objects/pending-snark-work-spec.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

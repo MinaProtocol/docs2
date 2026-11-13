@@ -1,0 +1,99 @@
+---
+id: block
+title: Block
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type Block {
+  commandTransactionCount: Int!
+  creator: PublicKey! @deprecated
+  creatorAccount: Account!
+  protocolState: ProtocolState!
+  protocolStateProof: protocolStateProof!
+  snarkJobs: [CompletedWork!]!
+  stateHash: StateHash!
+  stateHashField: StateHashAsDecimal!
+  transactions: Transactions!
+  winnerAccount: Account!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>Block.<b>commandTransactionCount</b></code>](#command-transaction-count)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#command-transaction-count\} 
+Count of user command transactions in the block
+
+
+#### [<code style={{ fontWeight: 'normal' }}>Block.<b>creatorAccount</b></code>](#creator-account)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Account!</b></code>](/node-developers/graphql-api/reference/types/objects/account.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#creator-account\} 
+Account that produced this block
+
+
+#### [<code style={{ fontWeight: 'normal' }}>Block.<b>protocolState</b></code>](#protocol-state)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>ProtocolState!</b></code>](/node-developers/graphql-api/reference/types/objects/protocol-state.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#protocol-state\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>Block.<b>protocolStateProof</b></code>](#protocol-state-proof)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>protocolStateProof!</b></code>](/node-developers/graphql-api/reference/types/objects/protocol-state-proof.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#protocol-state-proof\} 
+Snark proof of blockchain state
+
+
+#### [<code style={{ fontWeight: 'normal' }}>Block.<b>snarkJobs</b></code>](#snark-jobs)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>[CompletedWork!]!</b></code>](/node-developers/graphql-api/reference/types/objects/completed-work.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#snark-jobs\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>Block.<b>stateHash</b></code>](#state-hash)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>StateHash!</b></code>](/node-developers/graphql-api/reference/types/scalars/state-hash.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#state-hash\} 
+Base58Check-encoded hash of the state after this block
+
+
+#### [<code style={{ fontWeight: 'normal' }}>Block.<b>stateHashField</b></code>](#state-hash-field)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>StateHashAsDecimal!</b></code>](/node-developers/graphql-api/reference/types/scalars/state-hash-as-decimal.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#state-hash-field\} 
+Experimental: Bigint field-element representation of stateHash
+
+
+#### [<code style={{ fontWeight: 'normal' }}>Block.<b>transactions</b></code>](#transactions)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Transactions!</b></code>](/node-developers/graphql-api/reference/types/objects/transactions.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#transactions\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>Block.<b>winnerAccount</b></code>](#winner-account)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Account!</b></code>](/node-developers/graphql-api/reference/types/objects/account.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#winner-account\} 
+Account that won the slot (Delegator/Staker)
+
+
+
+
+<details class="graphql-markdown-details">
+<summary>
+<span class="graphql-markdown-details-label-closed">Show deprecated</span>
+<span class="graphql-markdown-details-label-open" hidden>Hide deprecated</span>
+</summary>
+
+#### [<code style={{ fontWeight: 'normal' }}>Block.<b>creator</b></code>](#creator)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>PublicKey!</b></code>](/node-developers/graphql-api/reference/types/scalars/public-key.mdx) <Badge class="badge badge--secondary badge--deprecated" text="deprecated"/> <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#creator\} 
+:::warning[DEPRECATED]
+
+use creatorAccount field instead
+
+:::
+
+Public key of account that produced this block
+
+
+</details>
+
+
+
+### Returned By
+
+[`bestChain`](/node-developers/graphql-api/reference/operations/queries/best-chain.mdx)  <Badge class="badge badge--secondary badge--relation" text="query"/><Bullet />[`block`](/node-developers/graphql-api/reference/operations/queries/block.mdx)  <Badge class="badge badge--secondary badge--relation" text="query"/><Bullet />[`genesisBlock`](/node-developers/graphql-api/reference/operations/queries/genesis-block.mdx)  <Badge class="badge badge--secondary badge--relation" text="query"/><Bullet />[`newBlock`](/node-developers/graphql-api/reference/operations/subscriptions/new-block.mdx)  <Badge class="badge badge--secondary badge--relation" text="subscription"/>

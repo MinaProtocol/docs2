@@ -1,0 +1,39 @@
+---
+id: check-vrf
+title: checkVrf
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+Check a vrf evaluation commitment. This can be used to check vrf evaluations without needing to reveal the private key, in the format returned by evaluateVrf
+
+
+```graphql
+checkVrf(
+  input: VrfEvaluationInput!
+): VrfEvaluation!
+```
+
+
+### Arguments
+
+#### [<code style={{ fontWeight: 'normal' }}>checkVrf.<b>input</b></code>](#input)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>VrfEvaluationInput!</b></code>](/node-developers/graphql-api/reference/types/inputs/vrf-evaluation-input.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="input"/> \{#input\} 
+
+
+
+
+
+### Type
+
+#### [<code style={{ fontWeight: 'normal' }}><b>VrfEvaluation</b></code>](/node-developers/graphql-api/reference/types/objects/vrf-evaluation.mdx) <Badge class="badge badge--secondary " text="object"/> 
+A witness to a vrf evaluation, which may be externally verified

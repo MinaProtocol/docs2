@@ -1,0 +1,43 @@
+---
+id: encoded-account
+title: EncodedAccount
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type EncodedAccount {
+  account: String!
+  merklePath: [MerklePathElement!]!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>EncodedAccount.<b>account</b></code>](#account)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String!</b></code>](/node-developers/graphql-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#account\} 
+Base64 encoded account as binable wire type
+
+
+#### [<code style={{ fontWeight: 'normal' }}>EncodedAccount.<b>merklePath</b></code>](#merkle-path)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>[MerklePathElement!]!</b></code>](/node-developers/graphql-api/reference/types/objects/merkle-path-element.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#merkle-path\} 
+Membership proof in the snarked ledger
+
+
+
+
+### Returned By
+
+[`encodedSnarkedLedgerAccountMembership`](/node-developers/graphql-api/reference/operations/queries/encoded-snarked-ledger-account-membership.mdx)  <Badge class="badge badge--secondary badge--relation" text="query"/>

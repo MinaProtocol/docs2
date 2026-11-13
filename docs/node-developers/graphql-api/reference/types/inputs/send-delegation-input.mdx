@@ -1,0 +1,63 @@
+---
+id: send-delegation-input
+title: SendDelegationInput
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+input SendDelegationInput {
+  fee: UInt64!
+  from: PublicKey!
+  memo: String
+  nonce: UInt32
+  to: PublicKey!
+  validUntil: UInt32
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>SendDelegationInput.<b>fee</b></code>](#fee)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>UInt64!</b></code>](/node-developers/graphql-api/reference/types/scalars/uint-64.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#fee\} 
+Fee amount in order to send a stake delegation
+
+
+#### [<code style={{ fontWeight: 'normal' }}>SendDelegationInput.<b>from</b></code>](#from)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>PublicKey!</b></code>](/node-developers/graphql-api/reference/types/scalars/public-key.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#from\} 
+Public key of sender of a stake delegation
+
+
+#### [<code style={{ fontWeight: 'normal' }}>SendDelegationInput.<b>memo</b></code>](#memo)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String</b></code>](/node-developers/graphql-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#memo\} 
+Short arbitrary message provided by the sender
+
+
+#### [<code style={{ fontWeight: 'normal' }}>SendDelegationInput.<b>nonce</b></code>](#nonce)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>UInt32</b></code>](/node-developers/graphql-api/reference/types/scalars/uint-32.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#nonce\} 
+Should only be set when cancelling transactions, otherwise a nonce is determined automatically
+
+
+#### [<code style={{ fontWeight: 'normal' }}>SendDelegationInput.<b>to</b></code>](#to)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>PublicKey!</b></code>](/node-developers/graphql-api/reference/types/scalars/public-key.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#to\} 
+Public key of the account being delegated to
+
+
+#### [<code style={{ fontWeight: 'normal' }}>SendDelegationInput.<b>validUntil</b></code>](#valid-until)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>UInt32</b></code>](/node-developers/graphql-api/reference/types/scalars/uint-32.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#valid-until\} 
+The global slot since genesis after which this transaction cannot be applied
+
+
+
+
+### Member Of
+
+[`sendDelegation`](/node-developers/graphql-api/reference/operations/mutations/send-delegation.mdx)  <Badge class="badge badge--secondary badge--relation" text="mutation"/>

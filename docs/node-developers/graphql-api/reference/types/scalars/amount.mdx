@@ -1,0 +1,28 @@
+---
+id: amount
+title: Amount
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+amount
+
+
+```graphql
+scalar Amount
+```
+
+
+### Member Of
+
+[`AccountTiming`](/node-developers/graphql-api/reference/types/objects/account-timing.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`ConsensusState`](/node-developers/graphql-api/reference/types/objects/consensus-state.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`epochLedger`](/node-developers/graphql-api/reference/types/objects/epoch-ledger.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`GenesisConstants`](/node-developers/graphql-api/reference/types/objects/genesis-constants.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`SignedAmount`](/node-developers/graphql-api/reference/types/objects/signed-amount.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`Transactions`](/node-developers/graphql-api/reference/types/objects/transactions.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`UserCommand`](/node-developers/graphql-api/reference/types/interfaces/user-command.mdx)  <Badge class="badge badge--secondary badge--relation" text="interface"/><Bullet />[`UserCommandDelegation`](/node-developers/graphql-api/reference/types/objects/user-command-delegation.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`UserCommandPayment`](/node-developers/graphql-api/reference/types/objects/user-command-payment.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`VrfThreshold`](/node-developers/graphql-api/reference/types/objects/vrf-threshold.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`WorkDescription`](/node-developers/graphql-api/reference/types/objects/work-description.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

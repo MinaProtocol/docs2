@@ -1,0 +1,53 @@
+---
+id: histogram
+title: Histogram
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type Histogram {
+  intervals: [Interval!]!
+  overflow: Int!
+  underflow: Int!
+  values: [Int!]!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>Histogram.<b>intervals</b></code>](#intervals)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>[Interval!]!</b></code>](/node-developers/graphql-api/reference/types/objects/interval.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#intervals\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>Histogram.<b>overflow</b></code>](#overflow)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#overflow\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>Histogram.<b>underflow</b></code>](#underflow)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#underflow\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>Histogram.<b>values</b></code>](#values)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>[Int!]!</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#values\} 
+
+
+
+
+
+### Member Of
+
+[`Histograms`](/node-developers/graphql-api/reference/types/objects/histograms.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`RpcPair`](/node-developers/graphql-api/reference/types/objects/rpc-pair.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

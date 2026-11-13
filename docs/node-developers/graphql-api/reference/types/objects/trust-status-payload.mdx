@@ -1,0 +1,53 @@
+---
+id: trust-status-payload
+title: TrustStatusPayload
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type TrustStatusPayload {
+  bannedStatus: Time
+  ipAddr: InetAddr!
+  peerId: String!
+  trust: Float!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>TrustStatusPayload.<b>bannedStatus</b></code>](#banned-status)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Time</b></code>](/node-developers/graphql-api/reference/types/scalars/time.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#banned-status\} 
+Banned status
+
+
+#### [<code style={{ fontWeight: 'normal' }}>TrustStatusPayload.<b>ipAddr</b></code>](#ip-addr)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>InetAddr!</b></code>](/node-developers/graphql-api/reference/types/scalars/inet-addr.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#ip-addr\} 
+IP address
+
+
+#### [<code style={{ fontWeight: 'normal' }}>TrustStatusPayload.<b>peerId</b></code>](#peer-id)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String!</b></code>](/node-developers/graphql-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#peer-id\} 
+libp2p Peer ID
+
+
+#### [<code style={{ fontWeight: 'normal' }}>TrustStatusPayload.<b>trust</b></code>](#trust)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Float!</b></code>](/node-developers/graphql-api/reference/types/scalars/float.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#trust\} 
+Trust score
+
+
+
+
+### Returned By
+
+[`trustStatus`](/node-developers/graphql-api/reference/operations/queries/trust-status.mdx)  <Badge class="badge badge--secondary badge--relation" text="query"/><Bullet />[`trustStatusAll`](/node-developers/graphql-api/reference/operations/queries/trust-status-all.mdx)  <Badge class="badge badge--secondary badge--relation" text="query"/>

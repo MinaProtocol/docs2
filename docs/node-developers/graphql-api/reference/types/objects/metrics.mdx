@@ -1,0 +1,78 @@
+---
+id: metrics
+title: Metrics
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type Metrics {
+  blockProductionDelay: [Int!]!
+  pendingSnarkWork: Int!
+  snarkPoolDiffBroadcasted: Int!
+  snarkPoolDiffReceived: Int!
+  snarkPoolSize: Int!
+  transactionPoolDiffBroadcasted: Int!
+  transactionPoolDiffReceived: Int!
+  transactionPoolSize: Int!
+  transactionsAddedToPool: Int!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>Metrics.<b>blockProductionDelay</b></code>](#block-production-delay)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>[Int!]!</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#block-production-delay\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>Metrics.<b>pendingSnarkWork</b></code>](#pending-snark-work)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#pending-snark-work\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>Metrics.<b>snarkPoolDiffBroadcasted</b></code>](#snark-pool-diff-broadcasted)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#snark-pool-diff-broadcasted\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>Metrics.<b>snarkPoolDiffReceived</b></code>](#snark-pool-diff-received)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#snark-pool-diff-received\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>Metrics.<b>snarkPoolSize</b></code>](#snark-pool-size)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#snark-pool-size\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>Metrics.<b>transactionPoolDiffBroadcasted</b></code>](#transaction-pool-diff-broadcasted)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#transaction-pool-diff-broadcasted\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>Metrics.<b>transactionPoolDiffReceived</b></code>](#transaction-pool-diff-received)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#transaction-pool-diff-received\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>Metrics.<b>transactionPoolSize</b></code>](#transaction-pool-size)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#transaction-pool-size\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>Metrics.<b>transactionsAddedToPool</b></code>](#transactions-added-to-pool)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#transactions-added-to-pool\} 
+
+
+
+
+
+### Member Of
+
+[`DaemonStatus`](/node-developers/graphql-api/reference/types/objects/daemon-status.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

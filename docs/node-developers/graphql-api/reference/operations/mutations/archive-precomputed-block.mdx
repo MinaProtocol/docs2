@@ -1,0 +1,38 @@
+---
+id: archive-precomputed-block
+title: archivePrecomputedBlock
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+archivePrecomputedBlock(
+  block: PrecomputedBlock!
+): Applied!
+```
+
+
+### Arguments
+
+#### [<code style={{ fontWeight: 'normal' }}>archivePrecomputedBlock.<b>block</b></code>](#block)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>PrecomputedBlock!</b></code>](/node-developers/graphql-api/reference/types/scalars/precomputed-block.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#block\} 
+Block encoded in precomputed block format
+
+
+
+
+### Type
+
+#### [<code style={{ fontWeight: 'normal' }}><b>Applied</b></code>](/node-developers/graphql-api/reference/types/objects/applied.mdx) <Badge class="badge badge--secondary " text="object"/>

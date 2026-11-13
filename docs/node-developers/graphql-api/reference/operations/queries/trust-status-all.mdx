@@ -1,0 +1,28 @@
+---
+id: trust-status-all
+title: trustStatusAll
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+IP address and trust status for all peers
+
+
+```graphql
+trustStatusAll: [TrustStatusPayload!]!
+```
+
+
+### Type
+
+#### [<code style={{ fontWeight: 'normal' }}><b>TrustStatusPayload</b></code>](/node-developers/graphql-api/reference/types/objects/trust-status-payload.mdx) <Badge class="badge badge--secondary " text="object"/>

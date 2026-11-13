@@ -1,0 +1,58 @@
+---
+id: account-auth-required
+title: AccountAuthRequired
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+Kind of authorization required
+
+
+```graphql
+enum AccountAuthRequired {
+  Either
+  Impossible
+  None
+  Proof
+  Signature
+}
+```
+
+
+### Values
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountAuthRequired.<b>Either</b></code>](#either) \{#either\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountAuthRequired.<b>Impossible</b></code>](#impossible) \{#impossible\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountAuthRequired.<b>None</b></code>](#none) \{#none\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountAuthRequired.<b>Proof</b></code>](#proof) \{#proof\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountAuthRequired.<b>Signature</b></code>](#signature) \{#signature\} 
+
+
+
+
+
+### Member Of
+
+[`AccountPermissions`](/node-developers/graphql-api/reference/types/objects/account-permissions.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`VerificationKeyPermission`](/node-developers/graphql-api/reference/types/objects/verification-key-permission.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

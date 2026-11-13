@@ -1,0 +1,43 @@
+---
+id: set-coinbase-receiver-payload
+title: SetCoinbaseReceiverPayload
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type SetCoinbaseReceiverPayload {
+  currentCoinbaseReceiver: PublicKey
+  lastCoinbaseReceiver: PublicKey
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>SetCoinbaseReceiverPayload.<b>currentCoinbaseReceiver</b></code>](#current-coinbase-receiver)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>PublicKey</b></code>](/node-developers/graphql-api/reference/types/scalars/public-key.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#current-coinbase-receiver\} 
+Returns the public key that will receive coinbase, or none if it will be the block producer
+
+
+#### [<code style={{ fontWeight: 'normal' }}>SetCoinbaseReceiverPayload.<b>lastCoinbaseReceiver</b></code>](#last-coinbase-receiver)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>PublicKey</b></code>](/node-developers/graphql-api/reference/types/scalars/public-key.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#last-coinbase-receiver\} 
+Returns the public key that was receiving coinbases previously, or none if it was the block producer
+
+
+
+
+### Returned By
+
+[`setCoinbaseReceiver`](/node-developers/graphql-api/reference/operations/mutations/set-coinbase-receiver.mdx)  <Badge class="badge badge--secondary badge--relation" text="mutation"/>

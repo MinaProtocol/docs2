@@ -1,0 +1,63 @@
+---
+id: block
+title: Block
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type Block {
+  blockHeight: Int!
+  creator: String!
+  stateHash: String!
+  parentHash: String!
+  dateTime: DateTime!
+  transactions: BlockTransactions!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>Block.<b>blockHeight</b></code>](#block-height)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#block-height\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>Block.<b>creator</b></code>](#creator)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String!</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#creator\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>Block.<b>stateHash</b></code>](#state-hash)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String!</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#state-hash\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>Block.<b>parentHash</b></code>](#parent-hash)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String!</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#parent-hash\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>Block.<b>dateTime</b></code>](#date-time)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>DateTime!</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/date-time.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#date-time\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>Block.<b>transactions</b></code>](#transactions)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>BlockTransactions!</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/objects/block-transactions.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#transactions\} 
+
+
+
+
+
+### Returned By
+
+[`blocks`](/node-operators/data-and-history/archive-node-api/reference/operations/queries/blocks.mdx)  <Badge class="badge badge--secondary badge--relation" text="query"/>
