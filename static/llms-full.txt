@@ -20072,12 +20072,11 @@ Now that you have the tooling installed, you can start building your application
 
   ```sh
   ✔ Create an accompanying UI project too? · none
-  ✔ UI: Set up project
   ✔ Initialize Git repo
   ✔ Set up project
+  ✔ Set project name
   ✔ NPM install
   ✔ NPM build contract
-  ✔ Set project name
   ✔ Git init commit
 
   Success!
@@ -20088,12 +20087,18 @@ Now that you have the tooling installed, you can start building your application
     git push -u origin main
   ```
 
-  The `zk project` command creates the `01-hello-world` directory that contains the scaffolding for your project, including tools such as the Prettier code formatting tool, the ESLint static code analysis tool, and the Jest JavaScript testing framework.
+  The `zk project` command creates the `01-hello-world` directory that contains the scaffolding for your project, including tools such as the Prettier code formatting tool and the ESLint static code analysis tool. The `npm test` script uses the Node.js built-in test runner.
 
-1. Change into the `01-hello-world` directory and list the contents:
+1. The zkApp CLI `0.23.0` creates a project for o1js 2. To use o1js 3.0.0, the same as the [example project](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/01-hello-world), open `01-hello-world/package.json` and change the `o1js` entry in `peerDependencies` from `"^2.*"` to `"^3.0.0"`. Then install it:
 
   ```sh
   $ cd 01-hello-world
+  $ npm install
+  ```
+
+1. List the contents of the `01-hello-world` directory:
+
+  ```sh
   $ ls
   ```
 
@@ -20104,13 +20109,12 @@ Now that you have the tooling installed, you can start building your application
   README.md
   babel.config.cjs
   build
+  cache
   config.json
-  jest-resolver.cjs
-  jest.config.js
-  keys
   node_modules
   package-lock.json
   package.json
+  scripts
   src
   tsconfig.json
   ```
@@ -20126,6 +20130,7 @@ Start by deleting the default files that come with the new project.
   ```sh
   $ rm src/Add.ts
   $ rm src/Add.test.ts
+  $ rm src/AddZkProgram.ts
   $ rm src/interact.ts
   ```
 
@@ -20136,8 +20141,13 @@ Start by deleting the default files that come with the new project.
   $ touch src/main.ts
   ```
 
-    - The `zk file` command created the `src/Square.ts` and `src/Square.test.ts` test files.
-    - This tutorial does not include writing tests, so you just use the `main.ts` file as a script to interact with the smart contract and observe how it works.
+    - The `zk file` command created the `src/Square.ts` file and the `src/Square.test.ts` test file. The zkApp CLI `0.23.0` writes the test file as a placeholder in a style that does not compile in the project it creates, so `npm run build` fails while the file is there. This tutorial does not include writing tests. Delete the placeholder:
+
+  ```sh
+  $ rm src/Square.test.ts
+  ```
+
+    - You use the `main.ts` file as a script to interact with the smart contract and observe how it works.
 
     In later tutorials, you learn how to interact with a smart contract from the browser, like a typical end user.
 
@@ -20641,8 +20651,13 @@ Start by deleting the default files that come with the new project.
   $ touch src/main.ts
   ```
 
-    - The `zk file` command created the `src/IncrementSecret.ts` file and the `src/IncrementSecret.test.ts` test file.
-    - This tutorial does not walk you through writing tests, so you use the `main.ts` file as a script to interact with the smart contract and observe how it works. The finished example project has a test suite; see [Test it](#test-it).
+    - The `zk file` command created the `src/IncrementSecret.ts` file and the `src/IncrementSecret.test.ts` test file. The zkApp CLI `0.23.0` writes the test file as a placeholder in a style that does not compile in the project it creates, so `npm run build` fails while the file is there. This tutorial does not include writing tests. Delete the placeholder:
+
+  ```sh
+  $ rm src/IncrementSecret.test.ts
+  ```
+
+    - You use the `main.ts` file as a script to interact with the smart contract and observe how it works. The finished example project has a test suite; see [Test it](#test-it).
 
 1. Now, open `src/index.ts` in a text editor and change it to look like:
 
@@ -20890,12 +20905,11 @@ npm update -g zkapp-cli
 
   ```sh
   ✔ Create an accompanying UI project too? · none
-  ✔ UI: Set up project
   ✔ Initialize Git repo
   ✔ Set up project
+  ✔ Set project name
   ✔ NPM install
   ✔ NPM build contract
-  ✔ Set project name
   ✔ Git init commit
 
   Success!
@@ -20906,9 +20920,15 @@ npm update -g zkapp-cli
     git push -u origin main
   ```
 
-  The `zk project` command creates the `03-deploying-to-a-live-network` directory that contains the scaffolding for your project, including tools such as the Prettier code formatting, the ESLint static code analysis, and the Jest JavaScript testing framework.
+  The `zk project` command creates the `03-deploying-to-a-live-network` directory that contains the scaffolding for your project, including tools such as the Prettier code formatting tool and the ESLint static code analysis tool. The `npm test` script uses the Node.js built-in test runner.
 
 1. Change into the `03-deploying-to-a-live-network` directory.
+
+1. The zkApp CLI `0.23.0` creates a project for o1js 2. To use o1js 3.0.0, the same as the example project, open `package.json` and change the `o1js` entry in `peerDependencies` from `"^2.*"` to `"^3.0.0"`. Then install it:
+
+  ```sh
+  $ npm install
+  ```
 
 For this tutorial, you run commands from the root of the `03-deploying-to-a-live-network` directory as you work in the `src` directory on files that contain the TypeScript code for the smart contract.
 
@@ -20923,6 +20943,7 @@ Start by deleting the default files that come with the new project.
   ```sh
   $ rm src/Add.ts
   $ rm src/Add.test.ts
+  $ rm src/AddZkProgram.ts
   $ rm src/interact.ts
   ```
 
@@ -20980,26 +21001,20 @@ A deploy alias consists of:
 
     - Transaction fee to use when deploying (in MINA): `0.1`
 
-1. When prompted to choose an account to pay transaction fees, select:
-
-    ```text
-    Use a different account (select to see options)
-    ```
-
-    If this is the first time you are running the `zk config` command, you see these options:
+1. When prompted to choose an account to pay transaction fees, you see these options if this is the first time you run the `zk config` command:
 
     ```text
     > Recover fee payer account from an existing base58 private key
     Create a new fee payer key pair
     ```
 
-    A third option to choose another saved fee payer account is shown only if you have multiple cached fee payer accounts.
+    If you already have a saved fee payer account, the first option is to use it. Select `Use a different account (select to see options)` to see the two options above, and a third option to choose another saved fee payer account if you have more than one.
 
 1. Select to create a new fee payer key pair:
 
     ```sh
     Create a new fee payer key pair
-    NOTE: the private key will be stored in plain text on this computer.
+    NOTE: The private key is created on this computer and is stored in plain text.
     ```
 
     Please mind the note above and **do not** use the fee payer account that holds a substantial amount of MINA.
@@ -21047,7 +21062,7 @@ A deploy alias consists of:
 1. At the interactive prompt, select the `devnet` deploy alias:
 
   ```text
-  ? Which deploy alias would you like to deploy to? …
+  ? Which deploy alias do you want to deploy to? …
   > devnet
   ```
 
@@ -21111,7 +21126,7 @@ A deploy alias consists of:
 
 After the transaction is included in a block, your smart contract is deployed!
 
-- The Mina account used to deploy the zkApp now contains the verification key associated with this smart contract.
+- The zkApp account, the key pair in `keys/devnet.json`, now contains the verification key associated with this smart contract. The fee payer account paid the fee and the account creation fee, and holds nothing of the zkApp.
 
 You ran the `zk config` command to:
 
