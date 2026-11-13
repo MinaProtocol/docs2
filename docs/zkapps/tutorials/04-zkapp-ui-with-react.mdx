@@ -353,16 +353,18 @@ To deploy the UI:
   $ printf '\n# o1js circuit cache\n/public/cache\n/app/cache.json\n' >> .gitignore
   ```
 
-1. In the `04-zkapp-browser-ui` directory, add the repository that you created as the `origin` remote and push the project. Replace `<your-user>` with your GitHub user name.
+1. In the `04-zkapp-browser-ui` directory, commit your work, add the repository that you created as the `origin` remote, and push the project. Replace `<your-user>` with your GitHub user name.
 
-  The `zk project` command put the cache into its first commit, `Init commit`. A new commit does not remove the cache files from that commit, so amend the first commit instead. This tutorial does not tell you to make other commits, so the first commit is the only one:
+  The first commit that `zk project` made, `Init commit`, contains only the `contracts` directory. This commit adds the `ui` directory and your changes:
 
   ```sh
   $ git add -A
-  $ git commit --amend -m "Tutorial 4"
+  $ git commit -m "Tutorial 4"
   $ git remote add origin https://github.com/<your-user>/04-zkapp-browser-ui.git
   $ git push -u origin main
   ```
+
+  If you already added the `origin` remote after `zk project` (the command prints this step as a next step), `git remote add` fails with `remote origin already exists`. In that case, skip `git remote add` and run only `git push -u origin main`.
 
 1. Change to the `04-zkapp-browser-ui/ui/` directory.
 1. Run the `deploy` script by executing the following command:
