@@ -30396,7 +30396,10 @@ This command performs the following operations:
 
 - Pulls the Docker image for your environment from the [Docker Hub](https://hub.docker.com/r/o1labs/mina-local-network) repository. The images are built for `amd64` only. On a computer with an `arm64` processor, such as a Mac with Apple silicon, Docker runs the image in emulation, which is slower.
 - Prepares the file system
-- Uses the artifacts of a stable Mina release from the Mina GitHub [repository](https://github.com/MinaProtocol/mina). zkApp CLI `0.23.0` pulls the `compatible-latest-<profile>` image, for example `compatible-latest-lightnet`. This tag is not updated anymore: it points to the stable Mina release 4.0.4, the same image as `latest-lightnet`. In zkApp CLI releases after `0.23.0`, the `--mina-version` option selects the Mina release: `latest`, the default, is the newest stable release, and a release number such as `4.0.4` pins the image. These releases deprecate the `--mina-branch` option. Do not use `--mina-branch develop` or `--mina-branch mesa`: those images are old and are not updated.
+- Uses the artifacts of a stable Mina release from the Mina GitHub [repository](https://github.com/MinaProtocol/mina):
+  - zkApp CLI `0.23.0` pulls the `compatible-latest-<profile>` image, for example `compatible-latest-lightnet`. This tag is not updated anymore. It points to the stable Mina release 4.0.4, the same image as `latest-lightnet`.
+  - In zkApp CLI releases after `0.23.0`, the `--mina-version` option selects the Mina release. `latest`, the default, is the newest stable release. A release number such as `4.0.4` pins the image. A pin works only for a release that has a published image tag on [Docker Hub](https://hub.docker.com/r/o1labs/mina-local-network/tags), for example `4.0.4` or `4.0.2`. For another release number, `docker pull` fails.
+  - These releases deprecate the `--mina-branch` option. Do not use `--mina-branch develop` or `--mina-branch mesa`: those images are old and are not updated.
 - Configures the network properties to achieve fast startup, syncing and operation times
 - Disables the blockchain `SNARK` proofs
 - Sets the Mina processes logging level to `Trace`
@@ -30450,7 +30453,7 @@ $ zk lightnet start --no-archive
 
 ### Keep the current product versions
 
-New `Docker` images are built and published to the [`Docker Hub`](https://hub.docker.com/r/o1labs/mina-local-network) repository for each new Mina release.
+New `Docker` images are built and published to the [`Docker Hub`](https://hub.docker.com/r/o1labs/mina-local-network) repository for new Mina releases. Not every Mina release has an image.
 You might not always want to get the latest product versions. For example, when your zkApp relies on the well-defined APIs and you want to continue developing in your current environment.
 
 To keep your current working versions of tools provided by the Lightnet, use the `--no-pull` option:
@@ -30458,6 +30461,12 @@ To keep your current working versions of tools provided by the Lightnet, use the
 ```sh
 $ zk lightnet start --no-pull
 ```
+
+:::note
+
+With `--no-pull`, the zkApp CLI uses the image that is already on your computer. A `compatible-latest-<profile>` image that you pulled before 2026-11-02 contains an older Mina release, not 4.0.4. Run `zk lightnet start` once without `--no-pull` to get the current image.
+
+:::
 
 ### Start the multi node network
 
