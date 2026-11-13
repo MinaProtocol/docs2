@@ -23419,7 +23419,7 @@ In this tutorial, you learn to create custom tokens.
 
 Mina comes with native support for custom tokens. Each account on Mina can also have tokens associated with it.
 
-To create a new token, one creates a smart contract, which becomes the manager for the token, and uses that contract to set the rules around how the token can be mint, burned, and sent.
+To create a new token, one creates a smart contract, which becomes the manager for the token, and uses that contract to set the rules around how the token can be minted, burned, and sent.
 
 The manager account may also set a token symbol for its token, such as in this example, `MYTKN`. Uniqueness is not enforced for token names. Instead the public key of the manager account is used to identify tokens.
 
@@ -23427,7 +23427,7 @@ In this tutorial, you review smart contract code that creates and manages new to
 
 The full example code is provided in the [08-custom-tokens/src/](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/08-custom-tokens/src) example files.
 
-For reference, a more extensive example, including all the ways to interact with token smart contracts, is provided in [token.test.ts](https://github.com/o1-labs/o1js/blob/main/src/lib/token.test.ts).
+For reference, a more extensive example, including all the ways to interact with token smart contracts, is provided in [token.test.ts](https://github.com/o1-labs/o1js/blob/main/src/lib/mina/v1/token.test.ts).
 
 ## Prerequisites
 
@@ -23439,7 +23439,7 @@ For reference, a more extensive example, including all the ways to interact with
 
 - Ensure your environment meets the [Prerequisites](/zkapps/tutorials#prerequisites) for zkApp Developer Tutorials.
 
-The example project for this tutorial is tested with [o1js](https://www.npmjs.com/package/o1js) version `3.0.0` and Node.js 22.
+The example project for this tutorial is tested with [o1js](https://www.npmjs.com/package/o1js) version `3.0.0` and Node.js 22.19.5 or later, which is what o1js 3 requires.
 
 ## Create the project
 
@@ -23463,18 +23463,27 @@ The example project for this tutorial is tested with [o1js](https://www.npmjs.co
 
 ## Prepare the project
 
-1. Change to the project directory, delete the existing files, and create a new `src/BasicTokenContract` smart contract, and a `index.ts` file:
+1. Change to the project directory. The zkApp CLI `0.23.0` creates a project for o1js 2. To use o1js 3.0.0, the same as the [example project](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/08-custom-tokens), open `package.json` and change the `o1js` entry in `peerDependencies` from `"^2.*"` to `"^3.0.0"`. Then install it:
 
   ```sh
   $ cd 08-custom-tokens
-  $ rm src/Add.ts
-  $ rm src/Add.test.ts
-  $ rm src/interact.ts
-  $ zk file src/BasicTokenContract
-  $ touch src/index.ts
+  $ npm install
   ```
 
-1. Edit `index.ts` to export your new smart contract:
+1. Delete the existing files and create a new `src/BasicTokenContract` smart contract:
+
+  ```sh
+  $ rm src/Add.ts
+  $ rm src/Add.test.ts
+  $ rm src/AddZkProgram.ts
+  $ rm src/interact.ts
+  $ zk file src/BasicTokenContract
+  $ rm src/BasicTokenContract.test.ts
+  ```
+
+  The `zk file` command also creates `src/BasicTokenContract.test.ts`. The zkApp CLI `0.23.0` writes this placeholder in a style that does not compile in the project it creates, so delete it. The example project has a test suite of its own.
+
+1. Replace the content of `src/index.ts`, which still imports the deleted files, so that it exports your new smart contract:
 
   ```ts title="src/index.ts"
   export { BasicTokenContract, tokenSymbol } from './BasicTokenContract.js';
@@ -23486,7 +23495,7 @@ The example project for this tutorial is tested with [o1js](https://www.npmjs.co
 
 Before you read the contract, learn the three objects that every custom token on Mina uses: the token manager, the token id, and the token account. Then learn the approval mechanism, which is how the token manager controls every change to a token balance.
 
-The [tokenConcepts.test.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/08-custom-tokens/src/tokenConcepts.test.ts) test file in the example project checks each statement in this section on a local blockchain.
+The [tokenConcepts.test.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/08-custom-tokens/src/tokenConcepts.test.ts) test file in the example project checks most of the statements in this section on a local blockchain.
 
 ### Token manager
 
@@ -26162,7 +26171,10 @@ Example smart contract files come with the new project, you can delete them if y
 
   ```sh
   $ zk file message
+  $ rm src/message.test.ts
   ```
+
+  The `zk file` command also creates `src/message.test.ts`. The zkApp CLI `0.23.0` writes this placeholder in a style that does not compile in the project it creates, so delete it. The example project has a test suite of its own.
 
 1. Copy the entire contents of the [message.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/13-anonymous-message-board/src/message.ts) example file into your local `message-board/src/message.ts` file.
 
