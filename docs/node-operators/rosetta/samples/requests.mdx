@@ -1,13 +1,20 @@
 ---
 title: Requests and Responses
-description: Mina-specific Rosetta request and response objects with curl examples
+description: Mina-specific Rosetta request and response objects
 ---
 
 # Requests and Responses
 
-The Rosetta API specification defines high-level descriptions of request and response objects. Exact JSON layouts differ between blockchains. This page covers Mina-specific objects and shows how to query each endpoint with curl.
+The Rosetta API specification defines high-level descriptions of request and response objects. Exact JSON layouts differ between blockchains. This page covers Mina-specific objects.
 
-All examples assume the shell variables from the [Code Samples](/node-operators/rosetta/samples) setup.
+For the runnable examples that exercise these endpoints, see the [TypeScript scripts](/node-operators/rosetta/samples) in the mina repo. The curl snippets below are illustrative — copy them for quick exploration, but adapt the runnable scripts for production code.
+
+Set these shell variables to follow along:
+
+```bash
+ROSETTA_URL="http://localhost:3087"
+NETWORK='{"blockchain":"mina","network":"mainnet"}'
+```
 
 ## Network endpoints
 
