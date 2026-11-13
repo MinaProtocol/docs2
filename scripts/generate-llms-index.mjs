@@ -120,12 +120,19 @@ function docIdToUrl(docId) {
   return `${SITE_URL}/${docId}`.replace(/\/index$/, "");
 }
 
+// The sidebar often lists a category's landing page again as its first item,
+// so the same page can come up twice. List each page once, where it first
+// appears.
+const listedUrls = new Set();
+
 async function entryToBullet(docId, fallbackLabel) {
+  const url = docIdToUrl(docId);
+  if (listedUrls.has(url)) return null;
   const fm = await readFrontmatter(docId);
   if (!fm) return null; // file doesn't exist
+  listedUrls.add(url);
   const title = fm.title || fallbackLabel || docId;
   const description = fm.description;
-  const url = docIdToUrl(docId);
   if (!description) {
     return { url, line: null, missing: { docId, title } };
   }
@@ -185,17 +192,20 @@ async function build() {
     if (SKIP_LABELS.has(entry.label)) continue;
 
     if (entry.type === "category") {
+      // The category's own landing page, if linked, goes first. Resolve it
+      // before the items so that it is the copy that is kept.
+      const landing =
+        entry.link?.type === "doc"
+          ? await entryToBullet(entry.link.id, entry.label)
+          : null;
+
       const { bullets, missingDescriptions } = await flattenCategory(
         entry.items ?? [],
         entry.label,
       );
 
-      // Prepend the category's own landing page if linked
-      if (entry.link?.type === "doc") {
-        const r = await entryToBullet(entry.link.id, entry.label);
-        if (r?.line) bullets.unshift(r.line);
-        else if (r?.missing) missingDescriptions.push(r.missing);
-      }
+      if (landing?.line) bullets.unshift(landing.line);
+      else if (landing?.missing) missingDescriptions.push(landing.missing);
 
       if (bullets.length === 0) continue;
       sections.push({ heading: entry.label, bullets });
