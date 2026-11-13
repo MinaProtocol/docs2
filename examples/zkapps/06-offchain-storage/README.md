@@ -2,7 +2,7 @@
 
 Worked example for [Tutorial 6: Off-Chain Storage](https://docs.minaprotocol.com/zkapps/tutorials/offchain-storage).
 
-A zkApp account holds eight field elements. `NumberStorageContract` keeps a map
+A zkApp account holds 32 field elements of on-chain state. `NumberStorageContract` keeps a map
 and a counter beyond that, using the offchain state API in o1js: the data
 travels as actions, a settlement proof folds them into a commitment, and only
 the commitment lives on chain.

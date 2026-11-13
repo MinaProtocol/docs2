@@ -1,3 +1,4 @@
+// docs:start local
 import { AccountUpdate, Field, Mina, PrivateKey } from 'o1js';
 import {
   NumberStorageContract,
@@ -10,6 +11,7 @@ Mina.setActiveInstance(Local);
 
 const deployer = Local.testAccounts[0];
 const zkAppKey = PrivateKey.random();
+// docs:end local
 // docs:start setup
 const contract = new NumberStorageContract(zkAppKey.toPublicKey());
 
@@ -24,6 +26,7 @@ await offchainState.compile();
 await NumberStorageContract.compile();
 // docs:end setup
 
+// docs:start deploy
 console.log('deploying...');
 const deployTx = await Mina.transaction(deployer, async () => {
   AccountUpdate.fundNewAccount(deployer);
@@ -31,6 +34,7 @@ const deployTx = await Mina.transaction(deployer, async () => {
 });
 await deployTx.prove();
 await deployTx.sign([deployer.key, zkAppKey]).send();
+// docs:end deploy
 
 // docs:start settle-function
 async function settle() {
@@ -71,6 +75,7 @@ console.log(
 );
 // docs:end read-after-settle
 
+// docs:start update
 // An update names the value it replaces, so a stale writer cannot clobber a
 // newer value by accident.
 console.log('updating index 1 from 42 to 43...');
@@ -85,3 +90,4 @@ console.log(
   'index 1 is now:',
   (await state.fields.numbers.get(Field(1))).value.toString()
 );
+// docs:end update
