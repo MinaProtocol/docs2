@@ -718,19 +718,22 @@ Mina offers an elegant solution: replacing the blockchain with an easily verifia
 
 ## The Mina Protocol 
 
-There are three public Mina Protocol networks:
+There are two public Mina Protocol networks:
 
-1. `mainnet`  - the production network
-2. `devnet`   - the test network based on the same software versions as the Mainnet
-3. `berkeley` - a development network where new features are trialed
+1. `mainnet` - the production network
+2. `devnet` - the test network based on the same software versions as the Mainnet
 
-You check the identity of the network with this graphQL query:
+You check the identity of the network with this GraphQL query:
 
 ```
 query MyQuery {
   networkID
 }
 ```
+
+A Mainnet node returns `mina:mainnet`, and a Devnet node returns `mina:devnet`.
+
+The `berkeley` network, where the features of the Berkeley upgrade were tested, no longer runs. Berkeley is the name of the Mainnet protocol upgrade of June 2024; see [Network Upgrades](/network-upgrades).
 
 This section describes how the Mina Protocol works.
 
