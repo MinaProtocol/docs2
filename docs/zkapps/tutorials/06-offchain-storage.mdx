@@ -55,7 +55,7 @@ Three parts make it work:
 A value is readable only after it is settled. That is the cost of the approach, and it is also what makes concurrent writes safe: an update names the value it expects to replace, and a settlement drops an update whose expected value no longer matches.
 
 :::note Experimental
-The offchain state API is exported under `Experimental`, so its shape can change between o1js releases. The example in this repository is built on every pull request, so it tracks the current release.
+The offchain state API is exported under `Experimental`, so its shape can change between o1js releases. CI builds and tests the example in this repository on each push to `main`, on each pull request that changes the examples, and once a day. Each of these runs also builds the example against the newest o1js release, so that a change in this API shows up there.
 :::
 
 ## Prerequisites
@@ -78,13 +78,16 @@ The offchain state API is exported under `Experimental`, so its shape can change
   $ npm install
   ```
 
-1. Clear the scaffolding and create the contract file:
+1. Clear the scaffolding and its compiled output in `build`, and create the contract file:
 
   ```sh
+  $ rm -rf build
   $ rm src/Add.ts src/Add.test.ts src/AddZkProgram.ts src/interact.ts
   $ zk file src/NumberStorageContract
   $ rm src/NumberStorageContract.test.ts
   ```
+
+  The `zk project` command builds the project when it creates it, and `tsc` does not delete old files from `build`. Without `rm -rf build`, the compiled `build/src/Add.test.js` stays, and `npm test` still runs it.
 
   The `zk file` command also creates `src/NumberStorageContract.test.ts`. The zkApp CLI `0.23.0` writes this placeholder in a style that does not compile in the project it creates, so delete it. The example project has a test suite of its own; see [What happens to a stale write](#what-happens-to-a-stale-write).
 
