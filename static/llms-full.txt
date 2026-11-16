@@ -30394,7 +30394,9 @@ $ zk lightnet start
 
 This command performs the following operations:
 
-- Pulls the Docker image for your environment from the [Docker Hub](https://hub.docker.com/r/o1labs/mina-local-network) repository. The release images are built for `amd64` only. On a computer with an `arm64` processor, such as a Mac with Apple silicon, run `export DOCKER_DEFAULT_PLATFORM=linux/amd64` before `zk lightnet start`. Without it, the pull fails with `no matching manifest`. With it, Docker runs the image in emulation, which is slower.
+- Pulls the Docker image for your environment from the [Docker Hub](https://hub.docker.com/r/o1labs/mina-local-network) repository. The images of Mina 4.0.4 are built for `amd64` and `arm64`, so a computer with an `arm64` processor, such as a Mac with Apple silicon, runs them natively. This includes the `4.0.4-<profile>`, `latest-<profile>`, `master-latest-<profile>` and `compatible-latest-<profile>` tags. The images of older releases, for example `4.0.2-<profile>`, are built for `amd64` only:
+  - To use an older release on an `arm64` computer, run `export DOCKER_DEFAULT_PLATFORM=linux/amd64` before `zk lightnet start`. Without it, the pull fails with `no matching manifest`. With it, Docker runs the image in emulation, which is slower.
+  - If you set `DOCKER_DEFAULT_PLATFORM=linux/amd64` before, run `unset DOCKER_DEFAULT_PLATFORM` to get the `arm64` image of Mina 4.0.4.
 - Prepares the file system
 - Uses the artifacts of a stable Mina release from the Mina GitHub [repository](https://github.com/MinaProtocol/mina):
   - zkApp CLI `0.23.0` pulls the `compatible-latest-<profile>` image, for example `compatible-latest-lightnet`. This tag is not updated anymore. It points to the image of the stable Mina release 4.0.4. To follow new stable releases with zkApp CLI `0.23.0`, use `--mina-branch master`: the `master-latest-<profile>` tag is updated with every stable release.
@@ -30464,7 +30466,7 @@ $ zk lightnet start --no-pull
 
 :::note
 
-With `--no-pull`, the zkApp CLI uses the image that is already on your computer. A `compatible-latest-<profile>` image that you pulled before 2026-11-03 (UTC) contains an older Mina release, not 4.0.4. Run `zk lightnet start` once without `--no-pull` to get the current image.
+With `--no-pull`, the zkApp CLI uses the image that is already on your computer. A `compatible-latest-<profile>` image that you pulled before 2026-11-03 (UTC) contains an older Mina release, not 4.0.4. On an `arm64` computer, an image that you pulled with `DOCKER_DEFAULT_PLATFORM=linux/amd64` stays an `amd64` image and runs in emulation. Run `zk lightnet start` once without `--no-pull` to get the current image.
 
 :::
 
