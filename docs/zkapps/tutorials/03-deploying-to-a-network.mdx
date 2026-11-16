@@ -35,7 +35,7 @@ Ensure your environment meets the [Prerequisites](/zkapps/tutorials#prerequisite
 - The latest version of the [zkApp CLI](https://www.npmjs.com/package/zkapp-cli)
 - Node.js 22.19.5 or later, which is what o1js 3 requires
 
-The [example project](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/03-deploying-to-a-network) for this tutorial uses o1js `^3.0.0`. CI builds and tests it on every pull request.
+The [example project](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/03-deploying-to-a-network) for this tutorial uses o1js `^3.0.0`. CI builds it, runs it and runs its tests on each push to `main`, on each pull request that changes the examples, and once a day.
 
 If you have earlier versions of the zkApp CLI and o1js installed, be sure to [Update the zkApp CLI](/zkapps/writing-a-zkapp/introduction-to-zkapps/install-zkapp-cli#update-the-zkapp-cli) to the latest version:
 
@@ -100,14 +100,17 @@ Each time you make updates, then build or deploy, the TypeScript code is compile
 
 Start by deleting the default files that come with the new project.
 
-1. Delete the default generated files:
+1. Delete the default generated files and their compiled output in `build`:
 
   ```sh
+  $ rm -rf build
   $ rm src/Add.ts
   $ rm src/Add.test.ts
   $ rm src/AddZkProgram.ts
   $ rm src/interact.ts
   ```
+
+  The `zk project` command builds the project when it creates it, and `tsc` does not delete old files from `build`. Without `rm -rf build`, the compiled `build/src/Add.test.js` stays, and `npm test` still runs it.
 
 1. Copy the `src/Square.ts` and `src/index.ts` files from the files of the first tutorial [01-hello-world/src](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/01-hello-world/src) to your local `03-deploying-to-a-live-network/src` directory. If prompted, replace existing files.
 

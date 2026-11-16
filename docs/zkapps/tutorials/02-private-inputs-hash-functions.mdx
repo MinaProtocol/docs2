@@ -106,14 +106,17 @@ Each time you make updates, then build or deploy, the TypeScript code is compile
 
 Start by deleting the default files that come with the new project.
 
-1. To delete the default generated files:
+1. To delete the default generated files and their compiled output in `build`:
 
   ```sh
+  $ rm -rf build
   $ rm src/Add.ts
   $ rm src/Add.test.ts
   $ rm src/AddZkProgram.ts
   $ rm src/interact.ts
   ```
+
+  The `zk project` command builds the project when it creates it, and `tsc` does not delete old files from `build`. Without `rm -rf build`, the compiled `build/src/Add.test.js` stays, and `npm test` still runs it.
 
 1. Now, create the new files for your project:
 

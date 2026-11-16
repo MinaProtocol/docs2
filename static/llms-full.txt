@@ -20125,14 +20125,17 @@ For this tutorial, you run commands from the root of the `01-hello-world` direct
 
 Start by deleting the default files that come with the new project.
 
-1. To delete the old files:
+1. To delete the old files and their compiled output in `build`:
 
   ```sh
+  $ rm -rf build
   $ rm src/Add.ts
   $ rm src/Add.test.ts
   $ rm src/AddZkProgram.ts
   $ rm src/interact.ts
   ```
+
+  The `zk project` command builds the project when it creates it, and `tsc` does not delete old files from `build`. Without `rm -rf build`, the compiled `build/src/Add.test.js` stays, and `npm test` still runs it.
 
 1. Now, create the new files for your project:
 
@@ -20635,14 +20638,17 @@ Each time you make updates, then build or deploy, the TypeScript code is compile
 
 Start by deleting the default files that come with the new project.
 
-1. To delete the default generated files:
+1. To delete the default generated files and their compiled output in `build`:
 
   ```sh
+  $ rm -rf build
   $ rm src/Add.ts
   $ rm src/Add.test.ts
   $ rm src/AddZkProgram.ts
   $ rm src/interact.ts
   ```
+
+  The `zk project` command builds the project when it creates it, and `tsc` does not delete old files from `build`. Without `rm -rf build`, the compiled `build/src/Add.test.js` stays, and `npm test` still runs it.
 
 1. Now, create the new files for your project:
 
@@ -20873,7 +20879,7 @@ Ensure your environment meets the [Prerequisites](/zkapps/tutorials#prerequisite
 - The latest version of the [zkApp CLI](https://www.npmjs.com/package/zkapp-cli)
 - Node.js 22.19.5 or later, which is what o1js 3 requires
 
-The [example project](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/03-deploying-to-a-network) for this tutorial uses o1js `^3.0.0`. CI builds and tests it on every pull request.
+The [example project](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/03-deploying-to-a-network) for this tutorial uses o1js `^3.0.0`. CI builds it, runs it and runs its tests on each push to `main`, on each pull request that changes the examples, and once a day.
 
 If you have earlier versions of the zkApp CLI and o1js installed, be sure to [Update the zkApp CLI](/zkapps/writing-a-zkapp/introduction-to-zkapps/install-zkapp-cli#update-the-zkapp-cli) to the latest version:
 
@@ -20938,14 +20944,17 @@ Each time you make updates, then build or deploy, the TypeScript code is compile
 
 Start by deleting the default files that come with the new project.
 
-1. Delete the default generated files:
+1. Delete the default generated files and their compiled output in `build`:
 
   ```sh
+  $ rm -rf build
   $ rm src/Add.ts
   $ rm src/Add.test.ts
   $ rm src/AddZkProgram.ts
   $ rm src/interact.ts
   ```
+
+  The `zk project` command builds the project when it creates it, and `tsc` does not delete old files from `build`. Without `rm -rf build`, the compiled `build/src/Add.test.js` stays, and `npm test` still runs it.
 
 1. Copy the `src/Square.ts` and `src/index.ts` files from the files of the first tutorial [01-hello-world/src](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/01-hello-world/src) to your local `03-deploying-to-a-live-network/src` directory. If prompted, replace existing files.
 
@@ -22544,7 +22553,7 @@ Three parts make it work:
 A value is readable only after it is settled. That is the cost of the approach, and it is also what makes concurrent writes safe: an update names the value it expects to replace, and a settlement drops an update whose expected value no longer matches.
 
 :::note Experimental
-The offchain state API is exported under `Experimental`, so its shape can change between o1js releases. The example in this repository is built on every pull request, so it tracks the current release.
+The offchain state API is exported under `Experimental`, so its shape can change between o1js releases. CI builds and tests the example in this repository on each push to `main`, on each pull request that changes the examples, and once a day. Each of these runs also builds the example against the newest o1js release, so that a change in this API shows up there.
 :::
 
 ## Prerequisites
@@ -22567,13 +22576,16 @@ The offchain state API is exported under `Experimental`, so its shape can change
   $ npm install
   ```
 
-1. Clear the scaffolding and create the contract file:
+1. Clear the scaffolding and its compiled output in `build`, and create the contract file:
 
   ```sh
+  $ rm -rf build
   $ rm src/Add.ts src/Add.test.ts src/AddZkProgram.ts src/interact.ts
   $ zk file src/NumberStorageContract
   $ rm src/NumberStorageContract.test.ts
   ```
+
+  The `zk project` command builds the project when it creates it, and `tsc` does not delete old files from `build`. Without `rm -rf build`, the compiled `build/src/Add.test.js` stays, and `npm test` still runs it.
 
   The `zk file` command also creates `src/NumberStorageContract.test.ts`. The zkApp CLI `0.23.0` writes this placeholder in a style that does not compile in the project it creates, so delete it. The example project has a test suite of its own; see [What happens to a stale write](#what-happens-to-a-stale-write).
 
@@ -25860,7 +25872,8 @@ Make sure your environment meets the
 Tutorials. o1js 3 requires Node.js 22.19.5 or later.
 
 The example project uses o1js `^3.0.0`. CI builds it, runs it and runs its
-tests on every pull request.
+tests on each push to `main`, on each pull request that changes the examples,
+and once a day.
 
 ## Get the example project
 
