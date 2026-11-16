@@ -40,13 +40,13 @@ Different networks may employ varying cryptographic methods. This specification 
 Possible values are `mainnet` and `testnet`.
 
 :::tip
-By default, if no network is explicitly chosen, `mainnet` is the default choice. For the Berkeley network, use `testnet`.
+By default, if no network is explicitly chosen, `mainnet` is the default choice. For Devnet and other test networks, use `testnet`.
 :::
 
 ```js
 import Client from 'mina-signer';
 const MainnetClient = new Client({ network: 'mainnet' }); // Specify mainnet
-const TestnetClient = new Client({ network: 'testnet' }); // Specify testnet (Berkeley)
+const TestnetClient = new Client({ network: 'testnet' }); // Specify testnet (Devnet)
 ```
 
 ### Generating keys
