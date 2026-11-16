@@ -34,6 +34,62 @@ This file is auto-generated from \`sidebars.js\` and the frontmatter of each doc
 Every page also has a markdown twin: add \`.md\` to its URL (for example ${SITE_URL}/zkapps/tutorials/hello-world.md).
 `;
 
+// Read first by a coding agent, before the page index. o1js.dev/ai-tooling
+// has a starter CLAUDE.md for o1js itself (provable types, circuit control
+// flow, ZkProgram); these notes add what is specific to Mina: networks,
+// versions and tools. Every note links the page that states it; keep each
+// note true for the current releases.
+const AGENT_NOTES = [
+  {
+    label: "Agent setup for o1js",
+    url: "https://o1js.dev/ai-tooling/",
+    description:
+      "A starter CLAUDE.md (also AGENTS.md, GEMINI.md) from o1Labs: provable types instead of number/boolean, no if/return on provable values, ZkProgram shape, compile() before prove. The notes below add what is specific to Mina.",
+  },
+  {
+    label: "Use o1js 3",
+    url: `${SITE_URL}/network-upgrades/mesa/requirements`,
+    description:
+      "Since the Mesa upgrade, nodes reject transactions made with o1js 2 or older. Write code for o1js 3; examples written for o1js 1 or 2 need changes.",
+  },
+  {
+    label: "Update the verification key after Mesa",
+    url: `${SITE_URL}/network-upgrades/mesa/upgrade-steps/post-upgrade`,
+    description:
+      "A zkApp deployed before Mesa accepts no transactions until its verification key is set again with a key compiled by o1js 3.",
+  },
+  {
+    label: "zkApp CLI 0.23.0 scaffolds",
+    url: `${SITE_URL}/zkapps/tutorials/hello-world`,
+    description:
+      "`zk project` writes \"o1js\": \"^2.*\"; change it to \"^3.0.0\". `zk file` writes a placeholder test that does not compile; delete or replace it. Node.js 22.19.5 or later is required.",
+  },
+  {
+    label: "Networks",
+    url: `${SITE_URL}/mina-protocol`,
+    description:
+      "The public networks are mainnet and devnet; the networkID GraphQL query returns mina:mainnet or mina:devnet. Berkeley is the name of the June 2024 upgrade, not a running network.",
+  },
+  {
+    label: "mina-signer network",
+    url: `${SITE_URL}/mina-signer`,
+    description:
+      "new Client({ network: 'testnet' }) signs transactions for Devnet; the default is mainnet. A transaction signed for one network is rejected on the other.",
+  },
+  {
+    label: "Events and actions",
+    url: `${SITE_URL}/zkapps/writing-a-zkapp/feature-overview/fetch-events-and-actions`,
+    description:
+      "Nodes do not keep them; fetchEvents and fetchActions read them from an archive node (Archive Node API), so Mina.Network needs an archive endpoint.",
+  },
+  {
+    label: "Local testing",
+    url: `${SITE_URL}/zkapps/writing-a-zkapp/introduction-to-zkapps/testing-zkapps-lightnet`,
+    description:
+      "Mina.LocalBlockchain for unit tests; `zk lightnet start` for a local network with a daemon, an archive node and funded accounts.",
+  },
+];
+
 // Top-level sidebar entries that are too internal-process to surface to AI
 // agents. Add IDs/labels here to skip them.
 const SKIP_LABELS = new Set(["Participate"]);
@@ -224,6 +280,14 @@ async function build() {
   sections.push({
     heading: "Operator-facing facts",
     bullets: OPERATOR_FACTS.map(
+      (f) => `- [${f.label}](${f.url}): ${f.description}`,
+    ),
+  });
+
+  // The agent notes go before the page index, so they are read first.
+  sections.unshift({
+    heading: "Before you write code",
+    bullets: AGENT_NOTES.map(
       (f) => `- [${f.label}](${f.url}): ${f.description}`,
     ),
   });
