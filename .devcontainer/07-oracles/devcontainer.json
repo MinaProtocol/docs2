@@ -1,0 +1,9 @@
+{
+  "name": "Tutorial 7: Oracles",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:22-bookworm",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}/examples/zkapps/07-oracles",
+  "hostRequirements": {
+    "memory": "8gb"
+  },
+  "postCreateCommand": "(cd contracts && npm ci && npm run build) && (cd oracle && npm ci && npm run build)"
+}

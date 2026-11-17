@@ -13,6 +13,9 @@ on:
       - 'scripts/mdx-to-markdown.cjs'
       - 'scripts/markdown-twin-path.cjs'
       - 'scripts/markdown-twins.test.mjs'
+      # The Codespaces links on the tutorial pages and their configs
+      - 'scripts/codespaces.test.mjs'
+      - '.devcontainer/**'
       - 'plugins/markdown-twins.cjs'
       # Pages include code regions from the examples with #include_code, so an
       # example change can change llms-full.txt.

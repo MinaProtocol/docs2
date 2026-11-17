@@ -1,0 +1,9 @@
+{
+  "name": "Interacting with zkApps Server-Side",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:22-bookworm",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}/examples/zkapps/interacting-with-zkApps-server-side",
+  "hostRequirements": {
+    "memory": "8gb"
+  },
+  "postCreateCommand": "npm ci && npm run build"
+}

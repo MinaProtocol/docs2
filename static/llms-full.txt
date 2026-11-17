@@ -20038,6 +20038,14 @@ To prevent copying command prompts as shown in the examples, use the copy code t
 
 :::
 
+:::tip Run the example in your browser
+
+[Open the example project in GitHub Codespaces](https://codespaces.new/MinaProtocol/docs2?quickstart=1&devcontainer_path=.devcontainer%2F01-hello-world%2Fdevcontainer.json). GitHub starts a container with Node.js 22 in the `examples/zkapps/01-hello-world` folder, installs the dependencies and builds the project. This takes some minutes. Then, in the terminal, run `npm test`. Some tests make proofs, and these tests take several minutes.
+
+You must have a GitHub account. The codespace uses the free monthly quota of your account. Stop or delete the codespace when you are done.
+
+:::
+
 ## Prerequisites
 
 Ensure your environment meets the [Prerequisites](/zkapps/tutorials#prerequisites) for zkApp Developer Tutorials.
@@ -20564,6 +20572,14 @@ All inputs to a smart contract are private by default. Inputs are never seen by 
 
 In this tutorial, you build a smart contract with a piece of private state that can be modified if a user knows the private state.
 
+:::tip Run the example in your browser
+
+[Open the example project in GitHub Codespaces](https://codespaces.new/MinaProtocol/docs2?quickstart=1&devcontainer_path=.devcontainer%2F02-private-inputs-and-hash-functions%2Fdevcontainer.json). GitHub starts a container with Node.js 22 in the `examples/zkapps/02-private-inputs-and-hash-functions` folder, installs the dependencies and builds the project. This takes some minutes. Then, in the terminal, run `npm test`. Some tests make proofs, and these tests take several minutes.
+
+You must have a GitHub account. The codespace uses the free monthly quota of your account. Stop or delete the codespace when you are done.
+
+:::
+
 ## Prerequisites
 
 This tutorial has been tested with [o1js](https://www.npmjs.com/package/o1js) version `3.0.0` and [zkApp CLI](https://www.npmjs.com/package/zkapp-cli) version `0.23.0`. o1js 3.0.0 requires Node.js `22.19.5` or later.
@@ -20873,6 +20889,14 @@ In this tutorial, you will use the `zk config` command to create the deploy alia
 tMINA is test MINA: the token of the Mina test networks, which has no real value. You get tMINA from the faucet, a service that sends free tMINA to an address that you give it.
 
 This tutorial reuses the `Square` contract that you created in [Tutorial 1: Hello World](hello-world).
+
+:::tip Run the example in your browser
+
+[Open the example project in GitHub Codespaces](https://codespaces.new/MinaProtocol/docs2?quickstart=1&devcontainer_path=.devcontainer%2F03-deploying-to-a-network%2Fdevcontainer.json). GitHub starts a container with Node.js 22 in the `examples/zkapps/03-deploying-to-a-network` folder, installs the dependencies and builds the project. This takes some minutes. Then, in the terminal, run `npm test`. Some tests make proofs, and these tests take several minutes.
+
+You must have a GitHub account. The codespace uses the free monthly quota of your account. Stop or delete the codespace when you are done.
+
+:::
 
 ## Prerequisites
 
@@ -21248,6 +21272,14 @@ You're making excellent progress in your zkApp journey:
 - In [Tutorial 3: Deploy to a Live Network](deploying-to-a-network), you used the `zk` commands to deploy your zkApp.
 
 In this tutorial, you are going to implement a browser UI using `Next.js` that interacts with a smart contract.
+
+:::tip Run the example in your browser
+
+[Open the example project in GitHub Codespaces](https://codespaces.new/MinaProtocol/docs2?quickstart=1&devcontainer_path=.devcontainer%2F04-zkapp-browser-ui%2Fdevcontainer.json). GitHub starts a container with Node.js 22 in the `examples/zkapps/04-zkapp-browser-ui` folder, installs the dependencies and builds the project. This takes some minutes. Then, in the terminal, run `cd contracts`, then `npm test`. Some tests make proofs, and these tests take several minutes.
+
+You must have a GitHub account. The codespace uses the free monthly quota of your account. Stop or delete the codespace when you are done.
+
+:::
 
 ## Prerequisites
 
@@ -21984,6 +22016,14 @@ In previous tutorials, you learned how to deploy smart contracts to the network 
 In this tutorial, you learn about types you can use when building with o1js. Earlier tutorials mostly use the `Field` type. o1js provides other higher-order types built from Fields that are useful for zkApp development and expand the possibilities for more applications.
 
 The [example project](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/05-common-types-and-functions/src) includes a [main.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/05-common-types-and-functions/src/main.ts) file that shows all of the concepts presented in this tutorial, along with smart contracts showing more advanced usage of some of the concepts, particularly Merkle Trees.
+
+:::tip Run the example in your browser
+
+[Open the example project in GitHub Codespaces](https://codespaces.new/MinaProtocol/docs2?quickstart=1&devcontainer_path=.devcontainer%2F05-common-types-and-functions%2Fdevcontainer.json). GitHub starts a container with Node.js 22 in the `examples/zkapps/05-common-types-and-functions` folder, installs the dependencies and builds the project. This takes some minutes. Then, in the terminal, run `npm test`. Some tests make proofs, and these tests take several minutes.
+
+You must have a GitHub account. The codespace uses the free monthly quota of your account. Stop or delete the codespace when you are done.
+
+:::
 
 ## Prerequisites
 
@@ -22902,6 +22942,14 @@ The full example is in [examples/zkapps/06-offchain-storage](https://github.com/
 - [src/NumberStorageContract.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/06-offchain-storage/src/NumberStorageContract.ts) — the offchain state declaration and the contract
 - [src/main.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/06-offchain-storage/src/main.ts) — a worked run: write, settle, read, update
 
+:::tip Run the example in your browser
+
+[Open the example project in GitHub Codespaces](https://codespaces.new/MinaProtocol/docs2?quickstart=1&devcontainer_path=.devcontainer%2F06-offchain-storage%2Fdevcontainer.json). GitHub starts a container with Node.js 22 in the `examples/zkapps/06-offchain-storage` folder, installs the dependencies and builds the project. This takes some minutes. Then, in the terminal, run `npm test`. Some tests make proofs, and these tests take several minutes.
+
+You must have a GitHub account. The codespace uses the free monthly quota of your account. Stop or delete the codespace when you are done.
+
+:::
+
 ## Why Off-Chain Storage?
 
 When you build an application for testing and local use, you can build and store a Merkle root locally.
@@ -23231,6 +23279,14 @@ You can use an oracle when your smart contract needs to consume data from the ou
 
 Learn about zkOracles in this 5-minute video:
 
+
+:::tip Run the example in your browser
+
+[Open the example project in GitHub Codespaces](https://codespaces.new/MinaProtocol/docs2?quickstart=1&devcontainer_path=.devcontainer%2F07-oracles%2Fdevcontainer.json). GitHub starts a container with Node.js 22 in the `examples/zkapps/07-oracles` folder, installs the dependencies and builds the project. This takes some minutes. Then, in the terminal, run `cd contracts`, then `npm test`. Some tests make proofs, and these tests take several minutes.
+
+You must have a GitHub account. The codespace uses the free monthly quota of your account. Stop or delete the codespace when you are done.
+
+:::
 
 ## Prerequisites
 
@@ -23902,6 +23958,14 @@ The full example code is provided in the [08-custom-tokens/src/](https://github.
 
 For reference, a more extensive example, including all the ways to interact with token smart contracts, is provided in [token.test.ts](https://github.com/o1-labs/o1js/blob/main/src/lib/mina/v1/token.test.ts).
 
+:::tip Run the example in your browser
+
+[Open the example project in GitHub Codespaces](https://codespaces.new/MinaProtocol/docs2?quickstart=1&devcontainer_path=.devcontainer%2F08-custom-tokens%2Fdevcontainer.json). GitHub starts a container with Node.js 22 in the `examples/zkapps/08-custom-tokens` folder, installs the dependencies and builds the project. This takes some minutes. Then, in the terminal, run `npm test`. Some tests make proofs, and these tests take several minutes.
+
+You must have a GitHub account. The codespace uses the free monthly quota of your account. Stop or delete the codespace when you are done.
+
+:::
+
 ## Prerequisites
 
 - Make sure you have the latest version of the zkApp CLI installed:
@@ -24308,6 +24372,14 @@ For example, recursive ZKPs can be used to prove the output of a machine learnin
 ### Off-chain, multi-party proof construction
 
 Recursive ZKPs also make it easy to allow multiple parties to construct transactions. One or more parties can recursively update a ZKP and its associated public state to accomplish off-chain proof construction. When the multi-party stage is completed, that state and its proof can then be sent as part of an on-chain transaction or used as part of an off-chain application leveraging ZKPs.
+
+:::tip Run the example in your browser
+
+[Open the example project in GitHub Codespaces](https://codespaces.new/MinaProtocol/docs2?quickstart=1&devcontainer_path=.devcontainer%2F09-recursion%2Fdevcontainer.json). GitHub starts a container with Node.js 22 in the `examples/zkapps/09-recursion` folder, installs the dependencies and builds the project. This takes some minutes. Then, in the terminal, run `npm test`. Some tests make proofs, and these tests take several minutes.
+
+You must have a GitHub account. The codespace uses the free monthly quota of your account. Stop or delete the codespace when you are done.
+
+:::
 
 ## ZkProgram Example
 
@@ -24857,6 +24929,14 @@ Each `AccountUpdate` can make assertions about its account, apply updates to its
 
 Transactions are structured as a list of trees of `AccountUpdates` applied with a [pre-order traversal](https://en.wikipedia.org/wiki/Tree_traversal).
 
+:::tip Run the example in your browser
+
+[Open the example project in GitHub Codespaces](https://codespaces.new/MinaProtocol/docs2?quickstart=1&devcontainer_path=.devcontainer%2F10-account-updates%2Fdevcontainer.json). GitHub starts a container with Node.js 22 in the `examples/zkapps/10-account-updates` folder, installs the dependencies and builds the project. This takes some minutes. Then, in the terminal, run `npm test`. Some tests make proofs, and these tests take several minutes.
+
+You must have a GitHub account. The codespace uses the free monthly quota of your account. Stop or delete the codespace when you are done.
+
+:::
+
 ## Permissions, Preconditions, and Composability
 
 Permissions, preconditions, composability, and tokens are the core features of zkApps that are implemented using `AccountUpdates`.
@@ -25277,6 +25357,14 @@ To review the types of accounts:
 The full source code for this tutorial is in the
 [examples/zkapps/11-advanced-account-updates](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/11-advanced-account-updates)
 directory on GitHub.
+
+:::tip Run the example in your browser
+
+[Open the example project in GitHub Codespaces](https://codespaces.new/MinaProtocol/docs2?quickstart=1&devcontainer_path=.devcontainer%2F11-advanced-account-updates%2Fdevcontainer.json). GitHub starts a container with Node.js 22 in the `examples/zkapps/11-advanced-account-updates` folder, installs the dependencies and builds the project. This takes some minutes. Then, in the terminal, run `npm test`. Some tests make proofs, and these tests take several minutes.
+
+You must have a GitHub account. The codespace uses the free monthly quota of your account. Stop or delete the codespace when you are done.
+
+:::
 
 ## Prerequisites
 
@@ -26241,6 +26329,14 @@ The full source code for this tutorial is in the
 [examples/zkapps/12-cross-contract-calls](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/12-cross-contract-calls)
 directory on GitHub.
 
+:::tip Run the example in your browser
+
+[Open the example project in GitHub Codespaces](https://codespaces.new/MinaProtocol/docs2?quickstart=1&devcontainer_path=.devcontainer%2F12-cross-contract-calls%2Fdevcontainer.json). GitHub starts a container with Node.js 22 in the `examples/zkapps/12-cross-contract-calls` folder, installs the dependencies and builds the project. This takes some minutes. Then, in the terminal, run `npm test`. Some tests make proofs, and these tests take several minutes.
+
+You must have a GitHub account. The codespace uses the free monthly quota of your account. Stop or delete the codespace when you are done.
+
+:::
+
 ## Prerequisites
 
 Make sure your environment meets the
@@ -26598,6 +26694,14 @@ In this tutorial, you build a smart contract that allows users to publish messag
 - This semi-anonymous messaging leverages one aspect of a person's identity without revealing exactly who they are.
 
 An example use case for this semi-anonymous contract is to enable a DAO member to make credible statements on behalf of their DAO without revealing their specific individual identity.
+
+:::tip Run the example in your browser
+
+[Open the example project in GitHub Codespaces](https://codespaces.new/MinaProtocol/docs2?quickstart=1&devcontainer_path=.devcontainer%2F13-anonymous-message-board%2Fdevcontainer.json). GitHub starts a container with Node.js 22 in the `examples/zkapps/13-anonymous-message-board` folder, installs the dependencies and builds the project. This takes some minutes. Then, in the terminal, run `npm test`. Some tests make proofs, and these tests take several minutes.
+
+You must have a GitHub account. The codespace uses the free monthly quota of your account. Stop or delete the codespace when you are done.
+
+:::
 
 ## Prerequisites
 
@@ -26996,6 +27100,14 @@ test is the claim.
 The full source code for this tutorial is in the
 [examples/zkapps/14-circuit-logic](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/14-circuit-logic)
 directory on GitHub.
+
+:::tip Run the example in your browser
+
+[Open the example project in GitHub Codespaces](https://codespaces.new/MinaProtocol/docs2?quickstart=1&devcontainer_path=.devcontainer%2F14-circuit-logic%2Fdevcontainer.json). GitHub starts a container with Node.js 22 in the `examples/zkapps/14-circuit-logic` folder, installs the dependencies and builds the project. This takes some minutes. Then, in the terminal, run `npm test`. Some tests make proofs, and these tests take several minutes.
+
+You must have a GitHub account. The codespace uses the free monthly quota of your account. Stop or delete the codespace when you are done.
+
+:::
 
 ## Prerequisites
 
@@ -27924,6 +28036,14 @@ url: /zkapps/tutorials/interacting-with-zkapps-server-side
 While user-facing zkApps can be written for the browser, sometimes it is useful to interact with a zkApp server-side or on your own machine. For example, when initializing a zkApp using programmatically generated information, deploying a zkApp in custom ways, or writing scripts that create transactions depending on real-world (periodically updating an on-chain value with signed data, like a keeper for an oracle) or on-chain events.
 
 Interacting with zkApps server-side is useful for some use cases. For example, if you need to create a custom account for your zkApp to deploy a zkApp to a different key than the fee payer key. You can programmatically parameterize a zkApp before you initialize it. You can even create a smart contract programmatically for users as part of an application.
+
+:::tip Run the example in your browser
+
+[Open the example project in GitHub Codespaces](https://codespaces.new/MinaProtocol/docs2?quickstart=1&devcontainer_path=.devcontainer%2Finteracting-with-zkApps-server-side%2Fdevcontainer.json). GitHub starts a container with Node.js 22 in the `examples/zkapps/interacting-with-zkApps-server-side` folder, installs the dependencies and builds the project. This takes some minutes. Then, in the terminal, run `npm test`. Some tests make proofs, and these tests take several minutes.
+
+You must have a GitHub account. The codespace uses the free monthly quota of your account. Stop or delete the codespace when you are done.
+
+:::
 
 ## Prerequisites
 

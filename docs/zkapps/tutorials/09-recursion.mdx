@@ -44,6 +44,14 @@ For example, recursive ZKPs can be used to prove the output of a machine learnin
 
 Recursive ZKPs also make it easy to allow multiple parties to construct transactions. One or more parties can recursively update a ZKP and its associated public state to accomplish off-chain proof construction. When the multi-party stage is completed, that state and its proof can then be sent as part of an on-chain transaction or used as part of an off-chain application leveraging ZKPs.
 
+:::tip Run the example in your browser
+
+[Open the example project in GitHub Codespaces](https://codespaces.new/MinaProtocol/docs2?quickstart=1&devcontainer_path=.devcontainer%2F09-recursion%2Fdevcontainer.json). GitHub starts a container with Node.js 22 in the `examples/zkapps/09-recursion` folder, installs the dependencies and builds the project. This takes some minutes. Then, in the terminal, run `npm test`. Some tests make proofs, and these tests take several minutes.
+
+You must have a GitHub account. The codespace uses the free monthly quota of your account. Stop or delete the codespace when you are done.
+
+:::
+
 ## ZkProgram Example
 
 You build recursive zkApps with [ZkProgram](https://docs.o1labs.org/o1js/api-reference/functions/ZkProgram), the o1js general purpose API for creating zero knowledge proofs. A ZkProgram is similar to zkApp smart contracts but isn't tied to an on-chain account.
