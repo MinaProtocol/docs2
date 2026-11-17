@@ -1,0 +1,9 @@
+{
+  "name": "Tutorial 3: Deploy to a Live Network",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:22-bookworm",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}/examples/zkapps/03-deploying-to-a-network",
+  "hostRequirements": {
+    "memory": "8gb"
+  },
+  "postCreateCommand": "npm ci && npm run build"
+}

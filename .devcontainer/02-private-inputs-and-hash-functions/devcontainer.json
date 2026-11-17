@@ -1,0 +1,9 @@
+{
+  "name": "Tutorial 2: Private Inputs and Hash Functions",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:22-bookworm",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}/examples/zkapps/02-private-inputs-and-hash-functions",
+  "hostRequirements": {
+    "memory": "8gb"
+  },
+  "postCreateCommand": "npm ci && npm run build"
+}
