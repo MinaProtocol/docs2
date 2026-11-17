@@ -24,6 +24,9 @@ import {
 import { LedgerContract } from './LedgerContract.js';
 import { BasicMerkleMapContract } from './BasicMerkleMapContract.js';
 import { BasicMerkleTreeContract } from './BasicMerkleTreeContract.js';
+import { IndexedMerkleMapContract, Map33 } from './IndexedMerkleMapContract.js';
+import { FieldList, MerkleListContract } from './MerkleListContract.js';
+import { DynamicArrayContract, Scores } from './DynamicArrayContract.js';
 
 // --------------------------------------
 console.log('--------------------------------------');
@@ -458,4 +461,154 @@ console.log(`value for key ${key}: ${map.get(key)}`);
     `BasicMerkleMap: smart contract root after update: ${zkapp.mapRoot.get()}`
   );
   // docs:end merkle-map-interaction
+}
+
+// --------------------------------------
+console.log('--------------------------------------');
+
+// docs:start indexed-merkle-map
+const indexedMap = new Map33();
+indexedMap.insert(100n, 50n);
+
+console.log(`value for key 100: ${indexedMap.get(100n)}`);
+console.log(`key 101 is in the map: ${indexedMap.getOption(101n).isSome}`);
+console.log(`Fields in Map33: ${Map33.provable.sizeInFields()}`);
+
+try {
+  indexedMap.insert(100n, 51n);
+} catch {
+  console.log('second insert of key 100: rejected');
+}
+// docs:end indexed-merkle-map
+
+// --------------------------------------
+// create an IndexedMerkleMapContract zkapp account
+
+{
+  const zkAppPrivateKey = PrivateKey.random();
+  const zkApp = new IndexedMerkleMapContract(zkAppPrivateKey.toPublicKey());
+  await IndexedMerkleMapContract.compile();
+
+  // docs:start indexed-merkle-map-interaction
+  // init() sets the root of an empty map on chain
+  const deployTxn = await Mina.transaction(deployerAccount, async () => {
+    AccountUpdate.fundNewAccount(deployerAccount);
+    await zkApp.deploy();
+  });
+  await deployTxn.prove();
+  await deployTxn.sign([deployerKey, zkAppPrivateKey]).send();
+
+  // the caller keeps the full map
+  const map = new Map33();
+
+  // insert on chain, then make the same change to the local map
+  const txn1 = await Mina.transaction(deployerAccount, async () => {
+    await zkApp.insert(map, Field(100), Field(50));
+  });
+  await txn1.prove();
+  await txn1.sign([deployerKey]).send();
+  map.insert(100n, 50n);
+
+  // update on chain, then locally
+  const txn2 = await Mina.transaction(deployerAccount, async () => {
+    await zkApp.update(map, Field(100), Field(51));
+  });
+  await txn2.prove();
+  await txn2.sign([deployerKey]).send();
+  map.update(100n, 51n);
+
+  console.log(
+    `IndexedMerkleMap: local root equals contract root: ${map.root.equals(
+      zkApp.mapRoot.get()
+    )}`
+  );
+  // docs:end indexed-merkle-map-interaction
+}
+
+// --------------------------------------
+console.log('--------------------------------------');
+
+// docs:start merkle-list
+const list = FieldList.empty();
+list.push(Field(1));
+list.push(Field(2));
+list.push(Field(3));
+
+console.log(`list elements: ${list.toArrayUnconstrained().get()}`);
+console.log(`Fields in the list: ${FieldList.provable.sizeInFields()}`);
+console.log(`popExn: ${list.popExn()}`);
+// docs:end merkle-list
+
+// --------------------------------------
+// create a MerkleListContract zkapp account
+
+{
+  const zkAppPrivateKey = PrivateKey.random();
+  const zkApp = new MerkleListContract(zkAppPrivateKey.toPublicKey());
+  await MerkleListContract.compile();
+
+  // docs:start merkle-list-interaction
+  const deployTxn = await Mina.transaction(deployerAccount, async () => {
+    AccountUpdate.fundNewAccount(deployerAccount);
+    await zkApp.deploy();
+  });
+  await deployTxn.prove();
+  await deployTxn.sign([deployerKey, zkAppPrivateKey]).send();
+
+  const list = FieldList.empty();
+
+  for (const element of [Field(5), Field(7)]) {
+    const txn = await Mina.transaction(deployerAccount, async () => {
+      await zkApp.push(list, element);
+    });
+    await txn.prove();
+    await txn.sign([deployerKey]).send();
+    list.push(element);
+  }
+
+  const sumTxn = await Mina.transaction(deployerAccount, async () => {
+    await zkApp.sum(list);
+  });
+  await sumTxn.prove();
+  await sumTxn.sign([deployerKey]).send();
+
+  console.log(`MerkleList: contract total: ${zkApp.total.get()}`);
+  // docs:end merkle-list-interaction
+}
+
+// --------------------------------------
+console.log('--------------------------------------');
+
+// docs:start dynamic-array
+const scores = Scores.from([UInt32.from(3), UInt32.from(4), UInt32.from(5)]);
+
+console.log(`length: ${scores.length}, capacity: ${scores.capacity}`);
+console.log(`Fields in Scores: ${Scores.provable.sizeInFields()}`);
+console.log(`element at index 2: ${scores.get(Field(2))}`);
+// docs:end dynamic-array
+
+// --------------------------------------
+// create a DynamicArrayContract zkapp account
+
+{
+  const zkAppPrivateKey = PrivateKey.random();
+  const zkApp = new DynamicArrayContract(zkAppPrivateKey.toPublicKey());
+  await DynamicArrayContract.compile();
+
+  const deployTxn = await Mina.transaction(deployerAccount, async () => {
+    AccountUpdate.fundNewAccount(deployerAccount);
+    await zkApp.deploy();
+  });
+  await deployTxn.prove();
+  await deployTxn.sign([deployerKey, zkAppPrivateKey]).send();
+
+  // docs:start dynamic-array-interaction
+  const txn = await Mina.transaction(deployerAccount, async () => {
+    await zkApp.addAll(scores);
+  });
+  await txn.prove();
+  await txn.sign([deployerKey]).send();
+
+  console.log(`DynamicArray: contract total: ${zkApp.total.get()}`);
+  // docs:end dynamic-array-interaction
 }
