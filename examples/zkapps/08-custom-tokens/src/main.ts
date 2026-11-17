@@ -6,6 +6,7 @@ import {
   UInt64,
 } from 'o1js';
 import { BasicTokenContract } from './BasicTokenContract.js';
+import { TokenVault } from './TokenVault.js';
 
 // A local blockchain, so this runs with no network, no faucet and no funds.
 const useProof = false;
@@ -63,5 +64,62 @@ console.log('alice balance:', Mina.getBalance(alice, token.deriveTokenId()).toSt
 console.log('bob balance:', Mina.getBalance(bob, token.deriveTokenId()).toString());
 console.log(
   'total in circulation is unchanged by a transfer:',
+  token.totalAmountInCirculation.get().toString()
+);
+
+// A zkApp that holds MYTKN: a vault on the token account
+// (vault address, token id). Alice owns it.
+const tokenId = token.deriveTokenId();
+const vaultPrivateKey = PrivateKey.random();
+const vaultAddress = vaultPrivateKey.toPublicKey();
+
+// docs:start vault-deploy
+const vault = new TokenVault(vaultAddress, tokenId);
+
+console.log('deploying the vault on a token account...');
+const deployVaultTx = await Mina.transaction(deployer, async () => {
+  // One new account: the vault's token account.
+  AccountUpdate.fundNewAccount(deployer);
+  await vault.deploy({ owner: alice });
+  // The vault's deploy update uses the token, so the token manager approves it.
+  await token.approveAccountUpdate(vault.self);
+});
+await deployVaultTx.prove();
+await deployVaultTx.sign([deployer.key, vaultPrivateKey]).send();
+// docs:end vault-deploy
+
+// docs:start vault-deposit
+console.log('bob deposits into the vault...');
+const depositAmount = UInt64.from(15_000);
+const depositTx = await Mina.transaction(bob, async () => {
+  await vault.deposit(depositAmount);
+  // The token manager moves the tokens from bob to the vault update that
+  // deposit() made, and approves both updates.
+  await token.transfer(bob, vault.self, depositAmount);
+});
+await depositTx.prove();
+await depositTx.sign([bob.key]).send();
+// docs:end vault-deposit
+
+console.log('bob balance:', Mina.getBalance(bob, tokenId).toString());
+console.log('vault balance:', Mina.getBalance(vaultAddress, tokenId).toString());
+console.log('total deposited:', vault.totalDeposited.get().toString());
+
+// docs:start vault-withdraw
+console.log('alice, the owner, withdraws from the vault...');
+const withdrawAmount = UInt64.from(10_000);
+const withdrawTx = await Mina.transaction(alice, async () => {
+  await vault.withdraw(withdrawAmount);
+  await token.transfer(vault.self, alice, withdrawAmount);
+});
+await withdrawTx.prove();
+await withdrawTx.sign([alice.key]).send();
+// docs:end vault-withdraw
+
+console.log('alice balance:', Mina.getBalance(alice, tokenId).toString());
+console.log('vault balance:', Mina.getBalance(vaultAddress, tokenId).toString());
+console.log('total deposited:', vault.totalDeposited.get().toString());
+console.log(
+  'total in circulation is unchanged by the vault:',
   token.totalAmountInCirculation.get().toString()
 );

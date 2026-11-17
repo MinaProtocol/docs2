@@ -18,6 +18,7 @@ npm start
 
 `main.ts` deploys the contract, mints to one account, sends part of the balance
 to another, and prints the balances and the amount in circulation at each step.
+Then it deploys `TokenVault`, deposits tokens into it and withdraws them.
 
 ## Test it
 
@@ -35,6 +36,14 @@ rejected.
 `transfer()` helper works for whitelisted holders and cannot move the token to
 or from any other address. `WhitelistedTokenContract.proofs.test.ts` checks
 this with real proofs, so it compiles the contract and takes several minutes.
+
+`TokenVault` is a zkApp that consumes the token. It is deployed on the token
+account (vault address, token id of `BasicTokenContract`), so the token manager
+must approve its deployment and every change to its balance. Any account can
+`deposit()`; only the owner can `withdraw()`, and never more than the total
+deposited. `main.ts` deploys it, deposits into it and withdraws from it.
+`TokenVault.test.ts` checks each rule, and `TokenVault.proofs.test.ts` runs a
+deposit and a withdrawal with real proofs.
 
 ## Requirements
 
