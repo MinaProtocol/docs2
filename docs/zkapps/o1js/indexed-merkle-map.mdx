@@ -19,12 +19,6 @@ import MigrateBanner from '@site/src/components/snippets/migrate-banner.mdx';
 
 <MigrateBanner />
 
-:::experimental
-
-The Indexed Merkle Map API is currently an experimental feature.
-
-:::
-
 # Indexed Merkle Map
 
 Similar to a Merkle Tree, a Merkle Map allows referencing off-chain data by storing a single hash, also known as the root.
@@ -35,8 +29,9 @@ A Merkle Map is a wrapper around a [Merkle Tree](https://docs.o1labs.org/o1js/ba
 
 The Indexed Merkle Map is an improved version of the [MerkleMap](/zkapps/tutorials/common-types-and-functions#merkle-map), offering enhanced efficiency and usability:
 
-- **Reduced Constraints:** Uses 4-8x fewer constraints than `MerkleMap`.
+- **Reduced Constraints:** In o1js 3.0.0, an `insert` into an `IndexedMerkleMap(33)` takes 2,621 rows and an `update` takes 1,613 rows. An update of a `MerkleMap` value takes 10,591 rows. These are the numbers that `analyzeMethods()` reports for the contracts of [Tutorial 5](/zkapps/tutorials/common-types-and-functions#indexedmerklemap).
 - **Provable Code Integration:** Unlike `MerkleTree` and `MerkleMap`, the high-level API of `IndexedMerkleMap` is usable within provable code.
+- **Proof of absence:** The map can prove that a key is not in the map. `insert()` fails for a key that is already in the map, and `update()` fails for a key that is not in the map.
 
 :::note
 
@@ -48,12 +43,10 @@ The `Indexed Merkle Map` can have a height of at most `52`, whereas the `Merkle 
 
 ### Prerequisites
 
-The `IndexedMerkleMap` API is accessible within the `Experimental` namespace. To use the API, import `Experimental` from o1js version 1.5.0 or higher.
+In o1js 3.0.0, `IndexedMerkleMap` is a top-level export of o1js. It is not in the `Experimental` namespace: `Experimental.IndexedMerkleMap` is `undefined`.
 
 ```ts
-import { Experimental } from 'o1js';
-
-const { IndexedMerkleMap } = Experimental;
+import { IndexedMerkleMap } from 'o1js';
 ```
 
 ### Instantiating an Indexed Merkle Map
@@ -66,7 +59,11 @@ const height = 31;
 class IndexedMerkleMap31 extends IndexedMerkleMap(height) {}
 ```
 
-In this example, `IndexedMerkleMap31` is a Merkle map capable of holding up to 2<sup>(31−1)</sup> leaves; approximately 1 billion entries.
+In this example, `IndexedMerkleMap31` is a Merkle map capable of holding up to 2<sup>(31−1)</sup> leaves; approximately 1 billion entries. A new map already contains the key `0` with the value `0`, and that entry uses one leaf.
+
+### Use it in a smart contract
+
+[Tutorial 5: Indexed Merkle Map](/zkapps/tutorials/common-types-and-functions#indexedmerklemap) has a tested smart contract that stores only the root of the map on chain and inserts and updates keys. It also shows why the contract method must change a `clone()` of the map argument.
 
 ### Indexed Merkle Map - API reference
 

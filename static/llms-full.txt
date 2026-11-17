@@ -19856,12 +19856,6 @@ Please see our page on [Security and zkApps](/zkapps/writing-a-zkapp/introductio
 url: /zkapps/o1js/indexed-merkle-map
 ---
 
-:::experimental
-
-The Indexed Merkle Map API is currently an experimental feature.
-
-:::
-
 # Indexed Merkle Map
 
 Similar to a Merkle Tree, a Merkle Map allows referencing off-chain data by storing a single hash, also known as the root.
@@ -19872,8 +19866,9 @@ A Merkle Map is a wrapper around a [Merkle Tree](https://docs.o1labs.org/o1js/ba
 
 The Indexed Merkle Map is an improved version of the [MerkleMap](/zkapps/tutorials/common-types-and-functions#merkle-map), offering enhanced efficiency and usability:
 
-- **Reduced Constraints:** Uses 4-8x fewer constraints than `MerkleMap`.
+- **Reduced Constraints:** In o1js 3.0.0, an `insert` into an `IndexedMerkleMap(33)` takes 2,621 rows and an `update` takes 1,613 rows. An update of a `MerkleMap` value takes 10,591 rows. These are the numbers that `analyzeMethods()` reports for the contracts of [Tutorial 5](/zkapps/tutorials/common-types-and-functions#indexedmerklemap).
 - **Provable Code Integration:** Unlike `MerkleTree` and `MerkleMap`, the high-level API of `IndexedMerkleMap` is usable within provable code.
+- **Proof of absence:** The map can prove that a key is not in the map. `insert()` fails for a key that is already in the map, and `update()` fails for a key that is not in the map.
 
 :::note
 
@@ -19885,12 +19880,10 @@ The `Indexed Merkle Map` can have a height of at most `52`, whereas the `Merkle 
 
 ### Prerequisites
 
-The `IndexedMerkleMap` API is accessible within the `Experimental` namespace. To use the API, import `Experimental` from o1js version 1.5.0 or higher.
+In o1js 3.0.0, `IndexedMerkleMap` is a top-level export of o1js. It is not in the `Experimental` namespace: `Experimental.IndexedMerkleMap` is `undefined`.
 
 ```ts
 
-
-const { IndexedMerkleMap } = Experimental;
 ```
 
 ### Instantiating an Indexed Merkle Map
@@ -19903,7 +19896,11 @@ const height = 31;
 class IndexedMerkleMap31 extends IndexedMerkleMap(height) {}
 ```
 
-In this example, `IndexedMerkleMap31` is a Merkle map capable of holding up to 2<sup>(31−1)</sup> leaves; approximately 1 billion entries.
+In this example, `IndexedMerkleMap31` is a Merkle map capable of holding up to 2<sup>(31−1)</sup> leaves; approximately 1 billion entries. A new map already contains the key `0` with the value `0`, and that entry uses one leaf.
+
+### Use it in a smart contract
+
+[Tutorial 5: Indexed Merkle Map](/zkapps/tutorials/common-types-and-functions#indexedmerklemap) has a tested smart contract that stores only the root of the map on chain and inserts and updates keys. It also shows why the contract method must change a `clone()` of the map argument.
 
 ### Indexed Merkle Map - API reference
 
@@ -22482,9 +22479,368 @@ You use [MerkleMaps](https://docs.o1labs.org/o1js/api-reference/classes/MerkleMa
 - A key-value store from public keys to booleans, for example to record whether each account has voted yet.
 - A nullifier that privately tracks if an input was used, without revealing it.
 
+:::tip Use IndexedMerkleMap for new code
+
+In o1js 3.0.0, `MerkleMap` is still exported and is not marked as deprecated. But [IndexedMerkleMap](#indexedmerklemap) does the same job with fewer constraints, and it can prove that a key is not in the map. Use `MerkleMap` only when existing code or an existing root on chain depends on it.
+
+:::
+
+## Provable data structures
+
+A circuit has a fixed size. Thus, a smart contract method cannot take a JavaScript array or a JavaScript `Map` of any length. A method can take only a _provable type_: a type that o1js can convert to a fixed number of field elements. o1js 3.0.0 has these provable data structures:
+
+- A fixed-size array, made with `Provable.Array(type, length)` or with a `Struct`, such as `Points8` in [Struct](#struct).
+- `DynamicArray`: an array with a fixed capacity and a length that can change.
+- `MerkleList`: a list of any length, which the circuit sees as one hash.
+- `MerkleTree` and `MerkleWitness`: values at index positions. See [Merkle Trees](#merkle-trees).
+- `MerkleMap` and `MerkleMapWitness`: values by key. See [Merkle Map](#merkle-map).
+- `IndexedMerkleMap`: values by key, with fewer constraints than `MerkleMap`.
+
+A _commitment_ is one field element, such as a hash or a Merkle root, that identifies all of the data. Usually, a smart contract stores only the commitment in its on-chain state. The caller keeps the full data off chain and gives it to the method as an argument. The method makes sure that the data agrees with the commitment on chain, changes the data, and stores the new commitment.
+
+### Which structure for which job
+
+The _rows_ column shows the size of the circuit of each method in the example project. It is the number that `analyzeMethods()` reports in o1js 3.0.0. A method that only sets one state field, such as `initState`, takes 614 rows. Thus, most of the rows of a small method do not come from the data structure.
+
+| Structure | Use it when | Size limit | What the method gets | What goes on chain | Rows in the example |
+| --- | --- | --- | --- | --- | --- |
+| `Provable.Array`, `Struct` | You always have exactly `n` values. | `n`, fixed | all `n` values | the values, or their hash | not measured |
+| `DynamicArray` | You have from 0 to `capacity` values, and the method reads all of them or reads by index. | `capacity` less than 2<sup>16</sup> | all `capacity` slots and the length | nothing, or a hash that you calculate | `addAll`: 742, `pick`: 707 (capacity 8) |
+| `MerkleList` | You have a list of unknown length that a method reads in order, for example a queue of tasks. | no limit on the list; `forEach(n)` reads at most `n` elements | 1 field: the hash | the hash | `push`: 628, `pop`: 628, `sum`: 686 (4 steps) |
+| `MerkleTree` | You have values at index positions. | 2<sup>(height-1)</sup> leaves | a witness of `height - 1` hashes | the root | `update`: 1,307 (height 20) |
+| `MerkleMap` | Existing code uses it. | height fixed at 256 | a witness | the root | `update`: 10,591 |
+| `IndexedMerkleMap` | You need values by key, or you must prove that a key is not in the map. | 2<sup>(height-1)</sup> leaves, height at most 52 | 2 fields, plus the map data as an unconstrained value | the root | `insert`: 2,621, `update`: 1,613 (height 33) |
+
+An _unconstrained_ value is data that the prover gives to the circuit without a proof. The method must check it against a constrained value, for example against the root on chain.
+
+### IndexedMerkleMap
+
+An `IndexedMerkleMap` is a key-value map in a Merkle tree. Each leaf holds a key, a value, and the next larger key in the map. Thus, the leaves make a sorted linked list. Because of this list, the map can prove that a key is not in the map: it shows the leaf with the next smaller key, and that leaf points to a larger key.
+
+In o1js 3.0.0, import `IndexedMerkleMap` directly from `o1js`. It is not in the `Experimental` namespace. Make a class for one height:
+
+```ts title="src/main.ts"
+const indexedMap = new Map33();
+indexedMap.insert(100n, 50n);
+
+console.log(`value for key 100: ${indexedMap.get(100n)}`);
+console.log(`key 101 is in the map: ${indexedMap.getOption(101n).isSome}`);
+console.log(`Fields in Map33: ${Map33.provable.sizeInFields()}`);
+
+try {
+  indexedMap.insert(100n, 51n);
+} catch {
+  console.log('second insert of key 100: rejected');
+}
+```
+
+The output:
+
+```
+value for key 100: 50
+key 101 is in the map: false
+Fields in Map33: 2
+second insert of key 100: rejected
+```
+
+These are the rules of the map:
+
+- A new map contains the key `0` with the value `0`. This entry uses one of the 2<sup>(height-1)</sup> leaves.
+- `insert(key, value)` fails if the key is already in the map.
+- `update(key, value)` fails if the key is not in the map. It returns the old value.
+- `set(key, value)` does an insert or an update. It costs more constraints than `insert()` or `update()`.
+- `get(key)` fails if the key is not in the map.
+- `getOption(key)` returns an `Option`: a provable type with an `isSome` Bool and a `value`. `isSome` is false if the key is not in the map. Then `value` is unconstrained, so read it with `orElse(default)`. The o1js API reference says that `getOption()` takes about two times the constraints of `get()`.
+- `map.root` is the hash of the internal Merkle root and the number of entries. Store `map.root` on chain.
+
+The map goes into a smart contract method as an argument. The contract stores only the root:
+
+```ts title="src/IndexedMerkleMapContract.ts"
+// A map with 2^(33-1) leaves. The initial key 0 uses one leaf.
+export class Map33 extends IndexedMerkleMap(33) {}
+
+export class IndexedMerkleMapContract extends SmartContract {
+  // Only the root goes on chain. The map data stays with the caller.
+  @state(Field) mapRoot = State<Field>();
+
+  init() {
+    super.init();
+    this.mapRoot.set(new Map33().root);
+  }
+
+  // Add a new key. Fails if the key is already in the map.
+  @method async insert(map: Map33, key: Field, value: Field) {
+    // Change a copy. The method body can run more than one time for
+    // each transaction, and a change to `map` itself also changes the
+    // map of the caller.
+    const copy = map.clone();
+    this.mapRoot.requireEquals(copy.root);
+    copy.insert(key, value);
+    this.mapRoot.set(copy.root);
+  }
+
+  // Change the value of a key. Fails if the key is not in the map.
+  @method async update(map: Map33, key: Field, value: Field) {
+    const copy = map.clone();
+    this.mapRoot.requireEquals(copy.root);
+    copy.update(key, value);
+    this.mapRoot.set(copy.root);
+  }
+}
+```
+
+The method changes a `clone()` of the map, not the argument. In o1js 3.0.0, `Mina.transaction()` can run the method body more than one time, and the argument shares its unconstrained data with the map of the caller. If the method changes the argument, the first run adds the key to the data of the caller but not to its root. The second run then fails with `Invalid low node (root)`. The tests of the example project find this error.
+
+The caller sends the transaction, and then makes the same change to its own map:
+
+```ts title="src/main.ts"
+// init() sets the root of an empty map on chain
+const deployTxn = await Mina.transaction(deployerAccount, async () => {
+  AccountUpdate.fundNewAccount(deployerAccount);
+  await zkApp.deploy();
+});
+await deployTxn.prove();
+await deployTxn.sign([deployerKey, zkAppPrivateKey]).send();
+
+// the caller keeps the full map
+const map = new Map33();
+
+// insert on chain, then make the same change to the local map
+const txn1 = await Mina.transaction(deployerAccount, async () => {
+  await zkApp.insert(map, Field(100), Field(50));
+});
+await txn1.prove();
+await txn1.sign([deployerKey]).send();
+map.insert(100n, 50n);
+
+// update on chain, then locally
+const txn2 = await Mina.transaction(deployerAccount, async () => {
+  await zkApp.update(map, Field(100), Field(51));
+});
+await txn2.prove();
+await txn2.sign([deployerKey]).send();
+map.update(100n, 51n);
+
+console.log(
+  `IndexedMerkleMap: local root equals contract root: ${map.root.equals(
+    zkApp.mapRoot.get()
+  )}`
+);
+```
+
+The output:
+
+```
+IndexedMerkleMap: local root equals contract root: true
+```
+
+### MerkleList
+
+A `MerkleList` is a list that the circuit sees as one hash. Each `push()` hashes the old hash with the new element. `popExn()` removes the element that was pushed last, so the list is a stack. Because the method gets only the hash, the list can have any length.
+
+Use a `MerkleList` when:
+
+- The length of the data is not known when you write the contract.
+- The method reads the elements in order, not by index.
+
+`forEach(n, callback)` always takes `n` steps, so its cost is `n` times the cost of one step. It fails if the list has more than `n` elements. After the last element, the callback gets dummy elements with `isDummy` set to true.
+
+```ts title="src/main.ts"
+const list = FieldList.empty();
+list.push(Field(1));
+list.push(Field(2));
+list.push(Field(3));
+
+console.log(`list elements: ${list.toArrayUnconstrained().get()}`);
+console.log(`Fields in the list: ${FieldList.provable.sizeInFields()}`);
+console.log(`popExn: ${list.popExn()}`);
+```
+
+The output:
+
+```
+list elements: 1,2,3
+Fields in the list: 1
+popExn: 3
+```
+
+`popExn()` fails on an empty list. `pop()` does not fail on an empty list: it returns a dummy element. `popOption()` returns an `Option`.
+
+A contract that keeps the hash of a list on chain:
+
+```ts title="src/MerkleListContract.ts"
+export class FieldList extends MerkleList.create(Field) {}
+
+// The number of steps that `sum` takes. A longer list fails.
+export const MAX_SUM_LENGTH = 4;
+
+export class MerkleListContract extends SmartContract {
+  // Only the hash of the list goes on chain. The elements stay with the caller.
+  @state(Field) listHash = State<Field>();
+  @state(Field) lastPopped = State<Field>();
+  @state(Field) total = State<Field>();
+
+  init() {
+    super.init();
+    this.listHash.set(FieldList.empty().hash);
+  }
+
+  @method async push(list: FieldList, element: Field) {
+    // Change a copy, for the same reason as in IndexedMerkleMapContract.
+    const copy = list.clone();
+    this.listHash.requireEquals(copy.hash);
+    copy.push(element);
+    this.listHash.set(copy.hash);
+  }
+
+  // Remove the element that was pushed last. Fails if the list is empty.
+  @method async pop(list: FieldList) {
+    const copy = list.clone();
+    this.listHash.requireEquals(copy.hash);
+    this.lastPopped.set(copy.popExn());
+    this.listHash.set(copy.hash);
+  }
+
+  // Add up all elements in MAX_SUM_LENGTH steps.
+  @method async sum(list: FieldList) {
+    this.listHash.requireEquals(list.hash);
+    let total = Field(0);
+    list.clone().forEach(MAX_SUM_LENGTH, (element, isDummy) => {
+      total = total.add(Provable.if(isDummy, Field(0), element));
+    });
+    this.total.set(total);
+  }
+}
+```
+
+Each method changes a `clone()` of the list for the same reason as in the `IndexedMerkleMap` contract. Without the clone, the hash of the list of the caller stays the same, but its elements change.
+
+```ts title="src/main.ts"
+const deployTxn = await Mina.transaction(deployerAccount, async () => {
+  AccountUpdate.fundNewAccount(deployerAccount);
+  await zkApp.deploy();
+});
+await deployTxn.prove();
+await deployTxn.sign([deployerKey, zkAppPrivateKey]).send();
+
+const list = FieldList.empty();
+
+for (const element of [Field(5), Field(7)]) {
+  const txn = await Mina.transaction(deployerAccount, async () => {
+    await zkApp.push(list, element);
+  });
+  await txn.prove();
+  await txn.sign([deployerKey]).send();
+  list.push(element);
+}
+
+const sumTxn = await Mina.transaction(deployerAccount, async () => {
+  await zkApp.sum(list);
+});
+await sumTxn.prove();
+await sumTxn.sign([deployerKey]).send();
+
+console.log(`MerkleList: contract total: ${zkApp.total.get()}`);
+```
+
+The output:
+
+```
+MerkleList: contract total: 12
+```
+
+### DynamicArray
+
+A `DynamicArray` has a fixed _capacity_ and a _length_ from 0 to the capacity. The circuit always holds all capacity slots plus one field for the length. The slots after the length can hold any value that the prover gives.
+
+Use a `DynamicArray` when:
+
+- The data is short and its length changes, for example from 0 to 8 scores.
+- The method must read elements by index, or must read all elements.
+
+A read at a variable index adds one constraint for each slot, so the cost grows with the capacity. For long data, use a `MerkleList` or a Merkle tree.
+
+```ts title="src/main.ts"
+const scores = Scores.from([UInt32.from(3), UInt32.from(4), UInt32.from(5)]);
+
+console.log(`length: ${scores.length}, capacity: ${scores.capacity}`);
+console.log(`Fields in Scores: ${Scores.provable.sizeInFields()}`);
+console.log(`element at index 2: ${scores.get(Field(2))}`);
+```
+
+The output:
+
+```
+length: 3, capacity: 8
+Fields in Scores: 9
+element at index 2: 5
+```
+
+`get(i)` fails if `i` is not less than the length. `Scores.from()` fails for more elements than the capacity.
+
+A contract that takes a `DynamicArray` as an argument:
+
+```ts title="src/DynamicArrayContract.ts"
+// Between 0 and 8 scores. The circuit always holds 8 slots.
+export class Scores extends DynamicArray(UInt32, { capacity: 8 }) {}
+
+// When o1js 3.0.0 builds the circuit (compile(), analyzeMethods(), prove()),
+// it copies each SmartContract method argument. The copy of a DynamicArray
+// loses its private fields, and forEach() and get() then throw "Cannot read
+// private member". Make a new array from the copy before you use it.
+function rebuild(scores: Scores) {
+  return new Scores(scores.array, scores.length);
+}
+
+export class DynamicArrayContract extends SmartContract {
+  @state(UInt32) total = State<UInt32>();
+  @state(UInt32) picked = State<UInt32>();
+
+  // Add up the real elements. The callback also sees the empty slots,
+  // with isDummy set to true.
+  @method async addAll(scores: Scores) {
+    let total = UInt32.zero;
+    rebuild(scores).forEach((score, isDummy) => {
+      total = total.add(Provable.if(isDummy, UInt32.zero, score));
+    });
+    this.total.set(total);
+  }
+
+  // Store the element at `index`. Fails if `index` is not less than the length.
+  @method async pick(scores: Scores, index: Field) {
+    this.picked.set(rebuild(scores).get(index));
+  }
+}
+```
+
+`forEach()` gives each slot with an `isDummy` flag. `addAll` adds `0` for a dummy slot. Without this check, a prover can put any value in a slot after the length, and that value goes into the total.
+
+```ts title="src/main.ts"
+const txn = await Mina.transaction(deployerAccount, async () => {
+  await zkApp.addAll(scores);
+});
+await txn.prove();
+await txn.sign([deployerKey]).send();
+
+console.log(`DynamicArray: contract total: ${zkApp.total.get()}`);
+```
+
+The output:
+
+```
+DynamicArray: contract total: 12
+```
+
+### Not on this page
+
+o1js 3.0.0 has more provable types that hold data. This tutorial does not show them:
+
+- `Bytes` and `UInt8`: fixed-size byte arrays for hash functions such as SHA-256 and Keccak.
+- `Experimental.OffchainState` and `Experimental.BatchReducer`: APIs that keep a map or a list off chain and settle it with actions. See [Tutorial 6](offchain-storage) for off-chain storage.
+
 ## Test it
 
-The example project in this repository carries a test suite for the code on
+The example project in this repository carries two test suites for the code on
 this page:
 
 ```sh
@@ -22493,9 +22849,9 @@ npm install
 npm test
 ```
 
-It asserts each value that the console-output blocks on this page print, from
-`num1 === num2: true` to `value for key 100: 50`. It also runs all three contracts
-on a local blockchain:
+`CommonTypes.test.ts` asserts each value that the console-output blocks on this
+page print, from `num1 === num2: true` to `value for key 100: 50`. It also runs
+three contracts on a local blockchain:
 
 - `BasicMerkleTreeContract` accepts an increment of `9` and **rejects** an
   increment of `10`. After an update, the contract root and the local tree
@@ -22507,8 +22863,23 @@ on a local blockchain:
   It **rejects** a transfer signed by a different key, a transfer of the full
   balance, and a new recipient that claims a balance that is not `0`.
 
-`main.ts` compiles all three contracts and creates real proofs, so it takes
-several minutes. The test suite turns proofs off and is much faster.
+`DataStructures.test.ts` covers the provable data structures:
+
+- `IndexedMerkleMap` **rejects** a second insert of the same key, an update of
+  a missing key, `get()` of a missing key, more keys than 2<sup>(height-1)</sup>
+  leaves, and a height of 53. `IndexedMerkleMapContract` keeps the same root as
+  the local map, does not change the map of the caller, and **rejects** a map
+  that does not match the root on chain. Its methods take at least 4 times fewer
+  rows than the `MerkleMap` update.
+- `MerkleListContract` pops the element that was pushed last, adds up a list of
+  3 elements, and **rejects** a pop from an empty list, a sum of a list longer
+  than `MAX_SUM_LENGTH`, and a list that does not match the hash on chain.
+- `DynamicArrayContract` adds up only the real elements, also when the empty
+  slots hold other values, and **rejects** an index that is not less than the
+  length. `Scores.from()` **rejects** more elements than the capacity.
+
+`main.ts` compiles all six contracts and creates real proofs, so it takes
+several minutes. The test suites turn proofs off and are much faster.
 
 ## Conclusion
 
