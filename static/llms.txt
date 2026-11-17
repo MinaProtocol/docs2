@@ -17,6 +17,11 @@ Every page also has a markdown twin: add `.md` to its URL (for example https://d
 - [Events and actions](https://docs.minaprotocol.com/zkapps/writing-a-zkapp/feature-overview/fetch-events-and-actions): Nodes do not keep them; fetchEvents and fetchActions read them from an archive node (Archive Node API), so Mina.Network needs an archive endpoint.
 - [Local testing](https://docs.minaprotocol.com/zkapps/writing-a-zkapp/introduction-to-zkapps/testing-zkapps-lightnet): Mina.LocalBlockchain for unit tests; `zk lightnet start` for a local network with a daemon, an archive node and funded accounts.
 
+## General
+
+- [Welcome](https://docs.minaprotocol.com/): Mina is building a gateway between the real world and crypto — and the infrastructure for the secure, democratic future we all deserve.
+- [Glossary](https://docs.minaprotocol.com/glossary): A list of terms relating to zero knowledge and the Mina ecosystem.
+
 ## Network Upgrades
 
 - [Network Upgrades](https://docs.minaprotocol.com/network-upgrades): History of Mina Protocol mainnet network upgrades (hard forks), including Berkeley and Mesa.
@@ -51,6 +56,15 @@ Every page also has a markdown twin: add `.md` to its URL (for example https://d
 - [Upgrade Modes - Details](https://docs.minaprotocol.com/network-upgrades/mesa/appendix/upgrade-modes-details): In-depth technical details of the Mesa upgrade mechanism, including automode internals, the dispatcher, stop-slot system, and manual upgrade flow.
 - [Automode Docker Compose Quickstart](https://docs.minaprotocol.com/network-upgrades/mesa/appendix/automode-docker-compose-quickstart): Run a Mina node with automode enabled for the Mesa upgrade using Docker Compose.
 - [Glossary](https://docs.minaprotocol.com/network-upgrades/mesa/glossary): Definitions of key terms used throughout the Mesa upgrade documentation — stop-slots, automode, dispatcher, trustless/trustful upgrades, and more.
+
+## Using Mina
+
+- [Install a Wallet](https://docs.minaprotocol.com/using-mina/install-a-wallet): Choose a wallet for MINA: Auro Wallet, Clorio or the Ledger Mina app, and a wallet for node operators.
+- [Ledger Hardware Wallet](https://docs.minaprotocol.com/using-mina/ledger-hardware-wallet): Keep MINA on a Ledger Nano S or Nano X. Install the Mina app, see the operations that it supports, and fix common problems. A Ledger cannot sign zkApp transactions.
+- [How to Send & Receive](https://docs.minaprotocol.com/using-mina/how-to-send-and-receive): Send and receive MINA with a wallet, and find the transaction in a block explorer.
+- [How to Delegate](https://docs.minaprotocol.com/using-mina/how-to-delegate): Delegate MINA to a block producer to get staking rewards without running a node.
+- [How to Use a zkApp](https://docs.minaprotocol.com/using-mina/how-to-use-zkapp): Use a zkApp as a user. Open the zkApp in a browser, confirm the transaction in a zkApp-compatible wallet, and check the transaction.
+- [General Security Practices](https://docs.minaprotocol.com/using-mina/Protect-Your-MINA): Keep MINA safe. Never share a seed phrase, private key or password, recognize common scams, and follow general security practices.
 
 ## zkApp Developers
 
@@ -169,6 +183,18 @@ Every page also has a markdown twin: add `.md` to its URL (for example https://d
 ## Exchange Operators
 
 - [Exchange Operators](https://docs.minaprotocol.com/node-operators/exchange-operators): Guide for exchanges integrating with the Mina blockchain using Rosetta API, archive nodes, and block producer nodes.
+
+## Node Developers
+
+- [Overview](https://docs.minaprotocol.com/node-developers): Start here to contribute code to the Mina daemon. Links to the repository, the contributing guide and the other developer documents.
+- [Codebase Overview](https://docs.minaprotocol.com/node-developers/codebase-overview): How the Mina daemon uses OCaml: code structure, compilation, library documentation, extensions, monads, Async and custom helpers.
+- [Repository Structure](https://docs.minaprotocol.com/node-developers/repository-structure): What the top-level folders of the MinaProtocol/mina repository contain.
+- [BIP44 Information](https://docs.minaprotocol.com/node-developers/bip44): The BIP44 coin type of MINA: index 12586 (0x8000312a).
+- [Code Review Guidelines](https://docs.minaprotocol.com/node-developers/code-review-guidelines): What a good pull request to the Mina repository contains, and what to check in OCaml code during a review.
+- [Style Guide](https://docs.minaprotocol.com/node-developers/style-guide): OCaml style rules for the Mina codebase, including parameterized records.
+- [Sandbox Node](https://docs.minaprotocol.com/node-developers/sandbox-node): Run a single-node private Mina network in Docker to test the protocol and build tools, with demo accounts and the GraphQL API on port 3085. The sandbox does not connect to a live network.
+- [GraphQL API](https://docs.minaprotocol.com/node-developers/graphql-api): Read data from a Mina daemon and send commands to it with its GraphQL API on port 3085: queries, mutations and subscriptions, and why you must not expose the API to the internet.
+- [Contributing to Mina](https://docs.minaprotocol.com/node-developers/contributing): How to contribute to Mina: code, documentation, Mina grants, and how to report issues.
 
 ## Integrations
 

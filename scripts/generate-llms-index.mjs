@@ -163,7 +163,11 @@ async function readFrontmatter(docId) {
           const m = line.match(/^(\w+):\s*(.+)$/);
           if (m) fm[m[1]] = m[2].replace(/^['"]|['"]$/g, "").trim();
         }
-        return { title: fm.title ?? null, description: fm.description ?? null };
+        return {
+          title: fm.title ?? null,
+          description: fm.description ?? null,
+          slug: fm.slug ?? null,
+        };
       } catch {
         /* try next path */
       }
@@ -182,10 +186,11 @@ function docIdToUrl(docId) {
 const listedUrls = new Set();
 
 async function entryToBullet(docId, fallbackLabel) {
-  const url = docIdToUrl(docId);
-  if (listedUrls.has(url)) return null;
   const fm = await readFrontmatter(docId);
   if (!fm) return null; // file doesn't exist
+  // An absolute `slug` replaces the path (the welcome page is `slug: /`).
+  const url = fm.slug?.startsWith("/") ? `${SITE_URL}${fm.slug}` : docIdToUrl(docId);
+  if (listedUrls.has(url)) return null;
   listedUrls.add(url);
   const title = fm.title || fallbackLabel || docId;
   const description = fm.description;
@@ -243,8 +248,17 @@ async function build() {
   const sections = [];
   const allMissing = [];
 
+  // Pages at the top level of the sidebar (the welcome page, the glossary)
+  // go together in one section.
+  const general = [];
+
   for (const entry of top) {
-    if (typeof entry === "string") continue;
+    if (typeof entry === "string") {
+      const r = await entryToBullet(entry);
+      if (r?.line) general.push(r.line);
+      else if (r?.missing) allMissing.push(r.missing);
+      continue;
+    }
     if (SKIP_LABELS.has(entry.label)) continue;
 
     if (entry.type === "category") {
@@ -263,9 +277,11 @@ async function build() {
       if (landing?.line) bullets.unshift(landing.line);
       else if (landing?.missing) missingDescriptions.push(landing.missing);
 
+      // Report the pages without a description before an empty section is
+      // dropped, or a section where no page has one disappears silently.
+      allMissing.push(...missingDescriptions);
       if (bullets.length === 0) continue;
       sections.push({ heading: entry.label, bullets });
-      allMissing.push(...missingDescriptions);
     } else if (entry.type === "doc") {
       const r = await entryToBullet(entry.id, entry.label);
       if (r?.line) {
@@ -275,6 +291,8 @@ async function build() {
       }
     }
   }
+
+  if (general.length > 0) sections.unshift({ heading: "General", bullets: general });
 
   // Append operator facts as their own H2
   sections.push({
