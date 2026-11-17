@@ -1,0 +1,176 @@
+---
+id: user-command
+title: UserCommand
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+Common interface for user commands
+
+
+```graphql
+interface UserCommand {
+  amount: Amount!
+  failureReason: TransactionStatusFailure
+  fee: Fee!
+  feePayer: Account!
+  feeToken: TokenId!
+  from: PublicKey! @deprecated
+  fromAccount: Account! @deprecated
+  hash: TransactionHash!
+  id: TransactionId!
+  isDelegation: Boolean! @deprecated
+  kind: UserCommandKind!
+  memo: String!
+  nonce: Int!
+  receiver: Account!
+  source: Account!
+  to: PublicKey! @deprecated
+  toAccount: Account! @deprecated
+  token: TokenId!
+  validUntil: Globalslot!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>UserCommand.<b>amount</b></code>](#amount)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Amount!</b></code>](/node-developers/graphql-api/reference/types/scalars/amount.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#amount\} 
+Amount that the source is sending to receiver - 0 for commands that are not associated with an amount
+
+
+#### [<code style={{ fontWeight: 'normal' }}>UserCommand.<b>failureReason</b></code>](#failure-reason)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>TransactionStatusFailure</b></code>](/node-developers/graphql-api/reference/types/scalars/transaction-status-failure.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#failure-reason\} 
+null is no failure, reason for failure otherwise.
+
+
+#### [<code style={{ fontWeight: 'normal' }}>UserCommand.<b>fee</b></code>](#fee)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Fee!</b></code>](/node-developers/graphql-api/reference/types/scalars/fee.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#fee\} 
+Fee that the fee-payer is willing to pay for making the transaction
+
+
+#### [<code style={{ fontWeight: 'normal' }}>UserCommand.<b>feePayer</b></code>](#fee-payer)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Account!</b></code>](/node-developers/graphql-api/reference/types/objects/account.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#fee-payer\} 
+Account that pays the fees for the command
+
+
+#### [<code style={{ fontWeight: 'normal' }}>UserCommand.<b>feeToken</b></code>](#fee-token)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>TokenId!</b></code>](/node-developers/graphql-api/reference/types/scalars/token-id.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#fee-token\} 
+Token used to pay the fee
+
+
+#### [<code style={{ fontWeight: 'normal' }}>UserCommand.<b>hash</b></code>](#hash)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>TransactionHash!</b></code>](/node-developers/graphql-api/reference/types/scalars/transaction-hash.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#hash\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>UserCommand.<b>id</b></code>](#id)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>TransactionId!</b></code>](/node-developers/graphql-api/reference/types/scalars/transaction-id.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#id\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>UserCommand.<b>kind</b></code>](#kind)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>UserCommandKind!</b></code>](/node-developers/graphql-api/reference/types/scalars/user-command-kind.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#kind\} 
+String describing the kind of user command
+
+
+#### [<code style={{ fontWeight: 'normal' }}>UserCommand.<b>memo</b></code>](#memo)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String!</b></code>](/node-developers/graphql-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#memo\} 
+Short arbitrary message provided by the sender
+
+
+#### [<code style={{ fontWeight: 'normal' }}>UserCommand.<b>nonce</b></code>](#nonce)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#nonce\} 
+Sequence number of command for the fee-payer's account
+
+
+#### [<code style={{ fontWeight: 'normal' }}>UserCommand.<b>receiver</b></code>](#receiver)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Account!</b></code>](/node-developers/graphql-api/reference/types/objects/account.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#receiver\} 
+Account that the command applies to
+
+
+#### [<code style={{ fontWeight: 'normal' }}>UserCommand.<b>source</b></code>](#source)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Account!</b></code>](/node-developers/graphql-api/reference/types/objects/account.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#source\} 
+Account that the command is sent from
+
+
+#### [<code style={{ fontWeight: 'normal' }}>UserCommand.<b>token</b></code>](#token)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>TokenId!</b></code>](/node-developers/graphql-api/reference/types/scalars/token-id.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#token\} 
+Token used by the command
+
+
+#### [<code style={{ fontWeight: 'normal' }}>UserCommand.<b>validUntil</b></code>](#valid-until)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Globalslot!</b></code>](/node-developers/graphql-api/reference/types/scalars/globalslot.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#valid-until\} 
+The global slot number after which this transaction cannot be applied
+
+
+
+
+<details class="graphql-markdown-details">
+<summary>
+<span class="graphql-markdown-details-label-closed">Show deprecated</span>
+<span class="graphql-markdown-details-label-open" hidden>Hide deprecated</span>
+</summary>
+
+#### [<code style={{ fontWeight: 'normal' }}>UserCommand.<b>from</b></code>](#from)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>PublicKey!</b></code>](/node-developers/graphql-api/reference/types/scalars/public-key.mdx) <Badge class="badge badge--secondary badge--deprecated" text="deprecated"/> <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#from\} 
+:::warning[DEPRECATED]
+
+use feePayer field instead
+
+:::
+
+Public key of the sender
+
+
+#### [<code style={{ fontWeight: 'normal' }}>UserCommand.<b>fromAccount</b></code>](#from-account)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Account!</b></code>](/node-developers/graphql-api/reference/types/objects/account.mdx) <Badge class="badge badge--secondary badge--deprecated" text="deprecated"/> <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#from-account\} 
+:::warning[DEPRECATED]
+
+use feePayer field instead
+
+:::
+
+Account of the sender
+
+
+#### [<code style={{ fontWeight: 'normal' }}>UserCommand.<b>isDelegation</b></code>](#is-delegation)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Boolean!</b></code>](/node-developers/graphql-api/reference/types/scalars/boolean.mdx) <Badge class="badge badge--secondary badge--deprecated" text="deprecated"/> <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#is-delegation\} 
+:::warning[DEPRECATED]
+
+use kind field instead
+
+:::
+
+If true, this represents a delegation of stake, otherwise it is a payment
+
+
+#### [<code style={{ fontWeight: 'normal' }}>UserCommand.<b>to</b></code>](#to)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>PublicKey!</b></code>](/node-developers/graphql-api/reference/types/scalars/public-key.mdx) <Badge class="badge badge--secondary badge--deprecated" text="deprecated"/> <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#to\} 
+:::warning[DEPRECATED]
+
+use receiver field instead
+
+:::
+
+Public key of the receiver
+
+
+#### [<code style={{ fontWeight: 'normal' }}>UserCommand.<b>toAccount</b></code>](#to-account)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Account!</b></code>](/node-developers/graphql-api/reference/types/objects/account.mdx) <Badge class="badge badge--secondary badge--deprecated" text="deprecated"/> <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#to-account\} 
+:::warning[DEPRECATED]
+
+use receiver field instead
+
+:::
+
+Account of the receiver
+
+
+</details>
+
+
+
+### Returned By
+
+[`pooledUserCommands`](/node-developers/graphql-api/reference/operations/queries/pooled-user-commands.mdx)  <Badge class="badge badge--secondary badge--relation" text="query"/>
+
+### Member Of
+
+[`SendDelegationPayload`](/node-developers/graphql-api/reference/types/objects/send-delegation-payload.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`SendPaymentPayload`](/node-developers/graphql-api/reference/types/objects/send-payment-payload.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`SendRosettaTransactionPayload`](/node-developers/graphql-api/reference/types/objects/send-rosetta-transaction-payload.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`Transactions`](/node-developers/graphql-api/reference/types/objects/transactions.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>
+
+### Implemented By
+
+[`UserCommandDelegation`](/node-developers/graphql-api/reference/types/objects/user-command-delegation.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`UserCommandPayment`](/node-developers/graphql-api/reference/types/objects/user-command-payment.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

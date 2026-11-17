@@ -1,0 +1,28 @@
+---
+id: transaction-status-failure
+title: TransactionStatusFailure
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+transaction status failure
+
+
+```graphql
+scalar TransactionStatusFailure
+```
+
+
+### Member Of
+
+[`UserCommand`](/node-developers/graphql-api/reference/types/interfaces/user-command.mdx)  <Badge class="badge badge--secondary badge--relation" text="interface"/><Bullet />[`UserCommandDelegation`](/node-developers/graphql-api/reference/types/objects/user-command-delegation.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`UserCommandPayment`](/node-developers/graphql-api/reference/types/objects/user-command-payment.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`ZkappCommandFailureReason`](/node-developers/graphql-api/reference/types/objects/zkapp-command-failure-reason.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

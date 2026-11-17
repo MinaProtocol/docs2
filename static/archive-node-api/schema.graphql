@@ -1,5 +1,5 @@
 # Archive Node API GraphQL schema, version 2.1 (Archive Node API 2.1.1).
-# Source of truth: https://github.com/o1-labs/Archive-Node-API/blob/main/schema.graphql
+# Source of truth: https://github.com/o1-labs/Archive-Node-API/blob/v2.1.1/schema.graphql
 # This copy is served at https://docs.minaprotocol.com/archive-node-api/schema.graphql
 # and embedded in https://docs.minaprotocol.com/node-operators/data-and-history/archive-node-api-schema
 

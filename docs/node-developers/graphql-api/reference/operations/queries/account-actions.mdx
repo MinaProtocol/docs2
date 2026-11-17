@@ -1,0 +1,48 @@
+---
+id: account-actions
+title: accountActions
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+Find all the actions associated to an account from the current best tip.
+
+
+```graphql
+accountActions(
+  maxLength: Int
+  publicKey: PublicKey!
+  token: TokenId
+): [ActionState!]!
+```
+
+
+### Arguments
+
+#### [<code style={{ fontWeight: 'normal' }}>accountActions.<b>maxLength</b></code>](#max-length)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#max-length\} 
+The maximum number of blocks to search for actions. If there are more blocks in the transition frontier from root to tip, the maxLength blocks closest to the best tip will be returned
+
+
+#### [<code style={{ fontWeight: 'normal' }}>accountActions.<b>publicKey</b></code>](#public-key)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>PublicKey!</b></code>](/node-developers/graphql-api/reference/types/scalars/public-key.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#public-key\} 
+Public key of account being retrieved
+
+
+#### [<code style={{ fontWeight: 'normal' }}>accountActions.<b>token</b></code>](#token)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>TokenId</b></code>](/node-developers/graphql-api/reference/types/scalars/token-id.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#token\} 
+Token of account being retrieved (defaults to MINA)
+
+
+
+
+### Type
+
+#### [<code style={{ fontWeight: 'normal' }}><b>ActionState</b></code>](/node-developers/graphql-api/reference/types/objects/action-state.mdx) <Badge class="badge badge--secondary " text="object"/>

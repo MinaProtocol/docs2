@@ -1,0 +1,43 @@
+---
+id: max-block-height-info
+title: MaxBlockHeightInfo
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type MaxBlockHeightInfo {
+  canonicalMaxBlockHeight: Int!
+  pendingMaxBlockHeight: Int!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>MaxBlockHeightInfo.<b>canonicalMaxBlockHeight</b></code>](#canonical-max-block-height)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#canonical-max-block-height\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>MaxBlockHeightInfo.<b>pendingMaxBlockHeight</b></code>](#pending-max-block-height)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#pending-max-block-height\} 
+
+
+
+
+
+### Member Of
+
+[`NetworkStateOutput`](/node-operators/data-and-history/archive-node-api/reference/types/objects/network-state-output.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

@@ -1,0 +1,48 @@
+---
+id: action-data
+title: ActionData
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type ActionData {
+  accountUpdateId: String!
+  transactionInfo: TransactionInfo
+  data: [String!]!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>ActionData.<b>accountUpdateId</b></code>](#account-update-id)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String!</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#account-update-id\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ActionData.<b>transactionInfo</b></code>](#transaction-info)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>TransactionInfo</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/objects/transaction-info.mdx) <Badge class="badge badge--secondary " text="object"/> \{#transaction-info\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ActionData.<b>data</b></code>](#data)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>[String!]!</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#data\} 
+
+
+
+
+
+### Member Of
+
+[`ActionOutput`](/node-operators/data-and-history/archive-node-api/reference/types/objects/action-output.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

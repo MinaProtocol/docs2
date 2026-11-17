@@ -1,0 +1,48 @@
+---
+id: vrf-message
+title: VrfMessage
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+The inputs to a vrf evaluation
+
+
+```graphql
+type VrfMessage {
+  delegatorIndex: Int!
+  epochSeed: EpochSeed!
+  globalSlot: GlobalSlotSinceHardFork!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>VrfMessage.<b>delegatorIndex</b></code>](#delegator-index)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#delegator-index\} 
+Position in the ledger of the delegator's account
+
+
+#### [<code style={{ fontWeight: 'normal' }}>VrfMessage.<b>epochSeed</b></code>](#epoch-seed)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>EpochSeed!</b></code>](/node-developers/graphql-api/reference/types/scalars/epoch-seed.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#epoch-seed\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>VrfMessage.<b>globalSlot</b></code>](#global-slot)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>GlobalSlotSinceHardFork!</b></code>](/node-developers/graphql-api/reference/types/scalars/global-slot-since-hard-fork.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#global-slot\} 
+
+
+
+
+
+### Member Of
+
+[`VrfEvaluation`](/node-developers/graphql-api/reference/types/objects/vrf-evaluation.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

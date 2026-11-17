@@ -1,0 +1,43 @@
+---
+id: may-use-token-input
+title: MayUseTokenInput
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+input MayUseTokenInput {
+  inheritFromParent: Boolean!
+  parentsOwnToken: Boolean!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>MayUseTokenInput.<b>inheritFromParent</b></code>](#inherit-from-parent)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Boolean!</b></code>](/node-developers/graphql-api/reference/types/scalars/boolean.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#inherit-from-parent\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>MayUseTokenInput.<b>parentsOwnToken</b></code>](#parents-own-token)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Boolean!</b></code>](/node-developers/graphql-api/reference/types/scalars/boolean.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#parents-own-token\} 
+
+
+
+
+
+### Member Of
+
+[`AccountUpdateBodyInput`](/node-developers/graphql-api/reference/types/inputs/account-update-body-input.mdx)  <Badge class="badge badge--secondary badge--relation" text="input"/>

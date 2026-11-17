@@ -1,0 +1,44 @@
+---
+id: transaction-status
+title: transactionStatus
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+Get the status of a transaction
+
+
+```graphql
+transactionStatus(
+  payment: ID
+  zkappTransaction: ID
+): TransactionStatus!
+```
+
+
+### Arguments
+
+#### [<code style={{ fontWeight: 'normal' }}>transactionStatus.<b>payment</b></code>](#payment)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>ID</b></code>](/node-developers/graphql-api/reference/types/scalars/id.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#payment\} 
+Id of a Payment
+
+
+#### [<code style={{ fontWeight: 'normal' }}>transactionStatus.<b>zkappTransaction</b></code>](#zkapp-transaction)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>ID</b></code>](/node-developers/graphql-api/reference/types/scalars/id.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#zkapp-transaction\} 
+Id of a zkApp transaction
+
+
+
+
+### Type
+
+#### [<code style={{ fontWeight: 'normal' }}><b>TransactionStatus</b></code>](/node-developers/graphql-api/reference/types/enums/transaction-status.mdx) <Badge class="badge badge--secondary " text="enum"/> 
+Status of a transaction

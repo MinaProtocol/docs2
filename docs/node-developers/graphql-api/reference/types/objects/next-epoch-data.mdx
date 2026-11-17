@@ -1,0 +1,58 @@
+---
+id: next-epoch-data
+title: NextEpochData
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type NextEpochData {
+  epochLength: Length!
+  ledger: epochLedger!
+  lockCheckpoint: String!
+  seed: EpochSeed!
+  startCheckpoint: StateHash!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>NextEpochData.<b>epochLength</b></code>](#epoch-length)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Length!</b></code>](/node-developers/graphql-api/reference/types/scalars/length.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#epoch-length\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>NextEpochData.<b>ledger</b></code>](#ledger)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>epochLedger!</b></code>](/node-developers/graphql-api/reference/types/objects/epoch-ledger.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#ledger\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>NextEpochData.<b>lockCheckpoint</b></code>](#lock-checkpoint)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String!</b></code>](/node-developers/graphql-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#lock-checkpoint\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>NextEpochData.<b>seed</b></code>](#seed)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>EpochSeed!</b></code>](/node-developers/graphql-api/reference/types/scalars/epoch-seed.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#seed\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>NextEpochData.<b>startCheckpoint</b></code>](#start-checkpoint)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>StateHash!</b></code>](/node-developers/graphql-api/reference/types/scalars/state-hash.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#start-checkpoint\} 
+
+
+
+
+
+### Member Of
+
+[`ConsensusState`](/node-developers/graphql-api/reference/types/objects/consensus-state.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

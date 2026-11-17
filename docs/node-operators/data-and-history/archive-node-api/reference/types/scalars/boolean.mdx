@@ -1,0 +1,28 @@
+---
+id: boolean
+title: Boolean
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+The `Boolean` scalar type represents `true` or `false`.
+
+
+```graphql
+scalar Boolean
+```
+
+
+### Member Of
+
+[`BlockQueryInput`](/node-operators/data-and-history/archive-node-api/reference/types/inputs/block-query-input.mdx)  <Badge class="badge badge--secondary badge--relation" text="input"/><Bullet />[`include`](/node-operators/data-and-history/archive-node-api/reference/operations/directives/include.mdx)  <Badge class="badge badge--secondary badge--relation" text="directive"/><Bullet />[`skip`](/node-operators/data-and-history/archive-node-api/reference/operations/directives/skip.mdx)  <Badge class="badge badge--secondary badge--relation" text="directive"/><Bullet />[`ZkappAccountPrecondition`](/node-operators/data-and-history/archive-node-api/reference/types/objects/zkapp-account-precondition.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`ZkappAccountUpdateOutput`](/node-operators/data-and-history/archive-node-api/reference/types/objects/zkapp-account-update-output.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

@@ -1,0 +1,98 @@
+---
+id: permissions
+title: Permissions
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type Permissions {
+  access: AuthRequired!
+  editActionState: AuthRequired!
+  editState: AuthRequired!
+  incrementNonce: AuthRequired!
+  receive: AuthRequired!
+  send: AuthRequired!
+  setDelegate: AuthRequired!
+  setPermissions: AuthRequired!
+  setTiming: AuthRequired!
+  setTokenSymbol: AuthRequired!
+  setVerificationKey: VerificationKeyPermission!
+  setVotingFor: AuthRequired!
+  setZkappUri: AuthRequired!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>Permissions.<b>access</b></code>](#access)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>AuthRequired!</b></code>](/node-developers/graphql-api/reference/types/scalars/auth-required.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#access\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>Permissions.<b>editActionState</b></code>](#edit-action-state)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>AuthRequired!</b></code>](/node-developers/graphql-api/reference/types/scalars/auth-required.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#edit-action-state\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>Permissions.<b>editState</b></code>](#edit-state)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>AuthRequired!</b></code>](/node-developers/graphql-api/reference/types/scalars/auth-required.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#edit-state\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>Permissions.<b>incrementNonce</b></code>](#increment-nonce)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>AuthRequired!</b></code>](/node-developers/graphql-api/reference/types/scalars/auth-required.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#increment-nonce\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>Permissions.<b>receive</b></code>](#receive)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>AuthRequired!</b></code>](/node-developers/graphql-api/reference/types/scalars/auth-required.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#receive\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>Permissions.<b>send</b></code>](#send)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>AuthRequired!</b></code>](/node-developers/graphql-api/reference/types/scalars/auth-required.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#send\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>Permissions.<b>setDelegate</b></code>](#set-delegate)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>AuthRequired!</b></code>](/node-developers/graphql-api/reference/types/scalars/auth-required.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#set-delegate\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>Permissions.<b>setPermissions</b></code>](#set-permissions)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>AuthRequired!</b></code>](/node-developers/graphql-api/reference/types/scalars/auth-required.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#set-permissions\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>Permissions.<b>setTiming</b></code>](#set-timing)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>AuthRequired!</b></code>](/node-developers/graphql-api/reference/types/scalars/auth-required.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#set-timing\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>Permissions.<b>setTokenSymbol</b></code>](#set-token-symbol)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>AuthRequired!</b></code>](/node-developers/graphql-api/reference/types/scalars/auth-required.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#set-token-symbol\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>Permissions.<b>setVerificationKey</b></code>](#set-verification-key)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>VerificationKeyPermission!</b></code>](/node-developers/graphql-api/reference/types/objects/verification-key-permission.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#set-verification-key\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>Permissions.<b>setVotingFor</b></code>](#set-voting-for)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>AuthRequired!</b></code>](/node-developers/graphql-api/reference/types/scalars/auth-required.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#set-voting-for\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>Permissions.<b>setZkappUri</b></code>](#set-zkapp-uri)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>AuthRequired!</b></code>](/node-developers/graphql-api/reference/types/scalars/auth-required.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#set-zkapp-uri\} 
+
+
+
+
+
+### Member Of
+
+[`AccountUpdateModification`](/node-developers/graphql-api/reference/types/objects/account-update-modification.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

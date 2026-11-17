@@ -1,0 +1,60 @@
+---
+id: zkapp-command-filter-options-input
+title: ZkappCommandFilterOptionsInput
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+Filter successful zkApp commands by block range.
+
+Both `from` and `to` are required. The range is bounded by `ZKAPP_COMMAND_RANGE_SIZE`, and the server may reject dense ranges that expand to too many account updates.
+
+
+```graphql
+input ZkappCommandFilterOptionsInput {
+  blockStatus: BlockStatusFilter
+  from: Int!
+  to: Int!
+  accountPublicKey: String
+  tokenId: String
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>ZkappCommandFilterOptionsInput.<b>blockStatus</b></code>](#block-status)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>BlockStatusFilter</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/enums/block-status-filter.mdx) <Badge class="badge badge--secondary " text="enum"/> \{#block-status\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ZkappCommandFilterOptionsInput.<b>from</b></code>](#from)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#from\} 
+Mina block height to filter zkApp commands from, inclusive
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ZkappCommandFilterOptionsInput.<b>to</b></code>](#to)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#to\} 
+Mina block height to filter zkApp commands to, exclusive
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ZkappCommandFilterOptionsInput.<b>accountPublicKey</b></code>](#account-public-key)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#account-public-key\} 
+Optional account update public key filter.
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ZkappCommandFilterOptionsInput.<b>tokenId</b></code>](#token-id)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#token-id\} 
+Optional account update token id filter.
+
+
+
+
+### Member Of
+
+[`zkappCommands`](/node-operators/data-and-history/archive-node-api/reference/operations/queries/zkapp-commands.mdx)  <Badge class="badge badge--secondary badge--relation" text="query"/>

@@ -1,0 +1,56 @@
+---
+id: verification-key-update-filter-input
+title: VerificationKeyUpdateFilterInput
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+Find applied account updates that set a specific verification key.
+
+The block range is required and limited by the server's configured maximum.
+`from` is inclusive and `to` is exclusive.
+
+
+```graphql
+input VerificationKeyUpdateFilterInput {
+  verificationKeyHash: String!
+  from: Int!
+  to: Int!
+  status: BlockStatusFilter
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>VerificationKeyUpdateFilterInput.<b>verificationKeyHash</b></code>](#verification-key-hash)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String!</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#verification-key-hash\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>VerificationKeyUpdateFilterInput.<b>from</b></code>](#from)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#from\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>VerificationKeyUpdateFilterInput.<b>to</b></code>](#to)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#to\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>VerificationKeyUpdateFilterInput.<b>status</b></code>](#status)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>BlockStatusFilter</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/enums/block-status-filter.mdx) <Badge class="badge badge--secondary " text="enum"/> \{#status\} 
+
+
+
+
+
+### Member Of
+
+[`verificationKeyUpdates`](/node-operators/data-and-history/archive-node-api/reference/operations/queries/verification-key-updates.mdx)  <Badge class="badge badge--secondary badge--relation" text="query"/>

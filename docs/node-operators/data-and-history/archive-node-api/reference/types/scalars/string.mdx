@@ -1,0 +1,32 @@
+---
+id: string
+title: String
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.
+
+
+```graphql
+scalar String
+```
+
+
+### Returned By
+
+[`schemaVersion`](/node-operators/data-and-history/archive-node-api/reference/operations/queries/schema-version.mdx)  <Badge class="badge badge--secondary badge--relation" text="query"/>
+
+### Member Of
+
+[`ActionData`](/node-operators/data-and-history/archive-node-api/reference/types/objects/action-data.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`ActionFilterOptionsInput`](/node-operators/data-and-history/archive-node-api/reference/types/inputs/action-filter-options-input.mdx)  <Badge class="badge badge--secondary badge--relation" text="input"/><Bullet />[`ActionStates`](/node-operators/data-and-history/archive-node-api/reference/types/objects/action-states.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`Block`](/node-operators/data-and-history/archive-node-api/reference/types/objects/block.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`BlockInfo`](/node-operators/data-and-history/archive-node-api/reference/types/objects/block-info.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`BlockTransactions`](/node-operators/data-and-history/archive-node-api/reference/types/objects/block-transactions.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`deprecated`](/node-operators/data-and-history/archive-node-api/reference/types/directives/deprecated.mdx)  <Badge class="badge badge--secondary badge--relation" text="directive"/><Bullet />[`EventData`](/node-operators/data-and-history/archive-node-api/reference/types/objects/event-data.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`EventFilterOptionsInput`](/node-operators/data-and-history/archive-node-api/reference/types/inputs/event-filter-options-input.mdx)  <Badge class="badge badge--secondary badge--relation" text="input"/><Bullet />[`FeeTransfer`](/node-operators/data-and-history/archive-node-api/reference/types/objects/fee-transfer.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`specifiedBy`](/node-operators/data-and-history/archive-node-api/reference/types/directives/specified-by.mdx)  <Badge class="badge badge--secondary badge--relation" text="directive"/><Bullet />[`TransactionInfo`](/node-operators/data-and-history/archive-node-api/reference/types/objects/transaction-info.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`UserCommand`](/node-operators/data-and-history/archive-node-api/reference/types/objects/user-command.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`UserCommandFilterInput`](/node-operators/data-and-history/archive-node-api/reference/types/inputs/user-command-filter-input.mdx)  <Badge class="badge badge--secondary badge--relation" text="input"/><Bullet />[`UserCommandOutput`](/node-operators/data-and-history/archive-node-api/reference/types/objects/user-command-output.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`VerificationKeyUpdate`](/node-operators/data-and-history/archive-node-api/reference/types/objects/verification-key-update.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`VerificationKeyUpdateFilterInput`](/node-operators/data-and-history/archive-node-api/reference/types/inputs/verification-key-update-filter-input.mdx)  <Badge class="badge badge--secondary badge--relation" text="input"/><Bullet />[`ZkappAccountUpdateOutput`](/node-operators/data-and-history/archive-node-api/reference/types/objects/zkapp-account-update-output.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`ZkAppCommand`](/node-operators/data-and-history/archive-node-api/reference/types/objects/zk-app-command.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`ZkappCommandFilterOptionsInput`](/node-operators/data-and-history/archive-node-api/reference/types/inputs/zkapp-command-filter-options-input.mdx)  <Badge class="badge badge--secondary badge--relation" text="input"/><Bullet />[`ZkappCommandOutput`](/node-operators/data-and-history/archive-node-api/reference/types/objects/zkapp-command-output.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`ZkappFieldArray`](/node-operators/data-and-history/archive-node-api/reference/types/objects/zkapp-field-array.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

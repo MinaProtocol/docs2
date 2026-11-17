@@ -1,0 +1,61 @@
+---
+id: event-filter-options-input
+title: EventFilterOptionsInput
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+Filter events from a specific account
+
+&#x002A;&#x002A;WARNING&#x002A;&#x002A;: The graphQL schema server will limit the block scan range to a fixed number of blocks.  The default is 10,000 blocks, but can be changed by the host.
+It is the responsibility of the client to use a block range that is within the limit, which will guarantee that all events are eventually returned.  It is possible to get a partial result if you do not specify both a `from` and a `to` parameter.
+
+
+```graphql
+input EventFilterOptionsInput {
+  address: String!
+  tokenId: String
+  status: BlockStatusFilter
+  to: Int
+  from: Int
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>EventFilterOptionsInput.<b>address</b></code>](#address)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String!</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#address\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>EventFilterOptionsInput.<b>tokenId</b></code>](#token-id)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#token-id\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>EventFilterOptionsInput.<b>status</b></code>](#status)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>BlockStatusFilter</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/enums/block-status-filter.mdx) <Badge class="badge badge--secondary " text="enum"/> \{#status\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>EventFilterOptionsInput.<b>to</b></code>](#to)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#to\} 
+Mina block height to filter events to, exclusive
+
+
+#### [<code style={{ fontWeight: 'normal' }}>EventFilterOptionsInput.<b>from</b></code>](#from)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#from\} 
+Mina block height to filter events from, inclusive
+
+
+
+
+### Member Of
+
+[`events`](/node-operators/data-and-history/archive-node-api/reference/operations/queries/events.mdx)  <Badge class="badge badge--secondary badge--relation" text="query"/>

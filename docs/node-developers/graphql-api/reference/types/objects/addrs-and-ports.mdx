@@ -1,0 +1,58 @@
+---
+id: addrs-and-ports
+title: AddrsAndPorts
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type AddrsAndPorts {
+  bindIp: String!
+  clientPort: Int!
+  externalIp: String!
+  libp2pPort: Int!
+  peer: Peer
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>AddrsAndPorts.<b>bindIp</b></code>](#bind-ip)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String!</b></code>](/node-developers/graphql-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#bind-ip\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AddrsAndPorts.<b>clientPort</b></code>](#client-port)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#client-port\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AddrsAndPorts.<b>externalIp</b></code>](#external-ip)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String!</b></code>](/node-developers/graphql-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#external-ip\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AddrsAndPorts.<b>libp2pPort</b></code>](#libp-2-p-port)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#libp-2-p-port\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AddrsAndPorts.<b>peer</b></code>](#peer)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Peer</b></code>](/node-developers/graphql-api/reference/types/objects/peer.mdx) <Badge class="badge badge--secondary " text="object"/> \{#peer\} 
+
+
+
+
+
+### Member Of
+
+[`DaemonStatus`](/node-developers/graphql-api/reference/types/objects/daemon-status.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

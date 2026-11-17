@@ -1,0 +1,43 @@
+---
+id: vrf-threshold-input
+title: VrfThresholdInput
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+The amount of stake delegated, used to determine the threshold for a vrf evaluation producing a block
+
+
+```graphql
+input VrfThresholdInput {
+  delegatedStake: UInt64!
+  totalStake: UInt64!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>VrfThresholdInput.<b>delegatedStake</b></code>](#delegated-stake)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>UInt64!</b></code>](/node-developers/graphql-api/reference/types/scalars/uint-64.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#delegated-stake\} 
+The amount of stake delegated to the vrf evaluator by the delegating account. This should match the amount in the epoch's staking ledger, which may be different to the amount in the current ledger.
+
+
+#### [<code style={{ fontWeight: 'normal' }}>VrfThresholdInput.<b>totalStake</b></code>](#total-stake)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>UInt64!</b></code>](/node-developers/graphql-api/reference/types/scalars/uint-64.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#total-stake\} 
+The total amount of stake across all accounts in the epoch's staking ledger.
+
+
+
+
+### Member Of
+
+[`evaluateVrf`](/node-developers/graphql-api/reference/operations/queries/evaluate-vrf.mdx)  <Badge class="badge badge--secondary badge--relation" text="query"/><Bullet />[`VrfEvaluationInput`](/node-developers/graphql-api/reference/types/inputs/vrf-evaluation-input.mdx)  <Badge class="badge badge--secondary badge--relation" text="input"/>

@@ -1,0 +1,58 @@
+---
+id: timing
+title: Timing
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type Timing {
+  cliffAmount: CurrencyAmount!
+  cliffTime: GlobalSlotSinceGenesis!
+  initialMinimumBalance: Balance!
+  vestingIncrement: CurrencyAmount!
+  vestingPeriod: GlobalSlotSpan!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>Timing.<b>cliffAmount</b></code>](#cliff-amount)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>CurrencyAmount!</b></code>](/node-developers/graphql-api/reference/types/scalars/currency-amount.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#cliff-amount\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>Timing.<b>cliffTime</b></code>](#cliff-time)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>GlobalSlotSinceGenesis!</b></code>](/node-developers/graphql-api/reference/types/scalars/global-slot-since-genesis.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#cliff-time\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>Timing.<b>initialMinimumBalance</b></code>](#initial-minimum-balance)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Balance!</b></code>](/node-developers/graphql-api/reference/types/scalars/balance.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#initial-minimum-balance\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>Timing.<b>vestingIncrement</b></code>](#vesting-increment)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>CurrencyAmount!</b></code>](/node-developers/graphql-api/reference/types/scalars/currency-amount.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#vesting-increment\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>Timing.<b>vestingPeriod</b></code>](#vesting-period)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>GlobalSlotSpan!</b></code>](/node-developers/graphql-api/reference/types/scalars/global-slot-span.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#vesting-period\} 
+
+
+
+
+
+### Member Of
+
+[`AccountUpdateModification`](/node-developers/graphql-api/reference/types/objects/account-update-modification.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

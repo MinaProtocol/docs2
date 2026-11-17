@@ -1,0 +1,38 @@
+---
+id: send-rosetta-transaction
+title: sendRosettaTransaction
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+Send a transaction in Rosetta format
+
+
+```graphql
+sendRosettaTransaction(
+  input: RosettaTransaction!
+): SendRosettaTransactionPayload!
+```
+
+
+### Arguments
+
+#### [<code style={{ fontWeight: 'normal' }}>sendRosettaTransaction.<b>input</b></code>](#input)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>RosettaTransaction!</b></code>](/node-developers/graphql-api/reference/types/scalars/rosetta-transaction.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#input\} 
+
+
+
+
+
+### Type
+
+#### [<code style={{ fontWeight: 'normal' }}><b>SendRosettaTransactionPayload</b></code>](/node-developers/graphql-api/reference/types/objects/send-rosetta-transaction-payload.mdx) <Badge class="badge badge--secondary " text="object"/>

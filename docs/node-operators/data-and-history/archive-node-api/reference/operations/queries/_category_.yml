@@ -1,0 +1,8 @@
+label: Queries
+position: 7
+link: 
+  type: generated-index
+  title: 'Queries overview'
+  slug: /node-operators/data-and-history/archive-node-api/reference/operations/queries
+collapsible: true
+collapsed: true

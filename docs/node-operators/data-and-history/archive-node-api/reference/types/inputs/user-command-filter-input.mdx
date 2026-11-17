@@ -1,0 +1,58 @@
+---
+id: user-command-filter-input
+title: UserCommandFilterInput
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+Find the user commands (payments and delegations) of one account.
+
+The block range is required and limited by the server's configured maximum.
+`from` is inclusive and `to` is exclusive. A range that holds more than the
+server's user command limit for the account is rejected.
+
+
+```graphql
+input UserCommandFilterInput {
+  address: String!
+  from: Int!
+  to: Int!
+  status: BlockStatusFilter
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>UserCommandFilterInput.<b>address</b></code>](#address)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String!</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#address\} 
+Public key of the account. A command is returned when the account is its fee
+payer, its source or its receiver.
+
+
+#### [<code style={{ fontWeight: 'normal' }}>UserCommandFilterInput.<b>from</b></code>](#from)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#from\} 
+Mina block height to search from, inclusive
+
+
+#### [<code style={{ fontWeight: 'normal' }}>UserCommandFilterInput.<b>to</b></code>](#to)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#to\} 
+Mina block height to search to, exclusive
+
+
+#### [<code style={{ fontWeight: 'normal' }}>UserCommandFilterInput.<b>status</b></code>](#status)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>BlockStatusFilter</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/enums/block-status-filter.mdx) <Badge class="badge badge--secondary " text="enum"/> \{#status\} 
+
+
+
+
+
+### Member Of
+
+[`userCommands`](/node-operators/data-and-history/archive-node-api/reference/operations/queries/user-commands.mdx)  <Badge class="badge badge--secondary badge--relation" text="query"/>

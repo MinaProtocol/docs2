@@ -1,0 +1,38 @@
+---
+id: actions
+title: actions
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+actions(
+  input: ActionFilterOptionsInput!
+): [ActionOutput!]!
+```
+
+
+### Arguments
+
+#### [<code style={{ fontWeight: 'normal' }}>actions.<b>input</b></code>](#input)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>ActionFilterOptionsInput!</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/inputs/action-filter-options-input.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="input"/> \{#input\} 
+
+
+
+
+
+### Type
+
+#### [<code style={{ fontWeight: 'normal' }}><b>ActionOutput</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/objects/action-output.mdx) <Badge class="badge badge--secondary " text="object"/>

@@ -1,0 +1,43 @@
+---
+id: verification-key-with-hash-input
+title: VerificationKeyWithHashInput
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+input VerificationKeyWithHashInput {
+  data: VerificationKey!
+  hash: Field!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>VerificationKeyWithHashInput.<b>data</b></code>](#data)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>VerificationKey!</b></code>](/node-developers/graphql-api/reference/types/scalars/verification-key.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#data\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>VerificationKeyWithHashInput.<b>hash</b></code>](#hash)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Field!</b></code>](/node-developers/graphql-api/reference/types/scalars/field.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#hash\} 
+
+
+
+
+
+### Member Of
+
+[`AccountUpdateModificationInput`](/node-developers/graphql-api/reference/types/inputs/account-update-modification-input.mdx)  <Badge class="badge badge--secondary badge--relation" text="input"/>

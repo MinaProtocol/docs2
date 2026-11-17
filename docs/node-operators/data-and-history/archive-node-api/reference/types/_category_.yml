@@ -1,0 +1,9 @@
+label: Types
+position: 1
+className: graphql-markdown-api-section
+link: 
+  type: generated-index
+  title: 'Types overview'
+  slug: /node-operators/data-and-history/archive-node-api/reference/types
+collapsible: false
+collapsed: false

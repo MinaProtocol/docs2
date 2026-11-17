@@ -1,0 +1,29 @@
+---
+id: network-state
+title: networkState
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+networkState: NetworkStateOutput!
+```
+
+
+### Type
+
+#### [<code style={{ fontWeight: 'normal' }}><b>NetworkStateOutput</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/objects/network-state-output.mdx) <Badge class="badge badge--secondary " text="object"/> 
+Metadata about the network

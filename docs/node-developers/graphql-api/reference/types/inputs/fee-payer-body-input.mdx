@@ -1,0 +1,53 @@
+---
+id: fee-payer-body-input
+title: FeePayerBodyInput
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+input FeePayerBodyInput {
+  fee: Fee!
+  nonce: UInt32!
+  publicKey: PublicKey!
+  validUntil: GlobalSlotSinceGenesis
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>FeePayerBodyInput.<b>fee</b></code>](#fee)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Fee!</b></code>](/node-developers/graphql-api/reference/types/scalars/fee.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#fee\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>FeePayerBodyInput.<b>nonce</b></code>](#nonce)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>UInt32!</b></code>](/node-developers/graphql-api/reference/types/scalars/uint-32.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#nonce\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>FeePayerBodyInput.<b>publicKey</b></code>](#public-key)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>PublicKey!</b></code>](/node-developers/graphql-api/reference/types/scalars/public-key.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#public-key\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>FeePayerBodyInput.<b>validUntil</b></code>](#valid-until)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>GlobalSlotSinceGenesis</b></code>](/node-developers/graphql-api/reference/types/scalars/global-slot-since-genesis.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#valid-until\} 
+
+
+
+
+
+### Member Of
+
+[`ZkappFeePayerInput`](/node-developers/graphql-api/reference/types/inputs/zkapp-fee-payer-input.mdx)  <Badge class="badge badge--secondary badge--relation" text="input"/>

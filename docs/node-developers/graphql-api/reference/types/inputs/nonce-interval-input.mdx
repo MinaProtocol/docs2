@@ -1,0 +1,43 @@
+---
+id: nonce-interval-input
+title: NonceIntervalInput
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+input NonceIntervalInput {
+  lower: UInt32!
+  upper: UInt32!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>NonceIntervalInput.<b>lower</b></code>](#lower)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>UInt32!</b></code>](/node-developers/graphql-api/reference/types/scalars/uint-32.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#lower\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>NonceIntervalInput.<b>upper</b></code>](#upper)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>UInt32!</b></code>](/node-developers/graphql-api/reference/types/scalars/uint-32.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#upper\} 
+
+
+
+
+
+### Member Of
+
+[`AccountPreconditionInput`](/node-developers/graphql-api/reference/types/inputs/account-precondition-input.mdx)  <Badge class="badge badge--secondary badge--relation" text="input"/>

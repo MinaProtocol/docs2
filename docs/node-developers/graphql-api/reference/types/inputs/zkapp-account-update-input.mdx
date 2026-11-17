@@ -1,0 +1,43 @@
+---
+id: zkapp-account-update-input
+title: ZkappAccountUpdateInput
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+An account update in a zkApp transaction
+
+
+```graphql
+input ZkappAccountUpdateInput {
+  authorization: ControlInput!
+  body: AccountUpdateBodyInput!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>ZkappAccountUpdateInput.<b>authorization</b></code>](#authorization)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>ControlInput!</b></code>](/node-developers/graphql-api/reference/types/inputs/control-input.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="input"/> \{#authorization\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ZkappAccountUpdateInput.<b>body</b></code>](#body)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>AccountUpdateBodyInput!</b></code>](/node-developers/graphql-api/reference/types/inputs/account-update-body-input.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="input"/> \{#body\} 
+
+
+
+
+
+### Member Of
+
+[`ZkappCommandInput`](/node-developers/graphql-api/reference/types/inputs/zkapp-command-input.mdx)  <Badge class="badge badge--secondary badge--relation" text="input"/>

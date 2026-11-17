@@ -1,0 +1,68 @@
+---
+id: consensus-configuration
+title: ConsensusConfiguration
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type ConsensusConfiguration {
+  acceptableNetworkDelay: Int!
+  delta: Int!
+  epochDuration: Int!
+  genesisStateTimestamp: Time!
+  k: Int!
+  slotDuration: Int!
+  slotsPerEpoch: Int!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>ConsensusConfiguration.<b>acceptableNetworkDelay</b></code>](#acceptable-network-delay)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#acceptable-network-delay\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ConsensusConfiguration.<b>delta</b></code>](#delta)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#delta\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ConsensusConfiguration.<b>epochDuration</b></code>](#epoch-duration)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#epoch-duration\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ConsensusConfiguration.<b>genesisStateTimestamp</b></code>](#genesis-state-timestamp)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Time!</b></code>](/node-developers/graphql-api/reference/types/scalars/time.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#genesis-state-timestamp\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ConsensusConfiguration.<b>k</b></code>](#k)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#k\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ConsensusConfiguration.<b>slotDuration</b></code>](#slot-duration)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#slot-duration\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ConsensusConfiguration.<b>slotsPerEpoch</b></code>](#slots-per-epoch)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#slots-per-epoch\} 
+
+
+
+
+
+### Member Of
+
+[`DaemonStatus`](/node-developers/graphql-api/reference/types/objects/daemon-status.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

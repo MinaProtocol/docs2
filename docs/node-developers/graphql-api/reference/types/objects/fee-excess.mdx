@@ -1,0 +1,53 @@
+---
+id: fee-excess
+title: FeeExcess
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+Fee excess divided into left, right components
+
+
+```graphql
+type FeeExcess {
+  feeExcessLeft: SignedFee!
+  feeExcessRight: SignedFee!
+  feeTokenLeft: TokenId!
+  feeTokenRight: TokenId!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>FeeExcess.<b>feeExcessLeft</b></code>](#fee-excess-left)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>SignedFee!</b></code>](/node-developers/graphql-api/reference/types/objects/signed-fee.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#fee-excess-left\} 
+Fee for left component of fee excess
+
+
+#### [<code style={{ fontWeight: 'normal' }}>FeeExcess.<b>feeExcessRight</b></code>](#fee-excess-right)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>SignedFee!</b></code>](/node-developers/graphql-api/reference/types/objects/signed-fee.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#fee-excess-right\} 
+Fee for right component of fee excess
+
+
+#### [<code style={{ fontWeight: 'normal' }}>FeeExcess.<b>feeTokenLeft</b></code>](#fee-token-left)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>TokenId!</b></code>](/node-developers/graphql-api/reference/types/scalars/token-id.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#fee-token-left\} 
+Token id for left component of fee excess
+
+
+#### [<code style={{ fontWeight: 'normal' }}>FeeExcess.<b>feeTokenRight</b></code>](#fee-token-right)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>TokenId!</b></code>](/node-developers/graphql-api/reference/types/scalars/token-id.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#fee-token-right\} 
+Token id for right component of fee excess
+
+
+
+
+### Member Of
+
+[`SnarkedLedgerState`](/node-developers/graphql-api/reference/types/objects/snarked-ledger-state.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`WorkDescription`](/node-developers/graphql-api/reference/types/objects/work-description.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

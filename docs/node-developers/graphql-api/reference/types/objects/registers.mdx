@@ -1,0 +1,53 @@
+---
+id: registers
+title: Registers
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type Registers {
+  firstPassLedger: LedgerHash!
+  localState: LocalState!
+  pendingCoinbaseStack: PendingCoinbaseStack!
+  secondPassLedger: LedgerHash!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>Registers.<b>firstPassLedger</b></code>](#first-pass-ledger)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>LedgerHash!</b></code>](/node-developers/graphql-api/reference/types/scalars/ledger-hash.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#first-pass-ledger\} 
+First pass ledger hash
+
+
+#### [<code style={{ fontWeight: 'normal' }}>Registers.<b>localState</b></code>](#local-state)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>LocalState!</b></code>](/node-developers/graphql-api/reference/types/objects/local-state.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#local-state\} 
+Local state
+
+
+#### [<code style={{ fontWeight: 'normal' }}>Registers.<b>pendingCoinbaseStack</b></code>](#pending-coinbase-stack)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>PendingCoinbaseStack!</b></code>](/node-developers/graphql-api/reference/types/objects/pending-coinbase-stack.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#pending-coinbase-stack\} 
+Pending coinbase stack
+
+
+#### [<code style={{ fontWeight: 'normal' }}>Registers.<b>secondPassLedger</b></code>](#second-pass-ledger)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>LedgerHash!</b></code>](/node-developers/graphql-api/reference/types/scalars/ledger-hash.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#second-pass-ledger\} 
+Second pass ledger hash
+
+
+
+
+### Member Of
+
+[`SnarkedLedgerState`](/node-developers/graphql-api/reference/types/objects/snarked-ledger-state.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

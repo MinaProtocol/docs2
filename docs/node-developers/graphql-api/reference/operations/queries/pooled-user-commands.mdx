@@ -1,0 +1,49 @@
+---
+id: pooled-user-commands
+title: pooledUserCommands
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+Retrieve all the scheduled user commands for a specified sender that the current daemon sees in its transaction pool. All scheduled commands are queried if no sender is specified
+
+
+```graphql
+pooledUserCommands(
+  hashes: [String!]
+  ids: [ID!]
+  publicKey: PublicKey
+): [UserCommand!]!
+```
+
+
+### Arguments
+
+#### [<code style={{ fontWeight: 'normal' }}>pooledUserCommands.<b>hashes</b></code>](#hashes)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>[String!]</b></code>](/node-developers/graphql-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary " text="list"/> <Badge class="badge badge--secondary " text="scalar"/> \{#hashes\} 
+Hashes of the commands to find in the pool
+
+
+#### [<code style={{ fontWeight: 'normal' }}>pooledUserCommands.<b>ids</b></code>](#ids)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>[ID!]</b></code>](/node-developers/graphql-api/reference/types/scalars/id.mdx) <Badge class="badge badge--secondary " text="list"/> <Badge class="badge badge--secondary " text="scalar"/> \{#ids\} 
+Ids of User commands
+
+
+#### [<code style={{ fontWeight: 'normal' }}>pooledUserCommands.<b>publicKey</b></code>](#public-key)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>PublicKey</b></code>](/node-developers/graphql-api/reference/types/scalars/public-key.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#public-key\} 
+Public key of sender of pooled user commands
+
+
+
+
+### Type
+
+#### [<code style={{ fontWeight: 'normal' }}><b>UserCommand</b></code>](/node-developers/graphql-api/reference/types/interfaces/user-command.mdx) <Badge class="badge badge--secondary " text="interface"/> 
+Common interface for user commands

@@ -1,0 +1,38 @@
+---
+id: set-coinbase-receiver
+title: setCoinbaseReceiver
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+Set the key to receive coinbases
+
+
+```graphql
+setCoinbaseReceiver(
+  input: SetCoinbaseReceiverInput!
+): SetCoinbaseReceiverPayload!
+```
+
+
+### Arguments
+
+#### [<code style={{ fontWeight: 'normal' }}>setCoinbaseReceiver.<b>input</b></code>](#input)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>SetCoinbaseReceiverInput!</b></code>](/node-developers/graphql-api/reference/types/inputs/set-coinbase-receiver-input.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="input"/> \{#input\} 
+
+
+
+
+
+### Type
+
+#### [<code style={{ fontWeight: 'normal' }}><b>SetCoinbaseReceiverPayload</b></code>](/node-developers/graphql-api/reference/types/objects/set-coinbase-receiver-payload.mdx) <Badge class="badge badge--secondary " text="object"/>

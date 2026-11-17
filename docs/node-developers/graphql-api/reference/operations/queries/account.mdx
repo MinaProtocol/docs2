@@ -1,0 +1,44 @@
+---
+id: account
+title: account
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+Find any account via a public key and token
+
+
+```graphql
+account(
+  publicKey: PublicKey!
+  token: TokenId
+): Account
+```
+
+
+### Arguments
+
+#### [<code style={{ fontWeight: 'normal' }}>account.<b>publicKey</b></code>](#public-key)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>PublicKey!</b></code>](/node-developers/graphql-api/reference/types/scalars/public-key.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#public-key\} 
+Public key of account being retrieved
+
+
+#### [<code style={{ fontWeight: 'normal' }}>account.<b>token</b></code>](#token)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>TokenId</b></code>](/node-developers/graphql-api/reference/types/scalars/token-id.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#token\} 
+Token of account being retrieved (defaults to MINA)
+
+
+
+
+### Type
+
+#### [<code style={{ fontWeight: 'normal' }}><b>Account</b></code>](/node-developers/graphql-api/reference/types/objects/account.mdx) <Badge class="badge badge--secondary " text="object"/> 
+An account record according to the daemon

@@ -1,0 +1,38 @@
+---
+id: send-rosetta-transaction-payload
+title: SendRosettaTransactionPayload
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type SendRosettaTransactionPayload {
+  userCommand: UserCommand!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>SendRosettaTransactionPayload.<b>userCommand</b></code>](#user-command)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>UserCommand!</b></code>](/node-developers/graphql-api/reference/types/interfaces/user-command.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="interface"/> \{#user-command\} 
+Command that was sent
+
+
+
+
+### Returned By
+
+[`sendRosettaTransaction`](/node-developers/graphql-api/reference/operations/mutations/send-rosetta-transaction.mdx)  <Badge class="badge badge--secondary badge--relation" text="mutation"/>

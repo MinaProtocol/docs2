@@ -1,0 +1,64 @@
+---
+id: send-test-payments
+title: sendTestPayments
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+Send a series of test payments
+
+
+```graphql
+sendTestPayments(
+  amount: UInt64!
+  fee: UInt64!
+  receiver: PublicKey!
+  repeat_count: UInt32!
+  repeat_delay_ms: UInt32!
+  senders: [PrivateKey!]!
+): Int!
+```
+
+
+### Arguments
+
+#### [<code style={{ fontWeight: 'normal' }}>sendTestPayments.<b>amount</b></code>](#amount)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>UInt64!</b></code>](/node-developers/graphql-api/reference/types/scalars/uint-64.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#amount\} 
+The amount of each payment
+
+
+#### [<code style={{ fontWeight: 'normal' }}>sendTestPayments.<b>fee</b></code>](#fee)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>UInt64!</b></code>](/node-developers/graphql-api/reference/types/scalars/uint-64.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#fee\} 
+The fee of each payment
+
+
+#### [<code style={{ fontWeight: 'normal' }}>sendTestPayments.<b>receiver</b></code>](#receiver)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>PublicKey!</b></code>](/node-developers/graphql-api/reference/types/scalars/public-key.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#receiver\} 
+The receiver of the payments
+
+
+#### [<code style={{ fontWeight: 'normal' }}>sendTestPayments.<b>repeat&#x005F;count</b></code>](#repeat-count)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>UInt32!</b></code>](/node-developers/graphql-api/reference/types/scalars/uint-32.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#repeat-count\} 
+How many times shall transaction be repeated
+
+
+#### [<code style={{ fontWeight: 'normal' }}>sendTestPayments.<b>repeat&#x005F;delay&#x005F;ms</b></code>](#repeat-delay-ms)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>UInt32!</b></code>](/node-developers/graphql-api/reference/types/scalars/uint-32.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#repeat-delay-ms\} 
+Delay with which a transaction shall be repeated
+
+
+#### [<code style={{ fontWeight: 'normal' }}>sendTestPayments.<b>senders</b></code>](#senders)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>[PrivateKey!]!</b></code>](/node-developers/graphql-api/reference/types/scalars/private-key.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#senders\} 
+The private keys from which to sign the payments
+
+
+
+
+### Type
+
+#### [<code style={{ fontWeight: 'normal' }}><b>Int</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary " text="scalar"/> 
+The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.

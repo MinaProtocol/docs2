@@ -1,0 +1,8 @@
+label: Inputs
+position: 3
+link: 
+  type: generated-index
+  title: 'Inputs overview'
+  slug: /node-operators/data-and-history/archive-node-api/reference/types/inputs
+collapsible: true
+collapsed: true

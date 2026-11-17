@@ -1,0 +1,48 @@
+---
+id: block-producer-timings
+title: BlockProducerTimings
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type BlockProducerTimings {
+  generatedFromConsensusAt: ConsensusTimeGlobalSlot!
+  globalSlotSinceGenesis: [Globalslot!]!
+  times: [ConsensusTime!]!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>BlockProducerTimings.<b>generatedFromConsensusAt</b></code>](#generated-from-consensus-at)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>ConsensusTimeGlobalSlot!</b></code>](/node-developers/graphql-api/reference/types/objects/consensus-time-global-slot.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#generated-from-consensus-at\} 
+Consensus time of the block that was used to determine the next block production time
+
+
+#### [<code style={{ fontWeight: 'normal' }}>BlockProducerTimings.<b>globalSlotSinceGenesis</b></code>](#global-slot-since-genesis)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>[Globalslot!]!</b></code>](/node-developers/graphql-api/reference/types/scalars/globalslot.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#global-slot-since-genesis\} 
+Next block production global-slot-since-genesis
+
+
+#### [<code style={{ fontWeight: 'normal' }}>BlockProducerTimings.<b>times</b></code>](#times)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>[ConsensusTime!]!</b></code>](/node-developers/graphql-api/reference/types/objects/consensus-time.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#times\} 
+Next block production time
+
+
+
+
+### Member Of
+
+[`DaemonStatus`](/node-developers/graphql-api/reference/types/objects/daemon-status.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

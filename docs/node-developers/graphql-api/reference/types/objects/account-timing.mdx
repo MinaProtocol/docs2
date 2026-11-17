@@ -1,0 +1,58 @@
+---
+id: account-timing
+title: AccountTiming
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type AccountTiming {
+  cliffAmount: Amount
+  cliffTime: Globalslot
+  initialMinimumBalance: Balance
+  vestingIncrement: Amount
+  vestingPeriod: GlobalSlotSpan
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountTiming.<b>cliffAmount</b></code>](#cliff-amount)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Amount</b></code>](/node-developers/graphql-api/reference/types/scalars/amount.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#cliff-amount\} 
+The cliff amount for a time-locked account
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountTiming.<b>cliffTime</b></code>](#cliff-time)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Globalslot</b></code>](/node-developers/graphql-api/reference/types/scalars/globalslot.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#cliff-time\} 
+The cliff time for a time-locked account
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountTiming.<b>initialMinimumBalance</b></code>](#initial-minimum-balance)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Balance</b></code>](/node-developers/graphql-api/reference/types/scalars/balance.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#initial-minimum-balance\} 
+The initial minimum balance for a time-locked account
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountTiming.<b>vestingIncrement</b></code>](#vesting-increment)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Amount</b></code>](/node-developers/graphql-api/reference/types/scalars/amount.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#vesting-increment\} 
+The vesting increment for a time-locked account
+
+
+#### [<code style={{ fontWeight: 'normal' }}>AccountTiming.<b>vestingPeriod</b></code>](#vesting-period)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>GlobalSlotSpan</b></code>](/node-developers/graphql-api/reference/types/scalars/global-slot-span.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#vesting-period\} 
+The vesting period for a time-locked account
+
+
+
+
+### Member Of
+
+[`Account`](/node-developers/graphql-api/reference/types/objects/account.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`MembershipInfo`](/node-developers/graphql-api/reference/types/objects/membership-info.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

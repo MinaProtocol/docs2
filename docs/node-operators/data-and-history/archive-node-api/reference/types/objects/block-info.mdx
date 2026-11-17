@@ -1,0 +1,78 @@
+---
+id: block-info
+title: BlockInfo
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type BlockInfo {
+  height: Int!
+  stateHash: String!
+  parentHash: String!
+  ledgerHash: String!
+  chainStatus: String!
+  timestamp: String!
+  globalSlotSinceHardfork: Int!
+  globalSlotSinceGenesis: Int!
+  distanceFromMaxBlockHeight: Int!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>BlockInfo.<b>height</b></code>](#height)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#height\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>BlockInfo.<b>stateHash</b></code>](#state-hash)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String!</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#state-hash\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>BlockInfo.<b>parentHash</b></code>](#parent-hash)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String!</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#parent-hash\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>BlockInfo.<b>ledgerHash</b></code>](#ledger-hash)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String!</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#ledger-hash\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>BlockInfo.<b>chainStatus</b></code>](#chain-status)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String!</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#chain-status\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>BlockInfo.<b>timestamp</b></code>](#timestamp)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String!</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#timestamp\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>BlockInfo.<b>globalSlotSinceHardfork</b></code>](#global-slot-since-hardfork)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#global-slot-since-hardfork\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>BlockInfo.<b>globalSlotSinceGenesis</b></code>](#global-slot-since-genesis)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#global-slot-since-genesis\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>BlockInfo.<b>distanceFromMaxBlockHeight</b></code>](#distance-from-max-block-height)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#distance-from-max-block-height\} 
+
+
+
+
+
+### Member Of
+
+[`ActionOutput`](/node-operators/data-and-history/archive-node-api/reference/types/objects/action-output.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`EventOutput`](/node-operators/data-and-history/archive-node-api/reference/types/objects/event-output.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`UserCommandOutput`](/node-operators/data-and-history/archive-node-api/reference/types/objects/user-command-output.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`VerificationKeyUpdate`](/node-operators/data-and-history/archive-node-api/reference/types/objects/verification-key-update.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`ZkappCommandOutput`](/node-operators/data-and-history/archive-node-api/reference/types/objects/zkapp-command-output.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

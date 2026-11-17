@@ -1,0 +1,48 @@
+---
+id: protocol-state
+title: ProtocolState
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type ProtocolState {
+  blockchainState: BlockchainState!
+  consensusState: ConsensusState!
+  previousStateHash: StateHash!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>ProtocolState.<b>blockchainState</b></code>](#blockchain-state)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>BlockchainState!</b></code>](/node-developers/graphql-api/reference/types/objects/blockchain-state.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#blockchain-state\} 
+State which is agnostic of a particular consensus algorithm
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ProtocolState.<b>consensusState</b></code>](#consensus-state)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>ConsensusState!</b></code>](/node-developers/graphql-api/reference/types/objects/consensus-state.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#consensus-state\} 
+State specific to the minaboros Proof of Stake consensus algorithm
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ProtocolState.<b>previousStateHash</b></code>](#previous-state-hash)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>StateHash!</b></code>](/node-developers/graphql-api/reference/types/scalars/state-hash.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#previous-state-hash\} 
+Base58Check-encoded hash of the previous state
+
+
+
+
+### Member Of
+
+[`Block`](/node-developers/graphql-api/reference/types/objects/block.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

@@ -1,0 +1,49 @@
+---
+id: protocol-state
+title: protocolState
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+Get the protocol state for a given block, optionally encoded in Base64
+
+
+```graphql
+protocolState(
+  encoding: Encoding
+  height: Int
+  stateHash: String
+): String!
+```
+
+
+### Arguments
+
+#### [<code style={{ fontWeight: 'normal' }}>protocolState.<b>encoding</b></code>](#encoding)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Encoding</b></code>](/node-developers/graphql-api/reference/types/enums/encoding.mdx) <Badge class="badge badge--secondary " text="enum"/> \{#encoding\} 
+Encoding format (JSON or BASE64)
+
+
+#### [<code style={{ fontWeight: 'normal' }}>protocolState.<b>height</b></code>](#height)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int</b></code>](/node-developers/graphql-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#height\} 
+The height of the desired block in the best chain
+
+
+#### [<code style={{ fontWeight: 'normal' }}>protocolState.<b>stateHash</b></code>](#state-hash)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String</b></code>](/node-developers/graphql-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#state-hash\} 
+The state hash of the desired block
+
+
+
+
+### Type
+
+#### [<code style={{ fontWeight: 'normal' }}><b>String</b></code>](/node-developers/graphql-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary " text="scalar"/> 
+The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.

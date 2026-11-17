@@ -1,0 +1,129 @@
+---
+id: consensus-state
+title: ConsensusState
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type ConsensusState {
+  blockCreator: PublicKey!
+  blockHeight: Length!
+  blockStakeWinner: PublicKey!
+  blockchainLength: Length! @deprecated
+  coinbaseReceiever: PublicKey!
+  epoch: Epoch!
+  epochCount: Length!
+  hasAncestorInSameCheckpointWindow: Boolean!
+  lastVrfOutput: String!
+  minWindowDensity: Length!
+  nextEpochData: NextEpochData!
+  slot: Slot!
+  slotSinceGenesis: Globalslot!
+  stakingEpochData: StakingEpochData!
+  superchargedCoinbase: Boolean!
+  totalCurrency: Amount!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>ConsensusState.<b>blockCreator</b></code>](#block-creator)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>PublicKey!</b></code>](/node-developers/graphql-api/reference/types/scalars/public-key.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#block-creator\} 
+The block producer public key that created this block
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ConsensusState.<b>blockHeight</b></code>](#block-height)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Length!</b></code>](/node-developers/graphql-api/reference/types/scalars/length.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#block-height\} 
+Height of the blockchain at this block
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ConsensusState.<b>blockStakeWinner</b></code>](#block-stake-winner)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>PublicKey!</b></code>](/node-developers/graphql-api/reference/types/scalars/public-key.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#block-stake-winner\} 
+The public key that is responsible for winning this block (including delegations)
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ConsensusState.<b>coinbaseReceiever</b></code>](#coinbase-receiever)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>PublicKey!</b></code>](/node-developers/graphql-api/reference/types/scalars/public-key.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#coinbase-receiever\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ConsensusState.<b>epoch</b></code>](#epoch)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Epoch!</b></code>](/node-developers/graphql-api/reference/types/scalars/epoch.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#epoch\} 
+Epoch in which this block was created
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ConsensusState.<b>epochCount</b></code>](#epoch-count)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Length!</b></code>](/node-developers/graphql-api/reference/types/scalars/length.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#epoch-count\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ConsensusState.<b>hasAncestorInSameCheckpointWindow</b></code>](#has-ancestor-in-same-checkpoint-window)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Boolean!</b></code>](/node-developers/graphql-api/reference/types/scalars/boolean.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#has-ancestor-in-same-checkpoint-window\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ConsensusState.<b>lastVrfOutput</b></code>](#last-vrf-output)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String!</b></code>](/node-developers/graphql-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#last-vrf-output\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ConsensusState.<b>minWindowDensity</b></code>](#min-window-density)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Length!</b></code>](/node-developers/graphql-api/reference/types/scalars/length.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#min-window-density\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ConsensusState.<b>nextEpochData</b></code>](#next-epoch-data)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>NextEpochData!</b></code>](/node-developers/graphql-api/reference/types/objects/next-epoch-data.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#next-epoch-data\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ConsensusState.<b>slot</b></code>](#slot)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Slot!</b></code>](/node-developers/graphql-api/reference/types/scalars/slot.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#slot\} 
+Slot in which this block was created
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ConsensusState.<b>slotSinceGenesis</b></code>](#slot-since-genesis)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Globalslot!</b></code>](/node-developers/graphql-api/reference/types/scalars/globalslot.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#slot-since-genesis\} 
+Slot since genesis (across all hard-forks)
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ConsensusState.<b>stakingEpochData</b></code>](#staking-epoch-data)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>StakingEpochData!</b></code>](/node-developers/graphql-api/reference/types/objects/staking-epoch-data.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#staking-epoch-data\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ConsensusState.<b>superchargedCoinbase</b></code>](#supercharged-coinbase)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Boolean!</b></code>](/node-developers/graphql-api/reference/types/scalars/boolean.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#supercharged-coinbase\} 
+Whether or not this coinbase was "supercharged", ie. created by an account that has no locked tokens
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ConsensusState.<b>totalCurrency</b></code>](#total-currency)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Amount!</b></code>](/node-developers/graphql-api/reference/types/scalars/amount.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#total-currency\} 
+Total currency in circulation at this block
+
+
+
+
+<details class="graphql-markdown-details">
+<summary>
+<span class="graphql-markdown-details-label-closed">Show deprecated</span>
+<span class="graphql-markdown-details-label-open" hidden>Hide deprecated</span>
+</summary>
+
+#### [<code style={{ fontWeight: 'normal' }}>ConsensusState.<b>blockchainLength</b></code>](#blockchain-length)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Length!</b></code>](/node-developers/graphql-api/reference/types/scalars/length.mdx) <Badge class="badge badge--secondary badge--deprecated" text="deprecated"/> <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#blockchain-length\} 
+:::warning[DEPRECATED]
+
+use blockHeight instead
+
+:::
+
+Length of the blockchain at this block
+
+
+</details>
+
+
+
+### Member Of
+
+[`ProtocolState`](/node-developers/graphql-api/reference/types/objects/protocol-state.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

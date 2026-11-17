@@ -1,0 +1,29 @@
+---
+id: blockchain-verification-key
+title: blockchainVerificationKey
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+The pickles verification key for the protocol state proof
+
+
+```graphql
+blockchainVerificationKey: JSON!
+```
+
+
+### Type
+
+#### [<code style={{ fontWeight: 'normal' }}><b>JSON</b></code>](/node-developers/graphql-api/reference/types/scalars/json.mdx) <Badge class="badge badge--secondary " text="scalar"/> 
+Arbitrary JSON

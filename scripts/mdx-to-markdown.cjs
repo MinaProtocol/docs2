@@ -9,8 +9,9 @@
  *
  * The conversion:
  *   - removes the YAML front matter;
- *   - removes MDX `import` lines and lines that are only a self-closing JSX
- *     component (`<Subscribe />`);
+ *   - removes MDX `import` lines, `export` lines (the component definitions
+ *     the generated GraphQL reference pages carry) and lines that are only a
+ *     self-closing JSX component (`<Subscribe />`);
  *   - replaces each `#include_code` directive with the code block that the
  *     site renders (scripts/include-code.cjs). This step comes after the
  *     import removal, so the import lines of the included code stay.
@@ -29,6 +30,7 @@ function stripFrontMatter(content) {
 function stripImportsAndJsx(content) {
   return content
     .replace(/^import\s+.*$/gm, '')
+    .replace(/^export\s+.*$/gm, '')
     .replace(/^<[A-Z]\w+[^>]*\/>\s*$/gm, '');
 }
 

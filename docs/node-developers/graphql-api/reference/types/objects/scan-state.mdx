@@ -1,0 +1,43 @@
+---
+id: scan-state
+title: ScanState
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+Status of the scan state as of a block
+
+
+```graphql
+type ScanState {
+  stateHash: StateHash!
+  trees: [ScanStateTree!]!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>ScanState.<b>stateHash</b></code>](#state-hash)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>StateHash!</b></code>](/node-developers/graphql-api/reference/types/scalars/state-hash.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#state-hash\} 
+State hash of the block whose scan state this is
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ScanState.<b>trees</b></code>](#trees)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>[ScanStateTree!]!</b></code>](/node-developers/graphql-api/reference/types/objects/scan-state-tree.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#trees\} 
+Status of each tree in the scan state, oldest first
+
+
+
+
+### Returned By
+
+[`scanState`](/node-developers/graphql-api/reference/operations/queries/scan-state.mdx)  <Badge class="badge badge--secondary badge--relation" text="query"/>

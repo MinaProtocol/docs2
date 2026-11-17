@@ -1,0 +1,43 @@
+---
+id: merkle-path-element
+title: MerklePathElement
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type MerklePathElement {
+  left: FieldElem
+  right: FieldElem
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>MerklePathElement.<b>left</b></code>](#left)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>FieldElem</b></code>](/node-developers/graphql-api/reference/types/scalars/field-elem.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#left\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>MerklePathElement.<b>right</b></code>](#right)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>FieldElem</b></code>](/node-developers/graphql-api/reference/types/scalars/field-elem.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#right\} 
+
+
+
+
+
+### Member Of
+
+[`Account`](/node-developers/graphql-api/reference/types/objects/account.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`EncodedAccount`](/node-developers/graphql-api/reference/types/objects/encoded-account.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/><Bullet />[`MembershipInfo`](/node-developers/graphql-api/reference/types/objects/membership-info.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

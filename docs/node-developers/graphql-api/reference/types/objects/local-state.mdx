@@ -1,0 +1,88 @@
+---
+id: local-state
+title: LocalState
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+type LocalState {
+  accountUpdateIndex: UInt32!
+  callStack: FieldElem!
+  excess: SignedAmount!
+  failureStatusTable: [[String!]!]!
+  fullTransactionCommitment: FieldElem!
+  ledger: LedgerHash!
+  stackFrame: FieldElem!
+  success: Boolean!
+  supplyIncrease: SignedAmount!
+  transactionCommitment: FieldElem!
+  willSucceed: Boolean!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>LocalState.<b>accountUpdateIndex</b></code>](#account-update-index)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>UInt32!</b></code>](/node-developers/graphql-api/reference/types/scalars/uint-32.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#account-update-index\} 
+Account update index component of local state
+
+
+#### [<code style={{ fontWeight: 'normal' }}>LocalState.<b>callStack</b></code>](#call-stack)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>FieldElem!</b></code>](/node-developers/graphql-api/reference/types/scalars/field-elem.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#call-stack\} 
+Call stack component of local state
+
+
+#### [<code style={{ fontWeight: 'normal' }}>LocalState.<b>excess</b></code>](#excess)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>SignedAmount!</b></code>](/node-developers/graphql-api/reference/types/objects/signed-amount.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#excess\} 
+Excess component of local state
+
+
+#### [<code style={{ fontWeight: 'normal' }}>LocalState.<b>failureStatusTable</b></code>](#failure-status-table)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>[[String!]!]!</b></code>](/node-developers/graphql-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#failure-status-table\} 
+Failure status table component of local state
+
+
+#### [<code style={{ fontWeight: 'normal' }}>LocalState.<b>fullTransactionCommitment</b></code>](#full-transaction-commitment)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>FieldElem!</b></code>](/node-developers/graphql-api/reference/types/scalars/field-elem.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#full-transaction-commitment\} 
+Full transaction commitment component of local state
+
+
+#### [<code style={{ fontWeight: 'normal' }}>LocalState.<b>ledger</b></code>](#ledger)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>LedgerHash!</b></code>](/node-developers/graphql-api/reference/types/scalars/ledger-hash.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#ledger\} 
+Ledger component of local state
+
+
+#### [<code style={{ fontWeight: 'normal' }}>LocalState.<b>stackFrame</b></code>](#stack-frame)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>FieldElem!</b></code>](/node-developers/graphql-api/reference/types/scalars/field-elem.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#stack-frame\} 
+Stack frame component of local state
+
+
+#### [<code style={{ fontWeight: 'normal' }}>LocalState.<b>success</b></code>](#success)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Boolean!</b></code>](/node-developers/graphql-api/reference/types/scalars/boolean.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#success\} 
+Success component of local state
+
+
+#### [<code style={{ fontWeight: 'normal' }}>LocalState.<b>supplyIncrease</b></code>](#supply-increase)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>SignedAmount!</b></code>](/node-developers/graphql-api/reference/types/objects/signed-amount.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#supply-increase\} 
+Supply increase component of local state
+
+
+#### [<code style={{ fontWeight: 'normal' }}>LocalState.<b>transactionCommitment</b></code>](#transaction-commitment)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>FieldElem!</b></code>](/node-developers/graphql-api/reference/types/scalars/field-elem.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#transaction-commitment\} 
+Transaction commitment component of local state
+
+
+#### [<code style={{ fontWeight: 'normal' }}>LocalState.<b>willSucceed</b></code>](#will-succeed)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Boolean!</b></code>](/node-developers/graphql-api/reference/types/scalars/boolean.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#will-succeed\} 
+Will-succeed component of local state
+
+
+
+
+### Member Of
+
+[`Registers`](/node-developers/graphql-api/reference/types/objects/registers.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

@@ -1,0 +1,43 @@
+---
+id: signed-fee
+title: SignedFee
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+Signed fee
+
+
+```graphql
+type SignedFee {
+  feeMagnitude: Fee!
+  sign: sign!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>SignedFee.<b>feeMagnitude</b></code>](#fee-magnitude)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Fee!</b></code>](/node-developers/graphql-api/reference/types/scalars/fee.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#fee-magnitude\} 
+Fee
+
+
+#### [<code style={{ fontWeight: 'normal' }}>SignedFee.<b>sign</b></code>](#sign)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>sign!</b></code>](/node-developers/graphql-api/reference/types/enums/sign.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="enum"/> \{#sign\} 
++/-
+
+
+
+
+### Member Of
+
+[`FeeExcess`](/node-developers/graphql-api/reference/types/objects/fee-excess.mdx)  <Badge class="badge badge--secondary badge--relation" text="object"/>

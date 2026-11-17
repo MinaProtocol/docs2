@@ -1,0 +1,43 @@
+---
+id: verification-key-permission-input
+title: VerificationKeyPermissionInput
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+input VerificationKeyPermissionInput {
+  auth: AuthRequired!
+  txnVersion: UInt32!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>VerificationKeyPermissionInput.<b>auth</b></code>](#auth)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>AuthRequired!</b></code>](/node-developers/graphql-api/reference/types/scalars/auth-required.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#auth\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>VerificationKeyPermissionInput.<b>txnVersion</b></code>](#txn-version)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>UInt32!</b></code>](/node-developers/graphql-api/reference/types/scalars/uint-32.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#txn-version\} 
+
+
+
+
+
+### Member Of
+
+[`PermissionsInput`](/node-developers/graphql-api/reference/types/inputs/permissions-input.mdx)  <Badge class="badge badge--secondary badge--relation" text="input"/>

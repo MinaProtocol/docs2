@@ -5,11 +5,11 @@
  * SDL (Relay, some IDE plugins). The output is `{ "__schema": ... }`, which
  * graphql-js `buildClientSchema` and graphql-codegen accept.
  *
- * Needs the `graphql` package, which this site does not depend on. Run it with
- * the module on NODE_PATH, as .github/workflows/check-archive-schema.yml does:
+ * scripts/generate-graphql-reference.mjs runs it before generating the
+ * reference pages, and .github/workflows/check-archive-schema.yml fails when
+ * the committed output is stale:
  *
- *   npm i --prefix /tmp/g graphql@16 && NODE_PATH=/tmp/g/node_modules \
- *     node scripts/generate-archive-schema-json.mjs
+ *   npm run generate-graphql-reference -- archive
  */
 import { readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';

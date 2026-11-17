@@ -1,0 +1,100 @@
+---
+id: user-command-output
+title: UserCommandOutput
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+A payment or a stake delegation that involves an account, with the block that
+carries it. A command that sits in several blocks of the result, such as two
+competing pending blocks, is returned once for each block.
+
+
+```graphql
+type UserCommandOutput {
+  blockInfo: BlockInfo!
+  sequenceNumber: Int!
+  hash: String!
+  kind: String!
+  feePayer: String!
+  from: String!
+  to: String!
+  amount: String!
+  fee: String!
+  memo: String!
+  nonce: Int!
+  status: String!
+  failureReason: String
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>UserCommandOutput.<b>blockInfo</b></code>](#block-info)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>BlockInfo!</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/objects/block-info.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="object"/> \{#block-info\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>UserCommandOutput.<b>sequenceNumber</b></code>](#sequence-number)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#sequence-number\} 
+Position of the command in its block
+
+
+#### [<code style={{ fontWeight: 'normal' }}>UserCommandOutput.<b>hash</b></code>](#hash)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String!</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#hash\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>UserCommandOutput.<b>kind</b></code>](#kind)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String!</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#kind\} 
+`payment` or `delegation`
+
+
+#### [<code style={{ fontWeight: 'normal' }}>UserCommandOutput.<b>feePayer</b></code>](#fee-payer)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String!</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#fee-payer\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>UserCommandOutput.<b>from</b></code>](#from)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String!</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#from\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>UserCommandOutput.<b>to</b></code>](#to)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String!</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#to\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>UserCommandOutput.<b>amount</b></code>](#amount)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String!</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#amount\} 
+Amount in nanomina. `0` for a delegation.
+
+
+#### [<code style={{ fontWeight: 'normal' }}>UserCommandOutput.<b>fee</b></code>](#fee)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String!</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#fee\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>UserCommandOutput.<b>memo</b></code>](#memo)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String!</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#memo\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>UserCommandOutput.<b>nonce</b></code>](#nonce)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Int!</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/int.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#nonce\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>UserCommandOutput.<b>status</b></code>](#status)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String!</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#status\} 
+`applied` or `failed`
+
+
+#### [<code style={{ fontWeight: 'normal' }}>UserCommandOutput.<b>failureReason</b></code>](#failure-reason)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>String</b></code>](/node-operators/data-and-history/archive-node-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#failure-reason\} 
+
+
+
+
+
+### Returned By
+
+[`userCommands`](/node-operators/data-and-history/archive-node-api/reference/operations/queries/user-commands.mdx)  <Badge class="badge badge--secondary badge--relation" text="query"/>

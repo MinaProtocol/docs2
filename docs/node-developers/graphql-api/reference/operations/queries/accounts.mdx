@@ -1,0 +1,39 @@
+---
+id: accounts
+title: accounts
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+Find all accounts for a public key
+
+
+```graphql
+accounts(
+  publicKey: PublicKey!
+): [Account!]!
+```
+
+
+### Arguments
+
+#### [<code style={{ fontWeight: 'normal' }}>accounts.<b>publicKey</b></code>](#public-key)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>PublicKey!</b></code>](/node-developers/graphql-api/reference/types/scalars/public-key.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#public-key\} 
+Public key to find accounts for
+
+
+
+
+### Type
+
+#### [<code style={{ fontWeight: 'normal' }}><b>Account</b></code>](/node-developers/graphql-api/reference/types/objects/account.mdx) <Badge class="badge badge--secondary " text="object"/> 
+An account record according to the daemon

@@ -1,0 +1,58 @@
+---
+id: epoch-data-precondition-input
+title: EpochDataPreconditionInput
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+input EpochDataPreconditionInput {
+  epochLength: LengthIntervalInput
+  ledger: EpochLedgerPreconditionInput!
+  lockCheckpoint: Field
+  seed: Field
+  startCheckpoint: Field
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>EpochDataPreconditionInput.<b>epochLength</b></code>](#epoch-length)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>LengthIntervalInput</b></code>](/node-developers/graphql-api/reference/types/inputs/length-interval-input.mdx) <Badge class="badge badge--secondary " text="input"/> \{#epoch-length\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>EpochDataPreconditionInput.<b>ledger</b></code>](#ledger)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>EpochLedgerPreconditionInput!</b></code>](/node-developers/graphql-api/reference/types/inputs/epoch-ledger-precondition-input.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="input"/> \{#ledger\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>EpochDataPreconditionInput.<b>lockCheckpoint</b></code>](#lock-checkpoint)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Field</b></code>](/node-developers/graphql-api/reference/types/scalars/field.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#lock-checkpoint\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>EpochDataPreconditionInput.<b>seed</b></code>](#seed)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Field</b></code>](/node-developers/graphql-api/reference/types/scalars/field.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#seed\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>EpochDataPreconditionInput.<b>startCheckpoint</b></code>](#start-checkpoint)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Field</b></code>](/node-developers/graphql-api/reference/types/scalars/field.mdx) <Badge class="badge badge--secondary " text="scalar"/> \{#start-checkpoint\} 
+
+
+
+
+
+### Member Of
+
+[`NetworkPreconditionInput`](/node-developers/graphql-api/reference/types/inputs/network-precondition-input.mdx)  <Badge class="badge badge--secondary badge--relation" text="input"/>

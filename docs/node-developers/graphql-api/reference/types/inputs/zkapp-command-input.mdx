@@ -1,0 +1,48 @@
+---
+id: zkapp-command-input
+title: ZkappCommandInput
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+No description
+
+
+```graphql
+input ZkappCommandInput {
+  accountUpdates: [ZkappAccountUpdateInput!]!
+  feePayer: ZkappFeePayerInput!
+  memo: Memo!
+}
+```
+
+
+### Fields
+
+#### [<code style={{ fontWeight: 'normal' }}>ZkappCommandInput.<b>accountUpdates</b></code>](#account-updates)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>[ZkappAccountUpdateInput!]!</b></code>](/node-developers/graphql-api/reference/types/inputs/zkapp-account-update-input.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="input"/> \{#account-updates\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ZkappCommandInput.<b>feePayer</b></code>](#fee-payer)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>ZkappFeePayerInput!</b></code>](/node-developers/graphql-api/reference/types/inputs/zkapp-fee-payer-input.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="input"/> \{#fee-payer\} 
+
+
+
+#### [<code style={{ fontWeight: 'normal' }}>ZkappCommandInput.<b>memo</b></code>](#memo)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>Memo!</b></code>](/node-developers/graphql-api/reference/types/scalars/memo.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#memo\} 
+
+
+
+
+
+### Member Of
+
+[`SendZkappInput`](/node-developers/graphql-api/reference/types/inputs/send-zkapp-input.mdx)  <Badge class="badge badge--secondary badge--relation" text="input"/>

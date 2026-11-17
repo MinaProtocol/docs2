@@ -1,0 +1,39 @@
+---
+id: start-filtered-log
+title: startFilteredLog
+---
+
+
+export const Bullet = () => <><span style={{ fontWeight: 'normal', fontSize: '.5em', color: 'var(--ifm-color-secondary-darkest)' }}>&nbsp;●&nbsp;</span></>
+
+export const SpecifiedBy = (props) => <>Specification<a className="link" style={{ fontSize:'1.5em', paddingLeft:'4px' }} target="_blank" href={props.url} title={'Specified by ' + props.url}>⎘</a></>
+
+export const Badge = (props) => <><span className={props.class}>{props.text}</span></>
+
+
+
+
+
+
+TESTING ONLY: Start filtering and recording all structured events in memory
+
+
+```graphql
+startFilteredLog(
+  filter: [String!]!
+): Boolean!
+```
+
+
+### Arguments
+
+#### [<code style={{ fontWeight: 'normal' }}>startFilteredLog.<b>filter</b></code>](#filter)<Bullet />[<code style={{ fontWeight: 'normal' }}><b>[String!]!</b></code>](/node-developers/graphql-api/reference/types/scalars/string.mdx) <Badge class="badge badge--secondary badge--non_null" text="non-null"/> <Badge class="badge badge--secondary " text="scalar"/> \{#filter\} 
+
+
+
+
+
+### Type
+
+#### [<code style={{ fontWeight: 'normal' }}><b>Boolean</b></code>](/node-developers/graphql-api/reference/types/scalars/boolean.mdx) <Badge class="badge badge--secondary " text="scalar"/> 
+The `Boolean` scalar type represents `true` or `false`.
