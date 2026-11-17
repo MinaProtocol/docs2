@@ -7,3 +7,4 @@ export {
   whitelistedTokenSymbol,
   WHITELIST_SIZE,
 } from './WhitelistedTokenContract.js';
+export { TokenVault } from './TokenVault.js';

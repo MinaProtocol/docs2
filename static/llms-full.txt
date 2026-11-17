@@ -23517,7 +23517,7 @@ url: /zkapps/tutorials/custom-tokens
 
 # Tutorial 8: Custom Tokens
 
-In this tutorial, you learn to create custom tokens.
+In this tutorial, you learn to create custom tokens, and to write a zkApp that consumes a custom token: it takes deposits of the token and holds them.
 
 Mina comes with native support for custom tokens. Each account on Mina can also have tokens associated with it.
 
@@ -23525,7 +23525,7 @@ To create a new token, one creates a smart contract, which becomes the manager f
 
 The manager account may also set a token symbol for its token, such as in this example, `MYTKN`. Uniqueness is not enforced for token names. Instead the public key of the manager account is used to identify tokens.
 
-In this tutorial, you review smart contract code that creates and manages new tokens.
+In this tutorial, you review smart contract code that creates and manages new tokens. Then you review a zkApp that holds a custom token. See [Consume tokens in a zkApp](#consume-tokens-in-a-zkapp).
 
 The full example code is provided in the [08-custom-tokens/src/](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/08-custom-tokens/src) example files.
 
@@ -23644,7 +23644,7 @@ A token account is created the first time that its public key receives the token
 
 ### Approval mechanism
 
-Every change to a token account is an account update with that token id. The Mina protocol accepts such an account update only when it is a child of the token manager's account update in the same transaction, or a deeper descendant that inherits the token permission from its parent. A top-level account update that uses a custom token id fails with the error `Top-level account update can not use or pass on token permissions`. So a token holder cannot move tokens without the token manager, even with a valid signature.
+Every change to a token account is an account update with that token id. The Mina protocol accepts such an account update only when it is a child of the token manager's account update in the same transaction, or a deeper descendant that inherits the token permission from its parent. A top-level account update that uses a custom token id fails. On a local blockchain, the error is `Top-level account update can not use or pass on token permissions` when the token account exists. When the account update creates the token account, the error is `Token_owner_not_caller`. So a token holder cannot move tokens without the token manager, even with a valid signature.
 
 The token manager approves account updates in two ways:
 
@@ -23836,7 +23836,7 @@ That completes a review of a basic token.
 
 ## Examples
 
-To see an example of interacting with this contract, see [main.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/08-custom-tokens/src/main.ts).
+To see an example of interacting with this contract, see [main.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/08-custom-tokens/src/main.ts). It also deploys `TokenVault` and uses it. See [Consume tokens in a zkApp](#consume-tokens-in-a-zkapp).
 
 To see an example of putting rules around a token, see [WhitelistedTokenContract.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/08-custom-tokens/src/WhitelistedTokenContract.ts). Only the public keys on a whitelist can hold or move this token. The contract keeps only the hash of the whitelist in its on-chain state, and each method gets the whitelist from the caller and checks it against that hash.
 
@@ -23892,15 +23892,209 @@ await tx.sign([alice.key]).send();
 
 A transfer to an address that is not on the whitelist fails with `the address is not on the whitelist`.
 
-## Building zkApps that interact with Tokens
+## Consume tokens in a zkApp
 
-With zkApps, you can also build smart contracts that interact with tokens. For example, swapping one token for another or taking deposits of Mina tokens.
+A token manager makes and moves its token. Other zkApps can also use the token. For example, a zkApp can take a deposit of a token from a user, hold the token, and pay it back later. In this section, you review `TokenVault`, a zkApp that does this with the `MYTKN` token of `BasicTokenContract`.
 
-For now, see this [example](https://github.com/o1-labs/o1js/blob/main/src/examples/zkapps/dex/dex.ts) of a zkApp implementing an AMM-based DEX.
+The rules of `TokenVault` are:
+
+- Any account can deposit `MYTKN` into the vault.
+- Only the owner of the vault can withdraw.
+- The owner cannot withdraw more than the total deposited.
+
+A full copy of [TokenVault.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/08-custom-tokens/src/TokenVault.ts) is provided. The [TokenVault.test.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/08-custom-tokens/src/TokenVault.test.ts) and [TokenVault.proofs.test.ts](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/08-custom-tokens/src/TokenVault.proofs.test.ts) test files check the statements in this section on a local blockchain. The second file creates real proofs.
+
+### The vault is on a token account
+
+A zkApp holds a custom token in a token account. A token account is identified by a public key and the token id (see [Token account](#token-account)). So the vault is the account (vault address, token id of `BasicTokenContract`). It is not the MINA account at the vault address. The MINA account at the same address is a different account, and it does not need to exist.
+
+To make a contract object for a token account, give the token id as the second argument of the constructor:
+
+```ts
+const vault = new TokenVault(vaultAddress, token.deriveTokenId());
+```
+
+Without the second argument, the contract object is for the MINA account at that address. Each account update that a `TokenVault` method makes is then on the token account. o1js sets `mayUseToken` of these account updates to `parentsOwnToken`. This flag tells the protocol that the parent account update in the transaction must be the account update of the token manager.
+
+`TokenVault` extends `SmartContract`, not `TokenContract`, because it does not manage a token. It has two state variables: the owner, and the total deposited:
+
+```ts title="src/TokenVault.ts"
+import {
+  DeployArgs,
+  method,
+  Permissions,
+  PublicKey,
+  SmartContract,
+  State,
+  state,
+  UInt64,
+} from 'o1js';
+
+/**
+ * A zkApp that holds a custom token.
+ *
+ * Deploy it on a token account: `new TokenVault(address, tokenId)`, where
+ * `tokenId` is the id of the token that it holds. Any account can deposit
+ * tokens. Only the owner can withdraw them, and never more than the total
+ * deposited.
+ *
+ * The vault cannot move a token by itself. Each of its account updates uses
+ * the token, so the token manager must approve it.
+ */
+export class TokenVault extends SmartContract {
+  /** The only account that can withdraw. */
+  @state(PublicKey) owner = State<PublicKey>();
+  /** How many tokens the vault holds. */
+  @state(UInt64) totalDeposited = State<UInt64>();
+
+  async deploy(args: DeployArgs & { owner: PublicKey }) {
+    await super.deploy(args);
+    this.owner.set(args.owner);
+    this.totalDeposited.set(UInt64.zero);
+
+    this.account.permissions.set({
+      ...Permissions.default(),
+      // Only a proof of deposit() can add tokens, so `totalDeposited` counts
+      // every token in the vault.
+      receive: Permissions.proof(),
+      // Nobody can change these rules after deployment, not even the holder
+      // of the vault key.
+      setPermissions: Permissions.impossible(),
+      setVerificationKey:
+        Permissions.VerificationKey.impossibleDuringCurrentVersion(),
+    });
+  }
+```
+
+`deploy()` takes the owner as an argument and sets the state. It also sets these permissions on the vault account:
+
+- `receive: Permissions.proof()`. Only a proof of a vault method can add tokens to the vault. Without this permission, any account can send tokens to the vault with `transfer()`, and `totalDeposited` does not count them. A transfer that bypasses `deposit()` fails with `Update_not_permitted_balance`.
+- `setPermissions: Permissions.impossible()` and `setVerificationKey: Permissions.VerificationKey.impossibleDuringCurrentVersion()`. Nobody can change the permissions or the code of the vault after deployment, not even the holder of the vault private key. Without these permissions, the holder of the vault private key can set `send` to `signature()` and take the tokens without `withdraw()`.
+
+The default permissions of a zkApp already set `send` and `editState` to `proof()`. So only a proof of `withdraw()` can take tokens out of the vault, and only the vault methods can change its state.
+
+### Deploy the vault with the approval of the token manager
+
+The vault account is a token account, so its deploy account update uses the token. The token manager must approve every account update that uses its token, the deploy update too. Thus, deploy the vault and give its account update to `approveAccountUpdate()` of the token manager in the same transaction:
+
+```ts title="src/main.ts"
+const vault = new TokenVault(vaultAddress, tokenId);
+
+console.log('deploying the vault on a token account...');
+const deployVaultTx = await Mina.transaction(deployer, async () => {
+  // One new account: the vault's token account.
+  AccountUpdate.fundNewAccount(deployer);
+  await vault.deploy({ owner: alice });
+  // The vault's deploy update uses the token, so the token manager approves it.
+  await token.approveAccountUpdate(vault.self);
+});
+await deployVaultTx.prove();
+await deployVaultTx.sign([deployer.key, vaultPrivateKey]).send();
+```
+
+`approveAccountUpdate()` calls `approveBase()` of `BasicTokenContract`. `approveBase()` calls `checkZeroBalanceChange()`. The deploy update does not change a balance, so `BasicTokenContract` approves it.
+
+The deploy creates one new account, the vault token account. `AccountUpdate.fundNewAccount()` pays the account creation fee for it.
+
+If you deploy the vault without `approveAccountUpdate()`, the transaction fails with `Token_owner_not_caller`, because the vault token account does not exist yet.
+
+A token manager decides which zkApps it approves. `BasicTokenContract` approves each account update when the balance changes sum to zero, so it approves any zkApp on its token. A token manager can be more strict. For example, it can approve only zkApps with a known verification key. For an example, see [Approve a deployment on a token account](/zkapps/tutorials/advanced-account-updates#approve-a-deployment-on-a-token-account) in Tutorial 11.
+
+### deposit() and withdraw() methods
+
+`deposit()` adds the amount to the balance of the vault and to `totalDeposited`. `withdraw()` requires a signature from the owner, checks the amount against `totalDeposited`, and removes the amount from the balance of the vault:
+
+```ts title="src/TokenVault.ts"
+  /**
+   * Add `amount` to the balance of the vault.
+   *
+   * The tokens must come from an account in the same transaction. The token
+   * manager checks that: its `approveBase()` requires the balance changes to
+   * sum to zero.
+   */
+  @method async deposit(amount: UInt64) {
+    const total = this.totalDeposited.getAndRequireEquals();
+    this.totalDeposited.set(total.add(amount));
+    this.balance.addInPlace(amount);
+  }
+
+  /**
+   * Take `amount` from the balance of the vault. The caller sends it on with
+   * the token manager.
+   */
+  @method async withdraw(amount: UInt64) {
+    const owner = this.owner.getAndRequireEquals();
+    this.sender
+      .getAndRequireSignature()
+      .equals(owner)
+      .assertTrue('only the owner can withdraw');
+
+    const total = this.totalDeposited.getAndRequireEquals();
+    total.assertGreaterThanOrEqual(
+      amount,
+      'cannot withdraw more than the total deposited'
+    );
+    this.totalDeposited.set(total.sub(amount));
+    this.balance.subInPlace(amount);
+  }
+}
+```
+
+Each method changes only the balance of the vault account. It does not move tokens from or to another account. The token manager does that.
+
+### Deposit tokens
+
+To deposit, call `deposit()` and then `transfer()` of the token manager in the same transaction. Give `vault.self`, the account update that `deposit()` made, as the receiver:
+
+```ts title="src/main.ts"
+console.log('bob deposits into the vault...');
+const depositAmount = UInt64.from(15_000);
+const depositTx = await Mina.transaction(bob, async () => {
+  await vault.deposit(depositAmount);
+  // The token manager moves the tokens from bob to the vault update that
+  // deposit() made, and approves both updates.
+  await token.transfer(bob, vault.self, depositAmount);
+});
+await depositTx.prove();
+await depositTx.sign([bob.key]).send();
+```
+
+`transfer()` makes an account update that takes the amount from `bob`, and puts the two account updates in a forest. Then it calls `approveBase()`. The account updates become children of the token manager account update, so the protocol accepts them. `checkZeroBalanceChange()` proves that the balance changes sum to zero: `bob` loses what the vault gets. `bob` signs the transaction, because his account update sends tokens and requires a signature.
+
+These conditions apply:
+
+- The amount that you give to `transfer()` must be the amount that you give to `deposit()`. `transfer()` sets the balance change of the vault account update again. If the two amounts are different, `tx.prove()` fails, because o1js cannot prove `deposit()` for the changed account update. A local blockchain with `proofsEnabled: false` does not check proofs, so it accepts this transaction. Test this condition with proofs.
+- If you call `deposit()` without the token manager, the vault account update is a top-level account update that uses the token. On a local blockchain, the transaction fails with `Top-level account update can not use or pass on token permissions`.
+- If the token manager approves only `vault.self`, with no account that pays the tokens, the balance changes do not sum to zero. `checkZeroBalanceChange()` fails with `Field.assertEquals(): 1000 != 0` for a deposit of 1000.
+
+### Withdraw tokens
+
+To withdraw, call `withdraw()` and then `transfer()` of the token manager. Give `vault.self` as the sender:
+
+```ts title="src/main.ts"
+console.log('alice, the owner, withdraws from the vault...');
+const withdrawAmount = UInt64.from(10_000);
+const withdrawTx = await Mina.transaction(alice, async () => {
+  await vault.withdraw(withdrawAmount);
+  await token.transfer(vault.self, alice, withdrawAmount);
+});
+await withdrawTx.prove();
+await withdrawTx.sign([alice.key]).send();
+```
+
+The vault account update does not need a signature from the vault private key. Its authorization is the proof of `withdraw()`. The owner signs the transaction, because `this.sender.getAndRequireSignature()` makes an account update that requires the signature of the sender.
+
+A withdrawal fails in these conditions:
+
+- The sender is not the owner. The error is `only the owner can withdraw`.
+- The amount is more than `totalDeposited`. The error is `cannot withdraw more than the total deposited`.
+- The token manager does not approve the account updates. On a local blockchain, the error is `Top-level account update can not use or pass on token permissions`.
+
+For a zkApp that holds two tokens and trades one for the other, see the [DEX example](https://github.com/o1-labs/o1js/blob/main/src/examples/zkapps/dex/dex.ts) in o1js. For a zkApp on a MINA account that sends the tokens of a zkApp on a token account, see [Send tokens from a zkApp](/zkapps/tutorials/advanced-account-updates#send-tokens-from-a-zkapp) in Tutorial 11.
 
 ## Conclusion
 
-You have finished reviewing the steps to build a smart contract to manage a token. You learned how to build a smart contract that places custom rules over tokens.
+You have finished reviewing the steps to build a smart contract to manage a token. You learned how to build a smart contract that places custom rules over tokens. You also learned how a zkApp on a token account holds a custom token, and why the token manager must approve each of its account updates.
 
 To learn more, see [Custom Token API](/zkapps/writing-a-zkapp/feature-overview/custom-tokens).
 
