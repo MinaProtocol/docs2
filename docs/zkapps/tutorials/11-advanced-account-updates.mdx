@@ -66,7 +66,7 @@ burn and transfer a custom token.
 
 This tutorial has been tested with:
 
-- [o1js](https://www.npmjs.com/package/o1js) version `3.0.0`
+- [o1js](https://www.npmjs.com/package/o1js) version `3.1.0`
 - Node.js version `22`
 
 ## Get the example project
@@ -392,7 +392,7 @@ The o1js reducer API is not safe for production applications for this reason.
 
 :::caution
 
-In o1js `3.0.0`, `Mina.LocalBlockchain` keeps the actions of a transaction
+In o1js `3.1.0`, `Mina.LocalBlockchain` keeps the actions of a transaction
 that the network rejected. The account's action state does not include them,
 but a reducer that runs after the rejected transaction reads them. A real
 network does not keep them. In a test with a reducer, do not send a rejected

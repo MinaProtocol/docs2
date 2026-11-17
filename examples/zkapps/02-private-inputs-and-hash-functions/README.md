@@ -3,7 +3,7 @@
 This Private Inputs and Hash Functions tutorial helps you to learn about private inputs, hash functions, and adding a second value as an input.
 
 ## Version
-- o1js: **3.0.0**
+- o1js: **3.1.0**
 - Node.js: **22.19.5** or later
 
 ## Tutorial

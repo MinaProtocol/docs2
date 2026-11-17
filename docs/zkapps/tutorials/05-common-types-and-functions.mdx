@@ -2,7 +2,7 @@
 title: 'Tutorial 5: Common Types and Functions'
 hide_title: true
 sidebar_label: 'Tutorial 5: Common Types and Functions'
-description: Open this page when you need an o1js type other than Field (Bool, UInt32, UInt64, Int64, CircuitString, keys, signatures, Struct), control flow with Provable.if and Provable.switch, or when you must choose a provable data structure (fixed-size array, DynamicArray, MerkleList, MerkleTree, MerkleMap, IndexedMerkleMap) and store only its root or hash on chain. Tested with o1js 3.0.0.
+description: Open this page when you need an o1js type other than Field (Bool, UInt32, UInt64, Int64, CircuitString, keys, signatures, Struct), control flow with Provable.if and Provable.switch, or when you must choose a provable data structure (fixed-size array, DynamicArray, MerkleList, MerkleTree, MerkleMap, IndexedMerkleMap) and store only its root or hash on chain. Tested with o1js 3.1.0.
 keywords:
   - smart contracts
   - zkapps
@@ -44,7 +44,7 @@ You must have a GitHub account. The codespace uses the free monthly quota of you
 
 ## Prerequisites
 
-This tutorial has been tested with [o1js](https://www.npmjs.com/package/o1js) version `3.0.0`. o1js 3.0.0 requires Node.js `22.19.5` or later.
+This tutorial has been tested with [o1js](https://www.npmjs.com/package/o1js) version `3.1.0`. o1js 3.1.0 requires Node.js `22.19.5` or later.
 
 Ensure your environment meets the [Prerequisites](/zkapps/tutorials#prerequisites) for zkApp Developer Tutorials.
 
@@ -246,13 +246,13 @@ You use [MerkleMaps](https://docs.o1labs.org/o1js/api-reference/classes/MerkleMa
 
 :::tip Use IndexedMerkleMap for new code
 
-In o1js 3.0.0, `MerkleMap` is still exported and is not marked as deprecated. But [IndexedMerkleMap](#indexedmerklemap) does the same job with fewer constraints, and it can prove that a key is not in the map. Use `MerkleMap` only when existing code or an existing root on chain depends on it.
+In o1js 3.1.0, `MerkleMap` is still exported and is not marked as deprecated. But [IndexedMerkleMap](#indexedmerklemap) does the same job with fewer constraints, and it can prove that a key is not in the map. Use `MerkleMap` only when existing code or an existing root on chain depends on it.
 
 :::
 
 ## Provable data structures
 
-A circuit has a fixed size. Thus, a smart contract method cannot take a JavaScript array or a JavaScript `Map` of any length. A method can take only a _provable type_: a type that o1js can convert to a fixed number of field elements. o1js 3.0.0 has these provable data structures:
+A circuit has a fixed size. Thus, a smart contract method cannot take a JavaScript array or a JavaScript `Map` of any length. A method can take only a _provable type_: a type that o1js can convert to a fixed number of field elements. o1js 3.1.0 has these provable data structures:
 
 - A fixed-size array, made with `Provable.Array(type, length)` or with a `Struct`, such as `Points8` in [Struct](#struct).
 - `DynamicArray`: an array with a fixed capacity and a length that can change.
@@ -265,7 +265,7 @@ A _commitment_ is one field element, such as a hash or a Merkle root, that ident
 
 ### Which structure for which job
 
-The _rows_ column shows the size of the circuit of each method in the example project. It is the number that `analyzeMethods()` reports in o1js 3.0.0. A method that only sets one state field, such as `initState`, takes 614 rows. Thus, most of the rows of a small method do not come from the data structure.
+The _rows_ column shows the size of the circuit of each method in the example project. It is the number that `analyzeMethods()` reports in o1js 3.1.0. A method that only sets one state field, such as `initState`, takes 614 rows. Thus, most of the rows of a small method do not come from the data structure.
 
 | Structure | Use it when | Size limit | What the method gets | What goes on chain | Rows in the example |
 | --- | --- | --- | --- | --- | --- |
@@ -282,7 +282,7 @@ An _unconstrained_ value is data that the prover gives to the circuit without a 
 
 An `IndexedMerkleMap` is a key-value map in a Merkle tree. Each leaf holds a key, a value, and the next larger key in the map. Thus, the leaves make a sorted linked list. Because of this list, the map can prove that a key is not in the map: it shows the leaf with the next smaller key, and that leaf points to a larger key.
 
-In o1js 3.0.0, import `IndexedMerkleMap` directly from `o1js`. It is not in the `Experimental` namespace. Make a class for one height:
+In o1js 3.1.0, import `IndexedMerkleMap` directly from `o1js`. It is not in the `Experimental` namespace. Make a class for one height:
 
 #include_code indexed-merkle-map examples/zkapps/05-common-types-and-functions/src/main.ts ts title="src/main.ts"
 
@@ -309,7 +309,7 @@ The map goes into a smart contract method as an argument. The contract stores on
 
 #include_code indexed-merkle-map-contract examples/zkapps/05-common-types-and-functions/src/IndexedMerkleMapContract.ts ts title="src/IndexedMerkleMapContract.ts"
 
-The method changes a `clone()` of the map, not the argument. In o1js 3.0.0, `Mina.transaction()` can run the method body more than one time, and the argument shares its unconstrained data with the map of the caller. If the method changes the argument, the first run adds the key to the data of the caller but not to its root. The second run then fails with `Invalid low node (root)`. The tests of the example project find this error.
+The method changes a `clone()` of the map, not the argument. In o1js 3.1.0, `Mina.transaction()` can run the method body more than one time, and the argument shares its unconstrained data with the map of the caller. If the method changes the argument, the first run adds the key to the data of the caller but not to its root. The second run then fails with `Invalid low node (root)`. The tests of the example project find this error.
 
 The caller sends the transaction, and then makes the same change to its own map:
 
@@ -397,7 +397,7 @@ DynamicArray: contract total: 12
 
 ### Not on this page
 
-o1js 3.0.0 has more provable types that hold data. This tutorial does not show them:
+o1js 3.1.0 has more provable types that hold data. This tutorial does not show them:
 
 - `Bytes` and `UInt8`: fixed-size byte arrays for hash functions such as SHA-256 and Keccak.
 - `Experimental.OffchainState` and `Experimental.BatchReducer`: APIs that keep a map or a list off chain and settle it with actions. See [Tutorial 6](offchain-storage) for off-chain storage.

@@ -47,10 +47,10 @@ const AGENT_NOTES = [
       "A starter CLAUDE.md (also AGENTS.md, GEMINI.md) from o1Labs: provable types instead of number/boolean, no if/return on provable values, ZkProgram shape, compile() before prove. The notes below add what is specific to Mina.",
   },
   {
-    label: "Use o1js 3",
+    label: "Use o1js 3.1.0 or later",
     url: `${SITE_URL}/network-upgrades/mesa/requirements`,
     description:
-      "Since the Mesa upgrade, nodes reject transactions made with o1js 2 or older. Write code for o1js 3; examples written for o1js 1 or 2 need changes.",
+      "Since the Mesa upgrade, nodes reject transactions made with o1js 2 or older. Write code for o1js 3, and use 3.1.0 or later: 3.1.0 fixes account-update security vulnerabilities and changes verification keys, so recompile and redeploy contracts built with 3.0.0. Examples written for o1js 1 or 2 need changes.",
   },
   {
     label: "Update the verification key after Mesa",
@@ -62,7 +62,7 @@ const AGENT_NOTES = [
     label: "zkApp CLI 0.23.0 scaffolds",
     url: `${SITE_URL}/zkapps/tutorials/hello-world`,
     description:
-      "`zk project` writes \"o1js\": \"^2.*\"; change it to \"^3.0.0\". `zk file` writes a placeholder test that does not compile; delete or replace it. Node.js 22.19.5 or later is required.",
+      "`zk project` writes \"o1js\": \"^2.*\"; change it to \"^3.1.0\". `zk file` writes a placeholder test that does not compile; delete or replace it. Node.js 22.19.5 or later is required.",
   },
   {
     label: "Networks",
