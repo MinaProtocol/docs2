@@ -235,7 +235,8 @@ class ZkTodoListProof extends ZkProgram.Proof(ZkTodoList) {}
 
 - `class IndexedMerkleMap8 extends Experimental.IndexedMerkleMap(8) {}`
   - This line creates the class we will use to store our todo list
-  - IndexedMerkleMap(8) means a merkle map with 2^8 leaves that can be accessed by index
+  - IndexedMerkleMap(8) means a merkle map of height 8. It has 2^7 = 128 leaves, and you get and set values by key, not by index. The map always contains key 0, which uses one leaf. Thus, you can insert at most 127 keys.
+  - In o1js 3, `IndexedMerkleMap` is not in the `Experimental` namespace. Import it directly: `import { IndexedMerkleMap } from "o1js";`. See [Indexed Merkle Map](/zkapps/o1js/indexed-merkle-map).
 - `publicOutput: IndexedMerkleMap8,`
   - This line defines the type of the output of the proof as our indexed merkle map class
   - So every proof of the contents of a todolist will export the merkle map that it is valid for
