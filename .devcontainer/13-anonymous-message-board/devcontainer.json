@@ -1,0 +1,9 @@
+{
+  "name": "Tutorial 13: Anonymous Message Board",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:22-bookworm",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}/examples/zkapps/13-anonymous-message-board",
+  "hostRequirements": {
+    "memory": "8gb"
+  },
+  "postCreateCommand": "npm ci && npm run build"
+}

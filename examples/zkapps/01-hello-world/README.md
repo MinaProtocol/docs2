@@ -3,7 +3,8 @@
 This Hello World tutorial helps you get started with o1js, zkApps, and programming with zero knowledge proofs.
 
 ## Version
-- o1js: **0.17.***
+- o1js: **3.0.0**
+- Node.js: **22.19.5** or later
 
 ## Tutorial
 

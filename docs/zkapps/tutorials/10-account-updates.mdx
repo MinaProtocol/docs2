@@ -34,6 +34,14 @@ Each `AccountUpdate` can make assertions about its account, apply updates to its
 
 Transactions are structured as a list of trees of `AccountUpdates` applied with a [pre-order traversal](https://en.wikipedia.org/wiki/Tree_traversal).
 
+:::tip Run the example in your browser
+
+[Open the example project in GitHub Codespaces](https://codespaces.new/MinaProtocol/docs2?quickstart=1&devcontainer_path=.devcontainer%2F10-account-updates%2Fdevcontainer.json). GitHub starts a container with Node.js 22 in the `examples/zkapps/10-account-updates` folder, installs the dependencies and builds the project. This takes some minutes. Then, in the terminal, run `npm test`. Some tests make proofs, and these tests take several minutes.
+
+You must have a GitHub account. The codespace uses the free monthly quota of your account. Stop or delete the codespace when you are done.
+
+:::
+
 ## Permissions, Preconditions, and Composability
 
 Permissions, preconditions, composability, and tokens are the core features of zkApps that are implemented using `AccountUpdates`.

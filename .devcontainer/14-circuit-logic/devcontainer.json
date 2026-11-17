@@ -1,0 +1,9 @@
+{
+  "name": "Tutorial 14: Logic in a Circuit",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:22-bookworm",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}/examples/zkapps/14-circuit-logic",
+  "hostRequirements": {
+    "memory": "8gb"
+  },
+  "postCreateCommand": "npm ci && npm run build"
+}

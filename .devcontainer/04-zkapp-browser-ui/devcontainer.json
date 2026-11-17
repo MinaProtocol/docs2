@@ -1,0 +1,9 @@
+{
+  "name": "Tutorial 4: zkApp UI with React",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:22-bookworm",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}/examples/zkapps/04-zkapp-browser-ui",
+  "hostRequirements": {
+    "memory": "8gb"
+  },
+  "postCreateCommand": "(cd contracts && npm ci && npm run build) && (cd ui && npm ci)"
+}

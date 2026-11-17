@@ -1,0 +1,9 @@
+{
+  "name": "Tutorial 11: Advanced Account Updates",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:22-bookworm",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}/examples/zkapps/11-advanced-account-updates",
+  "hostRequirements": {
+    "memory": "8gb"
+  },
+  "postCreateCommand": "npm ci && npm run build"
+}
