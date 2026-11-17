@@ -3,7 +3,7 @@
 This tutorial helps you learn about types you can use when building with o1js. Earlier tutorials mostly use the `Field` type. o1js provides other higher-order types built from Fields that are useful for zkApp development and expand the possibilities for more applications.
 
 ## Version
-- o1js: **3.0.0**
+- o1js: **3.1.0**
 - Node.js: **22.19.5** or later
 
 ## Tutorial

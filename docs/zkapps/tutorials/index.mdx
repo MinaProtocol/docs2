@@ -75,9 +75,11 @@ $ zk --version
 
 To use the zkApp CLI and o1js, your environment requires:
 
-- Node.js 22.19.5 or later (o1js 3.0.0 declares `engines.node >= 22.19.5`; CI runs the examples on Node.js 22 and 24)
+- Node.js 22.19.5 or later (o1js 3.1.0 declares `engines.node >= 22.19.5`; CI runs the examples on Node.js 22 and 24)
 - NPM v10 and later
 - git v2 and later
+
+The tutorials use o1js 3.1.0. Do not use o1js 3.0.0: o1js 3.1.0 fixes security vulnerabilities in the account updates that o1js makes. o1js 3.1.0 also changes the verification keys. Thus, you must compile a contract that you deployed with o1js 3.0.0 again, and deploy it again or set its new verification key.
 
 Use a package manager to install the required versions and upgrade older versions if needed. Package managers for the supported environments are:
 

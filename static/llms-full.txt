@@ -19867,7 +19867,7 @@ A Merkle Map is a wrapper around a [Merkle Tree](https://docs.o1labs.org/o1js/ba
 
 The Indexed Merkle Map is an improved version of the [MerkleMap](/zkapps/tutorials/common-types-and-functions#merkle-map), offering enhanced efficiency and usability:
 
-- **Reduced Constraints:** In o1js 3.0.0, an `insert` into an `IndexedMerkleMap(33)` takes 2,621 rows and an `update` takes 1,613 rows. An update of a `MerkleMap` value takes 10,591 rows. These are the numbers that `analyzeMethods()` reports for the contracts of [Tutorial 5](/zkapps/tutorials/common-types-and-functions#indexedmerklemap).
+- **Reduced Constraints:** In o1js 3.1.0, an `insert` into an `IndexedMerkleMap(33)` takes 2,621 rows and an `update` takes 1,613 rows. An update of a `MerkleMap` value takes 10,591 rows. These are the numbers that `analyzeMethods()` reports for the contracts of [Tutorial 5](/zkapps/tutorials/common-types-and-functions#indexedmerklemap).
 - **Provable Code Integration:** Unlike `MerkleTree` and `MerkleMap`, the high-level API of `IndexedMerkleMap` is usable within provable code.
 - **Proof of absence:** The map can prove that a key is not in the map. `insert()` fails for a key that is already in the map, and `update()` fails for a key that is not in the map.
 
@@ -19881,7 +19881,7 @@ The `Indexed Merkle Map` can have a height of at most `52`, whereas the `Merkle 
 
 ### Prerequisites
 
-In o1js 3.0.0, `IndexedMerkleMap` is a top-level export of o1js. It is not in the `Experimental` namespace: `Experimental.IndexedMerkleMap` is `undefined`.
+In o1js 3.1.0, `IndexedMerkleMap` is a top-level export of o1js. It is not in the `Experimental` namespace: `Experimental.IndexedMerkleMap` is `undefined`.
 
 ```ts
 
@@ -20100,7 +20100,7 @@ Now that you have the tooling installed, you can start building your application
 
   The `zk project` command creates the `01-hello-world` directory that contains the scaffolding for your project, including tools such as the Prettier code formatting tool and the ESLint static code analysis tool. The `npm test` script uses the Node.js built-in test runner.
 
-1. The zkApp CLI `0.23.0` creates a project for o1js 2. To use o1js 3.0.0, the same as the [example project](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/01-hello-world), open `01-hello-world/package.json` and change the `o1js` entry in `peerDependencies` from `"^2.*"` to `"^3.0.0"`. Then install it:
+1. The zkApp CLI `0.23.0` creates a project for o1js 2. To use o1js 3.1.0, the same as the [example project](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/01-hello-world), open `01-hello-world/package.json` and change the `o1js` entry in `peerDependencies` from `"^2.*"` to `"^3.1.0"`. Then install it:
 
   ```sh
   $ cd 01-hello-world
@@ -20583,7 +20583,7 @@ You must have a GitHub account. The codespace uses the free monthly quota of you
 
 ## Prerequisites
 
-This tutorial has been tested with [o1js](https://www.npmjs.com/package/o1js) version `3.0.0` and [zkApp CLI](https://www.npmjs.com/package/zkapp-cli) version `0.23.0`. o1js 3.0.0 requires Node.js `22.19.5` or later.
+This tutorial has been tested with [o1js](https://www.npmjs.com/package/o1js) version `3.1.0` and [zkApp CLI](https://www.npmjs.com/package/zkapp-cli) version `0.23.0`. o1js 3.1.0 requires Node.js `22.19.5` or later.
 
 Ensure your environment meets the [Prerequisites](/zkapps/tutorials#prerequisites) for zkApp Developer Tutorials.
 
@@ -20619,7 +20619,7 @@ Ensure your environment meets the [Prerequisites](/zkapps/tutorials#prerequisite
 
   The `zk project` command creates the `02-private-inputs-and-hash-functions` directory that contains the scaffolding for your project, including tools such as the Prettier code formatting tool and the ESLint static code analysis tool. The `npm test` script uses the Node.js built-in test runner.
 
-1. The zkApp CLI `0.23.0` creates a project for o1js 2. To use o1js 3.0.0, the same as the [example project](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/02-private-inputs-and-hash-functions), open `package.json` and change the `o1js` entry in `peerDependencies` from `"^2.*"` to `"^3.0.0"`. Then install it:
+1. The zkApp CLI `0.23.0` creates a project for o1js 2. To use o1js 3.1.0, the same as the [example project](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/02-private-inputs-and-hash-functions), open `package.json` and change the `o1js` entry in `peerDependencies` from `"^2.*"` to `"^3.1.0"`. Then install it:
 
   ```sh
   $ cd 02-private-inputs-and-hash-functions
@@ -20906,7 +20906,7 @@ Ensure your environment meets the [Prerequisites](/zkapps/tutorials#prerequisite
 - The latest version of the [zkApp CLI](https://www.npmjs.com/package/zkapp-cli)
 - Node.js 22.19.5 or later, which is what o1js 3 requires
 
-The [example project](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/03-deploying-to-a-network) for this tutorial uses o1js `^3.0.0`. CI builds it, runs it and runs its tests on each push to `main`, on each pull request that changes the examples, and once a day.
+The [example project](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/03-deploying-to-a-network) for this tutorial uses o1js `^3.1.0`. CI builds it, runs it and runs its tests on each push to `main`, on each pull request that changes the examples, and once a day.
 
 If you have earlier versions of the zkApp CLI and o1js installed, be sure to [Update the zkApp CLI](/zkapps/writing-a-zkapp/introduction-to-zkapps/install-zkapp-cli#update-the-zkapp-cli) to the latest version:
 
@@ -20957,7 +20957,7 @@ npm update -g zkapp-cli
 
 1. Change into the `03-deploying-to-a-live-network` directory.
 
-1. The zkApp CLI `0.23.0` creates a project for o1js 2. To use o1js 3.0.0, the same as the example project, open `package.json` and change the `o1js` entry in `peerDependencies` from `"^2.*"` to `"^3.0.0"`. Then install it:
+1. The zkApp CLI `0.23.0` creates a project for o1js 2. To use o1js 3.1.0, the same as the example project, open `package.json` and change the `o1js` entry in `peerDependencies` from `"^2.*"` to `"^3.1.0"`. Then install it:
 
   ```sh
   $ npm install
@@ -21298,7 +21298,7 @@ You must have a GitHub account. The codespace uses the free monthly quota of you
 
 This tutorial has been tested with:
 
-- [o1js](https://www.npmjs.com/package/o1js) version `3.0.0`
+- [o1js](https://www.npmjs.com/package/o1js) version `3.1.0`
 - [Next.js](https://nextjs.org/) version `14.2.3` and React version `18`
 - Node.js versions `22` and `24`
 
@@ -21359,8 +21359,8 @@ The zkApp CLI installs the dependencies in each sub-directory.
 
 The zkApp CLI can create the project with an earlier o1js. Set o1js to version 3:
 
-1. In `ui/package.json`, set the `o1js` version in `dependencies` to `^3.0.0`.
-1. In `contracts/package.json`, set the `o1js` version in `peerDependencies` to `^3.0.0`.
+1. In `ui/package.json`, set the `o1js` version in `dependencies` to `^3.1.0`.
+1. In `contracts/package.json`, set the `o1js` version in `peerDependencies` to `^3.1.0`.
 1. Run `npm install` in the `ui` directory and in the `contracts` directory.
 
 ## Create a repository
@@ -22028,7 +22028,7 @@ You must have a GitHub account. The codespace uses the free monthly quota of you
 
 ## Prerequisites
 
-This tutorial has been tested with [o1js](https://www.npmjs.com/package/o1js) version `3.0.0`. o1js 3.0.0 requires Node.js `22.19.5` or later.
+This tutorial has been tested with [o1js](https://www.npmjs.com/package/o1js) version `3.1.0`. o1js 3.1.0 requires Node.js `22.19.5` or later.
 
 Ensure your environment meets the [Prerequisites](/zkapps/tutorials#prerequisites) for zkApp Developer Tutorials.
 
@@ -22522,13 +22522,13 @@ You use [MerkleMaps](https://docs.o1labs.org/o1js/api-reference/classes/MerkleMa
 
 :::tip Use IndexedMerkleMap for new code
 
-In o1js 3.0.0, `MerkleMap` is still exported and is not marked as deprecated. But [IndexedMerkleMap](#indexedmerklemap) does the same job with fewer constraints, and it can prove that a key is not in the map. Use `MerkleMap` only when existing code or an existing root on chain depends on it.
+In o1js 3.1.0, `MerkleMap` is still exported and is not marked as deprecated. But [IndexedMerkleMap](#indexedmerklemap) does the same job with fewer constraints, and it can prove that a key is not in the map. Use `MerkleMap` only when existing code or an existing root on chain depends on it.
 
 :::
 
 ## Provable data structures
 
-A circuit has a fixed size. Thus, a smart contract method cannot take a JavaScript array or a JavaScript `Map` of any length. A method can take only a _provable type_: a type that o1js can convert to a fixed number of field elements. o1js 3.0.0 has these provable data structures:
+A circuit has a fixed size. Thus, a smart contract method cannot take a JavaScript array or a JavaScript `Map` of any length. A method can take only a _provable type_: a type that o1js can convert to a fixed number of field elements. o1js 3.1.0 has these provable data structures:
 
 - A fixed-size array, made with `Provable.Array(type, length)` or with a `Struct`, such as `Points8` in [Struct](#struct).
 - `DynamicArray`: an array with a fixed capacity and a length that can change.
@@ -22541,7 +22541,7 @@ A _commitment_ is one field element, such as a hash or a Merkle root, that ident
 
 ### Which structure for which job
 
-The _rows_ column shows the size of the circuit of each method in the example project. It is the number that `analyzeMethods()` reports in o1js 3.0.0. A method that only sets one state field, such as `initState`, takes 614 rows. Thus, most of the rows of a small method do not come from the data structure.
+The _rows_ column shows the size of the circuit of each method in the example project. It is the number that `analyzeMethods()` reports in o1js 3.1.0. A method that only sets one state field, such as `initState`, takes 614 rows. Thus, most of the rows of a small method do not come from the data structure.
 
 | Structure | Use it when | Size limit | What the method gets | What goes on chain | Rows in the example |
 | --- | --- | --- | --- | --- | --- |
@@ -22558,7 +22558,7 @@ An _unconstrained_ value is data that the prover gives to the circuit without a 
 
 An `IndexedMerkleMap` is a key-value map in a Merkle tree. Each leaf holds a key, a value, and the next larger key in the map. Thus, the leaves make a sorted linked list. Because of this list, the map can prove that a key is not in the map: it shows the leaf with the next smaller key, and that leaf points to a larger key.
 
-In o1js 3.0.0, import `IndexedMerkleMap` directly from `o1js`. It is not in the `Experimental` namespace. Make a class for one height:
+In o1js 3.1.0, import `IndexedMerkleMap` directly from `o1js`. It is not in the `Experimental` namespace. Make a class for one height:
 
 ```ts title="src/main.ts"
 const indexedMap = new Map33();
@@ -22630,7 +22630,7 @@ export class IndexedMerkleMapContract extends SmartContract {
 }
 ```
 
-The method changes a `clone()` of the map, not the argument. In o1js 3.0.0, `Mina.transaction()` can run the method body more than one time, and the argument shares its unconstrained data with the map of the caller. If the method changes the argument, the first run adds the key to the data of the caller but not to its root. The second run then fails with `Invalid low node (root)`. The tests of the example project find this error.
+The method changes a `clone()` of the map, not the argument. In o1js 3.1.0, `Mina.transaction()` can run the method body more than one time, and the argument shares its unconstrained data with the map of the caller. If the method changes the argument, the first run adds the key to the data of the caller but not to its root. The second run then fails with `Invalid low node (root)`. The tests of the example project find this error.
 
 The caller sends the transaction, and then makes the same change to its own map:
 
@@ -22874,7 +22874,7 @@ DynamicArray: contract total: 12
 
 ### Not on this page
 
-o1js 3.0.0 has more provable types that hold data. This tutorial does not show them:
+o1js 3.1.0 has more provable types that hold data. This tutorial does not show them:
 
 - `Bytes` and `UInt8`: fixed-size byte arrays for hash functions such as SHA-256 and Keccak.
 - `Experimental.OffchainState` and `Experimental.BatchReducer`: APIs that keep a map or a list off chain and settle it with actions. See [Tutorial 6](offchain-storage) for off-chain storage.
@@ -22994,7 +22994,7 @@ The offchain state API is exported under `Experimental`, so its shape can change
   $ zk project 06-offchain-storage
   ```
 
-1. Change to the project directory. The zkApp CLI `0.23.0` creates a project for o1js 2. To use o1js 3.0.0, the same as the [example project](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/06-offchain-storage), open `package.json` and change the `o1js` entry in `peerDependencies` from `"^2.*"` to `"^3.0.0"`. Then install it:
+1. Change to the project directory. The zkApp CLI `0.23.0` creates a project for o1js 2. To use o1js 3.1.0, the same as the [example project](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/06-offchain-storage), open `package.json` and change the `o1js` entry in `peerDependencies` from `"^2.*"` to `"^3.1.0"`. Then install it:
 
   ```sh
   $ cd 06-offchain-storage
@@ -23303,7 +23303,7 @@ You must have a GitHub account. The codespace uses the free monthly quota of you
 
 This tutorial has been tested with:
 
-- [o1js](https://www.npmjs.com/package/o1js) version `3.0.0`
+- [o1js](https://www.npmjs.com/package/o1js) version `3.1.0`
 - Node.js versions `22` and `24`
 
 The example project is built and tested in CI: the smart contract tests run against a local blockchain, and the oracle's signing logic is tested offline with o1js.
@@ -23491,7 +23491,7 @@ Now that you have an oracle that returns signed data, you can write a smart cont
 
 1. Change into the `07-oracles` directory.
 
-1. The zkApp CLI can create the project with an earlier o1js. In `package.json`, set the `o1js` version in `peerDependencies` to `^3.0.0`, then run:
+1. The zkApp CLI can create the project with an earlier o1js. In `package.json`, set the `o1js` version in `peerDependencies` to `^3.1.0`, then run:
 
    ```sh
    $ npm install
@@ -23977,7 +23977,7 @@ You must have a GitHub account. The codespace uses the free monthly quota of you
 
 - Ensure your environment meets the [Prerequisites](/zkapps/tutorials#prerequisites) for zkApp Developer Tutorials.
 
-The example project for this tutorial is tested with [o1js](https://www.npmjs.com/package/o1js) version `3.0.0` and Node.js 22.19.5 or later, which is what o1js 3 requires.
+The example project for this tutorial is tested with [o1js](https://www.npmjs.com/package/o1js) version `3.1.0` and Node.js 22.19.5 or later, which is what o1js 3 requires.
 
 ## Create the project
 
@@ -24001,7 +24001,7 @@ The example project for this tutorial is tested with [o1js](https://www.npmjs.co
 
 ## Prepare the project
 
-1. Change to the project directory. The zkApp CLI `0.23.0` creates a project for o1js 2. To use o1js 3.0.0, the same as the [example project](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/08-custom-tokens), open `package.json` and change the `o1js` entry in `peerDependencies` from `"^2.*"` to `"^3.0.0"`. Then install it:
+1. Change to the project directory. The zkApp CLI `0.23.0` creates a project for o1js 2. To use o1js 3.1.0, the same as the [example project](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/08-custom-tokens), open `package.json` and change the `o1js` entry in `peerDependencies` from `"^2.*"` to `"^3.1.0"`. Then install it:
 
   ```sh
   $ cd 08-custom-tokens
@@ -24394,7 +24394,7 @@ The following example code for the ZkProgram tutorial is provided in the [Add.ts
 
 Ensure your environment meets the [Prerequisites](/zkapps/tutorials#prerequisites) for zkApp Developer Tutorials.
 
-This tutorial uses o1js 3.0.0. o1js 3.0.0 needs Node.js 22.19.5 or later (`engines.node` in the o1js package).
+This tutorial uses o1js 3.1.0. o1js 3.1.0 needs Node.js 22.19.5 or later (`engines.node` in the o1js package).
 
 In particular, make sure you have the zkApp CLI installed:
 
@@ -25001,7 +25001,7 @@ In this tutorial, you build two smart contracts:
 - `ProofsOnlyZkApp`: Non-upgradeable proof only
 - `SecondaryZkApp`: the other zkApp
 
-The full source code for this tutorial is provided in the [examples/zkapps/10-account-updates](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/10-account-updates) directory on GitHub. The example project uses o1js 3.0.0, which needs Node.js 22.19.5 or later.
+The full source code for this tutorial is provided in the [examples/zkapps/10-account-updates](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/10-account-updates) directory on GitHub. The example project uses o1js 3.1.0, which needs Node.js 22.19.5 or later.
 
 ### Non-upgradeable proof only
 
@@ -25378,7 +25378,7 @@ burn and transfer a custom token.
 
 This tutorial has been tested with:
 
-- [o1js](https://www.npmjs.com/package/o1js) version `3.0.0`
+- [o1js](https://www.npmjs.com/package/o1js) version `3.1.0`
 - Node.js version `22`
 
 ## Get the example project
@@ -26047,7 +26047,7 @@ The o1js reducer API is not safe for production applications for this reason.
 
 :::caution
 
-In o1js `3.0.0`, `Mina.LocalBlockchain` keeps the actions of a transaction
+In o1js `3.1.0`, `Mina.LocalBlockchain` keeps the actions of a transaction
 that the network rejected. The account's action state does not include them,
 but a reducer that runs after the rejected transaction reads them. A real
 network does not keep them. In a test with a reducer, do not send a rejected
@@ -26344,7 +26344,7 @@ Make sure your environment meets the
 [Prerequisites](/zkapps/tutorials#prerequisites) for zkApp Developer
 Tutorials. o1js 3 requires Node.js 22.19.5 or later.
 
-The example project uses o1js `^3.0.0`. CI builds it, runs it and runs its
+The example project uses o1js `^3.1.0`. CI builds it, runs it and runs its
 tests on each push to `main`, on each pull request that changes the examples,
 and once a day.
 
@@ -26716,7 +26716,7 @@ $ npm install -g zkapp-cli
 
 o1js 3 requires Node.js 22.19.5 or later.
 
-The [example project](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/13-anonymous-message-board) uses o1js `^3.0.0`. CI builds it, runs it and runs its tests on each push to `main`, on each pull request that changes the examples, and once a day.
+The [example project](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/13-anonymous-message-board) uses o1js `^3.1.0`. CI builds it, runs it and runs its tests on each push to `main`, on each pull request that changes the examples, and once a day.
 
 ## Create the message-board project
 
@@ -26739,7 +26739,7 @@ The [example project](https://github.com/MinaProtocol/docs2/tree/main/examples/z
 
   Each time you make updates, then build or deploy, the TypeScript code is compiled into JavaScript in the `build` directory. See the included [README](https://github.com/MinaProtocol/docs2/blob/main/examples/zkapps/13-anonymous-message-board/README.md) file with usage instructions.
 
-1. The zkApp CLI `0.23.0` creates a project for o1js 2. To use o1js 3, the same as the [example project](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/13-anonymous-message-board), open `package.json` and change the `o1js` entry in `peerDependencies` from `"^2.*"` to `"^3.0.0"`. Then install it:
+1. The zkApp CLI `0.23.0` creates a project for o1js 2. To use o1js 3.1.0, the same as the [example project](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/13-anonymous-message-board), open `package.json` and change the `o1js` entry in `peerDependencies` from `"^2.*"` to `"^3.1.0"`. Then install it:
 
   ```sh
   $ npm install
@@ -27092,7 +27092,7 @@ Each section has three parts:
 
 1. The wrong code.
 2. What goes wrong: the error message, or the wrong result. Each message on
-   this page is the real text from o1js `3.0.0`.
+   this page is the real text from o1js `3.1.0`.
 3. The correct code.
 
 A test in the example project proves each claim on this page. The name of each
@@ -27123,7 +27123,7 @@ in the o1Labs docs.
 
 This tutorial has been tested with:
 
-- [o1js](https://www.npmjs.com/package/o1js) version `3.0.0`
+- [o1js](https://www.npmjs.com/package/o1js) version `3.1.0`
 - Node.js version `22`
 
 ## Get the example project
@@ -27993,9 +27993,11 @@ $ zk --version
 
 To use the zkApp CLI and o1js, your environment requires:
 
-- Node.js 22.19.5 or later (o1js 3.0.0 declares `engines.node >= 22.19.5`; CI runs the examples on Node.js 22 and 24)
+- Node.js 22.19.5 or later (o1js 3.1.0 declares `engines.node >= 22.19.5`; CI runs the examples on Node.js 22 and 24)
 - NPM v10 and later
 - git v2 and later
+
+The tutorials use o1js 3.1.0. Do not use o1js 3.0.0: o1js 3.1.0 fixes security vulnerabilities in the account updates that o1js makes. o1js 3.1.0 also changes the verification keys. Thus, you must compile a contract that you deployed with o1js 3.0.0 again, and deploy it again or set its new verification key.
 
 Use a package manager to install the required versions and upgrade older versions if needed. Package managers for the supported environments are:
 
@@ -28058,7 +28060,7 @@ The script on this page connects to Devnet. Before you start, complete [Tutorial
 
 To try the same flow without a network, a funded account or key files, go to [Run it without a network](#run-it-without-a-network).
 
-The [example project](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/interacting-with-zkApps-server-side) uses o1js `^3.0.0`. CI builds it, and runs and tests its local version (`src/local.ts`), on pull requests that change the examples, on every push to `main`, and daily. CI does not run the Devnet script (`src/main.ts`), because that script needs funds and keys.
+The [example project](https://github.com/MinaProtocol/docs2/tree/main/examples/zkapps/interacting-with-zkApps-server-side) uses o1js `^3.1.0`. CI builds it, and runs and tests its local version (`src/local.ts`), on pull requests that change the examples, on every push to `main`, and daily. CI does not run the Devnet script (`src/main.ts`), because that script needs funds and keys.
 
 ## Interact with the deployed Smart Contract
 
