@@ -25,7 +25,7 @@
     "test:scripts": "node --test scripts/*.test.mjs"
   },
   "dependencies": {
-    "@docusaurus/core": "^3.8.0",
+    "@docusaurus/core": "^3.10.2",
     "@docusaurus/cssnano-preset": "^3.8.0",
     "@docusaurus/plugin-client-redirects": "^3.8.0",
     "@docusaurus/plugin-debug": "^3.8.0",
