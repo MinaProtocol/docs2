@@ -10,14 +10,17 @@
 
 import { readdir, readFile, writeFile, mkdir } from 'node:fs/promises';
 import { join, relative, dirname, basename, extname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import mdxToMarkdownModule from './mdx-to-markdown.cjs';
 
 // The same conversion makes the markdown twin of each page
 // (plugins/markdown-twins.cjs), so the two cannot disagree.
 const { mdxToMarkdown } = mdxToMarkdownModule;
 
-const DOCS_DIR = new URL('../docs', import.meta.url).pathname;
-const OUTPUT_FILE = new URL('../static/llms-full.txt', import.meta.url).pathname;
+// fileURLToPath, not URL.pathname: pathname stays percent-encoded, so a
+// checkout under a path with spaces ("%20") or non-ASCII characters fails.
+const DOCS_DIR = fileURLToPath(new URL('../docs', import.meta.url));
+const OUTPUT_FILE = fileURLToPath(new URL('../static/llms-full.txt', import.meta.url));
 
 async function collectFiles(dir) {
   const entries = await readdir(dir, { withFileTypes: true });
