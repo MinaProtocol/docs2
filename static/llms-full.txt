@@ -16851,7 +16851,7 @@ Here’s how to find your address within common wallets:
 <br></br>
 
 - [**Clorio Wallet**](https://clor.io) - Open the wallet and tap <img src="/img/Copy_icon.png" alt="Copy icon on Clor.io" width="3%"/> at the top to copy your address.
-- [**Ledger Hardware Wallet**](https://www.ledger.com/mina-wallet) - Follow the [instructions on creating a Ledger Mina account via Auro Wallet](https://support.ledger.com/hc/en-us/articles/5458493215901-Creating-a-Ledger-MINA-account-via-Auro-Wallet?docs=true), then see the instructions for receiving MINA on Auro wallet above.
+- [**Ledger Hardware Wallet**](https://www.ledger.com/mina-wallet) - Follow the [instructions on creating a Ledger Mina account via Auro Wallet](https://support.ledger.com/article/5458493215901-zd), then see the instructions for receiving MINA on Auro wallet above.
 - [**Pallad**](https://get.pallad.co/website) - Open the wallet, tap "*Receive*", and tap "*Copy to clipboard*" to share your address. Wallet's QR code is displayed as well.
 
 <br></br>
@@ -16890,7 +16890,7 @@ When sending MINA, always double check that you have the correct Mina address fo
 <br></br>
 
 - [**Clorio Wallet**](https://clor.io) - Open the wallet, tap “*Send TX*”, and enter in the address, memo, amount, and fee, tap “*Preview*”, and enter in the nonce then tap “*Confirm*”.
-- [**Ledger Hardware Wallet**](https://www.ledger.com/mina-wallet) - Follow the [instructions on creating a Ledger Mina account via Auro Wallet](https://support.ledger.com/hc/en-us/articles/5458493215901-Creating-a-Ledger-MINA-account-via-Auro-Wallet?docs=true), then see the instructions for sending MINA on Auro wallet above.
+- [**Ledger Hardware Wallet**](https://www.ledger.com/mina-wallet) - Follow the [instructions on creating a Ledger Mina account via Auro Wallet](https://support.ledger.com/article/5458493215901-zd), then see the instructions for sending MINA on Auro wallet above.
 - [**Pallad**](https://get.pallad.co/website) - Open the wallet, tap "*Send*". Enter address and amount, and tap "*Next*". Enter your spending password and submit to confirm the transaction.
 
 <br></br>
@@ -17033,7 +17033,7 @@ Before you get started, download [Ledger Live](https://www.ledger.com/ledger-liv
 Make sure your Ledger firmware is on the latest version supporting Mina.
 
 1. Connect and unlock your Ledger device.
-2. Open the **Manager** in [Ledger Live](https://support.ledger.com/hc/en-us/articles/4404382258961?docs=true).
+2. Open the **Manager** in [Ledger Live](https://support.ledger.com/article/4404382258961-zd).
 3. Allow the manager on your device.
 4. Search for **Mina** in the app catalog.
 5. Click the **Install** button. Your device displays **Processing...**.
