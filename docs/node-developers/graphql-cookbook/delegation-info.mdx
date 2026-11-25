@@ -1,0 +1,88 @@
+---
+title: "GraphQL Cookbook: Delegation info"
+sidebar_label: Delegation info
+hide_title: true
+description: Find who a Mina account delegates its stake to, which delegate counts for the current epoch, and which accounts delegate to it, with one GraphQL query.
+keywords:
+  - GraphQL
+  - delegation
+  - staking
+  - delegators
+  - daemon
+---
+
+# Delegation info
+
+**What this does:** shows who an account delegates to, the delegate that counts for the current epoch, and the accounts that delegate to it.
+
+**When to use it:** to confirm a delegation took effect, or to list a block producer's delegators.
+
+## Query
+
+Send to the daemon GraphQL API, for example `https://devnet-plain-1.gcp.o1test.net/graphql`.
+
+```graphql
+query DelegationInfo($publicKey: PublicKey!) {
+  account(publicKey: $publicKey) {
+    publicKey
+    delegate
+    delegateAccount {
+      publicKey
+      balance {
+        total
+      }
+    }
+    epochDelegateAccount {
+      publicKey
+    }
+    delegators {
+      publicKey
+      balance {
+        total
+      }
+    }
+  }
+}
+```
+
+## Variables
+
+```json
+{ "publicKey": "B62qpfenMTTuG2RgaJJaatbJ7KheZ4K2a43dsK48keARjk8mZ4Mhjcr" }
+```
+
+## Example response
+
+From Devnet, for a block producer that stakes for itself:
+
+```json
+{
+  "data": {
+    "account": {
+      "publicKey": "B62qpfenMTTuG2RgaJJaatbJ7KheZ4K2a43dsK48keARjk8mZ4Mhjcr",
+      "delegate": "B62qpfenMTTuG2RgaJJaatbJ7KheZ4K2a43dsK48keARjk8mZ4Mhjcr",
+      "delegateAccount": {
+        "publicKey": "B62qpfenMTTuG2RgaJJaatbJ7KheZ4K2a43dsK48keARjk8mZ4Mhjcr",
+        "balance": { "total": "29689242850222613" }
+      },
+      "epochDelegateAccount": {
+        "publicKey": "B62qpfenMTTuG2RgaJJaatbJ7KheZ4K2a43dsK48keARjk8mZ4Mhjcr"
+      },
+      "delegators": []
+    }
+  }
+}
+```
+
+## Notes
+
+- An account that does not delegate returns its own public key as `delegate`.
+- `delegate` is the current ledger. `epochDelegateAccount` is the delegate in the staking ledger of the current epoch, which is the one that decides block production now. Right after a delegation, the two differ until the new delegation reaches a staking ledger.
+- `delegators` comes from the staking ledger of the last epoch, so it can lag the current ledger and can be empty. `lastEpochDelegators` reads the epoch before that.
+
+## Related
+
+- [Account balance](./account-balance)
+- [Network status](./network-status)
+- [How to delegate](/using-mina/how-to-delegate)
+- [Proof of Stake](/mina-protocol/proof-of-stake)

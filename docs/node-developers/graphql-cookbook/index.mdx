@@ -1,0 +1,56 @@
+---
+title: GraphQL Cookbook
+hide_title: true
+description: Copy-pasteable GraphQL queries for common Mina tasks, such as checking a balance, reading the mempool, estimating a fee, and finding a block or a transaction, each checked against Devnet.
+keywords:
+  - GraphQL
+  - cookbook
+  - queries
+  - daemon
+  - archive node
+---
+
+# GraphQL Cookbook
+
+Each recipe in this cookbook answers one question with one GraphQL query you can copy, run, and adapt. The [GraphQL API](/node-developers/graphql-api) page explains the API itself. The recipes show which fields to combine for a task.
+
+## Which endpoint answers which question
+
+Mina has two GraphQL services, and a recipe uses whichever one holds the data:
+
+| Service | Holds | Devnet endpoint used in these recipes |
+| --- | --- | --- |
+| Daemon GraphQL API | The current ledger, the node's transaction pool, and the last `k` blocks (the transition frontier, 290 blocks) | `https://devnet-plain-1.gcp.o1test.net/graphql` |
+| [Archive Node API](/node-operators/data-and-history/archive-node-api) | Historical blocks, transactions, events, and actions | `https://devnet-archive-node-api.gcp.o1test.net` |
+
+On your own node, the daemon API is at `http://localhost:3085/graphql`. For anything older than the transition frontier, use an archive node: the daemon does not keep it.
+
+## Run a recipe
+
+Send the query, and its variables if it has any, as JSON in a `POST` request. For example, with `curl` and `jq`:
+
+```sh
+curl -s https://devnet-plain-1.gcp.o1test.net/graphql \
+  -H 'content-type: application/json' \
+  -d '{"query": "{ syncStatus }"}' | jq
+```
+
+Any GraphQL client works the same way. On your own node, open `http://localhost:3085/graphql` in a browser to use the GraphiQL IDE.
+
+## Units and encodings
+
+- Amounts, balances, and fees are strings in nanomina: 1 MINA is `1000000000`. Parse them as big integers: large balances do not fit in a JavaScript `number`.
+- Memos are Base58Check encoded. `E4YM2vTHhWEg66xpj52JErHUBU4pZ1yageL4TVDDpTTSsv8mK6YaH` is the empty memo.
+- Daemon times and the archive's `timestamp` fields are Unix milliseconds as strings. The archive's `dateTime` is ISO 8601.
+
+## Recipes
+
+| Recipe | Question | Service |
+| --- | --- | --- |
+| [Network status](/node-developers/graphql-cookbook/network-status) | Is the node synced, and what epoch and slot is it? | Daemon |
+| [Account balance](/node-developers/graphql-cookbook/account-balance) | What is this account's balance and next nonce? | Daemon |
+| [Delegation info](/node-developers/graphql-cookbook/delegation-info) | Who does this account delegate to, for this epoch? | Daemon |
+| [Pending transactions](/node-developers/graphql-cookbook/pending-transactions) | What is waiting in the mempool? | Daemon |
+| [Estimate a fee](/node-developers/graphql-cookbook/estimate-fee) | What fee are other senders paying right now? | Daemon |
+| [Block by height](/node-developers/graphql-cookbook/block-by-height) | What is in block _N_? | Archive |
+| [Find a transaction](/node-developers/graphql-cookbook/find-transaction) | Did this payment land, and in which block? | Archive |

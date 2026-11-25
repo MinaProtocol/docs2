@@ -1,0 +1,100 @@
+---
+title: "GraphQL Cookbook: Pending transactions"
+sidebar_label: Pending transactions
+hide_title: true
+description: Inspect the payments, delegations, and zkApp commands waiting in a Mina daemon's transaction pool, for every sender, one sender, or specific hashes.
+keywords:
+  - GraphQL
+  - mempool
+  - transaction pool
+  - pending
+  - daemon
+---
+
+# Pending transactions
+
+**What this does:** lists the user commands (payments and delegations) and zkApp commands waiting in a node's transaction pool.
+
+**When to use it:** to check that a transaction you sent reached the pool, or to see what is waiting to be included.
+
+## Query
+
+Send to the daemon GraphQL API, for example `https://devnet-plain-1.gcp.o1test.net/graphql`.
+
+```graphql
+query PendingTransactions {
+  pooledUserCommands {
+    hash
+    kind
+    from
+    to
+    amount
+    fee
+    nonce
+    memo
+  }
+  pooledZkappCommands {
+    hash
+  }
+}
+```
+
+To narrow the result, pass `publicKey` (the sender) or `hashes` to either field:
+
+```graphql
+query MyPendingPayments($sender: PublicKey!) {
+  pooledUserCommands(publicKey: $sender) {
+    hash
+    nonce
+    fee
+  }
+}
+```
+
+## Variables
+
+None for the first query. For the second:
+
+```json
+{ "sender": "B62qp3B9VW1ir5qL1MWRwr6ecjC2NZbGr8vysGeme9vXGcFXTMNXb2t" }
+```
+
+## Example response
+
+From Devnet, for the first query:
+
+```json
+{
+  "data": {
+    "pooledUserCommands": [
+      {
+        "hash": "5JtrCq68nBJvdTHMtJfBiQXe1jDzUi2Qj9Pkb4BYV4nGUUrMvaBx",
+        "kind": "PAYMENT",
+        "from": "B62qp3B9VW1ir5qL1MWRwr6ecjC2NZbGr8vysGeme9vXGcFXTMNXb2t",
+        "to": "B62qp3B9VW1ir5qL1MWRwr6ecjC2NZbGr8vysGeme9vXGcFXTMNXb2t",
+        "amount": "10000000",
+        "fee": "10000000",
+        "nonce": 759216,
+        "memo": "E4YzjHJ6ds2xcGuWvfVGQzp6HXhk5R2c5xrj9apXH5ER941pRxqmS"
+      }
+    ],
+    "pooledZkappCommands": [
+      { "hash": "5JunMy52rXecEAckxMsVychphCHkmaZxar6D9n4g67XCZBJ42zLE" }
+    ]
+  }
+}
+```
+
+## Notes
+
+- The pool belongs to the node you ask. Each node sees a slightly different pool, and a command leaves it once it is in a block.
+- A command missing from the pool may already be in a block. To check, see [Find a transaction](./find-transaction).
+- `kind` is uppercase here, for example `PAYMENT`. The Archive Node API returns lowercase (`payment` or `delegation`), so normalize the case before you compare the two.
+- `nonce` is a number here, but a string on `account`.
+- The memo is Base58Check encoded. The one above decodes to `devnet-tx-generator`, a bot that sends traffic on Devnet.
+
+## Related
+
+- [Estimate a fee](./estimate-fee)
+- [Account balance](./account-balance)
+- [Find a transaction](./find-transaction)

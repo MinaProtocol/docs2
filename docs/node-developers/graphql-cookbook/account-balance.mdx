@@ -1,0 +1,83 @@
+---
+title: "GraphQL Cookbook: Account balance"
+sidebar_label: Account balance
+hide_title: true
+description: Get a Mina account's total, liquid, and locked balance, its nonce, the nonce to use for its next transaction, and its delegate with one GraphQL query.
+keywords:
+  - GraphQL
+  - balance
+  - nonce
+  - account
+  - daemon
+---
+
+# Account balance
+
+**What this does:** returns an account's balance, its nonce, the nonce for its next transaction, and its delegate.
+
+**When to use it:** to show a balance in a wallet or explorer, or to pick the nonce before you sign a transaction.
+
+## Query
+
+Send to the daemon GraphQL API, for example `https://devnet-plain-1.gcp.o1test.net/graphql`.
+
+```graphql
+query AccountBalance($publicKey: PublicKey!) {
+  account(publicKey: $publicKey) {
+    publicKey
+    balance {
+      total
+      liquid
+      locked
+      blockHeight
+    }
+    nonce
+    inferredNonce
+    delegate
+  }
+}
+```
+
+## Variables
+
+```json
+{ "publicKey": "B62qpfenMTTuG2RgaJJaatbJ7KheZ4K2a43dsK48keARjk8mZ4Mhjcr" }
+```
+
+## Example response
+
+From Devnet:
+
+```json
+{
+  "data": {
+    "account": {
+      "publicKey": "B62qpfenMTTuG2RgaJJaatbJ7KheZ4K2a43dsK48keARjk8mZ4Mhjcr",
+      "balance": {
+        "total": "29689242850222613",
+        "liquid": "29689242850222613",
+        "locked": "0",
+        "blockHeight": "594775"
+      },
+      "nonce": "1",
+      "inferredNonce": "1",
+      "delegate": "B62qpfenMTTuG2RgaJJaatbJ7KheZ4K2a43dsK48keARjk8mZ4Mhjcr"
+    }
+  }
+}
+```
+
+## Notes
+
+- Balances are nanomina strings: divide by `1000000000` for MINA. Parse them as big integers, not floats.
+- `liquid` is what the account can spend now. `locked` is the part its vesting schedule (timing) still holds back. Both can be `null` while the node is bootstrapping.
+- `balance.blockHeight` is the height the balance was read at.
+- Use `inferredNonce` for the next transaction. Unlike `nonce`, it counts this account's transactions that are still in the node's pool.
+- An account that does not exist yet returns `"account": null`. Sending it MINA creates it and charges the account creation fee.
+- For a custom token balance, pass the token ID as the `token` argument. It defaults to MINA.
+
+## Related
+
+- [Delegation info](./delegation-info)
+- [Pending transactions](./pending-transactions)
+- [Find a transaction](./find-transaction)

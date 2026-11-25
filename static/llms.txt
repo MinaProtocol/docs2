@@ -170,6 +170,17 @@ Every page also has a markdown twin: add `.md` to its URL (for example https://d
 
 - [Exchange Operators](https://docs.minaprotocol.com/node-operators/exchange-operators): Guide for exchanges integrating with the Mina blockchain using Rosetta API, archive nodes, and block producer nodes.
 
+## Node Developers
+
+- [GraphQL Cookbook](https://docs.minaprotocol.com/node-developers/graphql-cookbook): Copy-pasteable GraphQL queries for common Mina tasks, such as checking a balance, reading the mempool, estimating a fee, and finding a block or a transaction, each checked against Devnet.
+- [GraphQL Cookbook: Network status](https://docs.minaprotocol.com/node-developers/graphql-cookbook/network-status): Check with one GraphQL query whether a Mina daemon is synced, which network it is on, its block height, and the current epoch and slot.
+- [GraphQL Cookbook: Account balance](https://docs.minaprotocol.com/node-developers/graphql-cookbook/account-balance): Get a Mina account's total, liquid, and locked balance, its nonce, the nonce to use for its next transaction, and its delegate with one GraphQL query.
+- [GraphQL Cookbook: Delegation info](https://docs.minaprotocol.com/node-developers/graphql-cookbook/delegation-info): Find who a Mina account delegates its stake to, which delegate counts for the current epoch, and which accounts delegate to it, with one GraphQL query.
+- [GraphQL Cookbook: Pending transactions](https://docs.minaprotocol.com/node-developers/graphql-cookbook/pending-transactions): Inspect the payments, delegations, and zkApp commands waiting in a Mina daemon's transaction pool, for every sender, one sender, or specific hashes.
+- [GraphQL Cookbook: Estimate a fee](https://docs.minaprotocol.com/node-developers/graphql-cookbook/estimate-fee): Estimate a transaction fee for Mina from the fees of the commands waiting in a daemon's transaction pool, with a jq one-liner that prints the median in MINA.
+- [GraphQL Cookbook: Block by height](https://docs.minaprotocol.com/node-developers/graphql-cookbook/block-by-height): Fetch a Mina block by height, with its producer, time, coinbase, and transaction hashes, from the Archive Node API, including blocks older than the daemon keeps.
+- [GraphQL Cookbook: Find a transaction](https://docs.minaprotocol.com/node-developers/graphql-cookbook/find-transaction): Find a Mina payment or delegation in the Archive Node API by account and block range, and read its status, amount, fee, memo, and block.
+
 ## Integrations
 
 - [Integrate with Mina](https://docs.minaprotocol.com/integrations): Choose how to integrate an application, exchange, wallet, explorer, or indexer with Mina — the daemon GraphQL API, the Archive Node API, Rosetta, client SDKs, and signing libraries.
