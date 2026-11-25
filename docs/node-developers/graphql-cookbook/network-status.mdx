@@ -1,0 +1,101 @@
+---
+title: "GraphQL Cookbook: Network status"
+sidebar_label: Network status
+hide_title: true
+description: Check with one GraphQL query whether a Mina daemon is synced, which network it is on, its block height, and the current epoch and slot.
+keywords:
+  - GraphQL
+  - sync status
+  - epoch
+  - slot
+  - daemon
+---
+
+# Network status
+
+**What this does:** reports whether a daemon is synced, which network and chain it follows, its height, and the current epoch and slot.
+
+**When to use it:** before you trust anything else a node returns, or as a health check in monitoring.
+
+## Query
+
+Send to the daemon GraphQL API, for example `https://devnet-plain-1.gcp.o1test.net/graphql`.
+
+```graphql
+query NetworkStatus {
+  networkID
+  syncStatus
+  daemonStatus {
+    blockchainLength
+    highestBlockLengthReceived
+    chainId
+    consensusTimeNow {
+      epoch
+      slot
+      globalSlot
+      startTime
+      endTime
+    }
+    consensusConfiguration {
+      slotDuration
+      slotsPerEpoch
+      k
+    }
+    peers {
+      peerId
+    }
+  }
+}
+```
+
+## Variables
+
+None.
+
+## Example response
+
+From Devnet, with the peer list trimmed to two entries:
+
+```json
+{
+  "data": {
+    "networkID": "mina:devnet",
+    "syncStatus": "SYNCED",
+    "daemonStatus": {
+      "blockchainLength": 594775,
+      "highestBlockLengthReceived": 594775,
+      "chainId": "ebfce0d570bc22eb041e1a7b0a46bbc3ed5d0a1030ef2ab5e36eef908b93eba8",
+      "consensusTimeNow": {
+        "epoch": "13",
+        "slot": "793",
+        "globalSlot": "93613",
+        "startTime": "1795587570000",
+        "endTime": "1795587660000"
+      },
+      "consensusConfiguration": {
+        "slotDuration": 90000,
+        "slotsPerEpoch": 7140,
+        "k": 290
+      },
+      "peers": [
+        { "peerId": "12D3KooWPtxgAhUNd5MD4q6625tA1BGZ21eSNhXtFkFHscHKLdXV" },
+        { "peerId": "12D3KooWNtdriZPy1DcLHmFWGfRxGAumcaRvFPNHhwo3UG89gV4Z" }
+      ]
+    }
+  }
+}
+```
+
+## Notes
+
+- `syncStatus` is one of `CONNECTING`, `LISTENING`, `OFFLINE`, `BOOTSTRAP`, `CATCHUP`, or `SYNCED`. Only read chain data from a `SYNCED` node.
+- While a node is behind, `blockchainLength` is lower than `highestBlockLengthReceived`.
+- `slotDuration` is in milliseconds, and `startTime` and `endTime` are Unix milliseconds. Read the slot length from the node rather than hard-coding it.
+- Two nodes on the same network report the same `chainId`. A different `chainId` means a node is on another chain, for example one that has not followed a hard fork.
+- `peers` can be long. Leave it out if you only need sync state.
+
+## Related
+
+- [Account balance](./account-balance)
+- [Block by height](./block-by-height)
+- [GraphQL API](/node-developers/graphql-api)

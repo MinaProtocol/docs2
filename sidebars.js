@@ -421,6 +421,23 @@ module.exports = {
         'node-developers/style-guide',
         'node-developers/sandbox-node',
         'node-developers/graphql-api',
+        {
+          type: 'category',
+          label: 'GraphQL Cookbook',
+          link: {
+            type: 'doc',
+            id: 'node-developers/graphql-cookbook/index',
+          },
+          items: [
+            'node-developers/graphql-cookbook/network-status',
+            'node-developers/graphql-cookbook/account-balance',
+            'node-developers/graphql-cookbook/delegation-info',
+            'node-developers/graphql-cookbook/pending-transactions',
+            'node-developers/graphql-cookbook/estimate-fee',
+            'node-developers/graphql-cookbook/block-by-height',
+            'node-developers/graphql-cookbook/find-transaction',
+          ],
+        },
         'node-developers/contributing',
       ],
     },

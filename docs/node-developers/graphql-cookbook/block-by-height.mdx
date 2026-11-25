@@ -1,0 +1,93 @@
+---
+title: "GraphQL Cookbook: Block by height"
+sidebar_label: Block by height
+hide_title: true
+description: Fetch a Mina block by height, with its producer, time, coinbase, and transaction hashes, from the Archive Node API, including blocks older than the daemon keeps.
+keywords:
+  - GraphQL
+  - block
+  - block height
+  - archive node
+---
+
+# Block by height
+
+**What this does:** fetches one block by height, with its producer, time, coinbase, and the hashes of its transactions.
+
+**When to use it:** in an explorer, an indexer, or any time you need a block older than the daemon's last 290.
+
+## Query
+
+Send to the [Archive Node API](/node-operators/data-and-history/archive-node-api), for example `https://devnet-archive-node-api.gcp.o1test.net`.
+
+```graphql
+query BlockByHeight($from: Int!, $to: Int!) {
+  blocks(
+    query: { blockHeight_gte: $from, blockHeight_lt: $to, canonical: true }
+    limit: 1
+  ) {
+    blockHeight
+    stateHash
+    parentHash
+    creator
+    dateTime
+    transactions {
+      coinbase
+      userCommands {
+        hash
+      }
+      zkappCommands {
+        hash
+      }
+    }
+  }
+}
+```
+
+## Variables
+
+To get block 594442, ask for the range from 594442 up to, but not including, 594443:
+
+```json
+{ "from": 594442, "to": 594443 }
+```
+
+## Example response
+
+From Devnet:
+
+```json
+{
+  "data": {
+    "blocks": [
+      {
+        "blockHeight": 594442,
+        "stateHash": "3NLLnHaetPJs6i9UbEcuegcagPF9geHaaS54gdZJpiU7rHcbSvHJ",
+        "parentHash": "3NKsfR3kxADFTEnMvwMfQkfXb6gEGC3U7zBkYiX66cbaByjJUPKu",
+        "creator": "B62qpfgnUm7zVqi8MJHNB2m37rtgMNDbFNhC2DpMmmVpQt8x6gKv9Ww",
+        "dateTime": "2026-11-24T14:01:30.000Z",
+        "transactions": {
+          "coinbase": "360000000000",
+          "userCommands": [
+            { "hash": "5JuaPhq9sczBmmkV8X6h6teV636RF6PX9TnSZR9h2V9LFjkymZbs" }
+          ],
+          "zkappCommands": []
+        }
+      }
+    ]
+  }
+}
+```
+
+## Notes
+
+- `blockHeight_gte` is inclusive and `blockHeight_lt` is exclusive. Widen the range and raise `limit` to page through blocks, and use `sortBy: BLOCKHEIGHT_DESC` to get the newest first.
+- `canonical: true` returns only finalized blocks, about `k` (290) blocks behind the tip. Recent blocks are not canonical yet. Drop the filter, or use `inBestChain: true`, to include them.
+- The daemon's `block(height: …)` query only answers for blocks in its transition frontier. For an older height, it returns `Could not find block in transition frontier with height …`.
+- `coinbase` is in nanomina.
+
+## Related
+
+- [Find a transaction](./find-transaction)
+- [Network status](./network-status)
+- [Archive Node API](/node-operators/data-and-history/archive-node-api)

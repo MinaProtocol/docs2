@@ -1,0 +1,74 @@
+---
+title: "GraphQL Cookbook: Estimate a fee"
+sidebar_label: Estimate a fee
+hide_title: true
+description: Estimate a transaction fee for Mina from the fees of the commands waiting in a daemon's transaction pool, with a jq one-liner that prints the median in MINA.
+keywords:
+  - GraphQL
+  - fee
+  - fee estimation
+  - mempool
+  - daemon
+---
+
+# Estimate a fee
+
+**What this does:** reads the fees of the commands waiting in the transaction pool, so you can pick a fee that competes with them.
+
+**When to use it:** before you send a payment or delegation, when you want it included soon without overpaying.
+
+## Query
+
+Send to the daemon GraphQL API, for example `https://devnet-plain-1.gcp.o1test.net/graphql`.
+
+```graphql
+query PooledFees {
+  pooledUserCommands {
+    fee
+  }
+}
+```
+
+To print the median fee in MINA:
+
+```sh
+curl -s https://devnet-plain-1.gcp.o1test.net/graphql \
+  -H 'content-type: application/json' \
+  -d '{"query": "{ pooledUserCommands { fee } }"}' \
+| jq '[.data.pooledUserCommands[].fee | tonumber] | sort
+      | if length == 0 then null else .[length / 2 | floor] / 1e9 end'
+```
+
+## Variables
+
+None.
+
+## Example response
+
+From Devnet:
+
+```json
+{
+  "data": {
+    "pooledUserCommands": [
+      { "fee": "10000000" },
+      { "fee": "10000000" }
+    ]
+  }
+}
+```
+
+The `jq` command above prints `0.01`.
+
+## Notes
+
+- Fees are nanomina strings: `10000000` is 0.01 MINA.
+- The pool shows what senders offer right now, not what block producers accept. Treat the median as a starting point and raise it when you need faster inclusion.
+- An empty pool tells you nothing, and the command prints `null`. Fall back to your wallet's default fee.
+- On Devnet, most of the pool is often a traffic generator that pays 0.01 MINA, so the estimate there is flat.
+- For zkApp transactions, read the fee payer's fee from `pooledZkappCommands { zkappCommand { feePayer { body { fee } } } }`.
+
+## Related
+
+- [Pending transactions](./pending-transactions)
+- [Account balance](./account-balance)

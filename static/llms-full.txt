@@ -6986,6 +6986,640 @@ However, you can start the Mina Daemon node with the `--open-limited-graphql-por
 - [Introduction to GraphQL](https://graphql.org/learn/)
 
 ---
+url: /node-developers/graphql-cookbook/account-balance
+---
+
+# Account balance
+
+**What this does:** returns an account's balance, its nonce, the nonce for its next transaction, and its delegate.
+
+**When to use it:** to show a balance in a wallet or explorer, or to pick the nonce before you sign a transaction.
+
+## Query
+
+Send to the daemon GraphQL API, for example `https://devnet-plain-1.gcp.o1test.net/graphql`.
+
+```graphql
+query AccountBalance($publicKey: PublicKey!) {
+  account(publicKey: $publicKey) {
+    publicKey
+    balance {
+      total
+      liquid
+      locked
+      blockHeight
+    }
+    nonce
+    inferredNonce
+    delegate
+  }
+}
+```
+
+## Variables
+
+```json
+{ "publicKey": "B62qpfenMTTuG2RgaJJaatbJ7KheZ4K2a43dsK48keARjk8mZ4Mhjcr" }
+```
+
+## Example response
+
+From Devnet:
+
+```json
+{
+  "data": {
+    "account": {
+      "publicKey": "B62qpfenMTTuG2RgaJJaatbJ7KheZ4K2a43dsK48keARjk8mZ4Mhjcr",
+      "balance": {
+        "total": "29689242850222613",
+        "liquid": "29689242850222613",
+        "locked": "0",
+        "blockHeight": "594775"
+      },
+      "nonce": "1",
+      "inferredNonce": "1",
+      "delegate": "B62qpfenMTTuG2RgaJJaatbJ7KheZ4K2a43dsK48keARjk8mZ4Mhjcr"
+    }
+  }
+}
+```
+
+## Notes
+
+- Balances are nanomina strings: divide by `1000000000` for MINA. Parse them as big integers, not floats.
+- `liquid` is what the account can spend now. `locked` is the part its vesting schedule (timing) still holds back. Both can be `null` while the node is bootstrapping.
+- `balance.blockHeight` is the height the balance was read at.
+- Use `inferredNonce` for the next transaction. Unlike `nonce`, it counts this account's transactions that are still in the node's pool.
+- An account that does not exist yet returns `"account": null`. Sending it MINA creates it and charges the account creation fee.
+- For a custom token balance, pass the token ID as the `token` argument. It defaults to MINA.
+
+## Related
+
+- [Delegation info](./delegation-info)
+- [Pending transactions](./pending-transactions)
+- [Find a transaction](./find-transaction)
+
+---
+url: /node-developers/graphql-cookbook/block-by-height
+---
+
+# Block by height
+
+**What this does:** fetches one block by height, with its producer, time, coinbase, and the hashes of its transactions.
+
+**When to use it:** in an explorer, an indexer, or any time you need a block older than the daemon's last 290.
+
+## Query
+
+Send to the [Archive Node API](/node-operators/data-and-history/archive-node-api), for example `https://devnet-archive-node-api.gcp.o1test.net`.
+
+```graphql
+query BlockByHeight($from: Int!, $to: Int!) {
+  blocks(
+    query: { blockHeight_gte: $from, blockHeight_lt: $to, canonical: true }
+    limit: 1
+  ) {
+    blockHeight
+    stateHash
+    parentHash
+    creator
+    dateTime
+    transactions {
+      coinbase
+      userCommands {
+        hash
+      }
+      zkappCommands {
+        hash
+      }
+    }
+  }
+}
+```
+
+## Variables
+
+To get block 594442, ask for the range from 594442 up to, but not including, 594443:
+
+```json
+{ "from": 594442, "to": 594443 }
+```
+
+## Example response
+
+From Devnet:
+
+```json
+{
+  "data": {
+    "blocks": [
+      {
+        "blockHeight": 594442,
+        "stateHash": "3NLLnHaetPJs6i9UbEcuegcagPF9geHaaS54gdZJpiU7rHcbSvHJ",
+        "parentHash": "3NKsfR3kxADFTEnMvwMfQkfXb6gEGC3U7zBkYiX66cbaByjJUPKu",
+        "creator": "B62qpfgnUm7zVqi8MJHNB2m37rtgMNDbFNhC2DpMmmVpQt8x6gKv9Ww",
+        "dateTime": "2026-11-24T14:01:30.000Z",
+        "transactions": {
+          "coinbase": "360000000000",
+          "userCommands": [
+            { "hash": "5JuaPhq9sczBmmkV8X6h6teV636RF6PX9TnSZR9h2V9LFjkymZbs" }
+          ],
+          "zkappCommands": []
+        }
+      }
+    ]
+  }
+}
+```
+
+## Notes
+
+- `blockHeight_gte` is inclusive and `blockHeight_lt` is exclusive. Widen the range and raise `limit` to page through blocks, and use `sortBy: BLOCKHEIGHT_DESC` to get the newest first.
+- `canonical: true` returns only finalized blocks, about `k` (290) blocks behind the tip. Recent blocks are not canonical yet. Drop the filter, or use `inBestChain: true`, to include them.
+- The daemon's `block(height: …)` query only answers for blocks in its transition frontier. For an older height, it returns `Could not find block in transition frontier with height …`.
+- `coinbase` is in nanomina.
+
+## Related
+
+- [Find a transaction](./find-transaction)
+- [Network status](./network-status)
+- [Archive Node API](/node-operators/data-and-history/archive-node-api)
+
+---
+url: /node-developers/graphql-cookbook/delegation-info
+---
+
+# Delegation info
+
+**What this does:** shows who an account delegates to, the delegate that counts for the current epoch, and the accounts that delegate to it.
+
+**When to use it:** to confirm a delegation took effect, or to list a block producer's delegators.
+
+## Query
+
+Send to the daemon GraphQL API, for example `https://devnet-plain-1.gcp.o1test.net/graphql`.
+
+```graphql
+query DelegationInfo($publicKey: PublicKey!) {
+  account(publicKey: $publicKey) {
+    publicKey
+    delegate
+    delegateAccount {
+      publicKey
+      balance {
+        total
+      }
+    }
+    epochDelegateAccount {
+      publicKey
+    }
+    delegators {
+      publicKey
+      balance {
+        total
+      }
+    }
+  }
+}
+```
+
+## Variables
+
+```json
+{ "publicKey": "B62qpfenMTTuG2RgaJJaatbJ7KheZ4K2a43dsK48keARjk8mZ4Mhjcr" }
+```
+
+## Example response
+
+From Devnet, for a block producer that stakes for itself:
+
+```json
+{
+  "data": {
+    "account": {
+      "publicKey": "B62qpfenMTTuG2RgaJJaatbJ7KheZ4K2a43dsK48keARjk8mZ4Mhjcr",
+      "delegate": "B62qpfenMTTuG2RgaJJaatbJ7KheZ4K2a43dsK48keARjk8mZ4Mhjcr",
+      "delegateAccount": {
+        "publicKey": "B62qpfenMTTuG2RgaJJaatbJ7KheZ4K2a43dsK48keARjk8mZ4Mhjcr",
+        "balance": { "total": "29689242850222613" }
+      },
+      "epochDelegateAccount": {
+        "publicKey": "B62qpfenMTTuG2RgaJJaatbJ7KheZ4K2a43dsK48keARjk8mZ4Mhjcr"
+      },
+      "delegators": []
+    }
+  }
+}
+```
+
+## Notes
+
+- An account that does not delegate returns its own public key as `delegate`.
+- `delegate` is the current ledger. `epochDelegateAccount` is the delegate in the staking ledger of the current epoch, which is the one that decides block production now. Right after a delegation, the two differ until the new delegation reaches a staking ledger.
+- `delegators` comes from the staking ledger of the last epoch, so it can lag the current ledger and can be empty. `lastEpochDelegators` reads the epoch before that.
+
+## Related
+
+- [Account balance](./account-balance)
+- [Network status](./network-status)
+- [How to delegate](/using-mina/how-to-delegate)
+- [Proof of Stake](/mina-protocol/proof-of-stake)
+
+---
+url: /node-developers/graphql-cookbook/estimate-fee
+---
+
+# Estimate a fee
+
+**What this does:** reads the fees of the commands waiting in the transaction pool, so you can pick a fee that competes with them.
+
+**When to use it:** before you send a payment or delegation, when you want it included soon without overpaying.
+
+## Query
+
+Send to the daemon GraphQL API, for example `https://devnet-plain-1.gcp.o1test.net/graphql`.
+
+```graphql
+query PooledFees {
+  pooledUserCommands {
+    fee
+  }
+}
+```
+
+To print the median fee in MINA:
+
+```sh
+curl -s https://devnet-plain-1.gcp.o1test.net/graphql \
+  -H 'content-type: application/json' \
+  -d '{"query": "{ pooledUserCommands { fee } }"}' \
+| jq '[.data.pooledUserCommands[].fee | tonumber] | sort
+      | if length == 0 then null else .[length / 2 | floor] / 1e9 end'
+```
+
+## Variables
+
+None.
+
+## Example response
+
+From Devnet:
+
+```json
+{
+  "data": {
+    "pooledUserCommands": [
+      { "fee": "10000000" },
+      { "fee": "10000000" }
+    ]
+  }
+}
+```
+
+The `jq` command above prints `0.01`.
+
+## Notes
+
+- Fees are nanomina strings: `10000000` is 0.01 MINA.
+- The pool shows what senders offer right now, not what block producers accept. Treat the median as a starting point and raise it when you need faster inclusion.
+- An empty pool tells you nothing, and the command prints `null`. Fall back to your wallet's default fee.
+- On Devnet, most of the pool is often a traffic generator that pays 0.01 MINA, so the estimate there is flat.
+- For zkApp transactions, read the fee payer's fee from `pooledZkappCommands { zkappCommand { feePayer { body { fee } } } }`.
+
+## Related
+
+- [Pending transactions](./pending-transactions)
+- [Account balance](./account-balance)
+
+---
+url: /node-developers/graphql-cookbook/find-transaction
+---
+
+# Find a transaction
+
+**What this does:** lists an account's payments and delegations in a range of blocks, with the status, amount, fee, memo, and block of each.
+
+**When to use it:** to confirm that a payment landed and was applied, for example to credit a deposit.
+
+## Query
+
+Send to the [Archive Node API](/node-operators/data-and-history/archive-node-api), for example `https://devnet-archive-node-api.gcp.o1test.net`.
+
+```graphql
+query FindTransaction($address: String!, $from: Int!, $to: Int!) {
+  userCommands(
+    input: { address: $address, from: $from, to: $to, status: CANONICAL }
+  ) {
+    hash
+    kind
+    from
+    to
+    amount
+    fee
+    memo
+    nonce
+    status
+    failureReason
+    blockInfo {
+      height
+      timestamp
+      chainStatus
+    }
+  }
+}
+```
+
+## Variables
+
+```json
+{
+  "address": "B62qm6Ybxc4i7ih4Ti5yGXNNDxkQDNKCvEax9iHfZeZuor16hH3i4Kx",
+  "from": 594400,
+  "to": 594480
+}
+```
+
+## Example response
+
+From Devnet:
+
+```json
+{
+  "data": {
+    "userCommands": [
+      {
+        "hash": "5JuaPhq9sczBmmkV8X6h6teV636RF6PX9TnSZR9h2V9LFjkymZbs",
+        "kind": "payment",
+        "from": "B62qm6Ybxc4i7ih4Ti5yGXNNDxkQDNKCvEax9iHfZeZuor16hH3i4Kx",
+        "to": "B62qpkzJUF39RRWMRpUW7SYQRfDhcP4V19WvadnSnFe6RFGVmS1m8Az",
+        "amount": "1349102740",
+        "fee": "250000000",
+        "memo": "E4YM2vTHhWEg66xpj52JErHUBU4pZ1yageL4TVDDpTTSsv8mK6YaH",
+        "nonce": 1089,
+        "status": "applied",
+        "failureReason": null,
+        "blockInfo": {
+          "height": 594442,
+          "timestamp": "1795528890000",
+          "chainStatus": "canonical"
+        }
+      }
+    ]
+  }
+}
+```
+
+## Notes
+
+- The query finds commands by account, not by hash. A command matches when `address` is its fee payer, sender, or receiver. To find one hash, query its sender over a small range of heights and match `hash` in the result.
+- `from` is inclusive and `to` is exclusive. Keep the range narrow so the query stays fast.
+- `status: CANONICAL` returns only finalized blocks. Use `PENDING` or `ALL` to include recent blocks, which can still be replaced in a reorganization.
+- A command in a block can still have failed. Check that `status` is `applied`, and read `failureReason` when it is `failed`.
+- `amount` and `fee` are nanomina strings: this payment sent 1.34910274 MINA with a 0.25 MINA fee. The memo above is the empty memo.
+- A command that is not in any block yet is in the transaction pool. See [Pending transactions](./pending-transactions).
+
+## Related
+
+- [Block by height](./block-by-height)
+- [Pending transactions](./pending-transactions)
+- [Archive Node API](/node-operators/data-and-history/archive-node-api)
+
+---
+url: /node-developers/graphql-cookbook
+---
+
+# GraphQL Cookbook
+
+Each recipe in this cookbook answers one question with one GraphQL query you can copy, run, and adapt. The [GraphQL API](/node-developers/graphql-api) page explains the API itself. The recipes show which fields to combine for a task.
+
+## Which endpoint answers which question
+
+Mina has two GraphQL services, and a recipe uses whichever one holds the data:
+
+| Service | Holds | Devnet endpoint used in these recipes |
+| --- | --- | --- |
+| Daemon GraphQL API | The current ledger, the node's transaction pool, and the last `k` blocks (the transition frontier, 290 blocks) | `https://devnet-plain-1.gcp.o1test.net/graphql` |
+| [Archive Node API](/node-operators/data-and-history/archive-node-api) | Historical blocks, transactions, events, and actions | `https://devnet-archive-node-api.gcp.o1test.net` |
+
+On your own node, the daemon API is at `http://localhost:3085/graphql`. For anything older than the transition frontier, use an archive node: the daemon does not keep it.
+
+## Run a recipe
+
+Send the query, and its variables if it has any, as JSON in a `POST` request. For example, with `curl` and `jq`:
+
+```sh
+curl -s https://devnet-plain-1.gcp.o1test.net/graphql \
+  -H 'content-type: application/json' \
+  -d '{"query": "{ syncStatus }"}' | jq
+```
+
+Any GraphQL client works the same way. On your own node, open `http://localhost:3085/graphql` in a browser to use the GraphiQL IDE.
+
+## Units and encodings
+
+- Amounts, balances, and fees are strings in nanomina: 1 MINA is `1000000000`. Parse them as big integers: large balances do not fit in a JavaScript `number`.
+- Memos are Base58Check encoded. `E4YM2vTHhWEg66xpj52JErHUBU4pZ1yageL4TVDDpTTSsv8mK6YaH` is the empty memo.
+- Daemon times and the archive's `timestamp` fields are Unix milliseconds as strings. The archive's `dateTime` is ISO 8601.
+
+## Recipes
+
+| Recipe | Question | Service |
+| --- | --- | --- |
+| [Network status](/node-developers/graphql-cookbook/network-status) | Is the node synced, and what epoch and slot is it? | Daemon |
+| [Account balance](/node-developers/graphql-cookbook/account-balance) | What is this account's balance and next nonce? | Daemon |
+| [Delegation info](/node-developers/graphql-cookbook/delegation-info) | Who does this account delegate to, for this epoch? | Daemon |
+| [Pending transactions](/node-developers/graphql-cookbook/pending-transactions) | What is waiting in the mempool? | Daemon |
+| [Estimate a fee](/node-developers/graphql-cookbook/estimate-fee) | What fee are other senders paying right now? | Daemon |
+| [Block by height](/node-developers/graphql-cookbook/block-by-height) | What is in block _N_? | Archive |
+| [Find a transaction](/node-developers/graphql-cookbook/find-transaction) | Did this payment land, and in which block? | Archive |
+
+---
+url: /node-developers/graphql-cookbook/network-status
+---
+
+# Network status
+
+**What this does:** reports whether a daemon is synced, which network and chain it follows, its height, and the current epoch and slot.
+
+**When to use it:** before you trust anything else a node returns, or as a health check in monitoring.
+
+## Query
+
+Send to the daemon GraphQL API, for example `https://devnet-plain-1.gcp.o1test.net/graphql`.
+
+```graphql
+query NetworkStatus {
+  networkID
+  syncStatus
+  daemonStatus {
+    blockchainLength
+    highestBlockLengthReceived
+    chainId
+    consensusTimeNow {
+      epoch
+      slot
+      globalSlot
+      startTime
+      endTime
+    }
+    consensusConfiguration {
+      slotDuration
+      slotsPerEpoch
+      k
+    }
+    peers {
+      peerId
+    }
+  }
+}
+```
+
+## Variables
+
+None.
+
+## Example response
+
+From Devnet, with the peer list trimmed to two entries:
+
+```json
+{
+  "data": {
+    "networkID": "mina:devnet",
+    "syncStatus": "SYNCED",
+    "daemonStatus": {
+      "blockchainLength": 594775,
+      "highestBlockLengthReceived": 594775,
+      "chainId": "ebfce0d570bc22eb041e1a7b0a46bbc3ed5d0a1030ef2ab5e36eef908b93eba8",
+      "consensusTimeNow": {
+        "epoch": "13",
+        "slot": "793",
+        "globalSlot": "93613",
+        "startTime": "1795587570000",
+        "endTime": "1795587660000"
+      },
+      "consensusConfiguration": {
+        "slotDuration": 90000,
+        "slotsPerEpoch": 7140,
+        "k": 290
+      },
+      "peers": [
+        { "peerId": "12D3KooWPtxgAhUNd5MD4q6625tA1BGZ21eSNhXtFkFHscHKLdXV" },
+        { "peerId": "12D3KooWNtdriZPy1DcLHmFWGfRxGAumcaRvFPNHhwo3UG89gV4Z" }
+      ]
+    }
+  }
+}
+```
+
+## Notes
+
+- `syncStatus` is one of `CONNECTING`, `LISTENING`, `OFFLINE`, `BOOTSTRAP`, `CATCHUP`, or `SYNCED`. Only read chain data from a `SYNCED` node.
+- While a node is behind, `blockchainLength` is lower than `highestBlockLengthReceived`.
+- `slotDuration` is in milliseconds, and `startTime` and `endTime` are Unix milliseconds. Read the slot length from the node rather than hard-coding it.
+- Two nodes on the same network report the same `chainId`. A different `chainId` means a node is on another chain, for example one that has not followed a hard fork.
+- `peers` can be long. Leave it out if you only need sync state.
+
+## Related
+
+- [Account balance](./account-balance)
+- [Block by height](./block-by-height)
+- [GraphQL API](/node-developers/graphql-api)
+
+---
+url: /node-developers/graphql-cookbook/pending-transactions
+---
+
+# Pending transactions
+
+**What this does:** lists the user commands (payments and delegations) and zkApp commands waiting in a node's transaction pool.
+
+**When to use it:** to check that a transaction you sent reached the pool, or to see what is waiting to be included.
+
+## Query
+
+Send to the daemon GraphQL API, for example `https://devnet-plain-1.gcp.o1test.net/graphql`.
+
+```graphql
+query PendingTransactions {
+  pooledUserCommands {
+    hash
+    kind
+    from
+    to
+    amount
+    fee
+    nonce
+    memo
+  }
+  pooledZkappCommands {
+    hash
+  }
+}
+```
+
+To narrow the result, pass `publicKey` (the sender) or `hashes` to either field:
+
+```graphql
+query MyPendingPayments($sender: PublicKey!) {
+  pooledUserCommands(publicKey: $sender) {
+    hash
+    nonce
+    fee
+  }
+}
+```
+
+## Variables
+
+None for the first query. For the second:
+
+```json
+{ "sender": "B62qp3B9VW1ir5qL1MWRwr6ecjC2NZbGr8vysGeme9vXGcFXTMNXb2t" }
+```
+
+## Example response
+
+From Devnet, for the first query:
+
+```json
+{
+  "data": {
+    "pooledUserCommands": [
+      {
+        "hash": "5JtrCq68nBJvdTHMtJfBiQXe1jDzUi2Qj9Pkb4BYV4nGUUrMvaBx",
+        "kind": "PAYMENT",
+        "from": "B62qp3B9VW1ir5qL1MWRwr6ecjC2NZbGr8vysGeme9vXGcFXTMNXb2t",
+        "to": "B62qp3B9VW1ir5qL1MWRwr6ecjC2NZbGr8vysGeme9vXGcFXTMNXb2t",
+        "amount": "10000000",
+        "fee": "10000000",
+        "nonce": 759216,
+        "memo": "E4YzjHJ6ds2xcGuWvfVGQzp6HXhk5R2c5xrj9apXH5ER941pRxqmS"
+      }
+    ],
+    "pooledZkappCommands": [
+      { "hash": "5JunMy52rXecEAckxMsVychphCHkmaZxar6D9n4g67XCZBJ42zLE" }
+    ]
+  }
+}
+```
+
+## Notes
+
+- The pool belongs to the node you ask. Each node sees a slightly different pool, and a command leaves it once it is in a block.
+- A command missing from the pool may already be in a block. To check, see [Find a transaction](./find-transaction).
+- `kind` is uppercase here, for example `PAYMENT`. The Archive Node API returns lowercase (`payment` or `delegation`), so normalize the case before you compare the two.
+- `nonce` is a number here, but a string on `account`.
+- The memo is Base58Check encoded. The one above decodes to `devnet-tx-generator`, a bot that sends traffic on Devnet.
+
+## Related
+
+- [Estimate a fee](./estimate-fee)
+- [Account balance](./account-balance)
+- [Find a transaction](./find-transaction)
+
+---
 url: /node-developers
 ---
 

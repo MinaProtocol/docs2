@@ -1,0 +1,101 @@
+---
+title: "GraphQL Cookbook: Find a transaction"
+sidebar_label: Find a transaction
+hide_title: true
+description: Find a Mina payment or delegation in the Archive Node API by account and block range, and read its status, amount, fee, memo, and block.
+keywords:
+  - GraphQL
+  - transaction
+  - payment
+  - transaction status
+  - archive node
+---
+
+# Find a transaction
+
+**What this does:** lists an account's payments and delegations in a range of blocks, with the status, amount, fee, memo, and block of each.
+
+**When to use it:** to confirm that a payment landed and was applied, for example to credit a deposit.
+
+## Query
+
+Send to the [Archive Node API](/node-operators/data-and-history/archive-node-api), for example `https://devnet-archive-node-api.gcp.o1test.net`.
+
+```graphql
+query FindTransaction($address: String!, $from: Int!, $to: Int!) {
+  userCommands(
+    input: { address: $address, from: $from, to: $to, status: CANONICAL }
+  ) {
+    hash
+    kind
+    from
+    to
+    amount
+    fee
+    memo
+    nonce
+    status
+    failureReason
+    blockInfo {
+      height
+      timestamp
+      chainStatus
+    }
+  }
+}
+```
+
+## Variables
+
+```json
+{
+  "address": "B62qm6Ybxc4i7ih4Ti5yGXNNDxkQDNKCvEax9iHfZeZuor16hH3i4Kx",
+  "from": 594400,
+  "to": 594480
+}
+```
+
+## Example response
+
+From Devnet:
+
+```json
+{
+  "data": {
+    "userCommands": [
+      {
+        "hash": "5JuaPhq9sczBmmkV8X6h6teV636RF6PX9TnSZR9h2V9LFjkymZbs",
+        "kind": "payment",
+        "from": "B62qm6Ybxc4i7ih4Ti5yGXNNDxkQDNKCvEax9iHfZeZuor16hH3i4Kx",
+        "to": "B62qpkzJUF39RRWMRpUW7SYQRfDhcP4V19WvadnSnFe6RFGVmS1m8Az",
+        "amount": "1349102740",
+        "fee": "250000000",
+        "memo": "E4YM2vTHhWEg66xpj52JErHUBU4pZ1yageL4TVDDpTTSsv8mK6YaH",
+        "nonce": 1089,
+        "status": "applied",
+        "failureReason": null,
+        "blockInfo": {
+          "height": 594442,
+          "timestamp": "1795528890000",
+          "chainStatus": "canonical"
+        }
+      }
+    ]
+  }
+}
+```
+
+## Notes
+
+- The query finds commands by account, not by hash. A command matches when `address` is its fee payer, sender, or receiver. To find one hash, query its sender over a small range of heights and match `hash` in the result.
+- `from` is inclusive and `to` is exclusive. Keep the range narrow so the query stays fast.
+- `status: CANONICAL` returns only finalized blocks. Use `PENDING` or `ALL` to include recent blocks, which can still be replaced in a reorganization.
+- A command in a block can still have failed. Check that `status` is `applied`, and read `failureReason` when it is `failed`.
+- `amount` and `fee` are nanomina strings: this payment sent 1.34910274 MINA with a 0.25 MINA fee. The memo above is the empty memo.
+- A command that is not in any block yet is in the transaction pool. See [Pending transactions](./pending-transactions).
+
+## Related
+
+- [Block by height](./block-by-height)
+- [Pending transactions](./pending-transactions)
+- [Archive Node API](/node-operators/data-and-history/archive-node-api)
